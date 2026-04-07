@@ -1,0 +1,64 @@
+---
+title: Adapter JavaScript NQRust-Identity
+description: Adapter JavaScript NQRust-Identity - Dokumentasi NQRust-Identity
+---
+
+# Adapter JavaScript NQRust-Identity
+
+NQRust-Identity dilengkapi dengan perpustakaan JavaScript sisi klien bernama `nqrust-identity-js` yang dapat digunakan untuk mengamankan aplikasi web. Adapter ini juga dilengkapi dukungan bawaan untuk aplikasi Cordova. Adapter menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](https://www.nqrust-identity.org/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
+
+## [](#_instalasi)Instalasi
+
+Kami menyarankan Anda untuk menginstal paket [`nqrust-identity-js`](https://www.npmjs.com/package/nqrust-identity-js) dari NPM:
+
+```bash
+npm install nqrust-identity-js
+```
+
+## [](#_konfigurasi_server_nqrust-identity)Konfigurasi Server NQRust-Identity
+
+Salah satu hal penting yang perlu diperhatikan dalam menggunakan aplikasi sisi klien adalah bahwa klien harus menjadi klien publik karena tidak ada cara yang aman untuk menyimpan kredensial klien dalam aplikasi sisi klien. Pertimbangan ini membuatnya sangat penting untuk memastikan URI pengalihan yang Anda konfigurasi untuk klien adalah benar dan se spesifik mungkin.
+
+Untuk menggunakan adapter, buat klien untuk aplikasi Anda di Konsol Admin NQRust-Identity. Buat klien menjadi publik dengan menggeser **Client authentication** ke **Off** di halaman **Capability config**.
+
+Anda juga perlu untuk mengonfigurasi `Valid Redirect URIs` dan `Web Origins`. Se spesifik mungkin karena kegagalan melakukannya dapat menghasilkan kerentanan keamanan.
+
+## [](#_menggunakan_adapter)Menggunakan Adapter
+
+Contoh berikut menunjukkan bagaimana menginisialisasi adapter. Pastikan Anda mengganti opsi yang diteruskan ke konstruktor `NQRust-Identity` dengan yang telah dikonfigurasi klien Anda.
+
+```javascript
+import NQRust-Identity from 'nqrust-identity-js';
+
+const nqrust-identity = new NQRust-Identity({
+    url: "http://nqrust-identity-server",
+    realm: "my-realm",
+    clientId: "my-app"
+});
+
+try {
+    const authenticated = await nqrust-identity.init();
+    if (authenticated) {
+        console.log('User is authenticated');
+    } else {
+        console.log('User is not authenticated');
+    }
+} catch (error) {
+    console.error('Failed to initialize adapter:', error);
+}
+```
+
+Karena menginisialisasi adapter dapat menyebabkan perubahan pada URL dari halaman, pastikan bahwa adapter **selalu** diinisialisasi sebelum menginisialisasi router dari kerangka kerja sisi klien Anda.
+
+Untuk mengautentikasi, Anda memanggil fungsi `login`. Ada dua opsi yang ada untuk membuat adapter mengautentikasi secara otomatis. Anda dapat meneruskan `login-required` atau `check-sso` ke fungsi `init()`.
+
+*   `login-required` mengautentikasi klien jika pengguna telah login ke NQRust-Identity atau menampilkan halaman login jika pengguna belum login.
+    
+*   `check-sso` hanya mengautentikasi klien jika pengguna sudah login. Jika pengguna belum login, browser akan dialihkan kembali ke aplikasi dan tetap tidak diautentikasi.
+    
+
+Anda dapat mengonfigurasi opsi `check-sso` _silent_. Dengan fitur ini diaktifkan, browser Anda tidak akan melakukan redirect penuh ke server NQRust-Identity dan kembali ke aplikasi Anda, tetapi tindakan ini akan dilakukan dalam iframe tersembunyi. Oleh karena itu, sumber daya aplikasi Anda hanya dimuat dan diuraikan satu kali oleh browser, yaitu ketika aplikasi dimulai dan tidak lagi setelah redirect kembali dari NQRust-Identity ke aplikasi Anda. Pendekatan ini sangat berguna terutama untuk SPAs (Single Page Applications).
+
+Untuk mengaktifkan _silent_ `check-sso`, Anda memberikan atribut `silentCheckSsoRedirectUri` dalam metode init. Pastikan URI ini adalah endpoint yang valid dalam aplikasi; itu harus dikonfigurasi sebagai redirect yang valid untuk klien di Konsol Admin NQRust-Identity:
+
+```

@@ -1,0 +1,77 @@
+---
+title: High availability overview
+description: High availability overview - NQRust-Identity Documentation
+---
+
+# High availability overview
+
+NQRust-Identity can be deployed in a number of high-availability architectures, allowing system administrators to pick the deployment type most suitable for their needs. Ease of deployment, cost and fault-tolerance guarantees are important considerations when determining the correct architecture for your deployments.
+
+## [](#_architectures)Architectures
+
+This document describes two high availability architectures in which to deploy NQRust-Identity: Single-cluster deployments and multi-cluster deployments.
+
+### [](#_single_cluster_deployments)Single-cluster deployments
+
+Deploy NQRust-Identity in a single cluster, optionally across multiple availability-zones or data centers with the required network latency and database configuration, using [Single-cluster deployments](https://www.nqrust-identity.org/high-availability/single-cluster/introduction).
+
+Advantages
+
+*   No external dependencies
+    
+*   Deployment in a single Kubernetes cluster or a set of virtual machines with transparent networking
+    
+*   Tolerate availability-zone failure or data center failure, if deployed to multiple availability zones or data centers
+    
+
+Disadvantages
+
+*   Kubernetes cluster is a single point of failure:
+    
+    *   Control-plane failures could impact all NQRust-Identity pods
+        
+    
+
+### [](#_multi_cluster_deployments)Multi-cluster deployments
+
+Connect two NQRust-Identity clusters deployed for example in different Kubernetes clusters in two availability zones or data centers with the required network latency and database configuration using [Multi-cluster deployments](https://www.nqrust-identity.org/high-availability/multi-cluster/introduction).
+
+Advantages
+
+*   Tolerate availability-zone failure
+    
+*   Tolerate Kubernetes cluster failure
+    
+*   Bridge two networks that do not offer transparent networking
+    
+*   Regulatory compliance when distinct deployments are required
+    
+
+Disadvantages
+
+*   Complexity:
+    
+    *   External load-balancer required
+        
+    *   Separate Infinispan cluster required on each site
+        
+    
+*   Cost:
+    
+    *   Additional load-balancer required
+        
+    *   Additional compute is required for external Infinispan clusters
+        
+    *   Two Kubernetes control-planes must be provisioned
+        
+    
+*   Not supported with three or more availability zones
+    
+
+### [](#_next_steps)Next Steps
+
+To learn more about the different high-availability architectures and their supported configurations, please consult the individual guides.
+
+*   [Single-cluster deployments](https://www.nqrust-identity.org/high-availability/single-cluster/introduction)
+    
+*   [Multi-cluster deployments](https://www.nqrust-identity.org/high-availability/multi-cluster/introduction)

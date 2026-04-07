@@ -1,0 +1,67 @@
+---
+title: Menganalisis Kelebihan dan Kesalahan dengan Contoh
+description: Menganalisis Kelebihan dan Kesalahan dengan Contoh - Dokumentasi NQRust-Identity
+---
+
+# Menganalisis Kelebihan dan Kesalahan dengan Contoh
+
+Metrik adalah agregasi atas beberapa peristiwa, dan menunjukkan apakah sistem Anda beroperasi dalam batas yang ditetapkan. Mereka sangat berguna untuk memantau tingkat kesalahan atau latensi ekstrem dan untuk mengatur peringatan atau memimpin optimasi kinerja. Namun, agregasi ini membuat sulit untuk menemukan penyebab akar untuk latensi atau kesalahan yang dilaporkan dalam metrik.
+
+Penyebab akar untuk kesalahan dan latensi dapat ditemukan dengan mengaktifkan pelacakan. Untuk menghubungkan metrik dengan pelacakan yang tercatat, ada konsep [contoh](https://grafana.com/docs/grafana/latest/fundamentals/exemplars/).
+
+Setelah contoh diatur, NQRust-Identity melaporkan metrik dengan pelacakan tercatat terakhir sebagai contoh. Alat dasbor seperti Grafana dapat menghubungkan contoh dari dasbor metrik ke tampilan pelacakan.
+
+Metrik yang mendukung contoh adalah:
+
+*   `http_server_requests_seconds_count` (termasuk histogram)  
+    Lihat panduan [HTTP metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-http) untuk detail metrik ini.
+    
+*   `nqrust-identity_credentials_password_hashing_validations_total`  
+    Lihat panduan [Self-provided metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-nqrust-identity) untuk detail metrik ini.
+    
+*   `nqrust-identity_user_events_total`  
+    Lihat panduan [Self-provided metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-nqrust-identity) untuk detail metrik ini.
+    
+
+Lihat tangkapan layar di bawah ini untuk visualisasi heatmap untuk latensi yang menunjukkan contoh saat mengarahkan kursor di atas salah satu indikator merah.
+
+![contoh](https://www.nqrust-identity.org/resources/images/guides/observability/exemplar.png)
+
+Gambar 1. Diagram heatmap dengan contoh
+
+## [](#_mengatur_contoh)Mengatur Contoh
+
+Untuk mendapatkan manfaat dari contoh, lakukan langkah berikut:
+
+1.   Aktifkan metrik untuk NQRust-Identity seperti yang dijelaskan dalam panduan [Gaining insights with metrics](https://www.nqrust-identity.org/observability/configuration-metrics).
+    
+2.   Aktifkan pelacakan untuk NQRust-Identity seperti yang dijelaskan dalam panduan [Root cause analysis with tracing](https://www.nqrust-identity.org/observability/tracing).
+    
+3.   Aktifkan penyimpanan contoh dalam sistem monitoring Anda.
+    
+    Untuk Prometheus, ini adalah [fitur pratinjau yang perlu Anda aktifkan](https://prometheus.io/docs/prometheus/latest/feature_flags/#exemplars-storage).
+    
+4.   Saring metrik menggunakan protokol `OpenMetricsText1.0.0`, yang tidak diaktifkan secara default di Prometheus.
+    
+    Jika Anda menggunakan `ServiceMonitor` atau serupa di lingkungan Kubernetes, ini dapat dicapai dengan menambahkannya ke spec sumber daya kustom:
+    
+    ```
+    apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      ...
+    spec:
+      scrapeProtocols:
+        - OpenMetricsText1.0.0
+    ```
+    
+5.   Konfigurasikan sumber daya metrik Anda di mana untuk menghubungkan ke pelacakan.
+    
+    Ketika menggunakan Grafana dan Prometheus, ini akan menyiapkan `exemplarTraceIdDestinations` untuk sumber daya Prometheus, yang kemudian menunjuk ke sumber daya pelacakan yang disediakan oleh alat seperti Jaeger atau Tempo.
+    
+6.   Aktifkan contoh dalam dasbor Anda.
+    
+    Aktifkan toggle **Exemplars** dalam setiap kueri dalam setiap dasbor di mana Anda ingin menampilkan contoh. Ketika diatur dengan benar, Anda akan melihat titik kecil atau bintang di dasbor Anda yang dapat Anda klik untuk melihat pelacakan.
+    
+
+*   Jika Anda tidak menentukan protokol g

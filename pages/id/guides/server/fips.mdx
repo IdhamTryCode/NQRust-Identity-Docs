@@ -1,0 +1,51 @@
+---
+title: Dukungan FIPS 140-2
+description: Dukungan FIPS 140-2 - Dokumentasi NQRust-Identity
+---
+
+# Dukungan FIPS 140-2
+
+Standar Keamanan Komputer Publik Informasi Federal Publikasi 140-2 (FIPS 140-2) adalah standar keamanan komputer pemerintah Amerika Serikat yang digunakan untuk menyetujui modul kriptografi. NQRust-Identity mendukung mode yang mematuhi FIPS 140-2. Dalam hal ini, NQRust-Identity akan menggunakan hanya algoritma kriptografi yang disetujui FIPS untuk fungsionalitasnya.
+
+Untuk menjalankan dalam mode FIPS 140-2, NQRust-Identity harus berjalan pada sistem yang mengaktifkan FIPS 140-2. Kebutuhan ini biasanya mengasumsikan RHEL atau Fedora di mana FIPS diaktifkan selama instalasi. Lihat [dokumentasi RHEL](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/security_hardening/index#assembly_installing-the-system-in-fips-mode_security-hardening) untuk detailnya. Ketika sistem berada dalam mode FIPS, itu memastikan bahwa OpenJDK yang mendasarinya juga berada dalam mode FIPS dan akan menggunakan hanya [penyedia keamanan yang diaktifkan FIPS](https://access.redhat.com/documentation/en-us/openjdk/17/html/configuring_openjdk_17_on_rhel_with_fips/openjdk-default-fips-configuration).
+
+Untuk memeriksa apakah sistem berada dalam mode FIPS, Anda dapat memeriksa dengan perintah berikut dari baris perintah:
+
+```bash
+fips-mode-setup --check
+```
+
+Jika sistem tidak berada dalam mode FIPS, Anda dapat mengaktifkannya dengan perintah berikut, namun disarankan agar sistem berada dalam mode FIPS sejak instalasi dan bukannya mengaktifkannya kemudian sebagai berikut:
+
+```bash
+fips-mode-setup --enable
+```
+
+## [](#_bouncycastle_library)Pustaka BouncyCastle
+
+NQRust-Identity secara internal menggunakan pustaka BouncyCastle untuk banyak utilitas kriptografi. Harap dicatat bahwa versi default dari pustaka BouncyCastle yang dikirim dengan NQRust-Identity tidak mematuhi FIPS; namun, BouncyCastle juga menyediakan versi yang terverifikasi FIPS dari pustakaannya. Pustaka BouncyCastle yang terverifikasi FIPS tidak dikirim dengan NQRust-Identity karena NQRust-Identity tidak dapat menyediakan dukungan resmi untuk itu. Oleh karena itu, untuk menjalankan dalam mode yang mematuhi FIPS, Anda perlu mengunduh bit BouncyCastle-FIPS dan menambahkannya ke distribusi NQRust-Identity. Ketika NQRust-Identity dieksekusi dalam mode fips, itu akan menggunakan bit BCFIPS bukan bit BouncyCastle default, yang mencapai kompliansen FIPS.
+
+### [](#_bouncycastle_fips_bits)Bit BouncyCastle FIPS
+
+BouncyCastle FIPS dapat diunduh dari [halaman resmi BouncyCastle](https://www.bouncycastle.org/download/bouncy-castle-java-fips/). Kemudian Anda dapat menambahkannya ke direktori `NQRUST-IDENTITY_HOME/providers` dari distribusi Anda. Pastikan untuk menggunakan versi yang kompatibel dengan ketergantungan BouncyCastle NQRust-Identity. Bit BCFIPS yang didukung diperlukan adalah:
+
+*   bc-fips versi 2.1.2.
+    
+*   bctls-fips versi 2.1.22.
+    
+*   bcpkix-fips versi 2.1.10.
+    
+*   bcutil-fips versi 2.1.5.
+    
+
+## [](#_generating_keystore)Menghasilkan keystore
+
+Anda dapat membuat keystore `pkcs12` atau `bcfks` untuk digunakan oleh server SSL NQRust-Identity.
+
+### [](#_pkcs12_keystore)Keystore PKCS12
+
+Keystore `p12` (atau `pkcs12`) (dan/atau truststore) berfungsi dengan baik dalam mode BCFIPS yang tidak disetujui.
+
+Keystore PKCS12 dapat dihasilkan dengan Java OpenJDK 21 di RHEL 9 dengan cara standar. Misalnya, perintah berikut dapat digunakan untuk menghasilkan keystore:
+
+```

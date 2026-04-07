@@ -1,0 +1,80 @@
+---
+title: Mengonfigurasi Permintaan HTTP Keluar
+description: Mengonfigurasi Permintaan HTTP Keluar - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Permintaan HTTP Keluar
+
+NQRust-Identity sering memerlukan untuk membuat permintaan ke aplikasi dan layanan yang diamankan olehnya. NQRust-Identity mengelola koneksi keluar ini menggunakan klien HTTP. Panduan ini menunjukkan cara mengonfigurasi klien, pool koneksi, pengaturan lingkungan proxy, waktu tunggu, dan lainnya.
+
+## [](#_mengonfigurasi_sertifikat_terpercaya_untuk_koneksi_TLS)Mengonfigurasi Sertifikat Terpercaya untuk Koneksi TLS
+
+Lihat [Mengonfigurasi Sertifikat Terpercaya](https://www.nqrust-identity.org/server/nqrust-identity-truststore) untuk cara mengonfigurasi NQRust-Identity Truststore sehingga NQRust-Identity dapat melakukan permintaan keluar menggunakan TLS.
+
+## [](#_perintah_konfigurasi_klien)Perintah Konfigurasi Klien
+
+Klien HTTP yang digunakan NQRust-Identity untuk komunikasi keluar sangat dapat dikonfigurasi. Untuk mengonfigurasi klien HTTP keluar NQRust-Identity, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] start --spi-connections-http-client--default--<configurationoption>=<value>
+```
+
+Berikut adalah opsi perintah:
+
+**establish-connection-timeout-millis**
+
+Waktu maksimum dalam milidetik sampai waktu keluar koneksi berakhir. Default: Tidak diatur.
+
+**connection-request-timeout-millis**
+
+Waktu maksimum dalam milidetik untuk mendapatkan koneksi untuk permintaan. Default: 5000ms
+
+**socket-timeout-millis**
+
+Waktu maksimum tidak ada aktivitas antara dua paket data sampai koneksi socket berakhir, dalam milidetik. Default: 5000ms
+
+**connection-pool-size**
+
+Ukuran pool koneksi untuk koneksi keluar. Default: 128.
+
+**max-pooled-per-route**
+
+Berapa banyak koneksi yang dapat dipool per host. Default: 64.
+
+**connection-ttl-millis**
+
+Waktu maksimum koneksi hidup dalam milidetik. Default: Tidak diatur.
+
+**max-connection-idle-time-millis**
+
+Waktu maksimum koneksi idle yang tetap berada di pool koneksi, dalam milidetik. Koneksi idle akan dihapus dari pool oleh thread pembersih latar belakang. Atur opsi ini ke -1 untuk menonaktifkan pemeriksaan ini. Default: 900000.
+
+**disable-cookies**
+
+Aktifkan atau nonaktifkan caching cookie. Default: true.
+
+**client-keystore**
+
+Jalur file ke java keystore. Keystore ini berisi sertifikat klien untuk mTLS.
+
+**client-keystore-password**
+
+Password untuk client keystore. DIPERSYARATKAN, saat `client-keystore` diatur.
+
+**client-key-password**
+
+Password untuk private key klien. DIPERSYARATKAN, saat client-keystore diatur.
+
+**proxy-mappings**
+
+Tentukan konfigurasi proxy untuk permintaan HTTP keluar. Untuk detail lebih lanjut, lihat [Pemetaan Proxy untuk Permintaan HTTP Keluar](#_pemetaan_proxy_untuk_permintaan_HTTP_keluar).
+
+**disable-trust-manager**
+
+Jika permintaan keluar memerlukan HTTPS dan opsi konfigurasi ini diatur ke true, Anda tidak perlu menentukan truststore. Pengaturan ini hanya boleh digunakan selama pengembangan dan **tidak pernah di produksi** karena akan menonaktifkan verifikasi sertifikat SSL. Default: false.
+
+## [](#_mengonfigurasi_perilaku_pengulangan_untuk_permintaan_HTTP_keluar)Mengonfigurasi Perilaku Pengulangan untuk Permintaan HTTP Keluar
+
+Jangan biarkan durasi pengulangan keluar melebihi waktu tunggu pemanggil. Jika tidak, pemanggil mungkin berakhir dan melihat kesalahan saat NQRust-Identity terus mencoba pengulangan di latar belakang.
+
+NQRust-Identity dapat secara otomatis mencoba lagi permintaan HTTP keluar yang gagal. Ini berguna untuk menangani kesalahan jaringan sementara atau ketidaktersediaan layanan sementara. Perilaku pengulangan dinonaktifkan secara default

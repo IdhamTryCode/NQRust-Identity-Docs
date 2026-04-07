@@ -1,0 +1,77 @@
+---
+title: Mengonfigurasi NQRust-Identity
+description: Mengonfigurasi NQRust-Identity - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi NQRust-Identity
+
+Panduan ini menjelaskan metode konfigurasi untuk NQRust-Identity dan bagaimana cara memulai dan menerapkan konfigurasi yang disukai. Panduan ini mencakup pedoman konfigurasi untuk mengoptimalkan NQRust-Identity untuk startup yang lebih cepat dan footprint memori yang lebih rendah.
+
+## [](#_mengonfigurasi_sumber_untuk_nqrust-identity)Mengonfigurasi sumber untuk NQRust-Identity
+
+NQRust-Identity memuat konfigurasi dari empat sumber, yang terdaftar di sini sesuai urutan aplikasi.
+
+1.  Parameter baris perintah
+    
+2.  Variabel lingkungan
+    
+3.  Pilihan yang didefinisikan dalam file `conf/nqrust-identity.conf`, atau dalam file konfigurasi yang dibuat pengguna.
+    
+4.  Pilihan sensitif yang didefinisikan dalam file Java KeyStore yang dibuat pengguna.
+    
+
+Ketika sebuah opsi diatur dalam lebih dari satu sumber, yang pertama dalam daftar menentukan nilai untuk opsi itu. Misalnya, nilai opsi yang diatur oleh parameter baris perintah memiliki prioritas lebih tinggi daripada variabel lingkungan untuk opsi yang sama.
+
+### [](#_contoh_mengonfigurasi_parameter_db-url-host)Contoh: Mengonfigurasi parameter db-url-host
+
+Contoh berikut menunjukkan bagaimana nilai `db-url` diatur dalam empat sumber konfigurasi:
+
+ 
+
+Sumber
+
+Format
+
+Parameter baris perintah
+
+`--db-url=cliValue`
+
+Variabel lingkungan
+
+`KC_DB_URL=envVarValue`
+
+File konfigurasi
+
+`db-url=confFileValue`
+
+File KeyStore Java
+
+`kc.db-url=keystoreValue`
+
+Berdasarkan prioritas aplikasi, nilai yang digunakan saat startup adalah `cliValue`, karena baris perintah adalah prioritas tertinggi.
+
+Jika `--db-url=cliValue` tidak digunakan, nilai yang diterapkan akan menjadi `KC_DB_URL=envVarValue`. Jika nilai tidak diterapkan oleh baris perintah atau variabel lingkungan, `db-url=confFileValue` akan digunakan. Jika tidak ada nilai sebelumnya yang diterapkan, nilai `kc.db-url=keystoreValue` akan digunakan karena prioritas terendah di antara sumber konfigurasi yang tersedia.
+
+## [](#_format_untuk_konfigurasi)Format untuk konfigurasi
+
+Konfigurasi menggunakan format _unified-per-source_, yang menyederhanakan terjemahan pasangan kunci/nilai dari satu sumber konfigurasi ke sumber lainnya. Perhatikan bahwa format ini berlaku untuk opsi spi juga.
+
+Format parameter baris perintah
+
+Nilai untuk baris perintah menggunakan format `--_`&lt;key-with-dashes&gt;`_=_`&lt;value&gt;`_`. Untuk beberapa nilai, singkatan `-_`&lt;abbreviation&gt;`_=_`&lt;value&gt;`_` juga tersedia.
+
+Format variabel lingkungan
+
+Nilai untuk variabel lingkungan menggunakan format `KC__`&lt;key_with_underscores&gt;`_=_`&lt;value&gt;`_` format.
+
+Format file konfigurasi
+
+Nilai yang masuk ke file konfigurasi menggunakan format `_`&lt;key-with-dashes&gt;`_=_`&lt;value&gt;`_` format.
+
+Format file konfigurasi KeyStore
+
+Nilai yang masuk ke file konfigurasi KeyStore menggunakan format `kc._`&lt;key-with-dashes&gt;`_`. `_`&lt;value&gt;`_` kemudian adalah sandi yang disimpan di KeyStore.
+
+Pada akhir setiap panduan konfigurasi, cari tajuk _Relevant options_, yang mendefinisikan format konfigurasi yang berlaku. Untuk semua opsi konfigurasi, lihat [All configuration](https://www.nqrust-identity.org/server/all-config). Pilih sumber dan format konfigurasi yang berlaku untuk kasus penggunaan Anda.
+
+### [](#_contoh_format_alternatif_berdasarkan_sumber_konfigurasi)Contoh - Format alternatif berdasarkan s

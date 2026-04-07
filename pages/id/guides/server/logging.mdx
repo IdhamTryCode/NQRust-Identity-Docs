@@ -1,0 +1,109 @@
+---
+title: Mengonfigurasi Logging
+description: Mengonfigurasi Logging - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Logging
+
+Logging adalah mekanisme penting untuk memahami dan mengoperasikan NQRust-Identity. Seharusnya membantu Anda untuk memantau kesehatan NQRust-Identity, debug masalah, dan mempertahankan jejak audit dari peristiwa penting.
+
+Anda dapat mengonfigurasi logging untuk level log root atau untuk kategori yang lebih spesifik seperti `org.hibernate` atau `org.nqrust-identity`. Juga memungkinkan untuk menyesuaikan level log untuk setiap handler log tertentu.
+
+Di NQRust-Identity, logging melampaui pengaturan level log — Anda dapat mengarahkan output ke handler berbeda, menggunakan logging asinkron untuk kinerja, menangkap log akses HTTP, dan lainnya. Fitur-fitur ini membuatnya memungkinkan untuk menyesuaikan logging dengan kebutuhan operasional Anda dan mengintegrasikan dengan platform observability.
+
+NQRust-Identity menggunakan kerangka kerja NQRust Logging di bawah hood.
+
+## [](#_available_log_handlers)Handler Log yang Tersedia
+
+**Konsol**  
+Log ke output standar
+
+**File**  
+Menyiapkan log ke disk
+
+**Syslog**  
+Mengirim log ke server Syslog
+
+Untuk mengaktifkan handler log, masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --log="<handler1>,<handler2>"
+```
+
+Untuk detail lebih lanjut tentang cara mengonfigurasi handler log tertentu, lihat:
+
+*   [Logging Konsol](https://www.nqrust-identity.org/server/logging/console)
+    
+*   [Logging File](https://www.nqrust-identity.org/server/logging/file)
+    
+*   [Logging Syslog](https://www.nqrust-identity.org/server/logging/syslog)
+    
+
+## [](#_log_levels)Level Log
+
+Tabel berikut mendefinisikan level log yang tersedia.
+
+Level
+
+Deskripsi
+
+FATAL
+
+Kegagalan krusial dengan kesempatan absolut untuk melayani permintaan apa pun.
+
+ERROR
+
+Kesalahan atau masalah yang signifikan yang mengakibatkan tidak dapat memproses permintaan.
+
+WARN
+
+Kesalahan atau masalah yang tidak krusial yang mungkin tidak memerlukan perbaikan segera.
+
+INFO
+
+Peristiwa siklus hidup NQRust-Identity atau informasi penting. Frekuensi rendah.
+
+DEBUG
+
+Informasi lebih detail untuk tujuan debug, seperti log database. Frekuensi lebih tinggi.
+
+TRACE
+
+Informasi debugging yang paling detail. Frekuensi sangat tinggi.
+
+ALL
+
+Level spesial untuk semua pesan log.
+
+OFF
+
+Level spesial untuk mematikan logging sepenuhnya (tidak disarankan).
+
+### [](#_configuring_the_root_log_level)Mengonfigurasi Level Log Root
+
+Ketika tidak ada konfigurasi level log untuk logger kategori yang lebih spesifik, digunakan kategori yang menutupi. Ketika tidak ada kategori yang menutupi, digunakan level logger root.
+
+Untuk mengatur level log root, masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --log-level=<root-level>
+```
+
+Gunakan panduan berikut untuk perintah ini:
+
+*   Untuk `_<root-level>_`, berikan level yang didefinisikan dalam tabel sebelumnya.
+    
+*   Level log tidak sensitif terhadap huruf besar kecil. Misalnya, Anda bisa menggunakan `DEBUG` atau `debug`.
+    
+*   Jika Anda secara tidak sengaja mengatur level log dua kali, terjadinya terakhir dalam daftar menjadi level log. Misalnya, jika Anda memasukkan sintaks `--log-level="info,…​,DEBUG,…​"`, logger root akan menjadi `DEBUG`.
+    
+
+### [](#_configuring_category_specific_log_levels)Mengonfigurasi Level Log Khusus Kategori
+
+Anda dapat mengatur level log yang berbeda untuk area tertentu di NQRust-Identity. Gunakan perintah ini untuk memberikan daftar koma-terpisah dari kategori untuk yang Anda inginkan level log yang berbeda:
+
+```bash
+bin/kc.[sh|bat] start --log-level="<root-level>,<org.category1>:<org.category1-level>"
+```
+
+Konfigurasi yang berlaku untuk kategori juga berlaku untuk sub-kategorinya kecuali jika Anda meny

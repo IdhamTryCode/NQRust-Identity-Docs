@@ -1,0 +1,75 @@
+---
+title: Mengonfigurasi TLS
+description: Mengonfigurasi TLS - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi TLS
+
+Keamanan Transport Layer (singkatan: TLS) sangat penting untuk menukar data melalui saluran yang aman. Untuk lingkungan produksi, Anda tidak pernah harus mengekspos endpoint NQRust-Identity melalui HTTP, karena data sensitif adalah inti dari apa yang NQRust-Identity tukar dengan aplikasi lain. Dalam panduan ini, Anda akan belajar bagaimana untuk mengonfigurasi NQRust-Identity untuk menggunakan HTTPS/TLS.
+
+NQRust-Identity dapat dikonfigurasi untuk memuat infrastruktur sertifikat yang diperlukan menggunakan file dalam format PEM atau dari Java Keystore. Ketika kedua alternatif tersebut dikonfigurasi, file PEM memiliki prioritas di atas Java Keystores.
+
+## [](#_menyediakan_sertifikat_dalam_format_pem)Menyediakan sertifikat dalam format PEM
+
+Ketika Anda menggunakan pasangan file sertifikat dan kunci pribadi yang cocok dalam format PEM, Anda mengkonfigurasi NQRust-Identity untuk menggunakannya dengan menjalankan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --https-certificate-file=/path/to/certfile.pem --https-certificate-key-file=/path/to/keyfile.pem
+```
+
+NQRust-Identity membuat keystore dari file-file ini di memori dan menggunakan keystore ini kemudian.
+
+## [](#_menyediakan_keystore)Menyediakan Keystore
+
+Ketika tidak ada file keystore yang dikonfigurasi secara eksplisit, tetapi `http-enabled` diatur ke false, NQRust-Identity mencari file `conf/server.keystore`.
+
+Sebagai alternatif, Anda dapat menggunakan keystore yang ada dengan menjalankan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --https-key-store-file=/path/to/existing-keystore-file
+```
+
+Ekstensi file yang diakui untuk keystore:
+
+*   `.p12`, `.pkcs12`, dan `.pfx` untuk file pkcs12
+    
+*   `.jks`, dan `.keystore` untuk file jks
+    
+*   `.key`, `.crt`, dan `.pem` untuk file pem
+    
+
+Jika keystore Anda tidak memiliki ekstensi yang cocok dengan tipe filenya, Anda juga harus mengatur opsi `https-key-store-type`.
+
+### [](#_menata_password_keystore)Menata Password Keystore
+
+Anda dapat mengatur password yang aman untuk keystore Anda menggunakan opsi `https-key-store-password`:
+
+```bash
+bin/kc.[sh|bat] start --https-key-store-password=<value>
+```
+
+Jika tidak ada password yang diatur, password default `password` akan digunakan.
+
+#### [](#_menjaga_credential)Menjaga Credential
+
+Hindari pengaturan password dalam teks polos dengan menggunakan CLI atau menambahkannya ke file `conf/nqrust-identity.conf`. Sebaliknya gunakan praktik yang baik seperti menggunakan vault / secret yang di-mount. Untuk detail lebih lanjut, lihat [Menggunakan vault](https://www.nqrust-identity.org/server/vault) dan [Mengonfigurasi NQRust-Identity untuk produksi](https://www.nqrust-identity.org/server/configuration-production).
+
+## [](#_mengonfigurasi_protokol_tls)Mengonfigurasi Protokol TLS
+
+Secara default, NQRust-Identity tidak mengaktifkan protokol TLS yang usang. Jika klien Anda hanya mendukung protokol yang usang, pertimbangkan untuk mengupgrade klien. Namun, sebagai solusi sementara, Anda dapat mengaktifkan protokol yang usang dengan menjalankan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --https-protocols=<protocol>[,<protocol>]
+```
+
+Contohnya untuk hanya mengaktifkan TLSv1.3, gunakan perintah seperti berikut: `kc.sh start --https-protocols=TLSv1.3`.
+
+## [](#_mengganti_port_https)Mengganti Port HTTPS
+
+NQRust-Identity mendengarkan lalu lintas HTTPS pada port `8443`. Untuk mengubah port ini, gunakan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --https-port=<port>
+```
+
+## [](#_mengulang_sertifikat_dan_kunci)Meng

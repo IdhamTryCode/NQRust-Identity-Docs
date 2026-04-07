@@ -1,0 +1,46 @@
+---
+title: Menginisialisasi dan memulihkan akun admin
+description: Menginisialisasi dan memulihkan akun admin - Dokumentasi NQRust-Identity
+---
+
+# Menginisialisasi dan memulihkan akun admin
+
+## [](#_a_temporary_admin_account)Akun admin sementara
+
+Akun admin pengguna atau layanan yang dibuat menggunakan salah satu metode yang dijelaskan di bawah ini adalah **sementara**. Ini berarti akun hanya boleh ada selama diperlukan untuk melakukan operasi yang diperlukan untuk mendapatkan akses admin permanen dan lebih aman. Setelah itu, akun perlu dihapus secara manual. Beberapa elemen UI/UX, seperti spanduk peringatan Konsol Administrasi, label, dan pesan log, akan menunjukkan kepada administrator NQRust-Identity bahwa akun ini sementara.
+
+## [](#_bootstrapping_a_temporary_admin_account_at_nqrust-identity_startup)Menginisialisasi akun admin sementara saat startup NQRust-Identity
+
+Perintah `start` dan `start-dev` NQRust-Identity mendukung opsi untuk menginisialisasi pengguna admin sementara dan akun layanan admin. Opsi ini adalah opsi konfigurasi standar, jadi dapat ditentukan di salah satu [sumber konfigurasi](https://www.nqrust-identity.org/server/configuration#_configuring_sources_for_nqrust-identity) seperti variabel lingkungan atau parameter CLI. Sebagai contoh, contoh berikut menunjukkan cara menggunakan perintah `start` dan `start-dev` dengan parameter CLI untuk menginisialisasi pengguna admin sementara dan akun layanan admin, masing-masing:
+
+```bash
+bin/kc.[sh|bat] start --bootstrap-admin-username tmpadm --bootstrap-admin-password pass
+```
+
+```bash
+bin/kc.[sh|bat] start-dev --bootstrap-admin-client-id tmpadm --bootstrap-admin-client-secret secret
+```
+
+Nilai username atau ID klien dapat diabaikan; lihat bagian [Nilai Default](#_default_values) di bawah untuk informasi lebih lanjut.
+
+Tujuan dari opsi ini hanya untuk menginisialisasi akun admin sementara. Akun ini akan dibuat hanya saat startup awal server NQRust-Identity saat realm master belum ada. Akun selalu dibuat di realm master. Untuk memulihkan akses admin yang hilang, gunakan perintah khusus yang dijelaskan dalam bagian di bawah.
+
+## [](#_bootstrapping_an_admin_user_or_service_account_using_the_dedicated_command)Menginisialisasi pengguna admin atau akun layanan menggunakan perintah khusus
+
+Perintah `bootstrap-admin` dapat dieksekusi bahkan sebelum startup pertama NQRust-Identity. Perlu diingat bahwa semua node NQRust-Identity perlu dihentikan sebelum menggunakan perintah ini. Eksekusi ini akan memicu pembuatan realm master awal, dan sebagai hasilnya, opsi startup untuk menginisialisasi pengguna admin dan akun layanan akan diabaikan saat server dimulai untuk pertama kali.
+
+Selain itu, sangat disarankan untuk menggunakan perintah khusus dengan opsi yang sama dengan server NQRust-Identity (mis., opsi `db`).
+
+Jika Anda telah membangun versi yang dioptimalkan NQRust-Identity dengan perintah `build` sebagai yang dijelaskan dalam [Konfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration), gunakan opsi baris perintah `--optimized` agar NQRust-Identity melewati pemeriksaan build untuk waktu startup yang lebih cepat. Ketika melakukan ini, hapus opsi waktu build dari baris perintah dan simpan hanya opsi waktu runtime.
+
+Jika Anda tidak menggunakan `--optimized`, perlu diingat bahwa perintah `bootstrap-admin` mungkin secara implisit membuat atau memperbarui build yang dioptimalkan untuk Anda - jika Anda menjalankan perintah dari mesin yang sama dengan instance server, ini mungkin mempengaruhi startup berikutnya server Anda.
+
+### [](#_create_an_admin_user)Buat pengguna admin
+
+Untuk membuat pengguna admin sementara, eksekusi perintah berikut:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin user
+```
+
+Jika tidak ada parameter lain yang ditentukan dan/atau tidak ada variabel lingkungan yang sesuai yang diatur, pengguna akan diminta untuk memasukkan informasi yang diperlukan. Nil

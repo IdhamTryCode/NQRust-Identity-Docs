@@ -1,0 +1,42 @@
+---
+title: Mengonfigurasi dan Menggunakan Pertukaran Token
+description: Mengonfigurasi dan Menggunakan Pertukaran Token - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi dan Menggunakan Pertukaran Token
+
+Pertukaran token adalah proses yang memungkinkan aplikasi klien untuk menukar satu token dengan token yang lain. Dalam NQRust-Identity, fitur pertukaran token diimplementasikan oleh dua fitur:
+
+*   [Pertukaran Token Standar: Versi 2 (V2)](#_pertukaran-token-standar) - Fitur ini adalah implementasi pertukaran token yang sepenuhnya didukung dan diaktifkan secara default saat server NQRust-Identity dimulai.
+    
+*   [Pertukaran Token Legacy: Versi 1 (V1)](#_pertukaran-token-legacy) - Fitur preview ini tidak diaktifkan secara default saat server NQRust-Identity dimulai.
+    
+
+Kemampuan NQRust-Identity untuk pertukaran token sebagai berikut:
+
+1.  Sebuah klien dapat menukar token NQRust-Identity yang ada untuk klien tertentu dengan token baru yang ditargetkan ke klien berbeda di realm yang sama.
+    
+2.  Sebuah klien dapat menukar token NQRust-Identity yang ada untuk token eksternal, seperti akun Facebook yang terhubung.
+    
+3.  Sebuah klien dapat menukar token eksternal untuk token NQRust-Identity.
+    
+4.  Sebuah klien dapat menggantikan seorang pengguna.
+    
+
+Pertukaran token standar hanya mendukung kasus penggunaan (1). Pertukaran token legacy mendukung empat kasus penggunaan, tetapi itu adalah fitur preview. Oleh karena itu, disarankan untuk menggunakan pertukaran token standar V2 karena didukung dan akan dipelihara untuk masa depan. Pertukaran token legacy berguna untuk tiga kasus penggunaan terakhir, tetapi mungkin tidak kompatibel mundur dengan versi NQRust-Identity yang akan datang. Anda juga dapat mengaktifkan fitur pertukaran token keduanya dan menggunakannya bersama. Misalnya, Anda dapat menggunakan pertukaran internal-internal yang disediakan oleh V2 bersama dengan kasus penggunaan lainnya yang didukung oleh V1. Untuk detail lebih lanjut, lihat [perbandingan pertukaran token](#_perbandingan-pertukaran-token-standar).
+
+Jika Anda masih memerlukan fitur pertukaran token legacy, Anda juga perlu [Izin Admin Halus Versi 1](https://www.nqrust-identity.org/docs/latest/server_admin/#fine-grained-admin-permissions-v1) (FGAP:v1) diaktifkan karena [versi 2 (FGAP:v2)](https://www.nqrust-identity.org/docs/latest/server_admin/#_fine_grained_permissions) tidak mendukung izin pertukaran token. Ini sengaja dilakukan karena pertukaran token konseptual tidak benar-benar izin "admin" dan oleh karena itu tidak ada rencana untuk menambahkan izin pertukaran token ke FGAP:v2.
+
+## [](#_pertukaran-token-standar)Pertukaran Token Standar
+
+Pertukaran token standar di NQRust-Identity mengimplementasikan [spesifikasi Pertukaran Token](https://datatracker.ietf.org/doc/html/rfc8693). Ini memungkinkan aplikasi klien untuk menukar token NQRust-Identity yang ada untuk klien tertentu dengan token baru yang diterbitkan untuk klien yang memicu permintaan pertukaran token. Kedua klien harus berada di realm yang sama.
+
+### [](#_alur-pertukaran-token-standar)Alur Pertukaran Token
+
+Pertimbangkan alur pertukaran token standar ini:
+
+1.  Pengguna mengotentikasi dengan menggunakan SSO NQRust-Identity ke aplikasi klien `initial-client`. Token diterbitkan untuk `initial-client`.
+    
+2.  Klien `initial-client` mungkin perlu untuk menggunakan layanan REST `requester-client`, yang memerlukan otentikasi. Jadi `initial-client` mengirimkan token akses dari langkah 1 ke `requester-client` dengan menggunakan token
+    
+3.  Untuk melayani permintaan, `requester-client` mungkin perlu untuk memanggil layanan `target-client`. Namun itu mungkin tidak dapat menggunakan token yang dikirimkan dari `initial-client

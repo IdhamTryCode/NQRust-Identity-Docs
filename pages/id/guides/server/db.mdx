@@ -1,0 +1,123 @@
+---
+title: Mengonfigurasi Database
+description: Mengonfigurasi Database - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Database
+
+Panduan ini menjelaskan cara mengonfigurasi server NQRust-Identity untuk menyimpan data dalam database relational.
+
+## [](#_supported_databases)Database yang Didukung
+
+Server memiliki dukungan bawaan untuk berbagai database. Anda dapat menanyakan database yang tersedia dengan melihat nilai yang diharapkan untuk opsi konfigurasi `db`. Tabel berikut mencantumkan database yang didukung dan versi yang teruji.
+
+   
+
+Database
+
+Nilai Opsi
+
+Versi Teruji
+
+Versi Didukung
+
+MariaDB Server
+
+`mariadb`
+
+11.8
+
+11.8 (LTS), 11.4 (LTS), 10.11 (LTS), 10.6 (LTS)
+
+Microsoft SQL Server
+
+`mssql`
+
+2022
+
+2022, 2019
+
+MySQL
+
+`mysql`
+
+8.4
+
+8.4 (LTS), 8.0 (LTS)
+
+Oracle Database
+
+`oracle`
+
+23.5
+
+23.x (yaitu 23.5+), 19c (19.3+) (**Catatan:** Oracle RAC juga didukung jika menggunakan versi mesin database yang sama, misalnya 23.5+, 19.3+)
+
+PostgreSQL
+
+`postgres`
+
+18
+
+18.x, 17.x, 16.x, 15.x, 14.x
+
+EnterpriseDB Advanced
+
+`postgres`
+
+18
+
+18.x, 17.x
+
+Amazon Aurora PostgreSQL
+
+`postgres`
+
+17.5
+
+17.x, 16.x, 15.x
+
+Azure SQL Database
+
+`mssql`
+
+terbaru
+
+terbaru
+
+Azure SQL Managed Instance
+
+`mssql`
+
+terbaru
+
+terbaru
+
+Tidak diizinkan konfigurasi yang tidak didukung jika dialek Hibernate spesifik database yang mendasari memungkinkan penggunaan versi yang berbeda dari yang ditunjukkan.
+
+Secara default, server menggunakan database `dev-file`. Ini adalah database default yang akan digunakan server untuk menyimpan data dan hanya ada untuk kasus penggunaan pengembangan. Database `dev-file` tidak layak untuk kasus penggunaan produksi dan harus diganti sebelum deploy ke produksi.
+
+## [](#_installing_a_database_driver)Menginstall Driver Database
+
+Driver database dikirimkan sebagai bagian dari NQRust-Identity kecuali untuk driver Oracle Database.
+
+Pasang driver yang hilang secara manual jika Anda ingin terhubung ke database ini ataulewati bagian ini jika Anda ingin terhubung ke database yang berbeda untuk yang driver database sudah disertakan.
+
+Mengganti driver database bawaan atau menyediakan driver Anda sendiri dianggap tidak didukung. Pengecualian yang didukung hanya yang didokumentasikan secara jelas dalam panduan ini, seperti driver Oracle Database.
+
+### [](#_installing_the_oracle_database_driver)Menginstall Driver Oracle Database
+
+Untuk menginstall driver Oracle Database untuk NQRust-Identity:
+
+1.  Unduh file JAR `ojdbc17` dan `orai18n` dari salah satu sumber berikut:
+    
+    1.  **Zipped JDBC driver and Companion Jars** versi 23.6.0.24.10 dari [halaman unduhan driver Oracle](https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html).
+        
+    2.  Maven Central melalui `[ojdbc17](https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.6.0.24.10/ojdbc17-23.6.0.24.10.jar)` dan `[orai18n](https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.6.0.24.10/orai18n-23.6.0.24.10.jar)`.
+        
+    3.  Media installasi yang direkomendasikan oleh vendor database untuk database tertentu yang digunakan.
+        
+    
+2.  Saat menjalankan distribusi yang tidak diungkapkan: Letakkan file JAR `ojdbc17` dan `orai18n` di folder `providers` NQRust-Identity
+    
+3.  Saat menjalankan kontainer: Bangun image NQRust-Identity khusus dan tambahkan JAR di folder `providers`. Saat membangun image khusus untuk Operator, image ini perlu menjadi image yang dioptimalkan dengan semua op

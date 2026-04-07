@@ -1,0 +1,95 @@
+---
+title: Mengambil Wawasan dengan Metrik
+description: Mengambil Wawasan dengan Metrik - Dokumentasi NQRust-Identity
+---
+
+# Mengambil Wawasan dengan Metrik
+
+NQRust-Identity memiliki dukungan bawaan untuk metrik. Panduan ini menjelaskan cara mengaktifkan dan mengonfigurasi metrik server.
+
+## [](#_mengaktifkan_metrik)Mengaktifkan Metrik
+
+Mungkin untuk mengaktifkan metrik menggunakan opsi waktu kompilasi `metrics-enabled`:
+
+```bash
+bin/kc.[sh|bat] start --metrics-enabled=true
+```
+
+## [](#_menanyakan_metrik)Menanyakan Metrik
+
+NQRust-Identity mengekspos metrik pada endpoint berikut pada antarmuka manajemen:
+
+*   `/metrics`
+    
+
+Untuk informasi lebih lanjut tentang antarmuka manajemen, lihat [Mengonfigurasi Antarmuka Manajemen](https://www.nqrust-identity.org/server/management-interface). Respon dari endpoint menggunakan tipe konten `application/openmetrics-text` dan didasarkan pada format teks Prometheus (OpenMetrics). Potongan kode di bawah ini adalah contoh respon:
+
+```
+# HELP base_gc_total Menampilkan jumlah total koleksi yang telah terjadi. Atribut ini menampilkan -1 jika hitungan koleksi tidak terdefinisi untuk pengumpul ini.
+# TYPE base_gc_total counter
+base_gc_total{name="G1 Young Generation",} 14.0
+# HELP jvm_memory_usage_after_gc_percent Persentase pool heap yang lama digunakan setelah acara GC terakhir, dalam rentang [0..1]
+# TYPE jvm_memory_usage_after_gc_percent gauge
+jvm_memory_usage_after_gc_percent{area="heap",pool="long-lived",} 0.0
+# HELP jvm_threads_peak_threads Jumlah thread aktif puncak sejak mesin virtual Java dimulai atau puncak diatur ulang
+# TYPE jvm_threads_peak_threads gauge
+jvm_threads_peak_threads 113.0
+# HELP agroal_active_count Jumlah koneksi aktif. Koneksi ini sedang digunakan dan tidak tersedia untuk diambil.
+# TYPE agroal_active_count gauge
+agroal_active_count{datasource="default",} 0.0
+# HELP base_memory_maxHeap_bytes Menampilkan jumlah memori maksimum, dalam byte, yang dapat digunakan untuk manajemen memori.
+# TYPE base_memory_maxHeap_bytes gauge
+base_memory_maxHeap_bytes 1.6781410304E10
+# HELP process_start_time_seconds Waktu mulai proses sejak epoch unix.
+# TYPE process_start_time_seconds gauge
+process_start_time_seconds 1.675188449054E9
+# HELP system_load_average_1m Jumlah entitas yang dapat dieksekusi yang antrian untuk prosesor yang tersedia dan jumlah entitas yang dapat dieksekusi yang berjalan pada prosesor yang tersedia rata-rata selama periode waktu
+# TYPE system_load_average_1m gauge
+system_load_average_1m 4.005859375
+
+...
+```
+
+## [](#_langkah_berikutnya)Langkah Berikutnya
+
+Baca panduan [Pemantauan Kinerja dengan Indikator Level Layanan](https://www.nqrust-identity.org/observability/nqrust-identity-service-level-indicators) dan [Pemecahan Masalah Menggunakan Metrik](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting) untuk melihat bagaimana menggunakan metrik.
+
+## [](#_opsi_terkait)Opsi Terkait
+
+  
+
+_Jenis_ atau Nilai
+
+Default
+
+`cache-metrics-histograms-enabled`
+
+Aktifkan histogram untuk metrik untuk cache yang terintegrasi.
+
+**CLI:** `--cache-metrics-histograms-enabled`  
+**Env:** `KC_CACHE_METRICS_HISTOGRAMS_ENABLED`
+
+Hanya tersedia saat metrik diaktifkan
+
+`true`, `false`
+
+`false`
+
+`http-metrics-histograms-enabled`
+
+Aktifkan histogram dengan bucket default untuk durasi permintaan server HTTP.
+
+**CLI:** `--http-metrics-histograms-enabled`  
+**Env:** `KC_HTTP_METRICS_HISTOGRAMS_ENABLED`
+
+Hanya tersedia saat metrik diaktifkan
+
+`true`, `false`
+
+`false`
+
+`http-metrics-slos`
+
+Tujuan level layanan untuk permintaan server HTTP.
+
+Gunakan ini sebagai gantinya histogram default, atau gunakan secara kombinasi untuk menambahkan bucket tambahan. Tentukan daftar nilai yang dip

@@ -1,0 +1,107 @@
+---
+title: Klien Otorisasi NQRust-Identity
+description: Klien Otorisasi NQRust-Identity - Dokumentasi NQRust-Identity
+---
+
+# Klien Otorisasi NQRust-Identity
+
+Tergantung pada kebutuhan Anda, server sumber daya harus dapat mengelola sumber daya secara jarak jauh atau bahkan memeriksa izin secara program. Jika Anda menggunakan Java, Anda dapat mengakses Layanan Otorisasi NQRust-Identity menggunakan API Klien Otorisasi.
+
+Ini ditargetkan untuk server sumber daya yang ingin mengakses berbagai endpoint yang disediakan oleh server seperti Token Endpoint, sumber daya, dan endpoint manajemen izin.
+
+## [](#_dependensi_maven)Dependensi Maven
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.nqrust-identity</groupId>
+        <artifactId>nqrust-identity-authz-client</artifactId>
+        <version>26.0.8</version>
+    </dependency>
+</dependencies>
+```
+
+## [](#_konfigurasi)Konfigurasi
+
+Konfigurasi klien didefinisikan dalam file `nqrust-identity.json` sebagai berikut:
+
+```json
+{
+  "realm": "hello-world-authz",
+  "auth-server-url" : "http://localhost:8080",
+  "resource" : "hello-world-authz-service",
+  "credentials": {
+    "secret": "secret"
+  }
+}
+```
+
+*   **realm** (wajib)
+    
+    Nama realm.
+    
+*   **auth-server-url** (wajib)
+    
+    URL dasar server NQRust-Identity. Semua halaman NQRust-Identity lainnya dan endpoint layanan REST diambil dari ini. Biasanya dalam bentuk [https://host:port](https://host:port).
+    
+*   **resource** (wajib)
+    
+    Id klien aplikasi. Setiap aplikasi memiliki id klien yang digunakan untuk mengidentifikasi aplikasi.
+    
+*   **credentials** (wajib)
+    
+    Menentukan kredensial aplikasi. Ini adalah notasi objek di mana kunci adalah jenis kredensial dan nilai adalah nilai jenis kredensial. Rinciannya ada dalam [bagian khusus](#_adaptor_autentikasi_klien).
+    
+
+File konfigurasi biasanya berada dalam classpath aplikasi Anda, lokasi default dari mana klien akan mencoba untuk menemukan file `` `nqrust-identity.json` ``.
+
+## [](#_menyiapkan_klien_otorisasi)Menyiapkan klien otorisasi
+
+Dengan adanya file `` `nqrust-identity.json` `` dalam classpath Anda, Anda dapat membuat instance baru `` `AuthzClient` `` sebagai berikut:
+
+```java
+// create a new instance based on the configuration defined in a nqrust-identity.json located in your classpath
+AuthzClient authzClient = AuthzClient.create();
+```
+
+## [](#_mendapatkan_hak_isolasi_pengguna)Mendapatkan hak isolasi pengguna
+
+Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak isolasi pengguna:
+
+```java
+// create a new instance based on the configuration defined in nqrust-identity.json
+AuthzClient authzClient = AuthzClient.create();
+
+// create an authorization request
+AuthorizationRequest request = new AuthorizationRequest();
+
+// send the entitlement request to the server in order to
+// obtain an RPT with all permissions granted to the user
+AuthorizationResponse response = authzClient.authorization("alice", "alice").authorize(request);
+String rpt = response.getToken();
+
+System.out.println("You got an RPT: " + rpt);
+
+// now you can use the RPT to access protected resources on the resource server
+```
+
+Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak isolasi pengguna untuk satu atau lebih set sumber daya:
+
+```java
+// create a new instance based on the configuration defined in nqrust-identity.json
+AuthzClient authzClient = AuthzClient.create();
+
+// create an authorization request
+AuthorizationRequest request = new AuthorizationRequest();
+
+// add permissions to the request based on the resources and scopes you want to check access
+request.addPermission("Default Resource");
+
+// send the entitlement request to the server in order to
+// obtain an RPT with permissions for a single resource
+AuthorizationResponse response = authzClient.authorization("alice", "alice").authorize(request);
+String rpt = response.getToken();
+
+System.out.println("You got an RPT: " + rpt);
+
+// now you can use the RPT to access protected resources on the resource

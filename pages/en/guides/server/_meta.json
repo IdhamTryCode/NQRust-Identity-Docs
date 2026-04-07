@@ -1,0 +1,23 @@
+{
+  "configuration": "Configuring NQRust-Identity",
+  "configuration-production": "Configuring NQRust-Identity for production",
+  "bootstrap-admin-recovery": "Bootstrapping and recovering an admin account",
+  "directory-structure": "Directory Structure",
+  "enabletls": "Configuring TLS",
+  "hostname": "Configuring the hostname",
+  "reverseproxy": "Configuring a reverse proxy",
+  "db": "Configuring the database",
+  "caching": "Configuring distributed caches",
+  "outgoinghttp": "Configuring outgoing HTTP requests",
+  "keycloak-truststore": "Configuring trusted certificates",
+  "mutual-tls": "Configuring trusted certificates for mTLS",
+  "features": "Enabling and disabling features",
+  "configuration-provider": "Configuring providers",
+  "logging": "Configuring logging",
+  "fips": "FIPS 140-2 support",
+  "management-interface": "Configuring the Management Interface",
+  "importexport": "Importing and exporting realms",
+  "vault": "Using a vault",
+  "all-config": "All configuration",
+  "all-provider-config": "All provider configuration"
+}

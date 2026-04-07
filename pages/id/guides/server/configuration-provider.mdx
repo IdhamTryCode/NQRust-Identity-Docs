@@ -1,0 +1,74 @@
+---
+title: Mengonfigurasi Penyedia
+description: Mengonfigurasi Penyedia - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Penyedia
+
+Server dibangun dengan pertimbangan pada ekstensibilitas dan untuk itu menyediakan sejumlah Antarmuka Penyedia Layanan atau SPI, masing-masing bertanggung jawab untuk menyediakan kemampuan tertentu ke server. Dalam panduan ini, Anda akan memahami konsep inti di sekitar konfigurasi SPI dan penyedia masing-masing.
+
+Setelah membaca panduan ini, Anda harus dapat menggunakan konsep dan langkah yang dijelaskan di sini untuk menginstal, menghapus, mengaktifkan, menonaktifkan, dan mengonfigurasi penyedia mana saja, termasuk yang telah Anda implementasikan untuk memperluas kemampuan server untuk memenuhi kebutuhan Anda dengan lebih baik.
+
+## [](#_format_opsi_konfigurasi)Format Opsi Konfigurasi
+
+Penyedia dapat dikonfigurasi dengan menggunakan format konfigurasi tertentu. Format terdiri dari:
+
+```
+spi-<spi-id>--<provider-id>--<property>=<value>
+```
+
+Atau jika tidak ada kemungkinan kebingungan antara beberapa penyedia:
+
+```
+spi-<spi-id>-<provider-id>-<property>=<value>
+```
+
+`<spi-id>` adalah nama SPI yang ingin Anda konfigurasi.
+
+`<provider-id>` adalah id penyedia yang ingin Anda konfigurasi. Ini adalah id yang diatur ke implementasi pabrik penyedia yang sesuai.
+
+`<property>` adalah nama properti yang sebenarnya yang ingin Anda atur untuk penyedia tertentu.
+
+Nama properti `enabled` secara efektif dipesan untuk mengaktifkan / menonaktifkan penyedia.
+
+Semua nama ini (untuk spi, penyedia, dan properti) harus dalam huruf kecil dan jika nama dalam bentuk camel-case seperti `myNQRust-IdentityProvider`, seharusnya mencakup tanda hubung (`-`) sebelum huruf besar sebagai berikut: `my-nqrust-identity-provider`.
+
+Mengambil `HttpClientSpi` SPI sebagai contoh, nama SPI adalah `connectionsHttpClient` dan salah satu implementasi penyedia yang tersedia bernama `default`. Untuk mengatur properti `connectionPoolSize` Anda akan menggunakan opsi konfigurasi sebagai berikut:
+
+```
+spi-connections-http-client--default--connection-pool-size=10
+```
+
+### [](#_menetaplkan_opsi_konfigurasi_penyedia)Menetapkan Opsi Konfigurasi Penyedia
+
+Opsi konfigurasi penyedia diberikan saat memulai server. Lihat semua sumber konfigurasi yang didukung dan format untuk opsi di [Mengonfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration). Sebagai contoh melalui opsi baris perintah:
+
+Mengatur `connection-pool-size` untuk penyedia `default` dari `connections-http-client` SPI
+
+```bash
+bin/kc.[sh|bat] start --spi-connections-http-client--default--connection-pool-size=10
+```
+
+## [](#_opsi_waktu_pembuatan)Opsi Waktu Pembuatan
+
+### [](#_mengonfigurasi_satu_penyedia_untuk_spi)Mengonfigurasi Satu Penyedia untuk SPI
+
+Terlepas dari SPI, beberapa implementasi penyedia dapat berdampingan tetapi hanya satu diantaranya yang akan digunakan pada waktu runtime. Untuk SPI ini, penyedia tertentu adalah implementasi primer yang akan aktif dan digunakan pada waktu runtime. Format terdiri dari:
+
+```
+spi-<spi-id>--provider=<provider-id>
+```
+
+`spi-<spi-id>-provider=<provider-id>` masih dapat digunakan, tetapi server tidak akan dengan benar mendeteksi kapan perlu reaugmentation.
+
+Untuk mengonfigurasi penyedia sebagai penyedia tunggal Anda harus menjalankan perintah `build` sebagai berikut:
+
+Mengatur `mycustomprovider` sebagai penyedia tunggal untuk SPI `email-template`
+
+```bash
+bin/kc.[sh|bat] build --spi-email-template--provider=mycustomprovider
+```
+
+### [](#_mengonfigurasi_penyedia_default_untuk_spi)Mengonfigurasi Penyedia Default untuk SPI
+
+Terlepas dari SPI

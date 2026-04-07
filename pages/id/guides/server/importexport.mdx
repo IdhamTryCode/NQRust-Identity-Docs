@@ -1,0 +1,46 @@
+---
+title: Impor dan Ekspor Realm
+description: Impor dan Ekspor Realm - Dokumentasi NQRust-Identity
+---
+
+# Impor dan Ekspor Realm
+
+Dalam panduan ini, Anda akan memahami berbagai pendekatan untuk mengimpor dan mengekspor realm menggunakan file JSON.
+
+## [](#_import_export_commands)Perintah Impor / Ekspor
+
+Mengekspor dan mengimpor ke file tunggal dapat menghasilkan file besar yang mungkin membuat proses ekspor / impor kehabisan memori. Jika basis data Anda berisi lebih dari 50.000 pengguna, ekspor ke direktori dan bukan ke file tunggal. Jumlah pengguna per file default adalah lima puluh, tetapi Anda dapat menggunakan nilai yang lebih besar jika diinginkan.
+
+Perintah `import` dan `export` pada dasarnya adalah peluncuran server yang keluar sebelum membawa server penuh. Mereka saat ini tidak dirancang untuk dijalankan dari mesin yang sama dengan instance server yang sedang berjalan, yang mungkin mengakibatkan konflik port atau lainnya.
+
+Disarankan agar semua node NQRust-Identity dihentikan sebelum menggunakan perintah `kc.[sh|bat] export`. Hal ini memastikan bahwa hasilnya tidak akan memiliki masalah konsistensi dengan modifikasi pengguna atau realm selama ekspor.
+
+Tidak diperlukan agar semua node NQRust-Identity dihentikan sebelum melakukan perintah `kc.[sh|bat] import` dengan opsi override. Perintah ini tidak menyatukan ke dalam cluster cache, jadi menimpa realm akan mengakibatkan cache yang tidak konsisten di cluster, yang kemudian akan menampilkan dan menggunakan informasi yang tidak konsisten atau kedaluwarsa. Sebagai gantinya dari menimpa realm dengan perintah impor, pertimbangkan untuk menggunakan Admin API untuk menghapus realm yang perlu ditimpa sebelum menjalankan impor.
+
+### [](#_providing_options_for_database_connection_parameters)Memberikan Opsi untuk Parameter Koneksi Database
+
+Ketika menggunakan perintah `export` dan `import` di bawah, NQRust-Identity perlu tahu bagaimana cara untuk terhubung ke database tempat informasi tentang realm, client, pengguna, dan entitas lainnya disimpan. Seperti yang dijelaskan dalam [Mengonfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration) bahwa informasi ini dapat diberikan sebagai parameter baris perintah, variabel lingkungan, atau file konfigurasi. Gunakan opsi baris perintah `--help` untuk setiap perintah untuk melihat opsi yang tersedia.
+
+Beberapa opsi konfigurasi adalah opsi konfigurasi waktu kompilasi. Secara default, NQRust-Identity akan otomatis dibangun ulang secara otomatis untuk perintah `export` dan `import` jika mendeteksi perubahan parameter waktu kompilasi.
+
+Jika Anda telah membangun versi yang dioptimalkan dari NQRust-Identity dengan perintah `build` seperti yang diuraikan dalam [Mengonfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration), gunakan opsi baris perintah `--optimized` agar NQRust-Identity melewati pemeriksaan build untuk waktu startup yang lebih cepat. Ketika melakukan ini, hapus opsi waktu kompilasi dari baris perintah dan simpan hanya opsi waktu runtime.
+
+Jika Anda tidak menggunakan `--optimized`, perhatikan bahwa perintah `import` atau `export` mungkin secara implisit membuat atau memperbarui build yang dioptimalkan untuk Anda - jika Anda menjalankan perintah dari mesin yang sama dengan instance server, ini mungkin mempengaruhi startup berikutnya server Anda.
+
+### [](#_exporting_a_realm_to_a_directory)Mengekspor Realm ke Direktori
+
+Untuk mengekspor realm, Anda dapat menggunakan perintah `export`. Instance server NQRust-Identity Anda tidak boleh dimulai ketika menjalankan perintah ini.
+
+```bash
+bin/kc.[sh|bat] export --help
+```
+
+Untuk mengekspor realm ke direktori, Anda dapat menggunakan opsi `--dir <dir>`.
+
+```bash
+bin/kc.[sh|bat] export --dir <dir>
+```
+
+Ketika mengekspor realm ke direktori, server akan membuat file terpisah untuk setiap realm yang diekspor.
+
+#### [](#_configuring_how_users_are_exported)Meng

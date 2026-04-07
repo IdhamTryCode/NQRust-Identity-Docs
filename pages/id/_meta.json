@@ -1,0 +1,11 @@
+{
+  "index": {
+    "title": "Beranda",
+    "display": "hidden"
+  },
+  "getting-started": {
+    "title": "Memulai",
+    "display": "hidden"
+  },
+  "guides": "Panduan"
+}

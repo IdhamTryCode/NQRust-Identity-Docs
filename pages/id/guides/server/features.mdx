@@ -1,0 +1,85 @@
+---
+title: Mengaktifkan dan Menonaktifkan Fitur
+description: Mengaktifkan dan menonaktifkan fitur - Dokumentasi NQRust-Identity
+---
+
+# Mengaktifkan dan Menonaktifkan Fitur
+
+NQRust-Identity menyertakan beberapa fungsionalitas dalam fitur, termasuk beberapa fitur yang dinonaktifkan seperti Technology Preview dan fitur yang usang. Fitur lainnya diaktifkan secara default, tetapi Anda dapat menonaktifkannya jika tidak berlaku untuk penggunaan NQRust-Identity Anda.
+
+## [](#_mengaktifkan_fitur)Mengaktifkan fitur
+
+Beberapa fitur yang didukung, dan semua fitur preview, dinonaktifkan secara default. Anda dapat mengaktifkan fitur melalui opsi tunggal atau dengan memasukkannya ke dalam daftar fitur yang diaktifkan.
+
+### [](#_opsi_tunggal)Opsi tunggal
+
+Anda dapat mengaktifkan fitur spesifik ``&lt;name&gt;`` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] build --feature-<name>=enabled|disabled|vX
+```
+
+Nilai yang mungkin adalah `enabled`, `disabled`, atau versi spesifik fitur yang harus diaktifkan. Sebagai contoh, untuk mengaktifkan `rolling-updates:v2` dan `token-exchange`, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] build --feature-rolling-updates=v2 --feature-token-exchange=enabled
+```
+
+Mekanisme opsi tunggal berguna saat memperbarui daftar fitur panjang menjadi sulit atau saat Anda ingin memodifikasi fitur tertentu tanpa menimpa seluruh daftar dalam image yang sudah dibangun.
+
+### [](#_daftar_fitur_diaktifkan)Daftar fitur yang diaktifkan
+
+```bash
+bin/kc.[sh|bat] build --features="<name>[,<name>]"
+```
+
+Sebagai contoh, untuk mengaktifkan `docker` dan `token-exchange`, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] build --features="docker,token-exchange"
+```
+
+Untuk mengaktifkan semua fitur preview, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] build --features="preview"
+```
+
+### [](#_versi)Pengklasifikasian versi
+
+Fitur yang diaktifkan mungkin terklasifikasi berdasarkan versi atau tidak terklasifikasi. Jika Anda menggunakan nama fitur terklasifikasi, misalnya fitur:v1, versi fitur tersebut akan diaktifkan selama masih ada dalam runtime. Jika Anda menggunakan nama tidak terklasifikasi, misalnya hanya fitur, pemilihan versi fitur yang didukung dapat berubah dari rilis ke rilis sesuaiprecedence berikut:
+
+1.  Versi dukungan default tertinggi
+    
+2.  Versi dukungan non-default tertinggi
+    
+3.  Versi usang tertinggi
+    
+4.  Versi preview tertinggi
+    
+5.  Versi eksperimental tertinggi
+    
+
+## [](#_menonaktifkan_fitur)Menonaktifkan fitur
+
+Untuk menonaktifkan fitur yang diaktifkan secara default, Anda dapat menggunakan opsi tunggal atau daftar fitur yang dinonaktifkan. Ketika fitur dinonaktifkan, semua versi dari fitur tersebut dinonaktifkan.
+
+### [](#_opsi_tunggal_2)Opsi tunggal
+
+Anda dapat menonaktifkan fitur spesifik ``&lt;name&gt;`` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] build --feature-<name>=disabled
+```
+
+Sebagai contoh, untuk menonaktifkan `dpop` dan `recovery-codes`, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] build --feature-dpop=disabled --feature-recovery-codes=disabled
+```
+
+Mekanisme opsi tunggal berguna saat memperbarui daftar fitur panjang menjadi sulit atau saat Anda ingin memodifikasi fitur tertentu tanpa menimpa seluruh daftar dalam image yang sudah dibangun.
+
+### [](#_daftar_fitur_dinonaktifkan)Daftar fitur yang dinonaktifkan
+
+```bash

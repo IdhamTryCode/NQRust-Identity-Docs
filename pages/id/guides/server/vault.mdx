@@ -1,0 +1,97 @@
+---
+title: Menggunakan Vault
+description: Menggunakan Vault - Dokumentasi NQRust-Identity
+---
+
+# Menggunakan Vault
+
+NQRust-Identity menyediakan dua implementasi Vault SPI siap pakai: vault berbasis file teks polos dan vault berbasis Java KeyStore.
+
+Implementasi vault berbasis file sangat berguna untuk Kubernetes/OpenShift secrets. Anda dapat me-mount secret Kubernetes ke Container NQRust-Identity, dan field data akan tersedia dalam folder yang di-mount dengan struktur file datar.
+
+Implementasi vault berbasis Java KeyStore sangat berguna untuk menyimpan secret dalam instalasi bare metal. Anda dapat menggunakan vault KeyStore, yang dienkripsi menggunakan password.
+
+## [](#_available_integrations)Integrasi yang Tersedia
+
+Secrets yang disimpan dalam vault dapat digunakan di tempat berikut di Konsol Administrasi:
+
+*   Mendapatkan SMTP Mail server Password
+    
+*   Mendapatkan LDAP Bind Credential saat menggunakan LDAP-based User Federation
+    
+*   Mendapatkan OIDC identity providers Client Secret saat mengintegrasikan provider identitas eksternal
+
+## [](#_enabling_a_vault)Mengaktifkan Vault
+
+Untuk mengaktifkan vault berbasis file, Anda perlu membangun NQRust-Identity terlebih dahulu menggunakan opsi build berikut:
+
+```bash
+bin/kc.[sh|bat] build --vault=file
+```
+
+Analogis, untuk berbasis Java KeyStore, Anda perlu menentukan opsi build berikut:
+
+```bash
+bin/kc.[sh|bat] build --vault=keystore
+```
+
+## [](#_configuring_the_file_based_vault)Mengonfigurasi Vault Berbasis File
+
+### [](#_setting_the_base_directory_to_lookup_secrets)Mengatur Direktori Dasar untuk Mencari Secrets
+
+Secret Kubernetes/OpenShift pada dasarnya adalah file yang di-mount. Untuk mengonfigurasi direktori tempat file ini harus di-mount, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] start --vault-dir=/my/path
+```
+
+### [](#_realm_specific_secret_files)File Secret Spesifik Realm
+
+Secret Kubernetes/OpenShift digunakan berdasarkan realm di NQRust-Identity, yang memerlukan konvensi penamaan file:
+
+```bash
+${vault.<realmname>_<secretname>}
+```
+
+## [](#_configuring_the_java_keystore_based_vault)Mengonfigurasi Vault Berbasis Java KeyStore
+
+Untuk menggunakan vault berbasis Java KeyStore, Anda perlu membuat file KeyStore terlebih dahulu. Anda dapat menggunakan perintah berikut untuk melakukannya:
+
+```bash
+keytool -importpass -alias <realm-name>_<alias> -keystore keystore.p12 -storepass keystorepassword
+```
+
+dan kemudian masukkan nilai yang ingin Anda simpan di vault. Perhatikan bahwa format parameter `-alias` tergantung pada penyelesai kunci yang digunakan. Penyelesai kunci default adalah `REALM_UNDERSCORE_KEY`.
+
+Ini secara default akan menyimpan nilai dalam bentuk generic PBEKey (enkripsi berbasis password) dalam SecretKeyEntry.
+
+Anda kemudian dapat memulai NQRust-Identity menggunakan opsi runtime berikut:
+
+```bash
+bin/kc.[sh|bat] start  --vault-file=/path/to/keystore.p12 --vault-pass=<value> --vault-type=<value>
+```
+
+Perhatikan bahwa parameter `--vault-type` opsional dan defaultnya adalah `PKCS12`.
+
+Secrets yang disimpan dalam vault kemudian dapat diakses dalam realm melalui placeholder berikut (dengan asumsi menggunakan penyelesai kunci `REALM_UNDERSCORE_KEY`): `${vault.realm-name_alias}`.
+
+## [](#_using_underscores_in_the_secret_names)Menggunakan Garis Bawah dalam Nama Secret
+
+Untuk memproses secret dengan benar, Anda ganda semua garis bawah dalam `<secretname>`. Ketika penyelesai kunci `REALM_UNDERSCORE_KEY` digunakan, garis bawah dalam `<realmname>` juga digandakan dan `<secretname>` dan `<realmname>` dipisahkan oleh satu garis bawah.
+
+Contoh
+
+*   Nama Realm: `sso_realm`
+    
+*   Nama yang Diinginkan: `ldap_credential`
+    
+*   Nama file yang dihasilkan:
+    
+
+```
+sso\_\_realm\_ldap\_\_credential
+```
+
+Perhatikan garis bawah yang digandakan antara _sso_ dan _realm_ serta antara _ldap_ dan _credential_.
+
+Untuk mempelajari lebih lanjut tentang penyelesai kunci, li

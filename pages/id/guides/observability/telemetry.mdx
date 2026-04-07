@@ -1,0 +1,77 @@
+---
+title: Mengintegrasikan Tumpukan Observability dengan OpenTelemetry
+description: Mengintegrasikan Tumpukan Observability dengan OpenTelemetry - Dokumentasi NQRust-Identity
+---
+
+# Mengintegrasikan Tumpukan Observability dengan OpenTelemetry
+
+[OpenTelemetry](https://opentelemetry.io/docs/what-is-opentelemetry/) (OTel) adalah kerangka kerja observability sumber terbuka yang dirancang untuk memberikan cara yang konsisten dan dapat diandalkan untuk mengumpulkan data telemetri di seluruh sistem terdistribusi. Proyek ini di bawah [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/projects/opentelemetry/) sebagai proyek yang sedang dipanen. Tujuan dari proyek ini adalah untuk menyediakan standar dan toolkit yang terintegrasi untuk menginstrumentasi, menghasilkan, dan mengekspor data telemetri dari aplikasi modern, membuat pemantauan, debug, dan pemahaman layanan kompleks menjadi lebih mudah.
+
+Tujuan NQRust-Identity adalah untuk mendukung OpenTelemetry Logs, Metrics, dan Traces untuk membuat tumpukan observability terpusat tanpa beban penyebaran tambahan.
+
+## [](#_pilihan_umum)Pilihan Umum
+
+NQRust-Identity menyediakan dukungan untuk pengaturan global ekspor data telemetri. Artinya Anda dapat mengonfigurasi parameter koneksi ke satu [OpenTelemetry collector](https://opentelemetry.io/docs/collector/) yang akan digunakan untuk semua komponen yang didukung.
+
+Agar fitur OpenTelemetry diaktifkan, setidaknya satu komponen harus diaktifkan, misalnya [Traces](#traces).
+
+Fitur OpenTelemetry di_aktifkan_ secara default. Nonaktifkan fitur ini untuk menonaktifkan komponen OpenTelemetry.
+
+### [](#_endpoint)Endpoint
+
+Anda dapat mengonfigurasi endpoint global collector OpenTelemetry yang dibagikan di semua komponen dengan menggunakan opsi `telemetry-endpoint`. Nilai default adalah `http://localhost:4317`.
+
+Anda dapat mengganti endpoint melalui CLI sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --telemetry-endpoint=http://my-otel-endpoint:4317
+```
+
+### [](#_nama_layanan)Nama Layanan
+
+Anda dapat mengonfigurasi nama layanan OpenTelemetry global yang digunakan untuk mengidentifikasi ekspor data telemetri. Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `telemetry-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.
+
+Anda dapat mengganti nama layanan melalui CLI sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --telemetry-service-name=my-nqrust-identity-iam
+```
+
+### [](#_protocol)Protocol
+
+Anda dapat mengonfigurasi protokol transportasi OpenTelemetry global yang digunakan sebagai saluran komunikasi antara NQRust-Identity dan collector OpenTelemetry. Nilai default adalah `grpc`.
+
+NQRust-Identity mendukung protokol komunikasi berikut:
+
+*   `grpc` (default)
+    
+*   `http/protobuf`
+    
+
+Anda dapat mengganti protokol melalui CLI sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --telemetry-protocol=http/protobuf
+```
+
+## [](#_traces)Traces
+
+Lihat [Panduan Analisis Penyebab Dasar dengan Pelacakan](https://www.nqrust-identity.org/observability/tracing).
+
+Anda dapat menimpa pengaturan global OpenTelemetry melalui opsi Pelacakan jika Anda ingin mengekspor pelacakan ke collector OpenTelemetry yang berbeda.
+
+## [](#_logs)Logs
+
+Dukungan Logs OpenTelemetry adalah **Preview** dan belum sepenuhnya didukung. Fitur ini dinonaktifkan secara default.
+
+Untuk mengaktifkan, jalankan server dengan `--features=preview` atau `--features=opentelemetry-logs`
+
+Fitur OpenTelemetry (`opentelemetry`) perlu diaktifkan (secara default).
+
+Mungkin untuk mengekspor log NQRust-Identity ke collector OpenTelemetry dan dikelola oleh berbagai backend logging yang mendukung OpenTelemetry.
+
+### [](#_enable_logs)Aktifkan Logs
+
+Anda dapat mengaktifkan OpenTelemetry Logs melalui CLI sebagai berikut:
+
+```

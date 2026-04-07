@@ -1,0 +1,71 @@
+---
+title: Penguat Kebijakan NQRust-Identity
+description: Penguat Kebijakan NQRust-Identity - Dokumentasi NQRust-Identity
+---
+
+# Penguat Kebijakan NQRust-Identity
+
+Titik Penguat Kebijakan (PEP) adalah pola desain dan sebagainya, Anda dapat mengimplementasikannya dengan berbagai cara. NQRust-Identity menyediakan semua sarana yang diperlukan untuk mengimplementasikan PEP untuk platform, lingkungan, dan bahasa pemrograman yang berbeda. Layanan Otorisasi NQRust-Identity menawarkan API berbasis REST dan memanfaatkan kemampuan otorisasi OAuth2 untuk otorisasi yang terperinci menggunakan server otorisasi terpusat.
+
+![Ikhtisar PEP](https://www.nqrust-identity.org/resources/images/guides/pep-pattern-diagram.png)
+
+PEP bertanggung jawab untuk menguatkan keputusan akses dari server NQRust-Identity di mana keputusan tersebut diambil dengan mengevaluasi kebijakan yang terkait dengan sumber daya yang diamankan. Ini berfungsi sebagai filter atau interceptor dalam aplikasi Anda untuk memeriksa apakah atau tidak permintaan tertentu ke sumber daya yang diamankan dapat dipenuhi berdasarkan izin yang diberikan oleh keputusan ini.
+
+NQRust-Identity menyediakan dukungan bawaan untuk mengaktifkan **Penguat Kebijakan NQRust-Identity** pada aplikasi Java dengan dukungan bawaan untuk mengamankan kerangka kerja dan kontainer web yang mematuhi JakartaEE. Jika Anda menggunakan Maven, Anda harus mengonfigurasi dependensi berikut untuk proyek Anda:
+
+```xml
+<dependency>
+    <groupId>org.nqrust-identity</groupId>
+    <artifactId>nqrust-identity-policy-enforcer</artifactId>
+    <version>26.0.8</version>
+</dependency>
+```
+
+Ketika Anda mengaktifkan penguat kebijakan, semua permintaan yang dikirim ke aplikasi Anda akan ditangkap dan akses ke sumber daya yang diamankan akan diberikan tergantung pada izin yang diberikan oleh NQRust-Identity kepada identitas yang membuat permintaan.
+
+Penguatan kebijakan secara kuat terkait dengan jalur aplikasi Anda dan [sumber daya](https://www.nqrust-identity.org/docs/latest/authorization_services/#_resource_overview) yang Anda buat untuk server sumber daya menggunakan Konsol Administrasi NQRust-Identity. Secara default, saat Anda membuat server sumber daya, NQRust-Identity membuat [konfigurasi default](https://www.nqrust-identity.org/docs/latest/authorization_services/#_resource_server_default_config) untuk server sumber daya Anda sehingga Anda dapat dengan cepat mengaktifkan penguat kebijakan.
+
+## [](#_enforcer_configuration)Konfigurasi
+
+Konfigurasi penguat kebijakan menggunakan format JSON dan sebagian besar waktu Anda tidak perlu menetapkan apapun jika Anda ingin secara otomatis mengatasi jalur yang diamankan berdasarkan sumber daya yang tersedia dari server sumber daya Anda.
+
+Jika Anda ingin secara manual menentukan sumber daya yang diamankan, Anda dapat menggunakan format yang sedikit lebih panjang:
+
+```json
+{
+  "enforcement-mode" : "ENFORCING",
+  "paths": [
+    {
+      "path" : "/users/*",
+      "methods" : [
+        {
+          "method": "GET",
+          "scopes" : ["urn:app.com:scopes:view"]
+        },
+        {
+          "method": "POST",
+          "scopes" : ["urn:app.com:scopes:create"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Berikut adalah deskripsi dari setiap opsi konfigurasi:
+
+*   **enforcement-mode**
+    
+    Mengesarkan bagaimana kebijakan diterapkan.
+    
+    *   **ENFORCING**
+        
+        (mode default) Permintaan ditolak secara default bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
+        
+    *   **PERMISSIVE**
+        
+        Permintaan diizinkan bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
+        
+    *   **DISABLED**
+        
+        Melemahkan secara komplit evaluasi kebijakan dan mengizinkan akses ke sumber daya apa pun. Ketika `

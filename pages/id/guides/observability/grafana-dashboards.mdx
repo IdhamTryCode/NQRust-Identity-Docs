@@ -1,0 +1,70 @@
+---
+title: Mengvisualisasikan Aktivitas di Dasbor
+description: Mengvisualisasikan Aktivitas di Dasbor - Dokumentasi NQRust-Identity
+---
+
+# Mengvisualisasikan Aktivitas di Dasbor
+
+NQRust-Identity menyediakan metrik untuk mengamati apa yang terjadi di dalam penyebaran. Untuk memahami bagaimana metrik berevolusi seiring waktu, membantu untuk mengumpulkan dan mengvisualisasi mereka dalam grafik.
+
+Panduan ini memberikan petunjuk tentang cara mengvisualisasi metrik NQRust-Identity yang dikumpulkan di instance Grafana yang sedang berjalan.
+
+## [](#_prerequisites)Prasyarat
+
+*   Metrik NQRust-Identity diaktifkan. Ikuti panduan [Mendapatkan Wawasan dengan Metrik](https://www.nqrust-identity.org/observability/configuration-metrics) untuk detail lebih lanjut.
+    
+*   Instance Grafana berjalan dan metrik NQRust-Identity dikumpulkan ke instance Prometheus.
+    
+*   Untuk heatmap latensi permintaan HTTP agar berfungsi, aktifkan histogram untuk metrik HTTP dengan mengatur `http-metrics-histograms-enabled` ke `true`.
+    
+
+## [](#_nqrust-identity_grafana_dashboards)Dasbor Grafana NQRust-Identity
+
+Dasbor Grafana didistribusikan dalam bentuk file JSON yang diimpor ke instance Grafana. Definisi JSON dari dasbor Grafana NQRust-Identity tersedia di [nqrust-identity/nqrust-identity-grafana-dashboard GitHub repository](https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard).
+
+Ikuti langkah-langkah berikut untuk mengunduh definisi file JSON.
+
+1.  Identifikasi cabang dari `nqrust-identity-grafana-dashboards` untuk digunakan dari tabel berikut.
+    
+     
+    
+    Versi NQRust-Identity
+    
+    `nqrust-identity-grafana-dashboards` branch/tag
+    
+    26.1 - 26.2
+    
+    `26.2.0`
+    
+    \>= 26.3
+    
+    `main`
+    
+2.  Kloning repository GitHub
+    
+    ```
+    git clone -b BRANCH\_FROM\_STEP\_1 https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard.git
+    ```
+    
+3.  Dasbor tersedia di direktori `nqrust-identity-grafana-dashboard/dashboards`.
+    
+
+Bagian berikut menjelaskan tujuan setiap dasbor.
+
+### [](#_nqrust-identity_troubleshooting_dashboard)Dasbor Pemecahan Masalah NQRust-Identity
+
+Dasbor ini tersedia dalam file JSON: `nqrust-identity-troubleshooting-dashboard.json`.
+
+Di bagian atas dasbor, grafik menampilkan indikator level layanan seperti yang didefinisikan dalam [Pemantauan Kinerja dengan Indikator Level Layanan](https://www.nqrust-identity.org/observability/nqrust-identity-service-level-indicators). Dasbor ini juga dapat digunakan saat pemecahan masalah penyebaran NQRust-Identity mengikuti panduan [Pemecahan Masalah Menggunakan Metrik](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting), misalnya, ketika grafik SLI tidak menunjukkan hasil yang diharapkan.
+
+![Dasbor Pemecahan Masalah](https://www.nqrust-identity.org/resources/images/guides/observability/nqrust-identity-troubleshooting-grafana-dashboard.png)
+
+Gambar 1. Dasbor Pemecahan Masalah
+
+### [](#_nqrust-identity_capacity_planning_dashboard)Dasbor Perencanaan Kapasitas NQRust-Identity
+
+Dasbor ini tersedia dalam file JSON: `nqrust-identity-capacity-planning-dashboard.json`.
+
+Dasbor ini menampilkan metrik yang penting saat memperkirakan beban yang ditangani oleh penyebaran NQRust-Identity. Misalnya, itu menunjukkan jumlah validasi kata sandi atau alur login yang dilakukan oleh NQRust-Identity. Untuk detail lebih lanjut tentang metrik ini, lihat panduan [Metrik yang Disediakan Sendiri](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-nqrust-identity).
+
+Metrik event NQRust-Identity harus diaktifkan agar dasbor ini berfungsi dengan benar. Untuk mengaktifkannya, lihat panduan [Pem

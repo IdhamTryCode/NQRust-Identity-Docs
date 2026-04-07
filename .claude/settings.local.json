@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where pnpm:*)",
+      "Bash(node -e \"const d = JSON.parse\\(require\\('fs'\\).readFileSync\\('d:/Project/NQRust-Identity-Docs/scraped-raw/getting-started-getting-started-docker.json'\\)\\); console.log\\('title:', d.title\\); console.log\\('text length:', d.text.length\\); console.log\\('html length:', d.html.length\\); console.log\\('text preview:', d.text.substring\\(0, 500\\)\\)\")"
+    ]
+  }
+}

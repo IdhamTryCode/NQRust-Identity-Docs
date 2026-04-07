@@ -1,0 +1,87 @@
+---
+title: Analisis akar masalah dengan pelacakan
+description: Analisis akar masalah dengan pelacakan - Dokumentasi NQRust-Identity
+---
+
+# Analisis akar masalah dengan pelacakan
+
+Panduan ini menjelaskan cara mengaktifkan dan mengonfigurasi pelacakan terdistribusi di NQRust-Identity dengan menggunakan [OpenTelemetry](https://opentelemetry.io/) (OTel). Pelacakan memungkinkan pemantauan detail dari siklus hidup setiap permintaan, yang membantu dengan cepat mengidentifikasi dan mendiagnosa masalah,从而导致 more efficient debugging and maintenance.
+
+Hal ini memberikan wawasan berharga tentang kemacetan kinerja dan dapat membantu mengoptimalkan efisiensi sistem secara keseluruhan dan melewati batas sistem. NQRust-Identity menggunakan [Quarkus OTel extension](https://quarkus.io/guides/opentelemetry-tracing) yang didukung yang memberikan integrasi dan pemberian akses dari lacak aplikasi yang mulus.
+
+## [](#_enable_tracing) Mengaktifkan pelacakan
+
+Mungkin untuk mengaktifkan memberi akses lacak menggunakan opsi waktu kompilasi `tracing-enabled` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --tracing-enabled=true
+```
+
+Secara default, eksportir lacak mengirimkan data dalam batch, menggunakan protokol `gRPC` dan endpoint `http://localhost:4317`.
+
+Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `tracing-service-name`, yang mengambil alih `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`.
+
+Untuk informasi lebih lanjut tentang atribut sumber daya yang dapat diberikan melalui properti `tracing-resource-attributes`, lihat panduan [Quarkus OpenTelemetry Resource](https://quarkus.io/guides/opentelemetry#resource).
+
+Properti `tracing-service-name` dan `tracing-resource-attributes` adalah **deprecated**, dan Anda harus menggunakan `telemetry-service-name` dan `telemetry-resource-attributes`, masing-masing.
+
+Pelacakan hanya dapat diaktifkan ketika fitur `opentelemetry` **diaktifkan** (secara default).
+
+Untuk pengaturan pelacakan lebih lanjut, lihat semua konfigurasi yang mungkin di bawah.
+
+## [](#_development_setup) Pengaturan pengembangan
+
+Untuk melihat lacak NQRust-Identity yang ditangkap, pengaturan dasar dengan memanfaatkan platform pelacakan [Jaeger](https://www.jaegertracing.io/) mungkin digunakan. Untuk tujuan pengembangan, Jaeger-all-in-one dapat digunakan untuk melihat lacak seasily mungkin.
+
+Jaeger-all-in-one mencakup agen Jaeger, pengumpul OTel, dan layanan kueri/UI. Anda tidak perlu menginstal pengumpul terpisah, karena Anda dapat langsung mengirimkan data lacak ke Jaeger.
+
+```bash
+podman|docker run --name jaeger \
+-p 16686:16686 \
+-p 4317:4317 \
+-p 4318:4318 \
+jaegertracing/all-in-one
+```
+
+### [](#_exposed_ports) Port yang terekspos
+
+`16686`
+
+Antarmuka Pengguna Jaeger
+
+`4317`
+
+Penerima protokol gRPC OpenTelemetry (default)
+
+`4318`
+
+Penerima protokol HTTP OpenTelemetry
+
+Anda dapat mengunjungi Antarmuka Pengguna Jaeger di `http://localhost:16686/` untuk melihat informasi pelacakan. Antarmuka Pengguna Jaeger mungkin terlihat seperti ini dengan lacak NQRust-Identity acak:
+
+![Jaeger UI](https://www.nqrust-identity.org/resources/images/guides/jaeger-tracing.png)
+
+## [](#_information_in_traces)Informasi dalam lacak
+
+### [](#_spans)Span
+
+NQRust-Identity membuat span untuk kegiatan berikut:
+
+*   Permintaan HTTP masuk
+    
+*   Database yang keluar termasuk memperoleh koneksi database
+    
+*   Permintaan LDAP yang keluar termasuk menghubungkan ke server LDAP
+    
+*   Permintaan HTTP yang keluar termasuk IdP brokerage
+    
+
+### [](#_tags)Tags
+
+NQRust-Identity menambahkan tag ke lacak tergantung pada jenis permintaan. Semua tag diawali dengan `kc.`.
+
+Contoh tag adalah:
+
+`kc.clientId`
+
+ID

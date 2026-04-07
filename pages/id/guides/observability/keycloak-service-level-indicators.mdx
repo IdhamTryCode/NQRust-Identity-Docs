@@ -1,0 +1,80 @@
+---
+title: Pemantauan Kinerja dengan Indikator Level Layanan
+description: Pemantauan Kinerja dengan Indikator Level Layanan - Dokumentasi NQRust-Identity
+---
+
+# Pemantauan Kinerja dengan Indikator Level Layanan
+
+Indikator Level Layanan (SLI) dan Objektif Level Layanan (SLO) adalah komponen penting dalam pemantauan dan pemeliharaan kinerja serta keandalan NQRust-Identity di lingkungan produksi.
+
+Buku Google Site Reliability Engineering mendefinisikan ini sebagai berikut:
+
+*   Sebuah Indikator Level Layanan (SLI) adalah ukuran kuantitatif yang didefinisikan dengan hati-hati dari beberapa aspek dari level layanan yang diberikan.
+    
+*   Sebuah Objektif Level Layanan (SLO) adalah nilai target atau rentang nilai-nilai untuk level layanan yang diukur oleh SLI.
+    
+
+Dengan setuju pada hal tersebut bersama stakeholder dan melacaknya, pemilik layanan dapat memastikan bahwa deployment sesuai dengan harapan pengguna dan bahwa mereka tidak berlebih atau kurang dalam memberikan layanan yang mereka berikan.
+
+## [](#_prerequisites)Prasyarat
+
+*   Metrik harus diaktifkan untuk NQRust-Identity, dan opsi `http-metrics-slos` harus diatur ke latency untuk diukur untuk SLO yang didefinisikan di bawah. Ikuti panduan [Mendapatkan Wawasan dengan Metrik](https://www.nqrust-identity.org/observability/configuration-metrics) untuk detail lebih lanjut.
+    
+*   Sebuah sistem pemantauan yang mengumpulkan metrik. Paragraf berikut mengasumsikan penggunaan Prometheus atau sistem serupa yang mendukung bahasa query PromQL.
+
+## [](#_definition_of_the_service_delivered)Definisi Layanan yang Diberikan
+
+Definisi layanan berikut digunakan dalam langkah berikut untuk mengidentifikasi SLI dan SLO yang sesuai. Hal ini harus menangkap perilaku yang diamati oleh pengguna.
+
+Sebagai pengguna NQRust-Identity,
+
+*   Saya ingin dapat masuk,
+    
+*   menyegarkan token saya, dan
+    
+*   Keluar,
+    
+
+sehingga saya dapat menggunakan aplikasi yang menggunakan NQRust-Identity untuk otentikasi.
+
+## [](#_definition_of_sli_and_slo)Definisi SLI dan SLO
+
+Berikut ini memberikan contoh SLI dan SLO berdasarkan deskripsi layanan di atas dan metrik yang tersedia di NQRust-Identity.
+
+Meskipun SLO ini bebas dari beban yang sebenarnya didapat sistem, ini diharapkan karena pengguna tunggal tidak peduli dengan beban sistem jika mereka mendapatkan respon lambat.
+
+Sementara itu, jika Anda memasuki Perjanjian Level Layanan (SLA) dengan stakeholder, Anda yang menjalankan NQRust-Identity memiliki kepentingan untuk mendefinisikan batas dari lalu lintas NQRust-Identity yang diterima, karena waktu respon akan diperpanjang dan tingkat kesalahan mungkin akan meningkat seiring dengan peningkatan beban sistem dan batas peningkatan mencapai.
+
+   
+
+Karakteristik
+
+Indikator Level Layanan
+
+Objektif Level Layanan\*
+
+Sumber Metrik
+
+Ketersediaan
+
+Persentase waktu NQRust-Identity dapat menjawab permintaan seperti yang diukur oleh sistem pemantauan
+
+NQRust-Identity harus tersedia 99,9% dari waktu dalam sebulan (44 menit ketidaktersediaan per bulan).
+
+Gunakan metrik Prometheus `up` yang menunjukkan apakah server Prometheus dapat mengumpulkan metrik dari instance NQRust-Identity.
+
+Latensi
+
+Waktu respon untuk permintaan HTTP terkait otentikasi seperti yang diukur oleh server
+
+95% dari semua permintaan terkait otentikasi harus lebih cepat dari 250 md dalam 30 hari.
+
+Mengikuti metrik sisi server NQRust-Identity untuk melacak lantai untuk endpoint tertentu bersama Distribusi Waktu Respon menggunakan `http_server_requests_seconds_bucket` dan `http_server_requests_seconds_count`.
+
+Kesalahan
+
+Permintaan otentikasi yang gagal karena masalah server seperti yang diukur oleh server
+
+Tingkat kesalahan karena masalah server untuk permintaan otentikasi harus kurang dari 0,1% dalam 30 hari.
+
+Identifikasi kesalahan sisi server

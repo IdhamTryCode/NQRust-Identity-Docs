@@ -1,0 +1,19 @@
+{
+  "oidc-layers": "Mengamankan Aplikasi dengan OpenID Connect",
+  "javascript-adapter": "JavaScript Adapter",
+  "nodejs-adapter": "Node.js Adapter",
+  "mod-auth-openidc": "Konfigurasi mod_auth_openidc",
+  "saml-galleon-layers": "SAML Galleon Feature Pack",
+  "mod-auth-mellon": "Konfigurasi mod_auth_mellon",
+  "docker-registry": "Konfigurasi Docker Registry",
+  "client-registration": "Layanan Registrasi Client",
+  "client-registration-cli": "Otomatisasi Registrasi Client via CLI",
+  "mcp-authz-server": "Integrasi dengan MCP",
+  "token-exchange": "Konfigurasi Token Exchange",
+  "jwt-authorization-grant": "JWT Authorization Grant",
+  "specifications": "Spesifikasi yang Didukung",
+  "admin-client": "Admin Client",
+  "authz-client": "Authorization Client",
+  "policy-enforcer": "Policy Enforcer",
+  "upgrading": "Upgrade Client Libraries"
+}

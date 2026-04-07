@@ -1,0 +1,150 @@
+---
+title: Konfigurasi Semua Penyedia
+description: Dokumentasi NQRust-Identity - Konfigurasi Semua Penyedia
+---
+
+# Konfigurasi Semua Penyedia
+
+## [](#_sesi_autentikasi)sesi-autentikasi
+
+### [](#_infinispan)infinispan
+
+  
+
+Jenis atau Nilai
+
+Default
+
+`spi-authentication-sessions--infinispan--auth-sessions-limit`
+
+Jumlah maksimum sesi autentikasi bersamaan per RootAuthenticationSession.
+
+**CLI:** `--spi-authentication-sessions--infinispan--auth-sessions-limit`  
+**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__INFINISPAN__AUTH_SESSIONS_LIMIT`
+
+_integer_
+
+`300`
+
+### [](#_remote)remote
+
+  
+
+Jenis atau Nilai
+
+Default
+
+`spi-authentication-sessions--remote--auth-sessions-limit`
+
+Jumlah maksimum sesi autentikasi bersamaan per RootAuthenticationSession.
+
+**CLI:** `--spi-authentication-sessions--remote--auth-sessions-limit`  
+**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__AUTH_SESSIONS_LIMIT`
+
+_integer_
+
+`300`
+
+`spi-authentication-sessions--remote--max-retries`
+
+Jumlah maksimum pengulangan jika terjadi kesalahan.
+
+Nilai nol atau kurang dari nol menonaktifkan pengulangan.
+
+**CLI:** `--spi-authentication-sessions--remote--max-retries`  
+**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__MAX_RETRIES`
+
+_integer_
+
+`10`
+
+`spi-authentication-sessions--remote--retry-base-time`
+
+Waktu dasar penundaan kembali dalam milidetik.
+
+**CLI:** `--spi-authentication-sessions--remote--retry-base-time`  
+**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__RETRY_BASE_TIME`
+
+_integer_
+
+`10`
+
+## [](#_pengamatan_pengamankan_brute_force)pengamatan-pengamuran-brute-force
+
+### [](#_pengamaran_brute_force_default)pengamaran-brute-force-default
+
+  
+
+Jenis atau Nilai
+
+Default
+
+`spi-brute-force-protector--default-brute-force-detector--allow-concurrent-requests`
+
+Apakah login secara paralel diizinkan oleh proteksi brute force.
+
+**CLI:** `--spi-brute-force-protector--default-brute-force-detector--allow-concurrent-requests`  
+**Env:** `KC_SPI_BRUTE_FORCE_PROTECTOR__DEFAULT_BRUTE_FORCE_DETECTOR__ALLOW_CONCURRENT_REQUESTS`
+
+`true`, `false`
+
+`false`
+
+## [](#_cache_disembunyikan)cache-disembunyikan
+
+### [](#_default)default
+
+  
+
+Jenis atau Nilai
+
+Default
+
+`spi-cache-embedded--default--action-tokens-owners`
+
+Menyetel jumlah pemilik untuk cache terdistribusi actionTokens.
+
+Ini mendefinisikan jumlah salinan data Anda di dalam kluster.
+
+**CLI:** `--spi-cache-embedded--default--action-tokens-owners`  
+**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__ACTION_TOKENS_OWNERS`
+
+_Angka_integer_
+
+`spi-cache-embedded--default--authentication-sessions-owners`
+
+Menyetel jumlah pemilik untuk cache terdistribusi authenticationSessions.
+
+Ini mendefinisikan jumlah salinan data Anda di dalam kluster.
+
+**CLI:** `--spi-cache-embedded--default--authentication-sessions-owners`  
+**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__AUTHENTICATION_SESSIONS_OWNERS`
+
+_Angka_integer_
+
+`spi-cache-embedded--default--authorization-max-count`
+
+Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache otorisasi.
+
+**CLI:** `--spi-cache-embedded--default--authorization-max-count`  
+**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__AUTHORIZATION_MAX_COUNT`
+
+_Angka_integer_
+
+`spi-cache-embedded--default--client-sessions-max-count`
+
+Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache clientSessions.
+
+**CLI:** `--spi-cache-embedded--default--client-sessions-max-count`  
+**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CLIENT_SESSIONS_MAX_COUNT`
+
+_Angka_integer_
+
+`spi-cache-embedded--default--client-sessions-owners`
+
+Menyetel jumlah pemilik untuk cache terdistribusi clientSessions.
+
+Ini mendefinisikan jumlah salinan data Anda di dalam kluster.
+
+**CLI:** `--spi-cache-embedded--default--client-sessions-owners`  
+**Env:** `KC_SPI_CACHE_E

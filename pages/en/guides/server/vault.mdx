@@ -1,0 +1,168 @@
+---
+title: Using a vault
+description: Using a vault - NQRust-Identity Documentation
+---
+
+# Using a vault
+
+NQRust-Identity provides two out-of-the-box implementations of the Vault SPI: a plain-text file-based vault and Java KeyStore-based vault.
+
+The file-based vault implementation is especially useful for Kubernetes/OpenShift secrets. You can mount Kubernetes secrets into the NQRust-Identity Container, and the data fields will be available in the mounted folder with a flat-file structure.
+
+The Java KeyStore-based vault implementation is useful for storing secrets in bare metal installations. You can use the KeyStore vault, which is encrypted using a password.
+
+## [](#_available_integrations)Available integrations
+
+Secrets stored in the vaults can be used at the following places of the Administration Console:
+
+*   Obtain the SMTP Mail server Password
+    
+*   Obtain the LDAP Bind Credential when using LDAP-based User Federation
+    
+*   Obtain the OIDC identity providers Client Secret when integrating external identity providers
+    
+
+## [](#_enabling_a_vault)Enabling a vault
+
+For enabling the file-based vault you need to build NQRust-Identity first using the following build option:
+
+```bash
+bin/kc.[sh|bat] build --vault=file
+```
+
+Analogically, for the Java KeyStore-based you need to specify the following build option:
+
+```bash
+bin/kc.[sh|bat] build --vault=keystore
+```
+
+## [](#_configuring_the_file_based_vault)Configuring the file-based vault
+
+### [](#_setting_the_base_directory_to_lookup_secrets)Setting the base directory to lookup secrets
+
+Kubernetes/OpenShift secrets are basically mounted files. To configure a directory where these files should be mounted, enter this command:
+
+```bash
+bin/kc.[sh|bat] start --vault-dir=/my/path
+```
+
+### [](#_realm_specific_secret_files)Realm-specific secret files
+
+Kubernetes/OpenShift Secrets are used on a per-realm basis in NQRust-Identity, which requires a naming convention for the file in place:
+
+```bash
+${vault.<realmname>_<secretname>}
+```
+
+## [](#_configuring_the_java_keystore_based_vault)Configuring the Java KeyStore-based vault
+
+In order to use the Java KeyStore-based vault, you need to create a KeyStore file first. You can use the following command for doing so:
+
+```bash
+keytool -importpass -alias <realm-name>_<alias> -keystore keystore.p12 -storepass keystorepassword
+```
+
+and then enter a value you want to store in the vault. Note that the format of the `-alias` parameter depends on the key resolver used. The default key resolver is `REALM_UNDERSCORE_KEY`.
+
+This by default results to storing the value in a form of generic PBEKey (password based encryption) within SecretKeyEntry.
+
+You can then start NQRust-Identity using the following runtime options:
+
+```bash
+bin/kc.[sh|bat] start  --vault-file=/path/to/keystore.p12 --vault-pass=<value> --vault-type=<value>
+```
+
+Note that the `--vault-type` parameter is optional and defaults to `PKCS12`.
+
+Secrets stored in the vault can then be accessed in a realm via the following placeholder (assuming using the `REALM_UNDERSCORE_KEY` key resolver): `${vault.realm-name_alias}`.
+
+## [](#_using_underscores_in_the_secret_names)Using underscores in the secret names
+
+To process the secret correctly, you double all underscores in the `&lt;secretname&gt;`. When `REALM_UNDERSCORE_KEY` key resolver is used, underscores in `&lt;realmname&gt;` are also doubled and `&lt;secretname&gt;` and `&lt;realmname&gt;` is separated by a single underscore.
+
+Example
+
+*   Realm Name: `sso_realm`
+    
+*   Desired Name: `ldap_credential`
+    
+*   Resulting file name:
+    
+
+```
+sso\_\_realm\_ldap\_\_credential
+```
+
+Note the doubled underscores between _sso_ and _realm_ and also between _ldap_ and _credential_.
+
+To learn more about key resolvers, see [Key resolvers section in the Server Administration guide](https://www.nqrust-identity.org/docs/latest/server_admin/#_vault-key-resolvers).
+
+## [](#_example_use_an_ldap_bind_credential_secret_in_the_admin_console)Example: Use an LDAP bind credential secret in the Admin Console
+
+Example setup
+
+*   A realm named `secrettest`
+    
+*   A desired Name `ldapBc` for the bind Credential
+    
+*   Resulting file name: `secrettest_ldapBc`
+    
+
+Usage in Admin Console
+
+You can then use this secret from the Admin Console by using `${vault.ldapBc}` as the value for the `Bind Credential` when configuring your LDAP User federation.
+
+## [](#_relevant_options)Relevant options
+
+  
+
+_Type_ or Values
+
+Default
+
+`vault`
+
+Enables a vault provider.
+
+**CLI:** `--vault`  
+**Env:** `KC_VAULT`
+
+`file`, `keystore`
+
+`vault-dir`
+
+If set, secrets can be obtained by reading the content of files within the given directory.
+
+**CLI:** `--vault-dir`  
+**Env:** `KC_VAULT_DIR`
+
+_Path_
+
+`vault-file`
+
+Path to the keystore file.
+
+**CLI:** `--vault-file`  
+**Env:** `KC_VAULT_FILE`
+
+_Path_
+
+`vault-pass`
+
+Password for the vault keystore.
+
+**CLI:** `--vault-pass`  
+**Env:** `KC_VAULT_PASS`
+
+_String_
+
+`vault-type`
+
+Specifies the type of the keystore file.
+
+**CLI:** `--vault-type`  
+**Env:** `KC_VAULT_TYPE`
+
+_String_
+
+`PKCS12`

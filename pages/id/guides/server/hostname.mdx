@@ -1,0 +1,48 @@
+---
+title: Mengonfigurasi nama host (v2)
+description: Mengonfigurasi nama host (v2) - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi nama host (v2)
+
+## [](#_pengaturan_penting_nama_host)Pengaturan penting nama host
+
+Secara default, NQRust-Identity memaksa untuk mengkonfigurasi opsi `hostname` dan tidak secara dinamis mengurai URL. Ini merupakan langkah keamanan.
+
+NQRust-Identity dengan bebas menyampaikan URL-nya sendiri, misalnya melalui endpoint penemuan OIDC, atau sebagai bagian dari tautan reset kata sandi dalam email. Jika nama host diinterpretasikan secara dinamis dari header hostname, itu bisa memberikan peluang kepada penyerang untuk memanipulasi URL di email, mengarahkan pengguna ke domain palsu penyerang, dan mencuri data sensitif seperti token aksi, kata sandi, dll.
+
+Dengan menetapkan secara eksplisit opsi `hostname`, kita menghindari situasi di mana token dikeluarkan oleh penerbit palsu. Server dapat dijalankan dengan nama host yang jelas menggunakan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname my.nqrust-identity.org
+```
+
+Contoh-contoh ini menjalankan instance NQRust-Identity dalam mode produksi, yang memerlukan sertifikat publik dan kunci pribadi untuk mengamankan komunikasi. Untuk informasi lebih lanjut, lihat [Mengonfigurasi NQRust-Identity untuk produksi](https://www.nqrust-identity.org/server/configuration-production).
+
+## [](#_mengatur_bagian_tertentu_nama_host)Mengatur bagian tertentu opsi nama host
+
+Seperti yang ditunjukkan dalam contoh sebelumnya, skema dan port tidak secara eksplisit diperlukan. Dalam hal ini, NQRust-Identity secara otomatis menangani aspek-aspek ini. Misalnya, server akan dapat diakses di `[https://my.nqrust-identity.org:8443](https://my.nqrust-identity.org:8443)` dalam contoh yang diberikan. Namun, proxy balik biasanya akan mengekspos NQRust-Identity di port default, misalnya `443`. Dalam hal ini, lebih diinginkan untuk menentukan URL lengkap dalam opsi `hostname` daripada menjaga bagian dari URL dinamis. Server dapat kemudian dijalankan dengan:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org
+```
+
+Demikian pula, proxy balik Anda mungkin mengekspos NQRust-Identity di jalur konteks yang berbeda. Anda dapat mengonfigurasi NQRust-Identity untuk mencerminkan hal ini melalui opsi `hostname` dan `hostname-admin`. Lihat contoh berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org:123/auth
+```
+
+## [](#_menggunakan_url_internal_untuk_komunikasi_antara_klien)Menggunakan URL internal untuk komunikasi antara klien
+
+NQRust-Identity memiliki kemampuan untuk menawarkan URL terpisah untuk permintaan backchannel, memungkinkan komunikasi internal sambil menjaga penggunaan URL publik untuk permintaan frontchannel. Selain itu, backchannel secara dinamis diuraikan berdasarkan header yang masuk. Pertimbangkan contoh berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org --hostname-backchannel-dynamic true
+```
+
+Dengan cara ini, aplikasi Anda, yang disebut sebagai klien, dapat terhubung dengan NQRust-Identity melalui jaringan lokal Anda, sementara server tetap dapat diakses secara publik di `[https://my.nqrust-identity.org](https://my.nqrust-identity.org)`.
+
+## [](#_menggunakan_pemutusan_TLS_di_perimeter)Menggunakan pemotongan TLS di perimeter
+
+Seperti yang dapat Anda amati, protokol HTTPS adalah pilihan default, mengikuti komitmen NQRust-Identity untuk praktik keamanan terbaik. Namun, NQRust-Identity juga menyediakan fleksibilitas bagi pengguna untuk memilih HTTP jika diperlukan. Hal ini dapat dicapai dengan menentukan listener HTTP, lihat [Mengonfig

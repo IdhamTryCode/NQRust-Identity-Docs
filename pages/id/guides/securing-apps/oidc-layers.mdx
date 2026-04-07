@@ -1,0 +1,72 @@
+---
+title: Mengamankan aplikasi dan layanan dengan OpenID Connect
+description: Mengamankan aplikasi dan layanan dengan OpenID Connect - Dokumentasi NQRust-Identity
+---
+
+# Mengamankan aplikasi dan layanan dengan OpenID Connect
+
+## [](#_oidc_available_endpoints)Endpoint yang Tersedia
+
+Sebagai implementasi OpenID Connect Provider yang sepenuhnya memenuhi syarat, NQRust-Identity mengekspos sejumlah endpoint yang dapat digunakan oleh aplikasi dan layanan untuk mengautentikasi dan mengotorisasi pengguna mereka.
+
+Bagian ini menjelaskan beberapa endpoint utama yang harus digunakan oleh aplikasi dan layanan Anda saat berinteraksi dengan NQRust-Identity.
+
+### [](#_endpoints)Endpoint
+
+Endpoint yang paling penting untuk dipahami adalah endpoint konfigurasi `well-known`. Ini mencantumkan endpoint dan opsi konfigurasi lainnya yang relevan untuk implementasi OpenID Connect di NQRust-Identity. Endpoint adalah:
+
+```
+/realms/{realm-name}/.well-known/openid-configuration
+```
+
+Untuk mendapatkan URL lengkap, tambahkan URL dasar untuk NQRust-Identity dan ganti `{realm-name}` dengan nama realm Anda. Misalnya:
+
+```
+http://localhost:8080/realms/{realm-name}/.well-known/openid-configuration
+```
+
+Beberapa pustaka RP (Relying Party) mengambil semua endpoint yang diperlukan dari endpoint ini, tetapi untuk yang lain Anda mungkin perlu daftar endpoint secara individual.
+
+#### [](#_authorization_endpoint)Endpoint Otorisasi
+
+```
+/realms/{realm-name}/protocol/openid-connect/auth
+```
+
+Endpoint otorisasi melakukan autentikasi pengguna akhir. Autentikasi ini dilakukan dengan mengarahkan agen pengguna ke endpoint ini.
+
+Untuk detail lebih lanjut lihat bagian [Authorization Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#AuthorizationEndpoint) dalam spesifikasi OpenID Connect.
+
+#### [](#_token_endpoint)Endpoint Token
+
+```
+/realms/{realm-name}/protocol/openid-connect/token
+```
+
+Endpoint token digunakan untuk mendapatkan token. Token dapat diperoleh dengan menukar kode otorisasi atau dengan menyediakan kredensial secara langsung tergantung pada alur yang digunakan. Endpoint token juga digunakan untuk mendapatkan token akses baru saat mereka kedaluwarsa.
+
+Untuk detail lebih lanjut, lihat bagian [Token Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#TokenEndpoint) dalam spesifikasi OpenID Connect.
+
+#### [](#_userinfo_endpoint)Endpoint Userinfo
+
+```
+/realms/{realm-name}/protocol/openid-connect/userinfo
+```
+
+Endpoint userinfo mengembalikan klaim standar tentang pengguna yang terverifikasi; endpoint ini dilindungi oleh token bearer.
+
+Untuk detail lebih lanjut, lihat bagian [Userinfo Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo) dalam spesifikasi OpenID Connect.
+
+#### [](#_logout_endpoint)Endpoint Logout
+
+```
+/realms/{realm-name}/protocol/openid-connect/logout
+```
+
+Endpoint logout mengeluarkan pengguna yang terverifikasi.
+
+Agen pengguna dapat diarahkan ke endpoint ini, yang menyebabkan sesi pengguna aktif untuk dikeluarkan. Agen pengguna kemudian diarahkan kembali ke aplikasi. Ini dijelaskan lebih detail dalam [RP-Initiated logout section of the Server administration guide](https://www.nqrust-identity.org/docs/latest/server_admin/#rp-initiated-logout).
+
+Endpoint ini juga dapat dipanggil langsung oleh aplikasi. Untuk memanggil endpoint ini secara langsung, token refresh perlu disertakan bersama kredensial yang diperlukan untuk mengautentikasi klien. Namun ini bukan standar format lama dari pesan logout yang didukung hanya karena adapter OIDC Java lama NQRust-Identity atau [Elytron Wildfly OIDC adapter](https://docs.wildfly.org/37/WildFly_Elytron_Security.html#NQRust-Identity_Integration). Tidak disarankan untuk digunakan langsung dari aplikasi Anda. Untuk pengguna logout, disarankan untuk menggunakan protokol standar logout OIDC/SAML atau [NQRust-Identity Admin console](https://www.nqrust-identity.org/docs/latest/server_admin/#viewing-user-sessions) (atau cara lain dari admin REST API) atau [NQRust-Identity Account console](https://www.nqrust-identity.org/docs/latest/server_admin/#_account-service) (atau cara lain dari akun REST API).
+
+#### [](#_certificate_endpoint)Endpoint Certificate

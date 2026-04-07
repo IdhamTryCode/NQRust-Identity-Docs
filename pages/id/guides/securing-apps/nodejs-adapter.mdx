@@ -1,0 +1,75 @@
+---
+title: Adapter Node.js untuk NQRust-Identity
+description: Adapter Node.js untuk NQRust-Identity - Dokumentasi NQRust-Identity
+---
+
+# Adapter Node.js untuk NQRust-Identity
+
+NQRust-Identity menyediakan sebuah adapter Node.js yang dibangun di atas [Connect](https://github.com/senchalabs/connect) untuk melindungi aplikasi JavaScript sisi-server - tujuan utamanya adalah untuk fleksibel mencukupi integrasi dengan framework seperti [Express.js](https://expressjs.com/). Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](https://www.nqrust-identity.org/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
+
+Pustaka ini dapat diunduh langsung dari [organisasi NQRust-Identity](https://www.npmjs.com/package/nqrust-identity-connect) dan sumbernya tersedia di [GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
+
+Untuk menggunakan adapter Node.js, pertama-tama Anda harus membuat sebuah klien untuk aplikasi Anda di Konsol Admin NQRust-Identity. Adapter mendukung tipe akses publik, rahasia, dan hanya bearer. Yang mana harus dipilih tergantung pada skenario penggunaan.
+
+Setelah klien dibuat, klik **Action** di pojok kanan atas dan pilih **Download adapter config**. Untuk **Format, pilih \*NQRust-Identity OIDC JSON** dan klik **Download**. File `nqrust-identity.json` yang diunduh berada di folder root proyek Anda.
+
+## [](#_installation)Instalasi
+
+Dalam asumsi Anda telah menginstal [Node.js](https://nodejs.org), buat sebuah folder untuk aplikasi Anda:
+
+```
+mkdir myapp && cd myapp
+```
+
+Gunakan perintah `npm init` untuk membuat sebuah `package.json` untuk aplikasi Anda. Sekarang tambahkan adapter connect NQRust-Identity ke dalam daftar dependencies:
+
+```json
+    "dependencies": {
+        "nqrust-identity-connect": "26.1.1"
+    }
+```
+
+## [](#_usage)Penggunaan
+
+Instantiasikan sebuah kelas NQRust-Identity
+
+Kelas `NQRust-Identity` menyediakan titik pusat untuk konfigurasi dan integrasi dengan aplikasi Anda. Pembuatan yang paling sederhana tidak memerlukan argumen.
+
+Di direktori root proyek Anda, buat sebuah file yang disebut `server.js` dan tambahkan kode berikut:
+
+```javascript
+    const session = require('express-session');
+    const NQRust-Identity = require('nqrust-identity-connect');
+
+    const memoryStore = new session.MemoryStore();
+    const nqrust-identity = new NQRust-Identity({ store: memoryStore });
+```
+
+Instal dependensi `express-session`:
+
+```
+    npm install express-session
+```
+
+Untuk memulai skrip `server.js`, tambahkan perintah berikut di dalam bagian 'scripts' dari `package.json`:
+
+```
+    "scripts": {
+        "test": "echo \\"Error: no test specified\\" && exit 1",
+        "start": "node server.js"
+    },
+```
+
+Sekarang kita memiliki kemampuan untuk menjalankan server dengan perintah berikut:
+
+```
+    npm run start
+```
+
+Secara default, ini akan menemukan sebuah file bernama `nqrust-identity.json` di samping executable utama aplikasi Anda, dalam hal ini di folder root, untuk menginisialisasi pengaturan spesifik NQRust-Identity seperti kunci publik, nama realm, berbagai URL.
+
+Dalam hal ini, penyebaran NQRust-Identity diperlukan untuk mengakses Konsol Admin NQRust-Identity.
+
+Silakan kunjungi tautan tentang cara menyebarkan Konsol Admin NQRust-Identity dengan [Podman](https://www.nqrust-identity.org/getting-started/getting-started-podman) atau [Docker](https://www.nqrust-identity.org/getting-started/getting-started-docker)
+
+Sekarang kita siap untuk mendapatkan file `nqrust-identity.json` dengan mengunjungi Konsol Admin NQRust-Identity → klien (sidebar kiri) → pilih klien Anda → Instalasi → Opsi

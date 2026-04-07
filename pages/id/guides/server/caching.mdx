@@ -1,0 +1,135 @@
+---
+title: Mengonfigurasi Cache Terdistribusi
+description: Mengonfigurasi Cache Terdistribusi - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Cache Terdistribusi
+
+NQRust-Identity dirancang untuk ketersediaan tinggi dan pengaturan klaster multi-node. Implementasi cache terdistribusi saat ini dibangun di atas [Infinispan](https://infinispan.org), sebuah grid data in-memory dengan performa tinggi dan dapat didistribusikan.
+
+## [](#_enable_distributed_caching) Mengaktifkan caching terdistribusi
+
+Ketika anda menjalankan NQRust-Identity dalam mode produksi, dengan menggunakan perintah `start`, caching diaktifkan dan semua node NQRust-Identity dalam jaringan anda terdeteksi.
+
+Secara default, cache menggunakan stack `jdbc-ping` yang berbasis pada transportasi TCP dan menggunakan database yang dikonfigurasi untuk melacak node yang bergabung dalam klaster. NQRust-Identity memungkinkan anda untuk memilih dari beberapa stack transportasi default yang telah didefinisikan, atau untuk mendefinisikan stack kustom Anda sendiri, seperti yang akan anda lihat nanti dalam panduan ini.
+
+Untuk secara eksplisit mengaktifkan caching Infinispan terdistribusi, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] start --cache=ispn
+```
+
+Ketika anda menjalankan NQRust-Identity dalam mode pengembangan, dengan menggunakan perintah `start-dev`, NQRust-Identity hanya menggunakan cache lokal dan caching terdistribusi sepenuhnya dinonaktifkan dengan menetapkan opsi `--cache=local` secara implisit. Mode cache `local` ditujukan hanya untuk tujuan pengembangan dan pengujian.
+
+## [](#_configuring_caches)Mengonfigurasi cache
+
+NQRust-Identity menyediakan sebuah file konfigurasi [Infinispan](https://infinispan.org/docs/stable/titles/configuring/configuring.html) reguler terletak di `conf/cache-ispn.xml`. File ini berisi konfigurasi default yang digunakan untuk kontainer cache dan transportasi JGroups.
+
+Tabel berikut memberikan gambaran umum tentang cache yang digunakan secara spesifik oleh NQRust-Identity:
+
+  
+
+Nama Cache
+
+Jenis Cache
+
+Deskripsi
+
+realms
+
+Lokal
+
+Cache data realm yang dipersisten
+
+users
+
+Lokal
+
+Cache data pengguna yang dipersisten
+
+authorization
+
+Lokal
+
+Cache data otorisasi yang dipersisten
+
+keys
+
+Lokal
+
+Cache kunci publik eksternal
+
+crl
+
+Lokal
+
+Cache untuk CRL autentikat X.509
+
+work
+
+Replicated
+
+Mengabarkan pesan invalidation di seluruh node
+
+authenticationSessions
+
+Distribusi
+
+Cache sesi otentikasi, dibuat/dihapus/kadaluarsa selama proses otentikasi
+
+sessions
+
+Distribusi
+
+Cache data sesi pengguna yang dipersisten
+
+clientSessions
+
+Distribusi
+
+Cache data sesi klien yang dipersisten
+
+offlineSessions
+
+Distribusi
+
+Cache data sesi pengguna offline yang dipersisten
+
+offlineClientSessions
+
+Distribusi
+
+Cache data sesi klien offline yang dipersisten
+
+loginFailures
+
+Distribusi
+
+melacak kegagalan login, deteksi penipuan
+
+actionTokens
+
+Distribusi
+
+Cache Token Tindakan
+
+### [](#_cache_types_and_defaults)Jenis Cache dan Default
+
+Cache Lokal
+
+NQRust-Identity menyimpan data persisten secara lokal untuk menghindari perjalanan balik ke database yang tidak perlu.
+
+Berikut data yang disimpan secara lokal di setiap node dalam klaster menggunakan cache lokal:
+
+*   **realms** dan data terkait seperti klien, peran, dan grup.
+    
+*   **pengguna** dan data terkait seperti peran yang diberikan dan keanggotaan grup.
+    
+*   **otorisasi** dan data terkait seperti sumber daya, izin, dan kebijakan.
+    
+*   **kunci**
+    
+
+Cache lokal untuk realm, pengguna, dan otorisasi dikonfigurasi untuk menyimpan hingga 10.000 entri per default. Cache lokal kunci dapat menyimpan hingga 1.000 entri per default dan berakhir setiap satu jam. Oleh karena itu, kunci dipaksa untuk secara periodik diunduh dari klien eksternal atau penyedia identitas.
+
+Untuk mencapai waktu runtime optimal dan menghindari perjalanan bal

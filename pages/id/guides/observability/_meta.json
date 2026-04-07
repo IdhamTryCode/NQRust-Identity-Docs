@@ -1,0 +1,11 @@
+{
+  "telemetry": "Sentralisasi dengan OpenTelemetry",
+  "health": "Pemantauan Status dengan Health Check",
+  "configuration-metrics": "Wawasan melalui Metrics",
+  "event-metrics": "Monitoring Aktivitas Pengguna dengan Event Metrics",
+  "keycloak-service-level-indicators": "Monitoring Performa dengan Service Level Indicators",
+  "metrics-for-troubleshooting": "Troubleshooting dengan Metrics",
+  "tracing": "Analisis Akar Masalah dengan Tracing",
+  "grafana-dashboards": "Visualisasi di Dashboard Grafana",
+  "exemplars": "Analisis Outlier dengan Exemplars"
+}

@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide Nextra's default breadcrumb */
+.nextra-breadcrumb {
+  display: none !important;
+}
+
+@layer base {
+  :root {
+    --brand: 22 89% 54%;          /* #f36523 in HSL */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --primary: 22 89% 54%;
+    --primary-foreground: 0 0% 100%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --primary: 22 89% 54%;
+    --primary-foreground: 0 0% 100%;
+  }
+}

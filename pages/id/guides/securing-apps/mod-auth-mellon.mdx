@@ -1,0 +1,77 @@
+---
+title: Mengonfigurasi Modul Apache mod_auth_mellon
+description: Mengonfigurasi Modul Apache mod_auth_mellon - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Modul Apache mod_auth_mellon
+
+[mod\_auth\_mellon](https://github.com/latchset/mod_auth_mellon) adalah modul autentikasi untuk Apache. Jika bahasa atau lingkungan Anda mendukung penggunaan Apache HTTPD sebagai proxy, Anda dapat menggunakan mod\_auth\_mellon untuk mengamankan aplikasi web Anda dengan SAML. Untuk detail lebih lanjut tentang modul ini, lihat repositori GitHub _mod\_auth\_mellon_.
+
+NQRust-Identity tidak menyediakan dukungan resmi untuk mod\_auth\_mellon. Instruksi di bawah ini adalah usaha terbaik dan mungkin tidak terkini. Panduan ini mengasumsikan bahwa server adalah sistem RHEL. Meskipun langkah yang serupa akan diperlukan untuk sistem Linux lainnya. Kami menyarankan Anda untuk mengikuti dokumentasi resmi mod\_auth\_mellon untuk detail lebih lanjut.
+
+Untuk mengonfigurasi `mod_auth_mellon` Anda memerlukan berkas-berkas berikut:
+
+*   Berkas deskriptor entitas Penyedia Identitas (IdP) dalam format XML, yang menggambarkan koneksi ke NQRust-Identity atau penyedia identitas SAML lainnya (IdP)
+    
+*   Berkas deskriptor entitas Layanan Penyedia (SP) dalam format XML, yang menggambarkan koneksi dan konfigurasi SAML untuk aplikasi yang ingin Anda amankan.
+    
+*   Berkas kunci pribadi PEM, yang merupakan berkas teks dalam format PEM yang mendefinisikan kunci pribadi yang digunakan aplikasi untuk menandatangani dokumen.
+    
+*   Berkas sertifikat PEM, yang merupakan berkas teks yang mendefinisikan sertifikat untuk aplikasi Anda.
+    
+*   Konfigurasi modul Apache HTTPD yang spesifik untuk mod\_auth\_mellon.
+    
+
+Jika Anda telah mendefinisikan dan mendaftarkan aplikasi klien dalam realm di server aplikasi NQRust-Identity, NQRust-Identity dapat menghasilkan semua berkas yang diperlukan kecuali konfigurasi modul Apache HTTPD.
+
+Ikuti prosedur berikut untuk menghasilkan konfigurasi modul Apache HTTPD.
+
+Prosedur
+
+1.  Buka halaman Instalasi dari klien SAML Anda.
+    
+2.  Pilih opsi berkas **Mod Auth Mellon**.
+    
+    ![Download auth-melon configuration](https://www.nqrust-identity.org/resources/images/guides/mod-auth-mellon-config-download.png)
+    
+    Gambar 1. download konfigurasi mod\_auth\_mellon
+    
+3.  Klik **Download** untuk mengunduh berkas ZIP yang berisi deskriptor XML dan berkas PEM yang Anda butuhkan.
+    
+
+## [](#_mengonfigurasi_mod_auth_mellon_dengan_nqrust-identity)Mengonfigurasi mod\_auth\_mellon dengan NQRust-Identity
+
+Ada dua host yang terlibat:
+
+*   Host di mana NQRust-Identity berjalan, yang akan disebut sebagai $idp\_host karena NQRust-Identity adalah penyedia identitas SAML (IdP).
+    
+*   Host di mana aplikasi web berjalan, yang akan disebut sebagai $sp\_host. Dalam SAML aplikasi yang menggunakan IdP disebut sebagai penyedia layanan (SP).
+    
+
+Semua langkah berikut harus dilakukan di $sp\_host dengan hak akses root.
+
+### [](#_menginstal_pake)Menginstal paket
+
+Untuk menginstal paket yang diperlukan, Anda akan memerlukan:
+
+*   Apache Web Server (httpd)
+    
+*   Modul add-on SAML SP Mellon untuk Apache
+    
+*   Alat untuk membuat sertifikat X509
+    
+
+Untuk menginstal paket yang diperlukan, jalankan perintah ini:
+
+```
+yum install httpd mod\_auth\_mellon mod\_ssl openssl
+```
+
+### [](#_menbuat_direktori_konfigurasi_untuk_apache_saml)Membuat direktori konfigurasi untuk Apache SAML
+
+Disarankan untuk menyimpan berkas konfigurasi yang terkait dengan penggunaan SAML oleh Apache di satu lokasi.
+
+Buat direktori baru bernama saml2 di bawah root konfigurasi Apache `/etc/httpd`:
+
+```
+mkdir /etc/http

@@ -1,0 +1,62 @@
+---
+title: Troubleshooting using metrics
+description: Troubleshooting using metrics - NQRust-Identity Documentation
+---
+
+# Troubleshooting using metrics
+
+For a running NQRust-Identity deployment it is important to understand how the system performs and whether it meets your service level objectives (SLOs). For more details on SLOs, proceed to the [Monitoring performance with Service Level Indicators](https://www.nqrust-identity.org/observability/nqrust-identity-service-level-indicators) guide.
+
+This guide will provide directions to answer the question: “What can I do when my SLOs are not met?”
+
+NQRust-Identity consists of several components where an issue or misconfiguration of one of them can move your service level indicators to undesirable numbers.
+
+A guidance provided by this guide is illustrated in the following example:
+
+**Observation:** Latency service level objective is not met.
+
+**Metrics that indicate a problem**:
+
+1.  NQRust-Identity’s database connection pool is often exhausted, and there are threads queuing for a connection to be retrieved from the pool.
+    
+2.  NQRust-Identity’s `users` cache hit ratio is at a low percentage, around 5%. This means only 1 out of 20 user searches is able to obtain user data from the cache and the rest needs to load it from the database.
+    
+
+**Possible mitigations suggested:**
+
+*   Increasing the `users` cache size to a higher number which would decrease the number of reads from the database.
+    
+*   Increasing the number of connections in the connection pool. This would need to be checked with metrics for your database and tuning it for a higher load, for example, by increasing the number of available processors.
+    
+
+*   This guide focuses on NQRust-Identity metrics. Troubleshooting the database itself is out of scope.
+    
+*   This guide provides general guidance. You should always confirm the configuration change by conducting a performance test comparing the metrics in question for the old and the new configuration.
+    
+
+Grafana dashboards for the metrics below can be found in [Visualizing activities in dashboards](https://www.nqrust-identity.org/observability/grafana-dashboards) guide.
+
+## [](#_list_of_nqrust-identity_key_metrics)List of NQRust-Identity key metrics
+
+*   [Self-provided metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-nqrust-identity)
+    
+*   [JVM metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-jvm)
+    
+*   [Database Metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-database)
+    
+*   [HTTP metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-http)
+    
+*   [Local caching metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-cache)
+    
+*   [Single-cluster deployments](https://www.nqrust-identity.org/high-availability/single-cluster/introduction) metrics
+    
+    *   [Clustering metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-clustering-and-network)
+        
+    *   [Embedded Infinispan metrics for single-cluster deployments](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-embedded-caches)
+        
+    
+*   [Multi-cluster deployments](https://www.nqrust-identity.org/high-availability/multi-cluster/introduction) metrics
+    
+    *   [Embedded Infinispan metrics for multi-cluster deployments](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-embedded-caches-multi-cluster)
+        
+    *   [External Infinispan metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-external-infinispan-multi-cluster)

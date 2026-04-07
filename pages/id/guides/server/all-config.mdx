@@ -1,0 +1,147 @@
+---
+title: Konfigurasi Semua
+description: Konfigurasi Semua - Dokumentasi NQRust-Identity
+---
+
+# Konfigurasi Semua
+
+## [](#category-cache)Cache
+
+  
+
+Jenis atau Nilai
+
+Default
+
+`cache`
+
+Mendefinisikan mekanisme cache untuk ketersediaan tinggi.
+
+Pada mode produksi secara default, cache `ispn` digunakan untuk membuat kluster antara beberapa node server. Pada mode pengembangan secara default, cache `local` menonaktifkan kluster dan ditujukan untuk tujuan pengembangan dan pengujian.
+
+**CLI:** `--cache`  
+**Env:** `KC_CACHE`
+
+`ispn`, `local`
+
+`ispn`
+
+`cache-config-file`
+
+Mendefinisikan file dari mana konfigurasi cache harus diambil.
+
+File konfigurasi relatif terhadap direktori `conf/`.
+
+**CLI:** `--cache-config-file`  
+**Env:** `KC_CACHE_CONFIG_FILE`
+
+_File_
+
+`cache-config-mutate`
+
+Menentukan apakah diizinkan untuk mengubah konfigurasi cache default.
+
+Hanya disarankan untuk kasus penggunaan lanjutan di mana konfigurasi cache default terbukti menjadi masalah. Cara yang didukung untuk mengubah konfigurasi cache default adalah melalui opsi `cache-…​` lainnya.
+
+**CLI:** `--cache-config-mutate`  
+**Env:** `KC_CACHE_CONFIG_MUTATE`
+
+`true`, `false`
+
+`false`
+
+`cache-embedded-authorization-max-count`
+
+Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache otorisasi.
+
+**CLI:** `--cache-embedded-authorization-max-count`  
+**Env:** `KC_CACHE_EMBEDDED_AUTHORIZATION_MAX_COUNT`
+
+_Integer_
+
+`cache-embedded-client-sessions-max-count`
+
+Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache clientSessions.
+
+**CLI:** `--cache-embedded-client-sessions-max-count`  
+**Env:** `KC_CACHE_EMBEDDED_CLIENT_SESSIONS_MAX_COUNT`
+
+Hanya tersedia saat konfigurasi kluster Infinispan embedded
+
+_Integer_
+
+`cache-embedded-crl-max-count`
+
+Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache crl.
+
+**CLI:** `--cache-embedded-crl-max-count`  
+**Env:** `KC_CACHE_EMBEDDED_CRL_MAX_COUNT`
+
+_Integer_
+
+`cache-embedded-keys-max-count`
+
+Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache kunci.
+
+**CLI:** `--cache-embedded-keys-max-count`  
+**Env:** `KC_CACHE_EMBEDDED_KEYS_MAX_COUNT`
+
+_Integer_
+
+`cache-embedded-mtls-enabled`
+
+Mengenkripsi komunikasi jaringan antara server NQRust-Identity.
+
+Jika tidak ada parameter tambahan tentang keystore dan truststore yang diberikan, pasangan kunci sementara dan sertifikat akan dibuat dan diputar secara otomatis, yang disarankan untuk konfigurasi standar.
+
+**CLI:** `--cache-embedded-mtls-enabled`  
+**Env:** `KC_CACHE_EMBEDDED_MTLS_ENABLED`
+
+Hanya tersedia saat stack cache berbasis TCP digunakan
+
+`true`, `false`
+
+`true`
+
+`cache-embedded-mtls-key-store-file`
+
+Jalur file Keystore.
+
+Keystore harus berisi sertifikat yang akan digunakan oleh protokol TLS. Secara default, mencari `cache-mtls-keystore.p12` di bawah direktori conf/.
+
+**CLI:** `--cache-embedded-mtls-key-store-file`  
+**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_FILE`
+
+Hanya tersedia saat properti 'cache-embedded-mtls-enabled' diaktifkan
+
+_String_
+
+`cache-embedded-mtls-key-store-password`
+
+Kata sandi untuk mengakses Keystore.
+
+**CLI:** `--cache-embedded-mtls-key-store-password`  
+**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_PASSWORD`
+
+Hanya tersedia saat properti 'cache-embedded-mtls-enabled' diaktifkan
+
+_String_
+
+`cache-embedded-mtls-rotation-interval-days`
+
+Jangka waktu putaran sertifikat JGroups MTLS otomatis dalam hari.
+
+**CLI:** `--cache-embedded-mtls-rotation-interval-days`  
+**Env:** `KC_CACHE_EMBEDDED_MTLS_ROTATION_INTERVAL_DAYS`
+
+Hanya tersedia saat properti 'cache-embedded-mtls-enabled' diaktifkan
+
+_Integer_
+
+`30`
+
+`cache-embedded-mtls-trust-store-file`
+
+Jalur file Truststore.
+
+Seharusnya berisi sertifikat terpercaya atau Otorit

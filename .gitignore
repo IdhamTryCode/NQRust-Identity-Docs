@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+
+# Build
+dist/
+
+# Environment
+.env*.local
+
+# Debug
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Scraped content (large, regeneratable)
+scraped-raw/
+scraped-processed/
+
+# Playwright browsers
+playwright-browsers/
+
+# Temp files
+*.txt
+build_result.txt
+
+# Editor
+.cursor/
+.vscode/settings.json

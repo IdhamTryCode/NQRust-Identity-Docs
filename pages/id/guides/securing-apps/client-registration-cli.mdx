@@ -1,0 +1,48 @@
+---
+title: Otomatisasi Pendaftaran Klien dengan CLI
+description: Otomatisasi Pendaftaran Klien dengan CLI - Dokumentasi NQRust-Identity
+---
+
+# Otomatisasi Pendaftaran Klien dengan CLI
+
+CLI Pendaftaran Klien adalah alat antarmuka baris perintah (CLI) untuk pengembang aplikasi untuk mengonfigurasi klien baru secara mandiri saat mengintegrasikan dengan NQRust-Identity. Alat ini dirancang khusus untuk berinteraksi dengan endpoint REST Pendaftaran Klien NQRust-Identity.
+
+Tidak diperlukan untuk membuat atau memperoleh konfigurasi klien untuk setiap aplikasi agar dapat menggunakan NQRust-Identity. Biasanya Anda mengonfigurasi klien baru untuk setiap aplikasi baru yang dihosting di nama host yang unik. Ketika aplikasi berinteraksi dengan NQRust-Identity, aplikasi mengidentifikasi dirinya dengan ID klien sehingga NQRust-Identity dapat menyediakan halaman masuk, manajemen sesi single sign-on (SSO), dan layanan lainnya.
+
+Anda dapat mengonfigurasi klien aplikasi dari baris perintah dengan CLI Pendaftaran Klien, dan dapat menggunakannya dalam skrip shell.
+
+Untuk mengizinkan pengguna tertentu untuk menggunakan `CLI Pendaftaran Klien`, administrator NQRust-Identity biasanya menggunakan Konsol Admin untuk mengonfigurasi pengguna baru dengan peran yang sesuai atau untuk mengonfigurasi klien baru dan rahasia klien untuk memberikan akses ke API Pendaftaran REST.
+
+## [](#_mengonfigurasi_pengguna_baru_untuk_cli_pendaftaran_klien)Mengonfigurasi pengguna reguler baru untuk digunakan dengan CLI Pendaftaran Klien
+
+Prosedur
+
+1.  Masuk ke Konsol Admin (misalnya, [http://localhost:8080](http://localhost:8080)) sebagai `admin`.
+    
+2.  Pilih realm untuk diadministrasikan.
+    
+3.  Jika Anda ingin menggunakan pengguna yang ada, pilih pengguna itu untuk diedit; jika tidak, buat pengguna baru.
+    
+4.  Pilih **Role Mapping**, **Assign role**. Dari daftar opsi, klik **Filter by clients**. Di kolom pencarian, ketik `manage-clients`. Pilih peran, atau jika Anda berada di realm master, pilih yang memiliki **NAME-realm**, di mana `NAME` adalah nama realm yang ditarget. Anda dapat memberikan akses ke realm lainnya untuk pengguna di realm master.
+    
+5.  Klik **Assign** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
+    
+6.  Pilih **Available Roles**, **manage-client** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
+    
+    Perizinan ini memberi kemampuan kepada pengguna untuk melakukan operasi tanpa menggunakan Token Akses Awal atau Token Akses Registrasi (lihat [Menggunakan layanan pendaftaran klien](https://www.nqrust-identity.org/securing-apps/client-registration#_authentication) untuk informasi lebih lanjut).
+
+Mungkin untuk tidak menetapkan peran `realm-management` apapun kepada pengguna. Dalam hal ini, pengguna masih dapat masuk dengan CLI Pendaftaran Klien tetapi tidak dapat menggunakannya tanpa Token Akses Awal. Mencoba untuk melakukan operasi tanpa token akan menghasilkan kesalahan **403 Forbidden**.
+
+Administrator dapat mengeluarkan Token Akses Awal dari Konsol Admin di area Klien di tab **Initial Access Token**.
+
+## [](#_mengonfigurasi_klien_untuk_penggunaan_cli_pendaftaran_klien)Mengonfigurasi klien untuk digunakan dengan CLI Pendaftaran Klien
+
+Secara default, server mengenali CLI Pendaftaran Klien sebagai klien `admin-cli`, yang dikonfigurasi secara otomatis untuk setiap realm baru. Tidak diperlukan konfigurasi klien tambahan saat masuk dengan nama pengguna.
+
+Prosedur
+
+1.  Buat klien (misalnya, `reg-cli`) jika Anda ingin menggunakan konfigurasi klien terpisah untuk CLI Pendaftaran Klien.
+    
+2.  Hilangkan centang **Standard Flow Enabled**.
+    
+3.  Pertahankan keamanan

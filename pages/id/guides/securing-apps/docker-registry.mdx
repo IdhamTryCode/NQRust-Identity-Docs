@@ -1,0 +1,60 @@
+---
+title: Mengonfigurasi Registri Docker
+description: Mengonfigurasi Registri Docker - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Registri Docker
+
+Otentikasi Docker dinonaktifkan secara default. Untuk mengaktifkannya, lihat panduan [Mengaktifkan dan Menonaktifkan Fitur](https://www.nqrust-identity.org/server/features).
+
+Bagian ini menjelaskan bagaimana Anda dapat mengonfigurasi registri Docker untuk menggunakan NQRust-Identity sebagai server otentikasinya.
+
+Untuk informasi lebih lanjut tentang cara menyiapkan dan mengonfigurasi registri Docker, lihat panduan [Konfigurasi Registri Docker](https://distribution.github.io/distribution/about/configuration/).
+
+## [](#_docker_registry_configuration_file_installation)Pemasangan Berkas Konfigurasi Registri Docker
+
+Untuk pengguna dengan konfigurasi registri Docker yang lebih canggih, umumnya direkomendasikan untuk menyediakan berkas konfigurasi registri Anda sendiri. Provider Docker NQRust-Identity mendukung mekanisme ini melalui Opsi Format Berkas Konfigurasi Registri. Memilih opsi ini akan menghasilkan output yang mirip dengan berikut:
+
+```
+auth:
+  token:
+    realm: http://localhost:8080/realms/master/protocol/docker-v2/auth
+    service: docker-test
+    issuer: http://localhost:8080/realms/master
+```
+
+Output ini kemudian dapat disalin ke dalam berkas konfigurasi registri apa pun yang ada. Lihat [spesifikasi berkas konfigurasi registri](https://distribution.github.io/distribution/about/configuration/) untuk informasi lebih lanjut tentang cara pengaturan berkas, atau mulai dengan [contoh dasar](https://github.com/distribution/distribution/blob/main/cmd/registry/config-example.yml).
+
+Jangan lupa untuk mengonfigurasi bidang `rootcertbundle` dengan lokasi kunci publik realm NQRust-Identity. Konfigurasi otentikasi tidak akan berfungsi tanpa argumen ini.
+
+## [](#_docker_registry_environment_variable_override_installation)Pemasangan Penggantian Variabel Lingkungan Registri Docker
+
+Sering kali, menggunakan penggantian variabel lingkungan sederhana untuk registri Docker yang digunakan untuk pengembangan atau POC adalah yang tepat. Meskipun pendekatan ini biasanya tidak disarankan untuk penggunaan produksi, dapat membantu ketika seseorang memerlukan cara cepat dan sederhana untuk menyiapkan registri. Cukup gunakan Opsi Format Penggantian Variabel dari detail klien, dan output seperti di bawah ini akan muncul:
+
+```
+REGISTRY_AUTH_TOKEN_REALM: http://localhost:8080/realms/master/protocol/docker-v2/auth
+REGISTRY_AUTH_TOKEN_SERVICE: docker-test
+REGISTRY_AUTH_TOKEN_ISSUER: http://localhost:8080/realms/master
+```
+
+Jangan lupa untuk mengonfigurasi penggantian `REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE` dengan lokasi kunci publik realm NQRust-Identity. Konfigurasi otentikasi tidak akan berfungsi tanpa argumen ini.
+
+## [](#_docker_compose_yaml_file)Berkas YAML Docker Compose
+
+Metode pemasangan ini dimaksudkan sebagai cara mudah untuk mendapatkan registri Docker yang mengotentikasi terhadap server NQRust-Identity. Ini ditujukan untuk tujuan pengembangan saja dan tidak pernah digunakan dalam lingkungan produksi atau mirip produksi.
+
+Mekanisme pemasangan berkas zip menyediakan cepat mulai untuk pengembang yang ingin memahami bagaimana server NQRust-Identity dapat berinteraksi dengan registri Docker. Untuk mengonfigurasi:
+
+Prosedur
+
+1.  Dari realm yang diinginkan, buat konfigurasi klien. Pada saat ini Anda belum memiliki registri Docker - cepat mulai akan mengurus bagian itu.
+    
+2.  Pilih opsi **Docker Compose YAML** dari menu _Action_ dan pilih opsi **Download adapter config** untuk mengunduh berkas ZIP.
+    
+3.  Ekstrak arsip ke lokasi yang diinginkan, dan buka direktori.
+    
+4.  Jalankan registri Docker dengan `docker-compose up` 
+
+direkomendasikan untuk mengonfigurasi klien registri Docker di realm selain 'master', karena aliran otentikasi HTTP Basic tidak akan menampilkan formulir.
+
+Set

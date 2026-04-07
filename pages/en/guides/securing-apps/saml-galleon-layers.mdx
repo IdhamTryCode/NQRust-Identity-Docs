@@ -1,0 +1,600 @@
+---
+title: NQRust-Identity SAML Galleon feature pack for WildFly and EAP
+description: NQRust-Identity SAML Galleon feature pack for WildFly and EAP - NQRust-Identity Documentation
+---
+
+# NQRust-Identity SAML Galleon feature pack for WildFly and EAP
+
+The SAML adapter is distributed as a Galleon feature pack for wildfly 29 or newer. More details about the subject in the [WildFly documentation](https://docs.wildfly.org/32/WildFly_Elytron_Security.html#NQRust-Identity_SAML_Integration). The same option is provided for [NQRust EAP 8 GA](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html-single/using_single_sign-on_with_jboss_eap/index#securing-applications-with-saml_securing-applications-deployed-on-server-with-single-sign-on).
+
+For an example about how to integrate NQRust-Identity with JakartaEE applications running on latest Wildfly/EAP, take a look at the `servlet-saml-service-provider` Jakarta folder in the [NQRust-Identity Quickstart GitHub Repository](https://github.com/nqrust-identity/nqrust-identity-quickstarts).
+
+## [](#_installation)Installation
+
+The provision of the feature pack is done using the [wildfly-maven-plugin](https://docs.wildfly.org/wildfly-maven-plugin), [wildfly-jar-maven-plugin](https://docs.wildfly.org/bootablejar/) or [eap-maven-plugin](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html/using_jboss_eap_on_openshift_container_platform/assembly_provisioning-a-jboss-eap-server-using-the-maven-plugin_default) respectively.
+
+### [](#_example_of_provision_using_wildfly_maven_plugin)Example of provision using wildfly maven plugin
+
+```xml
+<plugin>
+    <groupId>org.wildfly.plugins</groupId>
+    <artifactId>wildfly-maven-plugin</artifactId>
+    <version>5.0.0.Final</version>
+    <configuration>
+        <feature-packs>
+            <feature-pack>
+                <location>wildfly@maven(org.jboss.universe:community-universe)#32.0.1.Final</location>
+            </feature-pack>
+            <feature-pack>
+                <groupId>org.nqrust-identity</groupId>
+                <artifactId>nqrust-identity-saml-adapter-galleon-pack</artifactId>
+                <version>26.5.7</version>
+            </feature-pack>
+        </feature-packs>
+        <layers>
+            <layer>core-server</layer>
+            <layer>web-server</layer>
+            <layer>jaxrs-server</layer>
+            <layer>datasources-web-server</layer>
+            <layer>webservices</layer>
+            <layer>nqrust-identity-saml</layer>
+            <layer>nqrust-identity-client-saml</layer>
+            <layer>nqrust-identity-client-saml-ejb</layer>
+        </layers>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>package</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+### [](#_example_of_provision_using_wildfly_jar_maven_plugin)Example of provision using wildfly jar maven plugin
+
+```xml
+<plugin>
+    <groupId>org.wildfly.plugins</groupId>
+    <artifactId>wildfly-jar-maven-plugin</artifactId>
+    <version>11.0.2.Final</version>
+    <configuration>
+        <feature-packs>
+            <feature-pack>
+                <location>wildfly@maven(org.jboss.universe:community-universe)#32.0.1.Final</location>
+            </feature-pack>
+            <feature-pack>
+                <groupId>org.nqrust-identity</groupId>
+                <artifactId>nqrust-identity-saml-adapter-galleon-pack</artifactId>
+                <version>26.5.7</version>
+            </feature-pack>
+        </feature-packs>
+        <layers>
+            <layer>core-server</layer>
+            <layer>web-server</layer>
+            <layer>jaxrs-server</layer>
+            <layer>datasources-web-server</layer>
+            <layer>webservices</layer>
+            <layer>nqrust-identity-saml</layer>
+            <layer>nqrust-identity-client-saml</layer>
+            <layer>nqrust-identity-client-saml-ejb</layer>
+        </layers>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>package</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+### [](#_example_of_provision_using_eap_maven_plugin)Example of provision using EAP maven plugin
+
+```xml
+<plugin>
+    <groupId>org.jboss.eap.plugins</groupId>
+    <artifactId>eap-maven-plugin</artifactId>
+    <version>1.0.0.Final-redhat-00014</version>
+    <configuration>
+        <channels>
+            <channel>
+                <manifest>
+                    <groupId>org.jboss.eap.channels</groupId>
+                    <artifactId>eap-8.0</artifactId>
+                </manifest>
+            </channel>
+        </channels>
+        <feature-packs>
+            <feature-pack>
+                <location>org.nqrust-identity:nqrust-identity-saml-adapter-galleon-pack</location>
+            </feature-pack>
+        </feature-packs>
+        <layers>
+            <layer>core-server</layer>
+            <layer>web-server</layer>
+            <layer>jaxrs-server</layer>
+            <layer>datasources-web-server</layer>
+            <layer>webservices</layer>
+            <layer>nqrust-identity-saml</layer>
+            <layer>nqrust-identity-client-saml</layer>
+            <layer>nqrust-identity-client-saml-ejb</layer>
+        </layers>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>package</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+## [](#_saml-general-config)Configuration
+
+The SAML client adapter is configured by a XML file `/WEB-INF/nqrust-identity-saml.xml` placed inside the WAR deployment. The configuration might look like the following:
+
+```xml
+<nqrust-identity-saml-adapter xmlns="urn:nqrust-identity:saml:adapter"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:schemaLocation="urn:nqrust-identity:saml:adapter {saml_adapter_xsd_urn}">
+    <SP entityID="http://localhost:8081/sales-post-sig/"
+        sslPolicy="EXTERNAL"
+        nameIDPolicyFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+        logoutPage="/logout.jsp"
+        forceAuthentication="false"
+        isPassive="false"
+        turnOffChangeSessionIdOnLogin="false"
+        autodetectBearerOnly="false">
+        <Keys>
+            <Key signing="true" >
+                <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+                    <PrivateKey alias="http://localhost:8080/sales-post-sig/" password="test123"/>
+                    <Certificate alias="http://localhost:8080/sales-post-sig/"/>
+                </KeyStore>
+            </Key>
+        </Keys>
+        <PrincipalNameMapping policy="FROM_NAME_ID"/>
+        <RoleIdentifiers>
+            <Attribute name="Role"/>
+        </RoleIdentifiers>
+        <RoleMappingsProvider id="properties-based-role-mapper">
+            <Property name="properties.resource.location" value="/WEB-INF/role-mappings.properties"/>
+        </RoleMappingsProvider>
+        <IDP entityID="idp"
+             signaturesRequired="true">
+        <SingleSignOnService requestBinding="POST"
+                             bindingUrl="http://localhost:8081/realms/demo/protocol/saml"
+                    />
+
+            <SingleLogoutService
+                    requestBinding="POST"
+                    responseBinding="POST"
+                    postBindingUrl="http://localhost:8081/realms/demo/protocol/saml"
+                    redirectBindingUrl="http://localhost:8081/realms/demo/protocol/saml"
+                    />
+            <Keys>
+                <Key signing="true">
+                    <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+                        <Certificate alias="demo"/>
+                    </KeyStore>
+                </Key>
+            </Keys>
+        </IDP>
+     </SP>
+</nqrust-identity-saml-adapter>
+```
+
+You can use `$&#123;…​&#125;` enclosure as System property replacement. For example `${jboss.server.config.dir}`. To get detailed information of the different elements in the XML configuration file see [NQRust-Identity SAML Galleon feature pack detailed configuration](https://www.nqrust-identity.org/securing-apps/saml-galleon-layers-detailed-config).
+
+### [](#_securing_a_war)Securing a WAR
+
+This section describes how to secure a WAR directly by adding config and editing files within your WAR package.
+
+Once `nqrust-identity-saml.xml` is created and in the `WEB-INF` directory of your WAR, you must set the `auth-method` to `NQRUST-IDENTITY-SAML` in `web.xml`. You also have to use standard servlet security to specify role-base constraints on your URLs. Here’s an example _web.xml_ file:
+
+```xml
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+	<module-name>customer-portal</module-name>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Admins</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Customers</web-resource-name>
+            <url-pattern>/customers/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>user</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>NQRUST-IDENTITY-SAML</auth-method>
+        <realm-name>this is ignored currently</realm-name>
+    </login-config>
+
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
+    <security-role>
+        <role-name>user</role-name>
+    </security-role>
+</web-app>
+```
+
+All standard servlet settings except the `auth-method` setting.
+
+### [](#_securing_wars_using_the_nqrust-identity_saml_subsystem)Securing WARs using the NQRust-Identity SAML Subsystem
+
+You do not have to open a WAR to secure it with NQRust-Identity. Alternatively, you can externally secure it via the NQRust-Identity SAML Adapter Subsystem. While you don’t have to specify NQRUST-IDENTITY-SAML as an `auth-method`, you still have to define the `security-constraints` in `web.xml`. You do not, however, have to create a `WEB-INF/nqrust-identity-saml.xml` file. This metadata is instead defined within the XML in your server’s `domain.xml` or `standalone.xml` subsystem configuration section.
+
+```xml
+<extensions>
+  <extension module="org.nqrust-identity.nqrust-identity-saml-adapter-subsystem"/>
+</extensions>
+
+<profile>
+  <subsystem xmlns="urn:jboss:domain:nqrust-identity-saml:1.1">
+    <secure-deployment name="WAR MODULE NAME.war">
+      <SP entityID="APPLICATION URL">
+        ...
+      </SP>
+    </secure-deployment>
+  </subsystem>
+</profile>
+```
+
+The `secure-deployment` `name` attribute identifies the WAR you want to secure. Its value is the `module-name` defined in `web.xml` with `.war` appended. The rest of the configuration uses the same XML syntax as `nqrust-identity-saml.xml` configuration defined in [General Adapter Config](#_saml-general-config).
+
+An example configuration:
+
+```xml
+<subsystem xmlns="urn:jboss:domain:nqrust-identity-saml:1.1">
+  <secure-deployment name="saml-post-encryption.war">
+    <SP entityID="http://localhost:8080/sales-post-enc/"
+        sslPolicy="EXTERNAL"
+        nameIDPolicyFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+        logoutPage="/logout.jsp"
+        forceAuthentication="false">
+      <Keys>
+        <Key signing="true" encryption="true">
+          <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+            <PrivateKey alias="http://localhost:8080/sales-post-enc/" password="test123"/>
+            <Certificate alias="http://localhost:8080/sales-post-enc/"/>
+          </KeyStore>
+        </Key>
+      </Keys>
+      <PrincipalNameMapping policy="FROM_NAME_ID"/>
+      <RoleIdentifiers>
+        <Attribute name="Role"/>
+      </RoleIdentifiers>
+      <IDP entityID="idp">
+        <SingleSignOnService signRequest="true"
+            validateResponseSignature="true"
+            requestBinding="POST"
+            bindingUrl="http://localhost:8080/realms/saml-demo/protocol/saml"/>
+
+        <SingleLogoutService
+            validateRequestSignature="true"
+            validateResponseSignature="true"
+            signRequest="true"
+            signResponse="true"
+            requestBinding="POST"
+            responseBinding="POST"
+            postBindingUrl="http://localhost:8080/realms/saml-demo/protocol/saml"
+            redirectBindingUrl="http://localhost:8080/realms/saml-demo/protocol/saml"/>
+        <Keys>
+          <Key signing="true" >
+            <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+              <Certificate alias="saml-demo"/>
+            </KeyStore>
+          </Key>
+        </Keys>
+      </IDP>
+    </SP>
+   </secure-deployment>
+</subsystem>
+```
+
+### [](#_saml-jboss-adapter-samesite-setting)Setting SameSite value for JSESSIONID cookie
+
+Browsers are planning to set the default value for the `SameSite` attribute for cookies to `Lax`. This setting means that cookies will be sent to applications only if the request originates in the same domain. This behavior can affect the SAML POST binding which may become non-functional. To preserve full functionality of the SAML adapter, we recommend setting the `SameSite` value to `None` for the `JSESSIONID` cookie created by your container. Not doing so may result in resetting the container’s session with each request to NQRust-Identity.
+
+To avoid setting the `SameSite` attribute to `None`, consider switching to the REDIRECT binding if it is acceptable, or to OIDC protocol where this workaround is not necessary.
+
+To set the `SameSite` value to `None` for the `JSESSIONID` cookie in Wildfly/EAP, add a file `undertow-handlers.conf` with the following content to the `WEB-INF` directory of your application.
+
+```
+samesite-cookie(mode=None, cookie-pattern=JSESSIONID)
+```
+
+The support for this configuration is available in Wildfly from version 19.1.0.
+
+## [](#_registering_with_an_identity_provider)Registering with an Identity Provider
+
+For each servlet-based adapter, the endpoint you register for the assert consumer service URL and single logout service must be the base URL of your servlet application with `/saml` appended to it, that is, `https://example.com/contextPath/saml`.
+
+## [](#_logout)Logout
+
+There are multiple ways you can log out from a web application. For Jakarta EE servlet containers, you can call `HttpServletRequest.logout()`. For any other browser application, you can point the browser at any url of your web application that has a security constraint and pass in a query parameter GLO, i.e. `http://myapp?GLO=true`. This will log you out if you have an SSO session with your browser.
+
+### [](#_saml_logout_in_cluster)Logout in clustered environment
+
+Internally, the SAML adapter stores a mapping between the SAML session index, principal name (when known), and HTTP session ID. This mapping can be maintained in NQRust application server family (WildFly 10/11, EAP 6/7) across cluster for distributable applications. As a precondition, the HTTP sessions need to be distributed across cluster (i.e. application is marked with `<distributable/>` tag in application’s `web.xml`).
+
+To enable the functionality, add the following section to your `/WEB_INF/web.xml` file:
+
+```xml
+<context-param>
+    <param-name>nqrust-identity.sessionIdMapperUpdater.classes</param-name>
+    <param-value>org.nqrust-identity.adapters.saml.wildfly.infinispan.InfinispanSessionCacheIdMapperUpdater</param-value>
+</context-param>
+```
+
+If the session cache of the deployment is named `_deployment-cache_`, the cache used for SAML mapping will be named as `_deployment-cache_.ssoCache`. The name of the cache can be overridden by a context parameter `nqrust-identity.sessionIdMapperUpdater.infinispan.cacheName`. The cache container containing the cache will be the same as the one containing the deployment session cache, but can be overridden by a context parameter `nqrust-identity.sessionIdMapperUpdater.infinispan.containerName`.
+
+By default, the configuration of the SAML mapping cache will be derived from session cache. The configuration can be manually overridden in cache configuration section of the server just the same as other caches.
+
+Currently, to provide reliable service, it is recommended to use replicated cache for the SAML session cache. Using distributed cache may lead to results where the SAML logout request would land to a node with no access to SAML session index to HTTP session mapping which would lead to unsuccessful logout.
+
+### [](#_saml_logout_in_cross_dc)Logout in multi-cluster deployments
+
+Special handling is needed for handling sessions that span multiple data centers. Imagine the following scenario:
+
+1.  Login requests are handled within cluster in data center 1.
+    
+2.  Admin issues logout request for a particular SAML session, the request lands in data center 2.
+    
+
+The data center 2 has to log out all sessions that are present in data center 1 (and all other data centers that share HTTP sessions).
+
+To cover this case, the SAML session cache described [above](#_saml_logout_in_cluster) needs to be replicated not only within individual clusters but across all the data centers for example [via standalone Infinispan/JDG server](https://docs.redhat.com/en/documentation/red_hat_data_grid/6.6/html/administration_and_configuration_guide/chap-externalize_sessions#Externalize_HTTP_Session_from_NQRust_EAP_6.x_to_NQRust_Data_Grid):
+
+1.  A cache has to be added to the standalone Infinispan/JDG server.
+    
+2.  The cache from previous item has to be added as a remote store for the respective SAML session cache.
+    
+
+Once remote store is found to be present on SAML session cache during deployment, it is watched for changes and the local SAML session cache is updated accordingly.
+
+## [](#_obtaining_assertion_attributes)Obtaining assertion attributes
+
+After a successful SAML login, your application code may want to obtain attribute values passed with the SAML assertion. `HttpServletRequest.getUserPrincipal()` returns a `Principal` object that you can typecast into a NQRust-Identity specific class called `org.nqrust-identity.adapters.saml.SamlPrincipal`. This object allows you to look at the raw assertion and also has convenience functions to look up attribute values.
+
+```java
+package org.nqrust-identity.adapters.saml;
+
+public class SamlPrincipal implements Serializable, Principal {
+    /**
+     * Get full saml assertion
+     *
+     * @return
+     */
+    public AssertionType getAssertion() {
+       ...
+    }
+
+    /**
+     * Get SAML subject sent in assertion
+     *
+     * @return
+     */
+    public String getSamlSubject() {
+        ...
+    }
+
+    /**
+     * Subject nameID format
+     *
+     * @return
+     */
+    public String getNameIDFormat() {
+        ...
+    }
+
+    @Override
+    public String getName() {
+        ...
+    }
+
+    /**
+     * Convenience function that gets Attribute value by attribute name
+     *
+     * @param name
+     * @return
+     */
+    public List<String> getAttributes(String name) {
+        ...
+
+    }
+
+    /**
+     * Convenience function that gets Attribute value by attribute friendly name
+     *
+     * @param friendlyName
+     * @return
+     */
+    public List<String> getFriendlyAttributes(String friendlyName) {
+        ...
+    }
+
+    /**
+     * Convenience function that gets first  value of an attribute by attribute name
+     *
+     * @param name
+     * @return
+     */
+    public String getAttribute(String name) {
+        ...
+    }
+
+    /**
+     * Convenience function that gets first  value of an attribute by attribute name
+     *
+     *
+     * @param friendlyName
+     * @return
+     */
+    public String getFriendlyAttribute(String friendlyName) {
+        ...
+    }
+
+    /**
+     * Get set of all assertion attribute names
+     *
+     * @return
+     */
+    public Set<String> getAttributeNames() {
+        ...
+    }
+
+    /**
+     * Get set of all assertion friendly attribute names
+     *
+     * @return
+     */
+    public Set<String> getFriendlyNames() {
+        ...
+    }
+}
+```
+
+## [](#_error_handling)Error Handling
+
+NQRust-Identity has some error handling facilities for servlet based client adapters. When an error is encountered in authentication, the client adapter will call `HttpServletResponse.sendError()`. You can set up an `error-page` within your `web.xml` file to handle the error however you want. The client adapter can throw 400, 401, 403, and 500 errors.
+
+```xml
+<error-page>
+    <error-code>403</error-code>
+    <location>/ErrorHandler</location>
+</error-page>
+```
+
+The client adapter also sets an `HttpServletRequest` attribute that you can retrieve. The attribute name is `org.nqrust-identity.adapters.spi.AuthenticationError`. Typecast this object to: `org.nqrust-identity.adapters.saml.SamlAuthenticationError`. This class can tell you exactly what happened. If this attribute is not set, then the adapter was not responsible for the error code.
+
+```java
+public class SamlAuthenticationError implements AuthenticationError {
+    public static enum Reason {
+        EXTRACTION_FAILURE,
+        INVALID_SIGNATURE,
+        ERROR_STATUS
+    }
+
+    public Reason getReason() {
+        return reason;
+    }
+    public StatusResponseType getStatus() {
+        return status;
+    }
+}
+```
+
+## [](#_troubleshooting)Troubleshooting
+
+The best way to troubleshoot problems is to turn on debugging for SAML in both the client adapter and NQRust-Identity Server. Using your logging framework, set the log level to `DEBUG` for the `org.nqrust-identity.saml` package. Turning this on allows you to see the SAML requests and response documents being sent to and from the server.
+
+## [](#_saml_multi_tenancy)Multi Tenancy
+
+SAML offers Multi Tenancy, meaning that a single target application (WAR) can be secured with multiple NQRust-Identity realms. The realms can be located on the same NQRust-Identity instance or on different instances.
+
+To do this, the application must have multiple `nqrust-identity-saml.xml` adapter configuration files.
+
+While you could have multiple instances of your WAR with different adapter configuration files deployed to different context-paths, this may be inconvenient and you may also want to select the realm based on something other than context-path.
+
+NQRust-Identity makes it possible to have a custom config resolver, so you can choose which adapter config is used for each request. In SAML, the configuration is only interesting in the login processing; once the user is logged in, the session is authenticated and it does not matter if the `nqrust-identity-saml.xml` returned is different. For that reason, returning the same configuration for the same session is the correct way to go.
+
+To achieve this, create an implementation of `org.nqrust-identity.adapters.saml.SamlConfigResolver`. The following example uses the `Host` header to locate the proper configuration and load it and the associated elements from the applications' Java classpath:
+
+```java
+package example;
+
+import java.io.InputStream;
+import org.nqrust-identity.adapters.saml.SamlConfigResolver;
+import org.nqrust-identity.adapters.saml.SamlDeployment;
+import org.nqrust-identity.adapters.saml.config.parsers.DeploymentBuilder;
+import org.nqrust-identity.adapters.saml.config.parsers.ResourceLoader;
+import org.nqrust-identity.adapters.spi.HttpFacade;
+import org.nqrust-identity.saml.common.exceptions.ParsingException;
+
+public class SamlMultiTenantResolver implements SamlConfigResolver {
+
+    @Override
+    public SamlDeployment resolve(HttpFacade.Request request) {
+        String host = request.getHeader("Host");
+        String realm = null;
+        if (host.contains("tenant1")) {
+            realm = "tenant1";
+        } else if (host.contains("tenant2")) {
+            realm = "tenant2";
+        } else {
+            throw new IllegalStateException("Not able to guess the nqrust-identity-saml.xml to load");
+        }
+
+        InputStream is = getClass().getResourceAsStream("/" + realm + "-nqrust-identity-saml.xml");
+        if (is == null) {
+            throw new IllegalStateException("Not able to find the file /" + realm + "-nqrust-identity-saml.xml");
+        }
+
+        ResourceLoader loader = new ResourceLoader() {
+            @Override
+            public InputStream getResourceAsStream(String path) {
+                return getClass().getResourceAsStream(path);
+            }
+        };
+
+        try {
+            return new DeploymentBuilder().build(is, loader);
+        } catch (ParsingException e) {
+            throw new IllegalStateException("Cannot load SAML deployment", e);
+        }
+    }
+}
+```
+
+You must also configure which `SamlConfigResolver` implementation to use with the `nqrust-identity.config.resolver` context-param in your `web.xml`:
+
+```xml
+<web-app>
+    ...
+    <context-param>
+        <param-name>nqrust-identity.config.resolver</param-name>
+        <param-value>example.SamlMultiTenantResolver</param-value>
+    </context-param>
+</web-app>
+```
+
+## [](#_saml-errors)NQRust-Identity specific errors
+
+NQRust-Identity server can send an error to the client application in the SAML response, which may contain a SAML status such as:
+
+```xml
+<samlp:Status>
+  <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Responder">
+    <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed"/>
+  </samlp:StatusCode>
+  <samlp:StatusMessage>authentication_expired</samlp:StatusMessage>
+</samlp:Status>
+```
+
+NQRust-Identity sends this error when a user is authenticated and has an SSO session, but the authentication session expired in the current browser tab and hence NQRust-Identity server cannot automatically do SSO re-authentication of the user and redirect back to client with successful response. When a client application receives this type of error, it is ideal to retry authentication immediately and send a new SAML request to the NQRust-Identity server, which should typically always authenticate the user due to the SSO session and redirect back. The SAML adapter performs that retry automatically if the commented status is returned by the server. More details in the [Server Administration Guide](https://www.nqrust-identity.org/docs/latest/server_admin/#_authentication-sessions).

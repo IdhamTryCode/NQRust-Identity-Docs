@@ -1,0 +1,44 @@
+---
+title: Mengonfigurasi Antarmuka Pengelolaan
+description: Mengonfigurasi Antarmuka Pengelolaan - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Antarmuka Pengelolaan
+
+Antarmuka pengelolaan memungkinkan akses ke endpoint pengelolaan melalui server HTTP yang berbeda dari yang utama. Ini menyediakan kemungkinan untuk menyembunyikan endpoint seperti `/metrics` atau `/health` dari dunia luar, oleh karena itu meningkatkan keamanan. Keuntungan terbesar mungkin dapat dilihat di lingkungan Kubernetes karena port pengelolaan tertentu mungkin tidak terekspos.
+
+## [](#_mengonfigurasi-antarmuka-pengelolaan)Mengonfigurasi Antarmuka Pengelolaan
+
+Antarmuka pengelolaan dihidupkan ketika ada sesuatu yang terekspos di atasnya. Endpoint pengelolaan seperti `/metrics` dan `/health` terekspos pada port pengelolaan default `9000` ketika metrik dan kesehatan diaktifkan. Antarmuka pengelolaan menyediakan serangkaian opsi dan dapat dikonfigurasi sepenuhnya.
+
+Jika properti antarmuka pengelolaan tidak ditetapkan secara eksplisit, nilai-nilainya secara otomatis diwariskan dari server HTTP default.
+
+### [](#_port)Port
+
+Untuk mengubah port untuk antarmuka pengelolaan, Anda dapat menggunakan opsi NQRust-Identity `http-management-port`.
+
+### [](#_relative_path)Relative Path
+
+Anda dapat mengubah relative path dari antarmuka pengelolaan, karena prefiks path untuk endpoint pengelolaan bisa berbeda. Anda dapat mencapainya melalui opsi NQRust-Identity `http-management-relative-path`.
+
+Sebagai contoh, jika Anda mengatur opsi CLI `--http-management-relative-path=/management`, metrik dan endpoint kesehatan akan diakses melalui path `/management/metrics` dan `/management/health`.
+
+Pengguna secara otomatis **diredireksi** ke path tempat NQRust-Identity dihosting ketika relative path ditentukan. Artinya, ketika relative path diatur ke `/management`, dan pengguna mengakses `localhost:9000/`, halaman diredireksi ke `localhost:9000/management`.
+
+Jika Anda tidak menetapkan nilai secara eksplisit, nilai dari properti `http-relative-path` yang digunakan. Sebagai contoh, jika Anda mengatur opsi CLI `--http-relative-path=/auth`, endpoint ini dapat diakses melalui path `/auth/metrics` dan `/auth/health`.
+
+### [](#_tls_support)Dukungan TLS
+
+Ketika TLS diatur untuk server NQRust-Identity default, secara default antarmuka pengelolaan juga dapat diakses melalui HTTPS. Antarmuka pengelolaan hanya dapat berjalan pada HTTP atau HTTPS, tidak keduanya seperti server utama.
+
+Jika Anda tidak ingin antarmuka pengelolaan menggunakan HTTPS, Anda dapat menetapkan opsi `http-management-scheme` ke `http`.
+
+Opsi spesifik antarmuka pengelolaan NQRust-Identity dengan awalan `https-management-*` telah disediakan untuk menetapkan parameter TLS yang berbeda untuk server HTTP pengelolaan. Fungsinya mirip dengan kontraktor mereka untuk server HTTP utama, untuk detailnya lihat [Mengonfigurasi TLS](https://www.nqrust-identity.org/server/enabletls). Ketika opsi-opsi ini tidak ditetapkan secara eksplisit, parameter TLS diwariskan dari server HTTP default.
+
+### [](#_disable_management_interface)Menonaktifkan Antarmuka Pengelolaan
+
+Antarmuka pengelolaan secara otomatis dimatikan ketika tidak ada yang terekspos di atasnya. Saat ini, hanya pemeriksaan kesehatan dan metrik yang terekspos di antarmuka pengelolaan terlepas dari apakah. Jika Anda ingin menonaktifkan penampakan mereka di antarmuka pengelolaan, atur properti NQRust-Identity `legacy-observability-interface` ke `true`.
+
+Menampilkan endpoint kesehatan dan metrik pada server HTTP default tidak disarankan untuk alasan keamanan, dan Anda harus selalu menggunakan antarmuka pengelolaan. Perhatikan, opsi `legacy-observability-interface` usang dan akan dihapus dalam rilis mendatang. Itu hanya memungkinkan Anda untuk memberi lebih banyak waktu untuk migrasi.
+
+## [](#_relevant

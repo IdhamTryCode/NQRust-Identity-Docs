@@ -1,0 +1,133 @@
+---
+title: Integrasi dengan Protokol Konteks Model (MCP)
+description: Integrasi dengan Protokol Konteks Model (MCP) - Dokumentasi NQRust-Identity
+---
+
+# Integrasi dengan Protokol Konteks Model (MCP)
+
+Saat ini, terdapat empat versi spesifikasi Protokol Konteks Model (MCP):
+
+*   2025-11-25 (versi terbaru)
+    
+*   2025-06-18
+    
+*   2025-03-26
+    
+*   2024-11-05 (versi awal)
+    
+
+Versi awal (2024-11-05) tidak mencakup otorisasi, oleh karena itu tidak dicakup dalam panduan ini.
+
+Panduan ini menunjukkan kepada Anda hal berikut:
+
+*   Versi MCP yang didukung NQRust-Identity.
+    
+*   Cara mengatur NQRust-Identity sebagai server otorisasi dalam MCP.
+    
+
+Namun, panduan ini tidak mencakup semua yang perlu Anda ketahui. Oleh karena itu, disarankan untuk membaca juga bagian otorisasi dari versi MCP yang relevan.
+
+## [](#_standards_compliance_mcp_requires)Kesesuaian Standar MCP memerlukan
+
+Menurut [spesifikasi MCP](https://modelcontextprotocol.io/specification/draft/basic/authorization#standards-compliance), terdapat beberapa standar terkait server otorisasi dalam MCP. Tabel berikut menunjukkan:
+
+*   Versi MCP mana yang memerlukan server otorisasi untuk mendukung standar mana pada tingkat mana (MUST, SHOULD, MAY).
+    
+*   Kesesuaian standar yang diikuti NQRust-Identity.
+    
+
+    
+
+Standar
+
+2025-11-25
+
+2025-06-18
+
+2025-03-26
+
+NQRust-Identity
+
+[The OAuth 2.1 Authorization Framework (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-14)
+
+MUST
+
+MUST
+
+MUST
+
+Didukung
+
+[OAuth 2.0 Authorization Server Metadata (RFC 8414)](https://datatracker.ietf.org/doc/html/rfc8414)
+
+MUST
+
+MUST
+
+MUST
+
+Didukung
+
+[Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707)
+
+MUST
+
+MUST
+
+-
+
+Tidak didukung
+
+[OAuth 2.0 Dynamic Client Registration Protocol (RFC 7591)](https://datatracker.ietf.org/doc/html/rfc7591)
+
+MAY
+
+SHOULD
+
+SHOULD
+
+Didukung
+
+[OAuth Client ID Metadata Document (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00)
+
+SHOULD
+
+-
+
+-
+
+Tidak didukung
+
+Spesifikasi MCP mengadopsi [OAuth 2.0 Protected Resource Metadata (RFC 9728)](https://datatracker.ietf.org/doc/html/rfc9728). Standar ini untuk server MCP dan bukan untuk server otorisasi seperti NQRust-Identity. Oleh karena itu, tidak termasuk dalam tabel di atas.
+
+## [](#_mcp_version_compliance)Kesesuaian Versi MCP
+
+Dalam panduan ini, sebagai kriteria kesesuaian, "NQRust-Identity mendukung MCP" berarti NQRust-Identity memenuhi semua persyaratan MUST dan SHOULD oleh MCP.
+
+Menurut kriteria ini, tabel berikut menunjukkan versi MCP yang didukung NQRust-Identity.
+
+ 
+
+Versi MCP
+
+Kesesuaian
+
+[2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)
+
+Didukung
+
+[2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
+
+Partially Supported tanpa Resource Indicators untuk OAuth 2.0
+
+[2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)
+
+Partially Supported tanpa Resource Indicators untuk OAuth 2.0 dan OAuth Client ID Metadata Document
+
+## [](#_setup)Pengaturan
+
+### [](#_for_mcp_2025_03_26)Untuk MCP 2025-03-26
+
+Tidak diperlukan pengaturan khusus.
+
+### [](#_for_mcp_2025_06_18_and

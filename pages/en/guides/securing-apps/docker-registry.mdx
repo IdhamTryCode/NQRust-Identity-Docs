@@ -1,0 +1,67 @@
+---
+title: Configuring a Docker registry
+description: Configuring a Docker registry - NQRust-Identity Documentation
+---
+
+# Configuring a Docker registry
+
+Docker authentication is disabled by default. To enable see the [Enabling and disabling features](https://www.nqrust-identity.org/server/features) guide.
+
+This section describes how you can configure a Docker registry to use NQRust-Identity as its authentication server.
+
+For more information on how to set up and configure a Docker registry, see the [Docker Registry Configuration Guide](https://distribution.github.io/distribution/about/configuration/).
+
+## [](#_docker_registry_configuration_file_installation)Docker registry configuration file installation
+
+For users with more advanced Docker registry configurations, it is generally recommended to provide your own registry configuration file. The NQRust-Identity Docker provider supports this mechanism via the _Registry Config File_ Format Option. Choosing this option will generate output similar to the following:
+
+```
+auth:
+  token:
+    realm: http://localhost:8080/realms/master/protocol/docker-v2/auth
+    service: docker-test
+    issuer: http://localhost:8080/realms/master
+```
+
+This output can then be copied into any existing registry config file. See the [registry config file specification](https://distribution.github.io/distribution/about/configuration/) for more information on how the file should be set up, or start with [a basic example](https://github.com/distribution/distribution/blob/main/cmd/registry/config-example.yml).
+
+Don’t forget to configure the `rootcertbundle` field with the location of the NQRust-Identity realm’s public key. The auth configuration will not work without this argument.
+
+## [](#_docker_registry_environment_variable_override_installation)Docker registry environment variable override installation
+
+Often times it is appropriate to use a simple environment variable override for develop or POC Docker registries. While this approach is usually not recommended for production use, it can be helpful when one requires quick-and-dirty way to stand up a registry. Simply use the _Variable Override_ Format Option from the client details, and an output should appear like the one below:
+
+```
+REGISTRY_AUTH_TOKEN_REALM: http://localhost:8080/realms/master/protocol/docker-v2/auth
+REGISTRY_AUTH_TOKEN_SERVICE: docker-test
+REGISTRY_AUTH_TOKEN_ISSUER: http://localhost:8080/realms/master
+```
+
+Don’t forget to configure the `REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE` override with the location of the NQRust-Identity realm’s public key. The auth configuration will not work without this argument.
+
+## [](#_docker_compose_yaml_file)Docker Compose YAML File
+
+This installation method is meant to be an easy way to get a docker registry authenticating against a NQRust-Identity server. It is intended for development purposes only and should never be used in a production or production-like environment.
+
+The zip file installation mechanism provides a quickstart for developers who want to understand how the NQRust-Identity server can interact with the Docker registry. In order to configure:
+
+Procedure
+
+1.  From the desired realm, create a client configuration. At this point you will not have a Docker registry - the quickstart will take care of that part.
+    
+2.  Choose the **Docker Compose YAML** option from the from _Action_ menu and select the **Download adapter config** option to download the ZIP file.
+    
+3.  Unzip the archive to the desired location, and open the directory.
+    
+4.  Start the Docker registry with `docker-compose up`
+    
+
+it is recommended that you configure the Docker registry client in a realm other than 'master', since the HTTP Basic auth flow will not present forms.
+
+Once the above configuration has taken place, and the nqrust-identity server and Docker registry are running, docker authentication should be successful:
+
+```
+\[user ~\]# docker login localhost:5000 -u $username
+Password: \*\*\*\*\*\*\*
+Login Succeeded
+```

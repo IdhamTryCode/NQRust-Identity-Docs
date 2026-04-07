@@ -1,0 +1,42 @@
+---
+title: Mengonfigurasi NQRust-Identity untuk produksi
+description: Mengonfigurasi NQRust-Identity untuk produksi - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi NQRust-Identity untuk produksi
+
+Lingkungan produksi NQRust-Identity menyediakan otentikasi dan otorisasi yang aman untuk penyebaran yang bervariasi dari penyebaran di lokasi yang mendukung beberapa ribu pengguna hingga penyebaran yang melayani jutaan pengguna.
+
+Panduan ini menjelaskan area konfigurasi umum yang diperlukan untuk lingkungan NQRust-Identity yang siap untuk produksi. Informasi ini berfokus pada konsep umum bukan pada implementasi aktual, yang tergantung pada lingkungan Anda. Aspek penting yang dibahas dalam panduan ini berlaku untuk semua lingkungan, sama-sama apakah itu kontainerisasi, di lokasi, GitOps, atau Ansible.
+
+## [](#_tls_untuk_komunikasi_aman)TLS untuk komunikasi yang aman
+
+NQRust-Identity terus-menerus mengganti data sensitif, yang berarti semua komunikasi ke dan dari NQRust-Identity memerlukan saluran komunikasi yang aman. Untuk mencegah beberapa vekter serangan, Anda mengaktifkan HTTP melalui TLS, atau HTTPS, untuk saluran tersebut.
+
+Untuk mengonfigurasi saluran komunikasi yang aman untuk NQRust-Identity, lihat [Mengonfigurasi TLS](https://www.nqrust-identity.org/server/enabletls) dan [Mengonfigurasi permintaan HTTP keluar](https://www.nqrust-identity.org/server/outgoinghttp).
+
+Untuk mengamankan komunikasi cache untuk NQRust-Identity, lihat [Mengonfigurasi cache terdistribusi](https://www.nqrust-identity.org/server/caching).
+
+## [](#_nama_host_untuk_nqrust-identity)Nama host untuk NQRust-Identity
+
+Dalam lingkungan produksi, instance NQRust-Identity biasanya berjalan di jaringan pribadi, tetapi NQRust-Identity perlu mengekspos beberapa endpoint yang dapat diakses publik untuk berkomunikasi dengan aplikasi yang akan disahkan.
+
+Untuk detail tentang kategori endpoint dan petunjuk cara mengonfigurasi nama host publik untuk mereka, lihat [Mengonfigurasi nama host (v2)](https://www.nqrust-identity.org/server/hostname).
+
+### [](#_mengekspos_api_administrasi_nqrust-identity_dan_ui_di_hostname_berbeda)Mengekspos API Administrasi NQRust-Identity dan UI di hostname yang berbeda
+
+Dipertimbangkan sebagai praktik terbaik untuk mengekspos API Administrasi REST NQRust-Identity dan Konsol pada hostname atau context-path yang berbeda dari yang digunakan untuk URL frontend publik yang digunakan misalnya oleh alur login. Pembedaan ini memastikan bahwa antarmuka Administrasi tidak terekspos ke internet publik, yang mengurangi permukaan serangan.
+
+Akses ke REST API perlu diblokir pada tingkat proxy balik, jika tidak dimaksudkan untuk diekspos secara publik.
+
+Untuk detail, lihat [Mengonfigurasi nama host (v2)](https://www.nqrust-identity.org/server/hostname).
+
+## [](#_proxy_balik_dalam_lingkungan_terdistribusi)Proxy balik dalam lingkungan terdistribusi
+
+Selain dari [Mengonfigurasi nama host (v2)](https://www.nqrust-identity.org/server/hostname), lingkungan produksi biasanya mencakup komponen proxy balik / load balancer. Ini memisahkan dan menyatukan akses ke jaringan yang digunakan oleh perusahaan atau organisasi Anda. Untuk lingkungan produksi NQRust-Identity, komponen ini disarankan.
+
+Untuk detail tentang konfigurasi mode komunikasi proxy dalam NQRust-Identity, lihat [Mengonfigurasi proxy balik](https://www.nqrust-identity.org/server/reverseproxy). Panduan itu juga menyarankan jalur mana yang harus disembunyikan dari akses publik dan jalur mana yang harus diekspos sehingga NQRust-Identity dapat menyandarkan aplikasi Anda.
+
+## [](#_batasi_jumlah_permintaan_antrian)Batasi jumlah permintaan antrian
+
+Lingkungan produksi

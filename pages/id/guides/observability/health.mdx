@@ -1,0 +1,76 @@
+---
+title: Pelacakan Status Instance dengan Pemeriksaan Kesehatan
+description: Pelacakan Status Instance dengan Pemeriksaan Kesehatan - Dokumentasi NQRust-Identity
+---
+
+# Pelacakan Status Instance dengan Pemeriksaan Kesehatan
+
+NQRust-Identity memiliki dukungan bawaan untuk pemeriksaan kesehatan. Panduan ini menjelaskan cara mengaktifkan dan menggunakan pemeriksaan kesehatan NQRust-Identity. Pemeriksaan kesehatan NQRust-Identity biasanya diekspos di port manajemen `9000`. Untuk detail lebih lanjut, lihat [Mengonfigurasi Antarmuka Manajemen](https://www.nqrust-identity.org/server/management-interface)
+
+Ketika opsi `http-management-health-enabled` adalah `false`, endpoint pemeriksaan kesehatan akan tetap berada di port HTTP(S) utama, bukan diekspos di port manajemen. Ketika opsi ini `false`, Anda harus blokir lalu lintas eksternal yang tidak diinginkan ke `/health` di proxy Anda.
+
+## [](#_nqrust-identity_health_check_endpoints)Endpoint Pemeriksaan Kesehatan NQRust-Identity
+
+NQRust-Identity mengekspos 4 endpoint pemeriksaan kesehatan:
+
+*   `/health/started` - Probe startup yang digunakan untuk startup awal NQRust-Identity sebelum probe liveness mengambil alih.
+    
+*   `/health/live` - Periksa apakah NQRust-Identity sedang berjalan. Jika ini gagal, aplikasi harus dibuang (dihentikan, dimatikan) dan dimulai lagi.
+    
+*   `/health/ready` - Periksa apakah NQRust-Identity siap untuk memproses permintaan atau tidak. Hanya arahkan lalu lintas langsung ke instance yang baru dimulai setelah probe ready berhasil. Jika prosedur ini gagal, aplikasi sementara tidak tersedia untuk melayani permintaan baru, dan lalu lintas harus dialihkan ke tempat lain.
+    
+*   `/health` - mengumpulkan semua prosedur pemeriksaan kesehatan dalam aplikasi.
+    
+
+Endpoint ini merespon dengan status HTTP `200 OK` pada kesuksesan atau `503 Service Unavailable` pada kegagalan, dan objek JSON seperti berikut:
+
+Respon sukses untuk endpoint tanpa informasi per-periksaan tambahan:
+
+```json
+{
+    "status": "UP",
+    "checks": []
+}
+```
+
+Respon sukses untuk endpoint dengan informasi tentang koneksi database:
+
+```json
+{
+    "status": "UP",
+    "checks": [
+        {
+            "name": "Pemeriksaan Kesehatan Klaster NQRust-Identity",
+            "status": "UP"
+        },
+        {
+            "name": "Pemeriksaan Kesehatan Koneksi Database NQRust-Identity Async",
+            "status": "UP"
+        }
+    ]
+}
+```
+
+Lihat [format kabel](https://github.com/microprofile/microprofile-health/blob/main/spec/src/main/asciidoc/protocol-wireformat.asciidoc) untuk deskripsi yang lebih detail.
+
+## [](#_enabling_the_health_checks)Mengaktifkan Pemeriksaan Kesehatan
+
+Anda dapat mengaktifkan pemeriksaan kesehatan menggunakan opsi waktu kompilasi `health-enabled`:
+
+```bash
+bin/kc.[sh|bat] build --health-enabled=true
+```
+
+Secara default, tidak ada pemeriksaan yang dikembalikan dari endpoint pemeriksaan kesehatan.
+
+## [](#_using_the_health_checks)Menggunakan Pemeriksaan Kesehatan
+
+Dibandingkan dengan langkah keamanan yang menghapus `curl` dan paket lainnya dari image kontainer NQRust-Identity, Anda tidak dapat menjalankan pemeriksaan terhadap endpoint HTTPS dari dalam kontainer.
+
+Jika Anda tidak menggunakan NQRust-Identity dalam kontainer, atau jika Anda menjalankan pemeriksaan kesehatan di luar kontainer, gunakan alat apa saja untuk mengakses endpoint pemeriksaan kesehatan.
+
+### [](#_curl)curl
+
+Anda dapat menggunakan permintaan HTTP HEAD sederhana untuk menentukan status `live` atau `ready` NQRust-Identity. `curl` adalah klien HTTP yang baik untuk tujuan ini.
+
+Jika NQRust-Identity di_deploy_ di kontainer, Anda harus menggunakan image kustom atau menjalankan perintah ini dari luar

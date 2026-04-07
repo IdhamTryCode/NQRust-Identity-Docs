@@ -1,0 +1,60 @@
+---
+title: Menggunakan layanan pendaftaran klien
+description: Menggunakan layanan pendaftaran klien - Dokumentasi NQRust-Identity
+---
+
+# Menggunakan layanan pendaftaran klien
+
+Agar aplikasi atau layanan dapat menggunakan NQRust-Identity, mereka harus mendaftarkan klien di NQRust-Identity. Admin dapat melakukannya melalui konsol admin (atau endpoint REST admin), tetapi klien juga dapat mendaftar sendiri melalui layanan pendaftaran klien NQRust-Identity.
+
+Layanan Pendaftaran Klien menawarkan dukungan bawaan untuk Representasi Klien NQRust-Identity, Metadata Klien OpenID Connect, dan Deskripsi Entitas SAML. Endpoint Layanan Pendaftaran Klien adalah `/realms/`&lt;realm&gt;`/clients-registrations/`&lt;provider&gt;``.
+
+`Providers` yang didukung secara bawaan adalah:
+
+*   default - Representasi Klien NQRust-Identity (JSON)
+    
+*   install - Konfigurasi Adapter NQRust-Identity (JSON)
+    
+*   openid-connect - Deskripsi Metadata Klien OpenID Connect (JSON)
+    
+*   saml2-entity-descriptor - Deskripsi Entitas SAML (XML)
+    
+
+Bagian berikut akan menjelaskan cara menggunakan provider yang berbeda.
+
+## [](#_autentikasi)Autentikasi
+
+Untuk memanggil Layanan Pendaftaran Klien, Anda biasanya memerlukan token. Token bisa berupa token bearer, token akses awal, atau token akses pendaftaran. Ada alternatif untuk mendaftar klien baru tanpa token sama sekali, tetapi Anda perlu mengonfigurasi Kebijakan Pendaftaran Klien (lihat di bawah).
+
+### [](#_token_pemantau)Token Pemantau
+
+Token pemantau dapat diterbitkan atas nama pengguna atau Akun Layanan. Berikut izin yang diperlukan untuk memanggil endpoint (lihat [Panduan Administrasi Server](https://www.nqrust-identity.org/docs/latest/server_admin/) untuk detail lebih lanjut):
+
+*   create-client atau manage-client - Untuk membuat klien
+    
+*   view-client atau manage-client - Untuk melihat klien
+    
+*   manage-client - Untuk memperbarui atau menghapus klien
+    
+
+Jika Anda menggunakan token pemantau untuk membuat klien, disarankan untuk menggunakan token dari Akun Layanan dengan peran `create-client` saja (lihat [Panduan Administrasi Server](https://www.nqrust-identity.org/docs/latest/server_admin/) untuk detail lebih lanjut).
+
+### [](#_token_akses_awal)Token Akses Awal
+
+Pendekatan yang disarankan untuk mendaftar klien baru adalah dengan menggunakan token akses awal. Token akses awal hanya dapat digunakan untuk membuat klien dan memiliki masa berlakunya yang dapat dikonfigurasi serta batas konfigurasi tentang berapa banyak klien yang dapat dibuat.
+
+Token akses awal dapat dibuat melalui konsol admin. Untuk membuat token akses awal baru, pertama pilih realm di konsol admin, kemudian klik `Client` di menu di kiri, diikuti `Initial access token` di tab yang ditampilkan di halaman.
+
+Sekarang Anda dapat melihat token akses awal yang ada. Jika Anda memiliki akses, Anda dapat menghapus token yang tidak lagi diperlukan. Anda hanya dapat mengambil nilai token saat Anda membuatnya. Untuk membuat token baru, klik `Create`. Anda dapat secara opsional menambahkan berapa lama token harus berlakunya, juga berapa banyak klien yang dapat dibuat menggunakan token. Setelah Anda klik `Save`, nilai token akan ditampilkan.
+
+Penting bahwa Anda menyalin/menempelkan token ini sekarang karena Anda tidak akan dapat mengambilnya nanti. Jika Anda lupa menyalin/menempelkan, hapus token tersebut dan buat yang baru.
+
+Nilai token digunakan sebagai token pemantau standar saat memanggil Layanan Pendaftaran Klien, dengan menambahkannya ke header Otorisasi dalam permintaan. Sebagai contoh:
+
+```
+Authorization: bearer eyJhbGciOiJSUz...
+```
+
+### [](#_token_akses_pendaftaran)Token Akses Pendaftaran
+
+Ketika Anda membuat klien melalui Layanan Pendaftaran Klien, respons akan mencakup token akses pendaftaran. Token akses pendaftaran menyediakan akses untuk mengambil konfigurasi klien nanti, tetapi juga untuk memperbarui atau menghapus kli

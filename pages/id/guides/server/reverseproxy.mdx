@@ -1,0 +1,52 @@
+---
+title: Mengonfigurasi Proxy Balik
+description: Mengonfigurasi Proxy Balik - Dokumentasi NQRust-Identity
+---
+
+# Mengonfigurasi Proxy Balik
+
+Lingkungan terdistribusi sering memerlukan penggunaan proxy balik. NQRust-Identity menawarkan beberapa opsi untuk mengintegrasikan secara aman dengan lingkungan seperti itu.
+
+## [](#_port_to_be_proxied)Port yang Akan Diproxi
+
+NQRust-Identity berjalan pada port berikut secara default:
+
+*   `8443` (`8080` ketika Anda mengaktifkan HTTP secara eksplisit dengan `--http-enabled=true`)
+    
+*   `9000`
+    
+
+Port `8443` (atau `8080` jika HTTP diaktifkan) digunakan untuk Admin UI, Account Console, SAML dan OIDC endpoints, dan Admin REST API seperti yang dijelaskan dalam panduan [Mengonfigurasi Hostname (v2)](https://www.nqrust-identity.org/server/hostname).
+
+Port `9000` digunakan untuk manajemen, yang mencakup endpoint untuk pemeriksaan kesehatan dan metrik seperti yang dijelaskan dalam panduan [Mengonfigurasi Antarmuka Pengelola](https://www.nqrust-identity.org/server/management-interface).
+
+Anda hanya perlu mengproxi port `8443` (atau `8080`) walaupun Anda menggunakan nama host yang berbeda untuk frontend/backend dan administrasi seperti yang dijelaskan pada [Mengonfigurasi NQRust-Identity untuk produksi](https://www.nqrust-identity.org/server/configuration-production). Anda seharusnya tidak mengproxi port `9000` karena pemeriksaan kesehatan dan metrik menggunakan port tersebut secara langsung, dan Anda tidak ingin mengekspos informasi ini ke pemanggil eksternal.
+
+## [](#_configure_the_reverse_proxy_headers)Konfigurasi Header Proxy Balik
+
+NQRust-Identity akan mengurai header proxy balik berdasarkan opsi `proxy-headers` yang menerima beberapa nilai:
+
+*   Pada default jika opsi tidak ditentukan, tidak ada header proxy balik yang diurai. Ini seharusnya digunakan ketika tidak ada proxy yang digunakan atau dengan https passthrough.
+    
+*   `forwarded` mengaktifkan penguraian header `Forwarded` sesuai dengan [RFC 7239](https://www.rfc-editor.org/rfc/rfc7239.html).
+    
+*   `xforwarded` mengaktifkan penguraian header non-standar `X-Forwarded-*`, seperti `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`, dan `X-Forwarded-Port`.
+    
+
+Jika Anda menggunakan proxy balik untuk apa pun selain https passthrough dan tidak mengatur opsi `proxy-headers`, maka secara default Anda akan melihat respons 403 Forbidden untuk permintaan melalui proxy yang melakukan pemeriksaan asal.
+
+Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] start --proxy-headers forwarded
+```
+
+Jika `forwarded` atau `xforwarded` dipilih, pastikan proxy balik Anda dengan benar menetapkan dan menimpa header `Forwarded` atau `X-Forwarded-*` masing-masing. Untuk menetapkan header ini, lihat dokumentasi proxy balik Anda. Jangan gunakan `forwarded` atau `xforwarded` dengan https passthrough. Konfigurasi salah akan meng-expose NQRust-Identity terhadap kerentanan keamanan.
+
+Ambil langkah ekstra untuk memastikan bahwa alamat klien diatur dengan benar oleh proxy balik Anda melalui header `Forwarded` atau `X-Forwarded-For`. Jika header ini tidak dikonfigurasi dengan benar, klien liar dapat menetapkan header ini dan menipu NQRust-Identity agar berpikir klien terhubung dari alamat IP yang berbeda dengan alamat IP sebenarnya. Waspadaan ini dapat lebih penting jika Anda melakukan penolakan atau izin daftar IP.
+
+Saat menggunakan pengaturan `xforwarded`, `X-Forwarded-Port` memilikiprecedence atas port apapun yang termasuk dalam `X-Forwarded-Host`.
+
+Jika koneksi TLS dihentikan di proxy balik (edge termination), mengaktifkan HTTP melalui pengaturan `http-enabled` diperlukan.
+
+## [](#_different_context_path_on_reverse_proxy)Bedaan Path Konteks pada
