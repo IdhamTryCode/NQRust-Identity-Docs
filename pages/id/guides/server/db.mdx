@@ -1,123 +1,613 @@
 ---
-title: Mengonfigurasi Database
-description: Mengonfigurasi Database - Dokumentasi NQRust-Identity
+title: Configuring the database
+description: Configuring the database - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi Database
+# Configuring the database
+
+import { Callout } from 'nextra/components'
 
 Panduan ini menjelaskan cara mengonfigurasi server NQRust-Identity untuk menyimpan data dalam database relational.
 
-## [](#_supported_databases)Database yang Didukung
+## Database yang Didukung
 
 Server memiliki dukungan bawaan untuk berbagai database. Anda dapat menanyakan database yang tersedia dengan melihat nilai yang diharapkan untuk opsi konfigurasi `db`. Tabel berikut mencantumkan database yang didukung dan versi yang teruji.
 
-   
+| Database | Nilai Opsi | Versi Teruji | Versi Didukung |
+| --- | --- | --- | --- |
+| MariaDB Server | `mariadb` | 11.8 | 11.8 (LTS), 11.4 (LTS), 10.11 (LTS), 10.6 (LTS) |
+| Microsoft SQL Server | `mssql` | 2022 | 2022, 2019 |
+| MySQL | `mysql` | 8.4 | 8.4 (LTS), 8.0 (LTS) |
+| Oracle Database | `oracle` | 23.5 | 23.x (mis. 23.5+), 19c (19.3+) (**Catatan:** Oracle RAC juga didukung jika menggunakan versi mesin database yang sama, mis. 23.5+, 19.3+) |
+| PostgreSQL | `postgres` | 18 | 18.x, 17.x, 16.x, 15.x, 14.x |
+| EnterpriseDB Advanced | `postgres` | 18 | 18.x, 17.x |
+| Amazon Aurora PostgreSQL | `postgres` | 17.5 | 17.x, 16.x, 15.x |
+| Azure SQL Database | `mssql` | terkini | terkini |
+| Azure SQL Managed Instance | `mssql` | terkini | terkini |
 
-Database
-
-Nilai Opsi
-
-Versi Teruji
-
-Versi Didukung
-
-MariaDB Server
-
-`mariadb`
-
-11.8
-
-11.8 (LTS), 11.4 (LTS), 10.11 (LTS), 10.6 (LTS)
-
-Microsoft SQL Server
-
-`mssql`
-
-2022
-
-2022, 2019
-
-MySQL
-
-`mysql`
-
-8.4
-
-8.4 (LTS), 8.0 (LTS)
-
-Oracle Database
-
-`oracle`
-
-23.5
-
-23.x (yaitu 23.5+), 19c (19.3+) (**Catatan:** Oracle RAC juga didukung jika menggunakan versi mesin database yang sama, misalnya 23.5+, 19.3+)
-
-PostgreSQL
-
-`postgres`
-
-18
-
-18.x, 17.x, 16.x, 15.x, 14.x
-
-EnterpriseDB Advanced
-
-`postgres`
-
-18
-
-18.x, 17.x
-
-Amazon Aurora PostgreSQL
-
-`postgres`
-
-17.5
-
-17.x, 16.x, 15.x
-
-Azure SQL Database
-
-`mssql`
-
-terbaru
-
-terbaru
-
-Azure SQL Managed Instance
-
-`mssql`
-
-terbaru
-
-terbaru
-
-Tidak diizinkan konfigurasi yang tidak didukung jika dialek Hibernate spesifik database yang mendasari memungkinkan penggunaan versi yang berbeda dari yang ditunjukkan.
+<Callout type="info">
+  Konfigurasi yang tidak didukung jika dialek Hibernate spesifik database yang mendasarinya memungkinkan penggunaan versi yang berbeda dari yang ditunjukkan.
+</Callout>
 
 Secara default, server menggunakan database `dev-file`. Ini adalah database default yang akan digunakan server untuk menyimpan data dan hanya ada untuk kasus penggunaan pengembangan. Database `dev-file` tidak layak untuk kasus penggunaan produksi dan harus diganti sebelum deploy ke produksi.
 
-## [](#_installing_a_database_driver)Menginstall Driver Database
+## Menginstall driver database
 
 Driver database dikirimkan sebagai bagian dari NQRust-Identity kecuali untuk driver Oracle Database.
 
-Pasang driver yang hilang secara manual jika Anda ingin terhubung ke database ini ataulewati bagian ini jika Anda ingin terhubung ke database yang berbeda untuk yang driver database sudah disertakan.
+Install driver yang hilang secara manual jika Anda ingin menghubungkan ke database ini
+ataulewati bagian ini jika Anda ingin menghubungkan ke database yang berbeda di mana driver database sudah disertakan.
 
-Mengganti driver database bawaan atau menyediakan driver Anda sendiri dianggap tidak didukung. Pengecualian yang didukung hanya yang didokumentasikan secara jelas dalam panduan ini, seperti driver Oracle Database.
+<Callout type="info">
+  Mengganti driver database bawaan atau menyediakan driver Anda sendiri dianggap tidak didukung.
+  Pengecualian yang didukung hanya yang jelas terdokumentasikan dalam panduan ini, seperti driver Oracle Database.
+</Callout>
 
-### [](#_installing_the_oracle_database_driver)Menginstall Driver Oracle Database
+### Menginstall driver Oracle Database
 
 Untuk menginstall driver Oracle Database untuk NQRust-Identity:
 
-1.  Unduh file JAR `ojdbc17` dan `orai18n` dari salah satu sumber berikut:
-    
-    1.  **Zipped JDBC driver and Companion Jars** versi 23.6.0.24.10 dari [halaman unduhan driver Oracle](https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html).
-        
-    2.  Maven Central melalui `[ojdbc17](https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.6.0.24.10/ojdbc17-23.6.0.24.10.jar)` dan `[orai18n](https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.6.0.24.10/orai18n-23.6.0.24.10.jar)`.
-        
-    3.  Media installasi yang direkomendasikan oleh vendor database untuk database tertentu yang digunakan.
-        
-    
-2.  Saat menjalankan distribusi yang tidak diungkapkan: Letakkan file JAR `ojdbc17` dan `orai18n` di folder `providers` NQRust-Identity
-    
-3.  Saat menjalankan kontainer: Bangun image NQRust-Identity khusus dan tambahkan JAR di folder `providers`. Saat membangun image khusus untuk Operator, image ini perlu menjadi image yang dioptimalkan dengan semua op
+1. Unduh file JAR `ojdbc17` dan `orai18n` dari salah satu sumber berikut:
+
+  1. **Zipped JDBC driver and Companion Jars** versi 23.26.0.0.0 dari [halaman unduh driver Oracle](https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html).
+  2. Maven Central melalui `ojdbc17` dan `orai18n`.
+  3. Media install yang direkomendasikan oleh vendor database untuk database tertentu yang digunakan.
+2. Ketika menjalankan distribusi yang tidak diungkapkan: Letakkan file JAR `ojdbc17` dan `orai18n` di folder `providers` NQRust-Identity
+3. Ketika menjalankan kontainer: Bangun image NQRust-Identity khusus dan tambahkan file JAR di folder `providers`. Ketika membangun image khusus untuk Operator, image tersebut perlu berupa image yang dioptimalkan dengan semua opsi waktu build NQRust-Identity diatur.
+
+  Sebuah Containerfile minimum untuk membangun image yang dapat digunakan dengan Operator NQRust-Identity dan mencakup driver JDBC database Oracle yang diunduh dari Maven Central terlihat seperti berikut:
+
+  ```dockerfile
+  FROM quay.io/nqrust-identity/nqrust-identity:latest
+  ADD --chown=nqrust-identity:nqrust-identity --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.26.0.0.0/ojdbc17-23.26.0.0.0.jar /opt/nqrust-identity/providers/ojdbc17.jar
+  ADD --chown=nqrust-identity:nqrust-identity --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.26.0.0.0/orai18n-23.26.0.0.0.jar /opt/nqrust-identity/providers/orai18n.jar
+  # Mengatur parameter build untuk database:
+  ENV KC_DB=oracle
+  # Tambahkan semua parameter build yang diperlukan, misalnya aktifkan kesehatan dan metriks:
+  ENV KC_HEALTH_ENABLED=true
+  ENV KC_METRICS_ENABLED=true
+  # Untuk dapat menggunakan image dengan Operator NQRust-Identity, image tersebut perlu dioptimalkan, yang memerlukan langkah build NQRust-Identity:
+  RUN /opt/nqrust-identity/bin/kc.sh build
+  ```
+
+  Lihat panduan Menjalankan NQRust-Identity di kontainer untuk detail tentang cara membangun image yang dioptimalkan.
+
+Kemudian lanjutkan konfigurasi database seperti yang dijelaskan dalam bagian berikutnya.
+
+## Mengonfigurasi Database
+
+Untuk setiap database yang didukung, server menyediakan beberapa pengaturan default yang berpendapat untuk menyederhanakan konfigurasi database. Anda melengkapi konfigurasi dengan memberikan beberapa pengaturan penting seperti host database dan kredensial.
+
+Konfigurasi dapat diatur selama perintah `build` atau perintah `start`:
+
+1. Menggunakan perintah `build` diikuti dengan perintah `start` yang dioptimalkan (direkomendasikan)
+
+  Pertama, pengaturan minimum yang diperlukan untuk terhubung ke database dapat ditentukan dalam `conf/nqrust-identity.conf`:
+
+  ```
+  # Pemasok database.
+  db=postgres
+  
+  # Nama pengguna database.
+  db-username=nqrust-identity
+  
+  # Kata sandi pengguna database.
+  db-password=change_me
+  
+  # Menetapkan nama host dari URL JDBC default yang dipilih
+  db-url-host=nqrust-identity-postgres
+  ```
+
+  Kemudian, perintah berikut menciptakan gambar server baru dan dioptimalkan berdasarkan opsi konfigurasi dan memulai server.
+
+  ```
+  bin/kc.[sh|bat] build
+  bin/kc.[sh|bat] start --optimized
+  ```
+2. Menggunakan **hanya perintah `start`** (tanpa `--optimized`)
+
+  ```bash
+  bin/kc.[sh|bat] start --db postgres --db-url-host nqrust-identity-postgres --db-username nqrust-identity --db-password change_me
+  ```
+
+<Callout type="warning">
+  Contoh di atas mencakup pengaturan minimum yang diperlukan untuk terhubung ke database tetapi mengungkapkan kata sandi database dan tidak direkomendasikan. Gunakan conf/nqrust-identity.conf seperti yang ditunjukkan di atas, variabel lingkungan, atau penyimpanan kunci untuk setidaknya kata sandi.
+</Callout>
+
+<Callout type="info">
+  Jika kata sandi database Anda berisi karakter `$` atau `$\{…​}`, gunakan variabel lingkungan `KCRAW_DB_PASSWORD` bukan `KC_DB_PASSWORD`. Awalan `KCRAW_` memastikan karakter `$` dipertahankan sebagaimana adanya. Lihat bagian _Menyimpan nilai literal dengan awalan KCRAW_ di [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration) untuk detailnya.
+</Callout>
+
+Secara default, tidak ada skema yang ditetapkan secara eksplisit dan NQRust-Identity menggunakan skema default dari database yang dipilih.
+Anda dapat menimpa ini dengan menggunakan opsi konfigurasi `db-schema`.
+
+Juga dimungkinkan untuk mengonfigurasi database saat [Mengimpor dan mengekspor realm](/en/guides/server/importExport) atau [Menginisialisasi dan memulihkan akun admin](/en/guides/server/bootstrap-admin-recovery):
+
+```
+bin/kc.[sh|bat] import --help
+bin/kc.[sh|bat] export --help
+bin/kc.[sh|bat] bootstrap-admin --help
+```
+
+Untuk informasi lebih lanjut, lihat [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration).
+
+## Menimpa Pengaturan Koneksi Default
+
+Server menggunakan JDBC sebagai teknologi yang mendasar untuk berkomunikasi dengan database. Jika pengaturan koneksi default tidak mencukupi, Anda dapat menentukan URL JDBC menggunakan opsi konfigurasi `db-url`.
+
+Berikut adalah contoh perintah untuk database PostgreSQL.
+
+```bash
+bin/kc.[sh|bat] start --db postgres --db-url jdbc:postgresql://mypostgres/mydatabase
+```
+
+Perlu diperhatikan bahwa Anda perlu menghindari karakter ketika memanggil perintah yang berisi karakter shell khusus seperti `;`, jadi Anda mungkin ingin menetapkan itu dalam file konfigurasi sebagai gantinya.
+
+## Mengonfigurasi dukungan Unicode untuk basis data
+
+Dukungan Unicode untuk semua kolom tergantung pada apakah basis data mengizinkan kolom VARCHAR dan CHAR untuk menggunakan set karakter Unicode.
+
+- Jika kolom ini dapat diatur, Unicode kemungkinan akan berfungsi, biasanya dengan mengorbankan panjang kolom.
+- Jika basis data hanya mendukung Unicode dalam kolom NVARCHAR dan NCHAR, dukungan Unicode untuk semua kolom teks kemungkinan tidak akan berfungsi karena skema server menggunakan kolom VARCHAR dan CHAR secara luas.
+
+Skema basis data hanya mendukung string Unicode untuk kolom khusus berikut:
+
+- **Realms**: nama tampilan, nama tampilan HTML, teks lokalisasi (kunci dan nilai)
+- **Federation** Providers: nama tampilan
+- **Users**: username, nama depan, nama belakang, nama atribut dan nilai
+- **Groups**: nama, nama atribut dan nilai
+- **Roles**: nama
+- Deskripsi objek
+
+Selain itu, karakter terbatas pada karakter yang terkandung dalam pengkodean basis data, yang seringnya 8-bit.
+Namun, untuk beberapa sistem basis data, Anda dapat mengaktifkan pengkodean UTF-8 karakter Unicode dan menggunakan set karakter Unicode penuh di semua kolom teks.
+Untuk basis data tertentu, pilihan ini mungkin akan menghasilkan panjang string maksimum yang lebih pendek daripada panjang string maksimum yang didukung oleh pengkodean 8-bit.
+
+Set karakter yang disarankan untuk digunakan diringkas dalam tabel di bawah ini, karena versi terbaru basis data ini sudah menggunakannya secara default.
+
+| Vendor | Set Karakter yang Disarankan | Contoh Pembuatan Basis Data |
+| --- | --- | --- |
+| Oracle | `AL32UTF8` | `CREATE DATABASE nqrust-identity<br/>  CHARACTER SET AL32UTF8<br/>  NATIONAL CHARACTER SET AL16UTF16;` |
+| Microsoft SQL Server | Urutan UTF-8<br/>(yang diakhiri dengan `_UTF8`) | `CREATE DATABASE nqrust-identity<br/>  COLLATE Latin1_General_100_CI_AS_SC_UTF8;` |
+| MySQL/MariaDB | `utf8mb4` | `CREATE DATABASE nqrust-identity<br/>  CHARACTER SET utf8mb4<br/>  COLLATE utf8mb4_unicode_ci;` |
+| PostgreSQL | `UTF8` | `CREATE DATABASE nqrust-identity<br/>  ENCODING 'UTF8'<br/>  LC_COLLATE 'en_US.utf8'<br/>  LC_CTYPE 'en_US.utf8';` |
+
+### Pertimbangan set karakter default dan urutan basis data MySQL dan MariaDB
+
+Versi MySQL dan MariaDB yang berbeda mungkin memiliki pengaturan default yang berbeda untuk set karakter dan urutan. NQRust-Identity menggunakan set karakter default dan urutan basis data saat membuat tabel dan kolom baru. Desain ini memungkinkan Anda untuk mengelola siklus hidup data Anda sendiri dengan menentukan set karakter dan urutan yang paling sesuai dengan kebutuhan Anda.
+
+<Callout type="warning">
+   Sebelum migrasi NQRust-Identity ke versi baru, pastikan basis data Anda memiliki konfigurasi set karakter dan urutan yang konsisten. Pengaturan yang tidak konsisten antara tabel yang ada dapat menyebabkan kesalahan kunci asing saat migrasi.
+
+   Untuk menghindari kebisingan yang berpotensi:
+
+   1. Atur set karakter dan urutan yang diinginkan sebagai default basis data **sebelum** menginstal atau mengupgrade NQRust-Identity.
+   2. Pastikan semua tabel NQRust-Identity yang ada menggunakan set karakter dan urutan yang sama.
+   3. Ketika mengupgrade, NQRust-Identity akan menyesuaikan tabel dan kolom baru dengan pengaturan default basis data Anda.
+
+    Dengan bergantung pada default basis data, NQRust-Identity menghormati niat Anda dan memungkinkan Anda untuk menjaga kendali atas konfigurasi basis data Anda sepanjang siklus hidupnya.
+</Callout>
+
+### Mengonfigurasi dukungan Unicode untuk basis data Microsoft SQL Server
+
+Karakter Unicode didukung hanya untuk kolom khusus untuk basis data Microsoft SQL Server.
+Basis data tidak memerlukan pengaturan khusus.
+
+Secara default, NQRust-Identity mengatur properti JDBC driver `sendStringParametersAsUnicode` ke `false` saat menggunakan Microsoft SQL Server.
+Hal ini dapat meningkatkan kinerja dan efisiensi rencana kueri, karena Microsoft SQL Server mungkin tidak dapat menggunakan indeks saat parameter string dikirim sebagai Unicode.
+
+Jika Anda perlu menimpa pengaturan ini, atur `sendStringParametersAsUnicode` secara eksplisit dalam URL JDBC (menggunakan `db-url`) atau melalui `db-url-properties`.
+Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] start --db mssql --db-url-properties=';sendStringParametersAsUnicode=true'
+```
+
+## Waktu timeout koneksi dan masuk basis data
+
+Ketika NQRust-Identity terhubung ke basis data, masalah jaringan dapat terjadi, terutama selama failover atau switchover.
+Untuk meningkatkan perilaku failover dan ketahanan startup selama masalah jaringan, NQRust-Identity mengatur waktu timeout koneksi default 10 detik untuk semua vendor basis data yang didukung saat menggunakan driver JDBC standar.
+
+Atur waktu timeout koneksi driver JDBC dan waktu timeout masuk.
+Default: `10s`.
+
+## Persiapan untuk PostgreSQL
+
+### Instance penulis dan pembaca
+
+Saat menjalankan instance pembaca dan penulis PostgreSQL, NQRust-Identity perlu selalu terhubung ke instance penulis untuk melakukan pekerjaannya.
+Saat menggunakan driver PostgreSQL asli, NQRust-Identity mengatur properti `targetServerType` dari driver JDBC PostgreSQL ke `primary` untuk memastikan bahwa ia selalu terhubung ke instance primer yang dapat ditulisi dan tidak pernah terhubung ke instance pembaca sekunder dalam skenario failover atau switchover.
+
+Anda dapat menimpa perilaku ini dengan mengatur nilai sendiri untuk `targetServerType` dalam URL DB atau properti tambahan.
+
+<Callout type="info">
+  Properti `targetServerType` hanya diterapkan secara otomatis ke sumber daya utama, karena persyaratan mungkin berbeda untuk sumber daya tambahan.
+</Callout>
+
+### Izin pengguna database
+
+Pastikan pengguna database memiliki izin `SELECT` untuk tabel berikut untuk memastikan peningkatan yang efisien: `pg_class`, `pg_namespace`.
+
+Ini digunakan selama peningkatan NQRust-Identity untuk menentukan perkiraan jumlah baris dalam tabel.
+Jika NQRust-Identity tidak memiliki izin untuk mengakses tabel ini, ia akan mencatat peringatan dan melanjutkan dengan operasi yang kurang efisien `SELECT COUNT(*) ...` selama peningkatan untuk menentukan jumlah baris dalam tabel yang terpengaruh oleh perubahan skema.
+
+### Menyelamatkan koneksi Anda
+
+Untuk menyelamatkan koneksi database Anda, konfigurasikan server PostgreSQL Anda untuk menggunakan TLS dan melakukan verifikasi sertifikat server penuh di sisi klien.
+
+**Konfigurasi Sisi Server (Prasyarat):**
+Sebelum menggunakan properti di bawah, pastikan server PostgreSQL Anda dikonfigurasi untuk TLS.
+
+**Konfigurasi Sisi Klien:**
+Selaamatkan koneksi dengan menambahkan opsi:
+
+```
+--db-tls-mode=verify-server --db-tls-trust-store-file=/path/to/certificate
+```
+
+- `db-tls-mode=verify-server`: Memaksa TLS dan memverifikasi identitas server terhadap sertifikat yang dipercayai.
+- `db-tls-trust-store-file=/path/to/certificate`: Jalur ke file sertifikat publik server di mesin klien.
+
+## Persiapan untuk Amazon Aurora PostgreSQL
+
+Saat menggunakan Amazon Aurora PostgreSQL, [Driver JDBC Amazon Web Services](https://github.com/awslabs/aws-advanced-jdbc-wrapper) menawarkan fitur tambahan seperti transfer koneksi database saat instance penulis berubah dalam setup Multi-AZ.
+Driver ini bukan bagian dari distribusi dan perlu diinstal sebelum dapat digunakan.
+
+Untuk menginstal driver ini, ikuti langkah berikut:
+
+1. Saat menjalankan distribusi yang tidak terkompresi: Unduh file JAR dari [halaman rilis Driver JDBC Amazon Web Services](https://github.com/awslabs/aws-advanced-jdbc-wrapper/releases/) dan letakkan dalam folder `providers` NQRust-Identity.
+2. Saat menjalankan kontainer: Bangun gambar NQRust-Identity khusus dan tambahkan JAR di folder `providers`.
+
+  Sebuah Containerfile minimal untuk membangun gambar yang dapat digunakan dengan Operator NQRust-Identity terlihat seperti berikut:
+
+  ```dockerfile
+  FROM quay.io/nqrust-identity/nqrust-identity:latest
+  ADD --chmod=0666 https://github.com/awslabs/aws-advanced-jdbc-wrapper/releases/download/2.5.6/aws-advanced-jdbc-wrapper-2.5.6.jar /opt/nqrust-identity/providers/aws-advanced-jdbc-wrapper.jar
+  ```
+
+  Lihat panduan Menjalankan NQRust-Identity dalam kontainer untuk detail tentang cara membangun gambar yang dioptimalkan, dan panduan Menggunakan gambar NQRust-Identity khusus tentang cara menjalankan gambar yang dioptimalkan dan tidak dioptimalkan dengan Operator NQRust-Identity.
+3. Konfigurasikan NQRust-Identity untuk berjalan dengan parameter berikut:
+
+  `db-url` Sisipkan `aws-wrapper` ke URL JDBC PostgreSQL reguler sehingga URL seperti `jdbc:aws-wrapper:postgresql://...`. `db-driver` Atur ke `software.amazon.jdbc.Driver` untuk menggunakan wrapper AWS JDBC.
+
+<Callout type="info">
+  Saat menimpa opsi wrapperPlugins dari Driver JDBC AWS, selalu sertakan plugin failover atau failover2 untuk memastikan bahwa NQRust-Identity selalu terhubung ke instance penulis bahkan dalam skenario failover atau switchover.
+</Callout>
+
+<Callout type="default">
+  Amazon Aurora PostgreSQL 17.0 atau lebih baru membutuhkan koneksi TLS secara default.
+
+  Sementara ini menyulitkan koneksi, Anda masih harus melakukan verifikasi sertifikat server penuh.
+  Untuk melakukan ini, unduh [bundle sertifikat](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.SSL.html) untuk wilayah AWS Anda.
+
+  Selamatkan koneksi dengan menambahkan opsi:
+
+  ```
+  --db-tls-mode=verify-server --db-tls-trust-store-file=/path/to/certificate
+  ```
+
+  - `db-tls-mode=verify-server`: Memaksa TLS dan memverifikasi identitas server terhadap sertifikat yang dipercayai.
+  - `db-tls-trust-store-file=/path/to/certificate`: Jalur ke file sertifikat publik server di mesin klien.
+</Callout>
+
+## Persiapan untuk MySQL server
+
+Dari MySQL 8.0.30, MySQL mendukung kunci primer tak terlihat yang dihasilkan untuk tabel InnoDB apa pun yang dibuat tanpa kunci primer yang jelas (informasi lebih lanjut [di sini](https://dev.mysql.com/doc/refman/8.0/en/create-table-gipks.html)).
+Jika fitur ini diaktifkan, inisialisasi skema database dan juga migrasi akan gagal dengan pesan kesalahan `Multiple primary key defined (1068)`.
+Anda kemudian perlu menonaktifkannya dengan mengatur parameter `sql_generate_invisible_primary_key` ke `OFF` dalam konfigurasi server MySQL Anda sebelum menginstal atau meninjau NQRust-Identity.
+
+## Persiapan untuk MS SQL server
+
+Pada MS SQL Server, level isolasi transaksi default adalah `READ_COMMITTED`, yang dapat mengakibatkan kemacetan saat beban tinggi. Oleh karena itu, level isolasi yang disarankan untuk NQRust-Identity adalah `READ_COMMITTED_SNAPSHOT`. Level isolasi ini digunakan secara default di Azure SQL.
+
+Namun, pada MS SQL Server, level isolasi database perlu diubah dengan menjalankan perintah berikut pada database Anda:
+
+```sql
+ALTER DATABASE <your-database-name> SET READ_COMMITTED_SNAPSHOT ON;
+```
+
+## Menggunakan Vendor Database dengan dukungan transaksi XA
+
+NQRust-Identity menggunakan transaksi non-XA dan driver database yang sesuai secara default.
+
+Jika Anda ingin menggunakan dukungan transaksi XA yang ditawarkan oleh driver Anda, masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] build --db=<vendor> --transaction-xa-enabled=true
+```
+
+NQRust-Identity secara otomatis memilih driver JDBC yang sesuai untuk vendor Anda.
+
+<Callout type="info">
+  Beberapa vendor, seperti Azure SQL dan MariaDB Galera, tidak mendukung atau mengandalkan mekanisme transaksi XA.
+</Callout>
+
+Pemulihan XA secara default diaktifkan dan akan menggunakan lokasi sistem file `NQRUST-IDENTITY_HOME/data/transaction-logs` untuk menyimpan log transaksi.
+
+<Callout type="info">
+  Mengaktifkan transaksi XA di lingkungan kontainer tidak sepenuhnya mendukung pemulihan XA kecuali jika penyimpanan stabil tersedia di jalur itu.
+</Callout>
+
+## Mengonfigurasi waktu timeout transaksi
+
+NQRust-Identity menyediakan dua opsi CLI untuk mengontrol perilaku waktu timeout transaksi:
+
+Mengontrol waktu timeout untuk transaksi reguler.
+Nilai default adalah 5 menit.
+
+Untuk mengonfigurasi timeout berbeda, misalnya 10 menit:
+
+```bash
+bin/kc.[sh|bat] start --transaction-default-timeout=10m
+```
+
+Mengontrol timeout untuk transaksi yang digunakan oleh perintah migrasi skema database, impor, dan ekspor.
+Nilai default adalah 30 menit, karena operasi ini mungkin memerlukan waktu yang lebih lama untuk diselesaikan untuk dataset yang besar.
+
+Untuk mengonfigurasi timeout berbeda, misalnya 1 jam:
+
+```bash
+bin/kc.[sh|bat] start --transaction-setup-timeout=1h
+```
+
+Kedua opsi ini menerima nilai sebagai durasi ISO 8601, bilangan bulat jumlah detik, atau bilangan bulat diikuti oleh `ms` (milidetik), `s` (detik), `m` (menit), `h` (jam), atau `d` (hari).
+Opsi ini dapat dikonfigurasi melalui CLI, variabel lingkungan, atau file konfigurasi `conf/nqrust-identity.conf`.
+
+<Callout type="info">
+  Opsi `transaction-default-timeout` memiliki prioritas lebih tinggi dari properti Quarkus yang tidak didukung `quarkus.transaction-manager.default-transaction-timeout`.
+  Jika Anda menggunakan properti Quarkus, migrasikan ke opsi yang didukung `transaction-default-timeout` dan hapus properti Quarkus dari konfigurasi Anda.
+</Callout>
+
+## Mengamankan koneksi database
+
+Mengenkripsi lalu lintas antara NQRust-Identity dan database disarankan untuk meningkatkan keamanan, karena itu mencegah pihak ketiga dari memeriksa lalu lintas jaringan.
+
+Direkomendasikan untuk mengambil langkah lebih jauh dan mengaktifkan verifikasi sertifikat untuk mencegah serangan yang lebih rumit seperti penodaan DNS dan hijacking alamat, di mana NQRust-Identity dapat dialihkan ke server yang berbeda dari yang dimaksud.
+Untuk melakukan validasi sertifikat, sertifikat database atau sertifikat Otoritas Pengawas (CA) harus ditambahkan ke truststore NQRust-Identity.
+
+Bagian ini memberikan petunjuk tentang cara mengaktifkan pengaturan ini di NQRust-Identity dan mengonfigurasi driver JDBC dengan benar.
+Mengonfigurasi server database dengan kunci pribadi dan sertifikat di luar cakupan bagian ini.
+Mohon kunjungi dokumentasi vendor Anda tentang cara melakukannya.
+
+NQRust-Identity menyediakan opsi CLI yang terintegrasi untuk mengonfigurasi pengaturan TLS database di berbagai vendor database.
+Opsi ini menyederhanakan konfigurasi dengan menyingkirkan properti JDBC spesifik vendor dan menyediakan antarmuka yang konsisten.
+
+Opsi berikut tersedia:
+
+Menyetel mode TLS untuk koneksi database.
+Nilai yang valid adalah `disabled` dan `verify-server`.
+Ketika diatur ke `verify-server`, itu mengaktifkan enkripsi dan verifikasi identitas server.
+Default: `disabled`
+
+Jalur ke file truststore yang berisi sertifikat server database atau sertifikat Otoritas Pengawas (CA) yang digunakan untuk memverifikasi identitas server database.
+
+Kata sandi untuk mengakses file truststore (jika diperlukan dan didukung oleh driver JDBC).
+
+Jenis file truststore.
+Nilai umum meliputi `JKS` (Java KeyStore) dan `PKCS12`.
+Jika tidak ditentukan, jenis truststore default driver digunakan.
+
+<Callout type="info">
+  Opsi CLI terintegrasi ini adalah pendekatan yang disarankan untuk mengonfigurasi database TLS.
+  NQRust-Identity secara otomatis menerjemahkan opsi ini ke properti JDBC spesifik vendor yang sesuai.
+</Callout>
+
+Contoh berikut menunjukkan cara mengonfigurasi database TLS menggunakan opsi ini untuk database PostgreSQL.
+
+```bash
+bin/kc.[sh|bat] start --db=postgres --db-tls-mode=verify-server --db-tls-trust-store-file=/path/to/certificate.pem
+```
+
+Alternatifnya, Anda dapat menggunakan `--truststore-paths` sebagai gantinya dari opsi `db-tls-trust-store-*` untuk menambahkan sertifikat Anda ke Java truststore.
+
+```bash
+bin/kc.[sh|bat] start --db=postgres --db-tls-mode=verify-server --truststore-paths=/path/to/certificate.pem
+```
+
+## Menyetel opsi konfigurasi provider JPA untuk migrationStrategy
+
+Untuk mengatur JPA migrationStrategy (manual/update/validate) Anda harus mengatur provider JPA sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--migration-strategy=manual
+```
+
+Jika Anda ingin mendapatkan file SQL untuk inisialisasi DB, Anda juga harus menambahkan SPI ini initializeEmpty (true/false):
+
+```bash
+bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--initialize-empty=false
+```
+
+Dengan cara yang sama, migrationExport untuk menunjuk ke file dan lokasi tertentu:
+
+```bash
+bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--migration-export=<path>/<file.sql>
+```
+
+Untuk informasi lebih lanjut, periksa Migrating the database dokumentasi.
+
+## Mengonfigurasi pool koneksi
+
+### MySQL dan MariaDB
+
+Untuk mencegah pengecualian 'No operations allowed after connection closed' dari dilemparkan, penting untuk memastikan
+pool koneksi NQRust-Identity memiliki masa hidup koneksi maksimum yang kurang dari `wait_timeout` yang dikonfigurasi oleh server.
+Ketika menggunakan basis data MySQL dan MariaDB, NQRust-Identity mengonfigurasi masa hidup maksimum default 7 jam dan 50 menit,
+karena ini kurang dari nilai server default yaitu 8 jam.
+
+Jika Anda secara eksplisit mengonfigurasi `wait_timeout` dalam basis data Anda, penting untuk memastikan Anda mengonfigurasi
+nilai `db-pool-max-lifetime` yang kurang dari `wait_timeout`. Praktik terbaik yang dianjurkan adalah menetapkan nilai ini
+sebagai `wait_timeout` Anda dikurangi beberapa menit. Kegagalan untuk mengonfigurasi `db-pool-max-lifetime` dengan benar akan
+menghasilkan peringatan NQRust-Identity saat startup.
+
+## Konfigurasi beberapa sumber data
+
+NQRust-Identity memungkinkan Anda untuk menentukan sumber data tambahan jika Anda perlu mengakses database lain dari ekstensi Anda. Hal ini berguna ketika menggunakan sumber data utama NQRust-Identity bukanlah pilihan yang layak untuk menyimpan data kustom, seperti pengguna.
+
+Anda dapat menemukan detail lebih lanjut tentang cara menghubungkan ke database pengguna Anda sendiri dalam dokumentasi User Storage SPI.
+
+Mendefinisikan beberapa sumber data bekerja seperti mendefinisikan sumber data tunggal, dengan satu perubahan penting - Anda harus menentukan nama untuk setiap sumber data sebagai bagian dari nama opsi konfigurasi.
+
+### Konfigurasi yang Diperlukan
+
+Untuk mengaktifkan sumber data tambahan, Anda perlu menyiapkan 2 hal - file JPA `persistence.xml` dan konfigurasi NQRust-Identity.
+File `persistence.xml` berfungsi untuk menentukan unit persistensi sebagai bagian dari standar Jakarta Persistence API dan diperlukan untuk propagasi konfigurasi yang tepat ke kerangka kerja ORM Hibernate.
+Setelah Anda menyelesaikan bagian dengan file `persistence.xml`, Anda perlu mengatur konfigurasi NQRust-Identity dengan sesuai.
+
+Properti sumber data tambahan dapat ditentukan melalui sumber konfigurasi standar seperti CLI, `nqrust-identity.conf`, atau variabel lingkungan.
+
+Sumber data tambahan dapat dikonfigurasi dengan cara serupa seperti sumber data utama.
+Hal ini dicapai dengan menggunakan nama opsi konfigurasi yang analog, yang juga mencakup nama sumber data tambahan.
+Sebagai contoh, ketika sumber data utama menggunakan `db-username`, yang tambahan akan menjadi `db-username-<datasource>`.
+Lihat bab Opsi Relevan untuk daftar lengkapnya.
+
+#### 1. File JPA `persistence.xml`
+
+File `persistence.xml` menyediakan konfigurasi untuk Jakarta Persistence API (JPA) seperti entitas yang harus dikelola, nama sumber data, pengaturan JDBC, pengaturan JPA/Hibernate kustom, dan lainnya.
+File ini perlu diletakan di folder `META-INF/persistence.xml` dari ekstensi NQRust-Identity kustom Anda.
+
+<Callout type="info">
+  Perhatikan bahwa Quarkus menyediakan kemampuan untuk mengatur unit persistensi JPA melalui properti Hibernate ORM bukannya menggunakan file persistence.xml.
+  Namun, cara yang didukung untuk NQRust-Identity adalah menggunakan file persistence.xml, dan jika file tersebut ada, properti Quarkus diabaikan.
+</Callout>
+
+Di NQRust-Identity, sebagian besar konfigurasi otomatis, dan Anda hanya perlu memberikan detail konfigurasi dasar - nama sumber data dan jenis transaksi.
+
+NQRust-Identity memerlukan penetapan jenis transaksi untuk sumber data tambahan menjadi `JTA`.
+Anda dapat menetapkan jenis transaksi dan nama sumber data sebagai berikut untuk file `persistence.xml` minimal ini:
+
+```xml
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+                         version="3.0">
+    <persistence-unit name="user-store-pu" transaction-type="JTA">
+        <class>org.your.extension.UserEntity</class>
+        <properties>
+            <property name="jakarta.persistence.jtaDataSource" value="user-store" />
+        </properties>
+    </persistence-unit>
+</persistence>
+```
+
+<Callout type="info">
+  Untuk menetapkan nama sumber data dengan benar, Anda harus menetapkan properti jakarta.persistence.jtaDataSource.
+  Jika tidak diatur, nama unit persistensi akan digunakan sebagai nama sumber data sebagai gantinya (jadi user-store-pu dalam hal ini).
+  Dalam contoh di atas, nama sumber data yang dihasilkan adalah user-store. Nama sumber data dapat sama dengan nama unit persistensi.
+</Callout>
+
+Untuk menggunakan entitas JPA Anda sendiri, Anda perlu memberikan properti `<class>` yang menandai entitas JPA yang akan dikelola oleh unit persistensi ini, diarahkan ke sumber data tertentu.
+Dalam contoh di atas, entitas JPA `org.your.extension.UserEntity` akan dikelola oleh unit persistensi `user-store-pu`, diarahkan ke sumber data `user-store`.
+
+#### 2. Properti yang Diperlukan
+
+Setelah Anda menyiapkan `persistence.xml` Anda, konfigurasi minimal di sisi NQRust-Identity adalah penyiapan jenis/db vendor untuk sumber data yang ditentukan.
+Anda perlu menentukan opsi build time `db-kind-<name>`, di mana `<name>` adalah nama sumber data Anda dan harus sama dengan yang ditentukan dalam file `persistence.xml`.
+
+Oleh karena itu, Anda dapat mengaktifkan sumber data tambahan `user-store` sebagai berikut (gunakan `postgres` sebagai contoh):
+
+```bash
+bin/kc.[sh|bat] start --db-kind-user-store=postgres
+```
+
+Setelah menentukan db-kind untuk sumber data, semua default spesifik jenis database (seperti driver dan dialek) secara otomatis diterapkan, just like untuk sumber data utama.
+
+### Konfigurasi melalui variabel lingkungan
+
+Jika Anda tidak ingin mengkonfigurasi sumber data melalui CLI atau properti `nqrust-identity.conf`, Anda dapat menggunakan variabel lingkungan.
+
+Anda dapat menetapkan jenis DB melalui variabel lingkungan (untuk sumber data `user-store`) sebagai berikut:
+
+```bash
+export KC_DB_KIND_USER_STORE=postgres
+export KC_DB_USERNAME_USER_STORE=my-username
+```
+
+Ini mencocokkan dengan properti NQRust-Identity `db-kind-user-store` dan `db-username-user-store` karena pemetaan default dari `_` (garis bawah) ke `-` (tanda das) untuk variabel lingkungan.
+Namun, terkadang, nama sumber data mungkin mengandung beberapa karakter khusus seperti `_`, `$` atau `.`
+
+Untuk mengkonfigurasinya dengan benar melalui variabel lingkungan NQRust-Identity, Anda perlu secara eksplisit mengatakan apa kunci untuk sumber data harus tampak seperti.
+Anda dapat menggunakan pasangan variabel lingkungan NQRust-Identity unik dengan kasus khusus dari `KCKEY_`.
+
+Sebagai contoh, untuk sumber data dengan nama _user_store$marketing_, Anda dapat menetapkan variabel lingkungan sebagai berikut:
+
+```bash
+export KC_USER_STORE_DB_KIND=mariadb
+export KCKEY_USER_STORE_DB_KIND=db-kind-user_store$marketing
+```
+
+Anda dapat menemukan informasi lebih lanjut dalam panduan [Konfigurasi NQRust-Identity](/en/guides/server/configuration), dalam subbab _Format untuk kunci variabel lingkungan dengan karakter khusus_.
+
+### Kompatibilitas mundur untuk `quarkus.properties`
+
+Dahulu, kami memberi petunjuk kepada pengguna untuk menggunakan properti Quarkus mentah untuk mengkonfigurasi sumber data tambahan di beberapa tempat.
+Namun, karena menggunakan properti Quarkus di file `conf/quarkus.properties` dianggap **tidak didukung**, sangat direkomendasikan untuk menggunakan opsi sumber data tambahan yang dijelaskan di atas.
+
+Sebelum Anda dapat beralih ke opsi yang ditujukan, Anda masih dapat menentukan pengaturan sumber data melalui properti Quarkus sebagai berikut:
+
+```properties
+quarkus.datasource.user-store.db-kind=h2
+quarkus.datasource.user-store.username=sa
+quarkus.datasource.user-store.jdbc.url=jdbc:h2:mem:user-store;DB_CLOSE_DELAY=-1
+quarkus.datasource.user-store.jdbc.transactions=xa
+```
+
+<Callout type="warning">
+  Gunakan properti Quarkus tanpa tanda kutip untuk nama sumber data, karena properti dengan nama sumber data yang dipetikan bertentangan dengan pemetaan opsi sumber data baru.
+  Oleh karena itu, gunakan quarkus.datasource.user-store.db-kind=h2, bukan quarkus.datasource."user-store".db-kind=h2 untuk mencegah masalah apa pun.
+</Callout>
+
+## Opsi yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`db`**<br/>Penyedia database.<br/>Dalam mode produksi, nilai default `dev-file` dianggap usang, Anda sebaiknya menentukan db secara eksplisit.<br/>**Kunci bernama:** `db-kind-<datasource>`<br/>**CLI:** `--db`<br/>**Env:** `KC_DB` | `dev-file`, `dev-mem`, `mariadb`, `mssql`, `mysql`, `oracle`, `postgres`, `tidb` | `dev-file` |
+| **`db-connect-timeout`**<br/>Mengatur waktu timeout koneksi driver JDBC dan waktu login.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--db-connect-timeout`<br/>**Env:** `KC_DB_CONNECT_TIMEOUT` | _String_ | `10s` |
+| **`db-debug-jpql`**<br/>Menambahkan informasi JPQL sebagai komentar pada pernyataan SQL untuk debug generasi pernyataan SQL JPA.<br/>**Kunci bernama:** `db-debug-jpql-<datasource>`<br/>**CLI:** `--db-debug-jpql`<br/>**Env:** `KC_DB_DEBUG_JPQL` | `true`, `false` | `false` |
+| **`db-driver`**<br/>Nama kelas lengkap dari driver JDBC.<br/>Jika tidak diatur, driver default akan diatur sesuai dengan database yang dipilih.<br/>**Kunci bernama:** `db-driver-<datasource>`<br/>**CLI:** `--db-driver`<br/>**Env:** `KC_DB_DRIVER` | _String_ |  |
+| **`db-log-slow-queries-threshold`**<br/>Log pernyataan SQL yang lebih lambat dari ambang batas yang dikonfigurasi dengan logger org.<br/>hibernate.SQL_SLOW dan log-level info.<br/>**Kunci bernama:** `db-log-slow-queries-threshold-<datasource>`<br/>**CLI:** `--db-log-slow-queries-threshold`<br/>**Env:** `KC_DB_LOG_SLOW_QUERIES_THRESHOLD` | _Integer_ | `10000` |
+| **`db-password`**<br/>Sandi dari pengguna database.<br/>**Kunci bernama:** `db-password-<datasource>`<br/>**CLI:** `--db-password`<br/>**Env:** `KC_DB_PASSWORD` | _String_ |  |
+| **`db-pool-initial-size`**<br/>Ukuran awal pool koneksi.<br/>**Kunci bernama:** `db-pool-initial-size-<datasource>`<br/>**CLI:** `--db-pool-initial-size`<br/>**Env:** `KC_DB_POOL_INITIAL_SIZE` | _Integer_ |  |
+| **`db-pool-max-lifetime`**<br/>Waktu maksimum koneksi yang tetap dalam pool, setelah itu akan ditutup saat dikembalikan dan diganti sesuai kebutuhan.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--db-pool-max-lifetime`<br/>**Env:** `KC_DB_POOL_MAX_LIFETIME` | _String_ |  |
+| **`db-pool-max-size`**<br/>Ukuran maksimum pool koneksi.<br/>**Kunci bernama:** `db-pool-max-size-<datasource>`<br/>**CLI:** `--db-pool-max-size`<br/>**Env:** `KC_DB_POOL_MAX_SIZE` | _Integer_ | `100` |
+| **`db-pool-min-size`**<br/>Ukuran minimum pool koneksi.<br/>**Kunci bernama:** `db-pool-min-size-<datasource>`<br/>**CLI:** `--db-pool-min-size`<br/>**Env:** `KC_DB_POOL_MIN_SIZE` | _Integer_ |  |
+| **`db-schema`**<br/>Skema database yang akan digunakan.<br/>**Kunci bernama:** `db-schema-<datasource>`<br/>**CLI:** `--db-schema`<br/>**Env:** `KC_DB_SCHEMA` | _String_ |  |
+| **`db-tls-mode`**<br/>Mengatur mode TLS untuk koneksi database.<br/>Jika dinonaktifkan, menggunakan nilai default driver. Ketika diatur ke verify-server, mengaktifkan enkripsi dan verifikasi identitas server. Dibutuhkan sertifikat server database atau sertifikat Otoritas Pengguna Sertifikat (CA).<br/>**Kunci bernama:** `db-tls-mode-<datasource>`<br/>**CLI:** `--db-tls-mode`<br/>**Env:** `KC_DB_TLS_MODE` | `disabled`, `verify-server` | `disabled` |
+| **`db-tls-trust-store-file`**<br/>Jalur ke file truststore yang berisi sertifikat server database atau sertifikat Otoritas Pengguna Sertifikat (CA) yang digunakan untuk verifikasi identitas server database.<br/>**Kunci bernama:** `db-tls-trust-store-file-<datasource>`<br/>**CLI:** `--db-tls-trust-store-file`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_FILE` | _File_ |  |
+| **`db-tls-trust-store-password`**<br/>Sandi untuk mengakses file truststore yang diatur dalam db-tls-trust-store-file (jika diperlukan dan didukung oleh driver JDBC).<br/>**Kunci bernama:** `db-tls-trust-store-password-<datasource>`<br/>**CLI:** `--db-tls-trust-store-password`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD` | _String_ |  |
+| **`db-tls-trust-store-type`**<br/>Jenis file truststore.<br/>Nilai umum meliputi `JKS` (Java KeyStore) dan `PKCS12`. Jika tidak ditentukan, menggunakan nilai default driver.<br/>**Kunci bernama:** `db-tls-trust-store-type-<datasource>`<br/>**CLI:** `--db-tls-trust-store-type`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE` | _String_ |  |
+| **`db-url`**<br/>URL JDBC database yang lengkap.<br/>Jika tidak diberikan, URL default akan diatur berdasarkan penyedia database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/nqrust-identity`.<br/>**Kunci bernama:** `db-url-full-<datasource>`<br/>**CLI:** `--db-url`<br/>**Env:** `KC_DB_URL` | _String_ |  |
+| **`db-url-database`**<br/>Mengatur nama database dari URL JDBC default dari penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-database-<datasource>`<br/>**CLI:** `--db-url-database`<br/>**Env:** `KC_DB_URL_DATABASE` | _String_ |  |
+| **`db-url-host`**<br/>Mengatur nama host dari URL JDBC default dari penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-host-<datasource>`<br/>**CLI:** `--db-url-host`<br/>**Env:** `KC_DB_URL_HOST` | _String_ |  |
+| **`db-url-port`**<br/>Mengatur port dari URL JDBC default dari penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-port-<datasource>`<br/>**CLI:** `--db-url-port`<br/>**Env:** `KC_DB_URL_PORT` | _Integer_ |  |
+| **`db-url-properties`**<br/>Mengatur properti dari URL JDBC default dari penyedia yang dipilih.<br/>Pastikan untuk mengatur properti sesuai dengan format yang diharapkan oleh penyedia database, serta menambahkan karakter yang tepat di awal nilai properti ini. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-properties-<datasource>`<br/>**CLI:** `--db-url-properties`<br/>**Env:** `KC_DB_URL_PROPERTIES` | _String_ |  |
+| **`db-username`**<br/>Nama pengguna database.<br/>**Kunci bernama:** `db-username-<datasource>`<br/>**CLI:** `--db-username`<br/>**Env:** `KC_DB_USERNAME` | _String_ |  |
+| **`transaction-default-timeout`**<br/>Waktu timeout transaksi default.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--transaction-default-timeout`<br/>**Env:** `KC_TRANSACTION_DEFAULT_TIMEOUT` | _String_ | `5m` |
+| **`transaction-setup-timeout`**<br/>Waktu timeout transaksi untuk migrasi database/impor/ekspor transaksi.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--transaction-setup-timeout`<br/>**Env:** `KC_TRANSACTION_SETUP_TIMEOUT` | _String_ | `30m` |
+| **`transaction-xa-enabled`**<br/>Jika diatur ke true, sumber daya XA akan digunakan.<br/>**Kunci bernama:** `transaction-xa-enabled-<datasource>`<br/>**CLI:** `--transaction-xa-enabled`<br/>**Env:** `KC_TRANSACTION_XA_ENABLED` | `true`, `false` | `false` |
+
+### Opsi sumber daya data tambahan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`db-debug-jpql-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Menambahkan informasi JPQL sebagai komentar pada pernyataan SQL untuk debug generasi pernyataan SQL JPA.<br/>**CLI:** `--db-debug-jpql-<datasource>`<br/>**Env:** `KC_DB_DEBUG_JPQL_<DATASOURCE>` | `true`, `false` | `false` |
+| **`db-driver-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Nama kelas lengkap dari driver JDBC. Jika tidak diatur, driver default akan diatur sesuai dengan database yang dipilih.<br/>**CLI:** `--db-driver-<datasource>`<br/>**Env:** `KC_DB_DRIVER_<DATASOURCE>` | _String_ |  |
+| **`db-enabled-<datasource>`**<br/>Jika sumber daya data bernama &lt;datasource&gt; harus diaktifkan pada runtime.<br/>**CLI:** `--db-enabled-<datasource>`<br/>**Env:** `KC_DB_ENABLED_<DATASOURCE>` | `true`, `false` | `true` |
+| **`db-kind-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Penyedia database. Dalam mode produksi, nilai default `dev-file` dianggap usang, Anda sebaiknya menentukan db secara eksplisit.<br/>**CLI:** `--db-kind-<datasource>`<br/>**Env:** `KC_DB_KIND_<DATASOURCE>` | `dev-file`, `dev-mem`, `mariadb`, `mssql`, `mysql`, `oracle`, `postgres`, `tidb` |  |
+| **`db-log-slow-queries-threshold-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Log pernyataan SQL yang lebih lambat dari ambang batas yang dikonfigurasi dengan logger org.hibernate.SQL_SLOW dan log-level info.<br/>**CLI:** `--db-log-slow-queries-threshold-<datasource>`<br/>**Env:** `KC_DB_LOG_SLOW_QUERIES_THRESHOLD_<DATASOURCE>` | _Integer_ | `10000` |
+| **`db-password-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Sandi dari pengguna database.<br/>**CLI:** `--db-password-<datasource>`<br/>**Env:** `KC_DB_PASSWORD_<DATASOURCE>` | _String_ |  |
+| **`db-pool-initial-size-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Ukuran awal pool koneksi.<br/>**CLI:** `--db-pool-initial-size-<datasource>`<br/>**Env:** `KC_DB_POOL_INITIAL_SIZE_<DATASOURCE>` | _Integer_ |  |
+| **`db-pool-max-size-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Ukuran maksimum pool koneksi.<br/>**CLI:** `--db-pool-max-size-<datasource>`<br/>**Env:** `KC_DB_POOL_MAX_SIZE_<DATASOURCE>` | _Integer_ | `100` |
+| **`db-pool-min-size-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Ukuran minimum pool koneksi.<br/>**CLI:** `--db-pool-min-size-<datasource>`<br/>**Env:** `KC_DB_POOL_MIN_SIZE_<DATASOURCE>` | _Integer_ |  |
+| **`db-schema-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Skema database yang akan digunakan.<br/>**CLI:** `--db-schema-<datasource>`<br/>**Env:** `KC_DB_SCHEMA_<DATASOURCE>` | _String_ |  |
+| **`db-tls-mode-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur mode TLS untuk koneksi database. Jika dinonaktifkan, menggunakan nilai default driver. Ketika diatur ke verify-server, mengaktifkan enkripsi dan verifikasi identitas server. Dibutuhkan sertifikat server database atau sertifikat Otoritas Pengguna Sertifikat (CA).<br/>**CLI:** `--db-tls-mode-<datasource>`<br/>**Env:** `KC_DB_TLS_MODE_<DATASOURCE>` | `disabled`, `verify-server` | `disabled` |
+| **`db-tls-trust-store-file-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Jalur ke file truststore yang berisi sertifikat server database atau sertifikat Otoritas Pengguna Sertifikat (CA) yang digunakan untuk verifikasi identitas server database.<br/>**CLI:** `--db-tls-trust-store-file-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_FILE_<DATASOURCE>` | _File_ |  |
+| **`db-tls-trust-store-password-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Sandi untuk mengakses file truststore yang diatur dalam db-tls-trust-store-file (jika diperlukan dan didukung oleh driver JDBC).<br/>**CLI:** `--db-tls-trust-store-password-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD_<DATASOURCE>` | _String_ |  |
+| **`db-tls-trust-store-type-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Jenis file truststore. Nilai umum meliputi `JKS` (Java KeyStore) dan `PKCS12`. Jika tidak ditentukan, menggunakan nilai default driver.<br/>**CLI:** `--db-tls-trust-store-type-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE_<DATASOURCE>` | _String_ |  |
+| **`db-url-database-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur nama database dari URL JDBC default dari penyedia yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-database-<datasource>`<br/>**Env:** `KC_DB_URL_DATABASE_<DATASOURCE>` | _String_ |  |
+| **`db-url-full-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>URL JDBC database yang lengkap. Jika tidak diberikan, URL default akan diatur berdasarkan penyedia database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/nqrust-identity`.<br/>**CLI:** `--db-url-full-<datasource>`<br/>**Env:** `KC_DB_URL_FULL_<DATASOURCE>` | _String_ |  |
+| **`db-url-host-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur nama host dari URL JDBC default dari penyedia yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-host-<datasource>`<br/>**Env:** `KC_DB_URL_HOST_<DATASOURCE>` | _String_ |  |
+| **`db-url-port-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur port dari URL JDBC default dari penyedia yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-port-<datasource>`<br/>**Env:** `KC_DB_URL_PORT_<DATASOURCE>` | _Integer_ |  |
+| **`db-url-properties-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur properti dari URL JDBC default dari penyedia yang dipilih. Pastikan untuk mengatur properti sesuai dengan format yang diharapkan oleh penyedia database, serta menambahkan karakter yang tepat di awal nilai properti ini. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-properties-<datasource>`<br/>**Env:** `KC_DB_URL_PROPERTIES_<DATASOURCE>` | _String_ |  |
+| **`db-username-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Nama pengguna database.<br/>**CLI:** `--db-username-<datasource>`<br/>**Env:** `KC_DB_USERNAME_<DATASOURCE>` | _String_ |  |
+| **`transaction-xa-enabled-<datasource>`**<br/>Jika diatur ke true, XA untuk &lt;datasource&gt; sumber daya akan digunakan.<br/>**CLI:** `--transaction-xa-enabled-<datasource>`<br/>**Env:** `KC_TRANSACTION_XA_ENABLED_<DATASOURCE>` | `true`, `false` | `true` |

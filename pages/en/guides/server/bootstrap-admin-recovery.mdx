@@ -5,13 +5,15 @@ description: Bootstrapping and recovering an admin account - NQRust-Identity Doc
 
 # Bootstrapping and recovering an admin account
 
-## [](#_a_temporary_admin_account)A temporary admin account
+import { Callout } from 'nextra/components'
+
+## A temporary admin account
 
 A user or service admin account created using one of the methods described below is **temporary**. This means the account should exist only for the duration necessary to perform operations needed to gain permanent and more secure admin access. After that, the account needs to be removed manually. Various UI/UX elements, such as the Administration Console warning banner, labels, and log messages, will indicate to a NQRust-Identity administrator that the account is temporary.
 
-## [](#_bootstrapping_a_temporary_admin_account_at_nqrust-identity_startup)Bootstrapping a temporary admin account at NQRust-Identity startup
+## Bootstrapping a temporary admin account at NQRust-Identity startup
 
-NQRust-Identity `start` and `start-dev` commands support options for bootstrapping both temporary admin users and admin service accounts. These options are standard configuration options, so they can be specified in any of the [configuration sources](https://www.nqrust-identity.org/server/configuration#_configuring_sources_for_nqrust-identity) such as environment variables or CLI parameters. For instance, the following examples demonstrate how to use the `start` and `start-dev` commands with CLI parameters to bootstrap a temporary admin user and an admin service account, respectively:
+NQRust-Identity `start` and `start-dev` commands support options for bootstrapping both temporary admin users and admin service accounts. These options are standard configuration options, so they can be specified in any of the [configuration sources](/en/guides/server/configuration#_configuring_sources_for_nqrust-identity) such as environment variables or CLI parameters. For instance, the following examples demonstrate how to use the `start` and `start-dev` commands with CLI parameters to bootstrap a temporary admin user and an admin service account, respectively:
 
 ```bash
 bin/kc.[sh|bat] start --bootstrap-admin-username tmpadm --bootstrap-admin-password pass
@@ -25,17 +27,20 @@ The username or client ID values can be omitted; see the [Default values](#_defa
 
 The purpose of these options is solely for bootstrapping temporary admin accounts. These accounts will be created only during the initial start of the NQRust-Identity server when the master realm doesn’t exist yet. The accounts are always created in the master realm. For recovering lost admin access, use the dedicated command described in the sections below.
 
-## [](#_bootstrapping_an_admin_user_or_service_account_using_the_dedicated_command)Bootstrapping an admin user or service account using the dedicated command
+## Bootstrapping an admin user or service account using the dedicated command
 
 The `bootstrap-admin` command can be executed even before the first-ever start of NQRust-Identity. Bear in mind that all the NQRust-Identity nodes need to be stopped prior to using this command. Its execution will trigger the creation of the initial master realm, and as a result, the startup options to bootstrap the admin user and service account will be ignored later when the server is started for the first time.
 
 Additionally, it is strongly recommended to use the dedicated command with the same options that the NQRust-Identity server is started with (e.g., `db` options).
 
-If you have built an optimized version of NQRust-Identity with the `build` command as outlined in [Configuring NQRust-Identity](https://www.nqrust-identity.org/server/configuration), use the command line option `--optimized` to have NQRust-Identity skip the build check for a faster startup time. When doing this, remove the build time options from the command line and keep only the runtime options.
+If you have built an optimized version of NQRust-Identity with the `build` command as outlined in [Configuring NQRust-Identity](/en/guides/server/configuration), use the command line option `--optimized` to have NQRust-Identity skip the build check for a faster startup time.
+When doing this, remove the build time options from the command line and keep only the runtime options.
 
-if you do not use `--optimized` keep in mind that an `bootstrap-admin` command may implicitly create or update an optimized build for you - if you are running the command from the same machine as a server instance, this may impact the next start of your server.
+<Callout type="info">
+  if you do not use --optimized keep in mind that an bootstrap-admin command may implicitly create or update an optimized build for you - if you are running the command from the same machine as a server instance, this may impact the next start of your server.
+</Callout>
 
-### [](#_create_an_admin_user)Create an admin user
+### Create an admin user
 
 To create a temporary admin user, execute the following command:
 
@@ -53,7 +58,7 @@ bin/kc.[sh|bat] bootstrap-admin user --username tmpadm --password:env PASS_VAR
 
 This command creates a temporary admin user with the username `tmpadm` and the password retrieved from the environment variable.
 
-### [](#_create_a_service_account)Create a service account
+### Create a service account
 
 In automated scenarios, a temporary admin service account can be a more suitable alternative to a temporary admin user.
 
@@ -73,7 +78,7 @@ bin/kc.[sh|bat] bootstrap-admin service --client-id tmpclient --client-secret:en
 
 This command creates a temporary admin service account with the client ID `tmpclient` and the secret retrieved from the environment variable.
 
-## [](#_regaining_access_to_the_realm_with_an_increased_security)Regaining access to the realm with an increased security
+## Regaining access to the realm with an increased security
 
 Passwordless, OTP, or other advanced authentication methods can be enforced for a realm with lost admin access. In such a case, the admin service account needs to be created to recover lost admin access to the realm. After the service account is created, authentication against the NQRust-Identity instance is required to perform all necessary operations:
 
@@ -93,11 +98,11 @@ Finally, the retrieved ID can be used to remove the advanced authentication meth
 bin/kcadm.[sh|bat] delete users/{userId}/credentials/{credentialId} -r {realm-name}
 ```
 
-## [](#_default_values)Default values
+## Default values
 
 For both the startup and dedicated command scenarios, the username and client ID are optional and default to `temp-admin` for both the user and service account, respectively.
 
-## [](#_disable_the_parameters_prompt)Disable the parameters prompt
+## Disable the parameters prompt
 
 To disable the prompt for the parameters, the `--no-prompt` parameter can be used. For example:
 
@@ -115,7 +120,7 @@ bin/kc.[sh|bat] bootstrap-admin user --password:env PASS_VAR --no-prompt
 
 This creates a temporary admin user with the default username without prompting for confirmation. For more information, see the [Default values](#_default_values) section above.
 
-## [](#_environment_variables)Environment variables
+## Environment variables
 
 For the `bootstrap-admin user` command, both username and password can be optionally set as environment variables:
 

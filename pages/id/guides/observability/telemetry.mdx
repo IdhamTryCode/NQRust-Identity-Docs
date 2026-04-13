@@ -1,25 +1,33 @@
 ---
-title: Mengintegrasikan Tumpukan Observability dengan OpenTelemetry
-description: Mengintegrasikan Tumpukan Observability dengan OpenTelemetry - Dokumentasi NQRust-Identity
+title: Mengintegrasikan tumpukan observability Anda dengan OpenTelemetry
+description: Mengintegrasikan tumpukan observability Anda dengan OpenTelemetry - Dokumentasi NQRust-Identity
 ---
 
-# Mengintegrasikan Tumpukan Observability dengan OpenTelemetry
+# Mengintegrasikan tumpukan observability Anda dengan OpenTelemetry
 
-[OpenTelemetry](https://opentelemetry.io/docs/what-is-opentelemetry/) (OTel) adalah kerangka kerja observability sumber terbuka yang dirancang untuk memberikan cara yang konsisten dan dapat diandalkan untuk mengumpulkan data telemetri di seluruh sistem terdistribusi. Proyek ini di bawah [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/projects/opentelemetry/) sebagai proyek yang sedang dipanen. Tujuan dari proyek ini adalah untuk menyediakan standar dan toolkit yang terintegrasi untuk menginstrumentasi, menghasilkan, dan mengekspor data telemetri dari aplikasi modern, membuat pemantauan, debug, dan pemahaman layanan kompleks menjadi lebih mudah.
+import { Callout } from 'nextra/components'
 
-Tujuan NQRust-Identity adalah untuk mendukung OpenTelemetry Logs, Metrics, dan Traces untuk membuat tumpukan observability terpusat tanpa beban penyebaran tambahan.
+[OpenTelemetry](https://opentelemetry.io/docs/what-is-opentelemetry/) (OTel) adalah kerangka kerja observability sumber terbuka yang dirancang untuk menyediakan cara yang konsisten dan dapat diandalkan untuk mengumpulkan data telemetri di seluruh sistem terdistribusi.
+Projek ini di bawah naungan [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/projects/opentelemetry/) sebagai proyek yang sedang dipanen.
+Tujuan dari projek ini adalah untuk menyediakan standar dan set peralatan yang terintegrasi untuk menginstrumentasi, menghasilkan, dan mengekspor data telemetri dari aplikasi modern, membuat pengawasan, debug, dan pemahaman layanan kompleks menjadi lebih mudah.
 
-## [](#_pilihan_umum)Pilihan Umum
+Tujuan NQRust-Identity adalah untuk mendukung OpenTelemetry Logs, Metrics, dan Traces untuk menciptakan tumpukan observability terpusat tanpa beban penyebaran tambahan.
 
-NQRust-Identity menyediakan dukungan untuk pengaturan global ekspor data telemetri. Artinya Anda dapat mengonfigurasi parameter koneksi ke satu [OpenTelemetry collector](https://opentelemetry.io/docs/collector/) yang akan digunakan untuk semua komponen yang didukung.
+## Opsi Umum
 
-Agar fitur OpenTelemetry diaktifkan, setidaknya satu komponen harus diaktifkan, misalnya [Traces](#traces).
+NQRust-Identity menyediakan dukungan untuk pengaturan global ekspor data telemetri.
+Ini berarti Anda dapat mengonfigurasi parameter koneksi ke satu [OpenTelemetry collector](https://opentelemetry.io/docs/collector/) yang akan digunakan untuk semua komponen yang didukung.
 
-Fitur OpenTelemetry di_aktifkan_ secara default. Nonaktifkan fitur ini untuk menonaktifkan komponen OpenTelemetry.
+Untuk mengaktifkan OpenTelemetry, setidaknya satu komponen harus diaktifkan, misalnya [Traces](#traces).
 
-### [](#_endpoint)Endpoint
+<Callout type="info">
+  Fitur OpenTelemetry diaktifkan secara default. Nonaktifkan fitur ini untuk menonaktifkan komponen OpenTelemetry.
+</Callout>
 
-Anda dapat mengonfigurasi endpoint global collector OpenTelemetry yang dibagikan di semua komponen dengan menggunakan opsi `telemetry-endpoint`. Nilai default adalah `http://localhost:4317`.
+### Endpoint
+
+Anda dapat mengonfigurasi endpoint global collector OpenTelemetry yang dibagikan di semua komponen dengan menggunakan opsi `telemetry-endpoint`.
+Nilai default adalah `http://localhost:4317`.
 
 Anda dapat mengganti endpoint melalui CLI sebagai berikut:
 
@@ -27,9 +35,10 @@ Anda dapat mengganti endpoint melalui CLI sebagai berikut:
 bin/kc.[sh|bat] start --telemetry-endpoint=http://my-otel-endpoint:4317
 ```
 
-### [](#_nama_layanan)Nama Layanan
+### Nama Layanan
 
-Anda dapat mengonfigurasi nama layanan OpenTelemetry global yang digunakan untuk mengidentifikasi ekspor data telemetri. Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `telemetry-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.
+Anda dapat mengonfigurasi nama layanan OpenTelemetry global yang digunakan untuk mengidentifikasi eksportir data telemetri.
+Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `telemetry-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.
 
 Anda dapat mengganti nama layanan melalui CLI sebagai berikut:
 
@@ -37,16 +46,15 @@ Anda dapat mengganti nama layanan melalui CLI sebagai berikut:
 bin/kc.[sh|bat] start --telemetry-service-name=my-nqrust-identity-iam
 ```
 
-### [](#_protocol)Protocol
+### Protokol
 
-Anda dapat mengonfigurasi protokol transportasi OpenTelemetry global yang digunakan sebagai saluran komunikasi antara NQRust-Identity dan collector OpenTelemetry. Nilai default adalah `grpc`.
+Anda dapat mengonfigurasi protokol transportasi OpenTelemetry global yang digunakan sebagai saluran komunikasi antara NQRust-Identity dan collector OpenTelemetry.
+Nilai default adalah `grpc`.
 
 NQRust-Identity mendukung protokol komunikasi berikut:
 
-*   `grpc` (default)
-    
-*   `http/protobuf`
-    
+- `grpc`  (default)
+- `http/protobuf`
 
 Anda dapat mengganti protokol melalui CLI sebagai berikut:
 
@@ -54,24 +62,218 @@ Anda dapat mengganti protokol melalui CLI sebagai berikut:
 bin/kc.[sh|bat] start --telemetry-protocol=http/protobuf
 ```
 
-## [](#_traces)Traces
+### Header Permintaan
 
-Lihat [Panduan Analisis Penyebab Dasar dengan Pelacakan](https://www.nqrust-identity.org/observability/tracing).
+Anda dapat mengonfigurasi header permintaan khusus yang akan dikirimkan saat mengekspor data telemetri ke collector OpenTelemetry.
+Hal ini berguna untuk menyediakan token autentikasi atau header khusus lain yang diperlukan oleh backend telemetri Anda.
 
-Anda dapat menimpa pengaturan global OpenTelemetry melalui opsi Pelacakan jika Anda ingin mengekspor pelacakan ke collector OpenTelemetry yang berbeda.
+Gunakan opsi `telemetry-header-<header>` untuk menetapkan header untuk semua komponen telemetri (log, metrik, dan jejak).
 
-## [](#_logs)Logs
+Ganti `<header>` dengan nama header khusus Anda dalam nama opsi.
 
-Dukungan Logs OpenTelemetry adalah **Preview** dan belum sepenuhnya didukung. Fitur ini dinonaktifkan secara default.
+```bash
+bin/kc.[sh|bat] start --telemetry-header-Authorization='Bearer my-token' --telemetry-header-X-Custom-Header=custom-value
+```
 
-Untuk mengaktifkan, jalankan server dengan `--features=preview` atau `--features=opentelemetry-logs`
+<Callout type="info">
+  Header spesifik komponen mengambil precedence atas header umum untuk komponen masing-masing.
+</Callout>
 
-Fitur OpenTelemetry (`opentelemetry`) perlu diaktifkan (secara default).
+## Pengaturan melalui NQRust-Identity CR (Operator)
+
+NQRust-Identity CR memiliki opsi konfigurasi pertama kelas untuk telemetri. Ini dapat dikonfigurasi di bawah spesifikasi telemtry sebagai berikut:
+
+```yaml
+apiVersion: k8s.nqrust-identity.org/v2beta1
+kind: NQRust-Identity
+metadata:
+  name: example-kc
+spec:
+  telemetry:
+    endpoint: http://my-telemetry:4317          # default 'http://localhost:4317'
+    serviceName: my-best-nqrust-identity-telemetry     # default 'nqrust-identity'
+    protocol: http/protobuf                     # default 'grpc'
+    resourceAttributes:
+      service.namespace: nqrust-identity-namespace-telemetry
+```
+
+Bidang ini harus mencerminkan asosiasi 1:1 dengan opsi server `telemetry-*`.
+
+### Mengaktifkan Semua Komponen OpenTelemetry
+
+Untuk mengaktifkan metrik, log, dan jejak OpenTelemetry, Anda dapat mengonfigurasi NQRust-Identity CR sebagai berikut:
+
+<Callout type="warning">
+  OpenTelemetry Logs dan Metrics adalah fitur preview/eksperimental.
+</Callout>
+
+```yaml
+apiVersion: k8s.nqrust-identity.org/v2alpha1
+kind: NQRust-Identity
+metadata:
+  name: example-kc
+spec:
+  features:
+    enabled:
+      - opentelemetry-logs
+      - opentelemetry-metrics
+  telemetry:
+    endpoint: http://my-telemetry:4317
+    serviceName: my-best-nqrust-identity-telemetry
+    protocol: grpc
+  tracing:
+    enabled: true
+  additionalOptions:
+    - name: telemetry-logs-enabled
+      value: "true"
+    - name: telemetry-metrics-enabled
+      value: "true"
+    - name: metrics-enabled
+      value: "true"
+```
+
+## Jejak
+
+Lihat panduan [Analisis akar masalah dengan jejak](/en/guides/observability/tracing).
+
+Anda dapat menimpa pengaturan OpenTelemetry global melalui opsi Jejak jika Anda ingin mengekspor jejak ke collector OpenTelemetry yang berbeda.
+
+## Log
+
+<Callout type="info">
+  Dukungan OpenTelemetry Logs adalah **Preview** dan belum sepenuhnya didukung. Fitur ini dimatikan secara default.
+
+  Untuk mengaktifkannya, jalankan server dengan `--features=preview` atau `--features=opentelemetry-logs`
+</Callout>
+
+<Callout type="info">
+  Fitur OpenTelemetry (opentelemetry) perlu diaktifkan (secara default).
+</Callout>
 
 Mungkin untuk mengekspor log NQRust-Identity ke collector OpenTelemetry dan dikelola oleh berbagai backend logging yang mendukung OpenTelemetry.
 
-### [](#_enable_logs)Aktifkan Logs
+### Mengaktifkan Log
 
 Anda dapat mengaktifkan OpenTelemetry Logs melalui CLI sebagai berikut:
 
+```bash
+bin/kc.[sh|bat] start --features=opentelemetry-logs --telemetry-logs-enabled=true
 ```
+
+Untuk informasi lebih lanjut tentang cara mengatur logging, lihat panduan [Mengonfigurasi Logging](/en/guides/server/logging).
+
+### Tipe Log
+
+Secara default, semua tipe log diekspor oleh NQRust-Identity.
+Anda dapat secara opsional mengonfigurasi tipe log yang paling verbose untuk diekspor melalui opsi `telemetry-logs-level`.
+
+Opsi `telemetry-logs-level` menyaring log mana yang diekspor ke OpenTelemetry, sementara `log-level` dan `log-level-<category>` mengontrol log mana yang dihasilkan oleh NQRust-Identity.
+
+Filter telemetri diterapkan pada log yang sudah dihasilkan, jadi menetapkan `telemetry-logs-level=DEBUG` tidak akan diekspor log `DEBUG` jika `log-level=WARN`.
+
+Sebagai contoh, jika Anda hanya ingin diekspor log `WARN` dan `ERROR`, Anda dapat mengganti level log melalui CLI sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --telemetry-logs-level=WARN
+```
+
+### Header Permintaan
+
+Seperti yang dinyatakan untuk pengaturan umum header, Anda dapat mengonfigurasi header permintaan khusus yang akan digunakan saat mengekspor log.
+
+```bash
+bin/kc.[sh|bat] start --telemetry-logs-header-Authorization='Bearer logs-token'
+```
+
+## Metrik
+
+<Callout type="warning">
+  Fitur Metrik OpenTelemetry saat ini eksperimental, dan tidak disarankan untuk digunakan dalam produksi.
+</Callout>
+
+<Callout type="info">
+  Untuk fitur Metrik bekerja, fitur OpenTelemetry opentelemetry tidak dapat dinonaktifkan.
+</Callout>
+
+Untuk mengintegrasikan Metrik OpenTelemetry, NQRust-Identity menggunakan [Micrometer-to-OpenTelemetry bridge](https://quarkus.io/guides/telemetry-micrometer-to-opentelemetry),
+yang menyediakan fungsionalitas untuk mengekspor metrik yang dibuat oleh Micrometer ke collector OpenTelemetry.
+Ini berarti bahwa semua metrik yang dibuat melalui Micrometer atau metrik OpenTelemetry akan diekspor ke OpenTelemetry.
+
+Ada beberapa [perbedaan konvensi API, dan semantik](https://quarkus.io/guides/telemetry-micrometer-to-opentelemetry#metric-differences-between-micrometer-and-opentelemetry) untuk Micrometer vs OTel Metrics, jadi Anda harus memeriksa apakah semua metrik yang diperlukan telah diekspor.
+
+### Mengaktifkan Metrik
+
+Anda dapat mengaktifkan Metrik OpenTelemetry melalui CLI sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --features=opentelemetry-metrics --telemetry-metrics-enabled=true --metrics-enabled=true
+```
+
+<Callout type="info">
+  Metrik (metrics-enabled) juga perlu diaktifkan
+</Callout>
+
+Untuk informasi lebih lanjut tentang cara mengatur metrik, lihat opsi konfigurasi di bawah atau kunjungi panduan [Mendapatkan wawasan dengan metrik](/en/guides/observability/configuration-metrics).
+
+### Header Permintaan
+
+Seperti yang dinyatakan untuk pengaturan umum header, Anda dapat mengonfigurasi header permintaan khusus yang akan digunakan saat mengekspor metrik.
+
+```bash
+bin/kc.[sh|bat] start --telemetry-metrics-header-Authorization='Bearer metrics-token'
+```
+
+## Pengaturan Pengembangan
+
+Untuk tujuan pengembangan, Anda dapat menggunakan [Grafana OTel-LGTM service](https://github.com/grafana/docker-otel-lgtm), yang berisi OpenTelemetry Collector dan backend untuk log (Loki), metrik (Prometheus), dan jejak (Tempo).
+
+![grafana otel lgtm](/images/observability/telemetry-1.png)
+
+Anda dapat memulai layanan ini dengan menggunakan Docker/Podman sebagai berikut:
+
+```shell
+docker run -p 3000:3000 -p 4317:4317 -p 4318:4318 --rm -ti grafana/otel-lgtm
+```
+
+Kemudian, Anda dapat menavigasi ke UI Grafana dengan mengakses `localhost:3000` dan kemudian Anda dapat menjelajahi semua data yang dikirimkan ke collector OpenTelemetry.
+
+## Opsi Yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`telemetry-endpoint`**<br/>Endpoint OpenTelemetry untuk terhubung.<br/>**CLI:** `--telemetry-endpoint`<br/>**Env:** `KC_TELEMETRY_ENDPOINT` | _String_ | `http://localhost:4317` |
+| **`telemetry-header-<header>`**<br/>Header OpenTelemetry umum yang akan menjadi bagian dari permintaan ekspor (utama untuk menyediakan header Autorisasi).<br/>Periksa dokumentasi tentang cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf kustom.<br/>**CLI:** `--telemetry-header-<header>`<br/>**Env:** `KC_TELEMETRY_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk komunikasi antara server dan collector OpenTelemetry.<br/>**CLI:** `--telemetry-protocol`<br/>**Env:** `KC_TELEMETRY_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
+| **`telemetry-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry yang mengkarakterkan produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`.<br/>**CLI:** `--telemetry-resource-attributes`<br/>**Env:** `KC_TELEMETRY_RESOURCE_ATTRIBUTES` | _List_ |  |
+| **`telemetry-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambil precedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.<br/>**CLI:** `--telemetry-service-name`<br/>**Env:** `KC_TELEMETRY_SERVICE_NAME` | _String_ | `nqrust-identity` |
+
+### Jejak
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`tracing-enabled`**<br/>Mengaktifkan jejak OpenTelemetry.<br/>**CLI:** `--tracing-enabled`<br/>**Env:** `KC_TRACING_ENABLED` | `true`, `false` | `false` |
+| **`tracing-endpoint`**<br/>Endpoint OpenTelemetry untuk terhubung untuk jejak.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--tracing-endpoint`<br/>**Env:** `KC_TRACING_ENDPOINT` | _String_ | `http://localhost:4317` |
+| **`tracing-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk data telemetri.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--tracing-protocol`<br/>**Env:** `KC_TRACING_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
+| **`tracing-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry yang ada dalam jejak yang diekspor untuk mengkarakterkan produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-resource-attributes`. Untuk informasi lebih lanjut, periksa panduan Jejak.<br/>**CLI:** `--tracing-resource-attributes`<br/>**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES` | _List_ |  |
+| **`tracing-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambil precedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-service-name`.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `nqrust-identity` |
+
+### Log
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`telemetry-logs-enabled`**<br/>Mengaktifkan ekspor log ke tujuan yang menangani log OpenTelemetry.<br/>**CLI:** `--telemetry-logs-enabled`<br/>**Env:** `KC_TELEMETRY_LOGS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-logs-endpoint`**<br/>Endpoint OpenTelemetry untuk mengekspor log.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--telemetry-logs-endpoint`<br/>**Env:** `KC_TELEMETRY_LOGS_ENDPOINT` | _String_ |  |
+| **`telemetry-logs-header-<header>`**<br/>Header OpenTelemetry yang akan menjadi bagian dari permintaan ekspor log (utama untuk menyediakan header Autorisasi).<br/>Periksa dokumentasi tentang cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf kustom.<br/>**CLI:** `--telemetry-logs-header-<header>`<br/>**Env:** `KC_TELEMETRY_LOGS_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-logs-level`**<br/>Tipe log yang paling verbose yang diekspor ke endpoint telemetri.<br/>Untuk informasi lebih lanjut, periksa panduan Telemetri.<br/>**CLI:** `--telemetry-logs-level`<br/>**Env:** `KC_TELEMETRY_LOGS_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`telemetry-logs-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk mengekspor log.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--telemetry-logs-protocol`<br/>**Env:** `KC_TELEMETRY_LOGS_PROTOCOL` | `grpc`, `http/protobuf` |  |
+
+### Metrik
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`metrics-enabled`**<br/>Apakah server harus mengekspos metrik.<br/>Jika diaktifkan, metrik tersedia di endpoint `/metrics`.<br/>**CLI:** `--metrics-enabled`<br/>**Env:** `KC_METRICS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-metrics-enabled`**<br/>Mengaktifkan ekspor metrik ke tujuan yang menangani metrik OpenTelemetry.<br/>**CLI:** `--telemetry-metrics-enabled`<br/>**Env:** `KC_TELEMETRY_METRICS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-metrics-endpoint`**<br/>Endpoint OpenTelemetry untuk terhubung ke Metrik.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--telemetry-metrics-endpoint`<br/>**Env:** `KC_TELEMETRY_METRICS_ENDPOINT` | _String_ |  |
+| **`telemetry-metrics-header-<header>`**<br/>Header OpenTelemetry yang akan menjadi bagian dari permintaan ekspor metrik (utama untuk menyediakan header Autorisasi).<br/>Periksa dokumentasi tentang cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf kustom.<br/>**CLI:** `--telemetry-metrics-header-<header>`<br/>**Env:** `KC_TELEMETRY_METRICS_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-metrics-interval`**<br/>Interval antara awal dua upaya ekspor metrik ke tujuan yang menangani data metrik OpenTelemetry.<br/>Menerima format waktu sederhana seperti java.time.Duration (seperti 5000ms, 30s, 5m, 1h). Jika nilai hanya angka, itu mewakili waktu dalam detik.<br/>**CLI:** `--telemetry-metrics-interval`<br/>**Env:** `KC_TELEMETRY_METRICS_INTERVAL` | _String_ | `60s` |
+| **`telemetry-metrics-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk data telemetri metrik.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--telemetry-metrics-protocol`<br/>**Env:** `KC_TELEMETRY_METRICS_PROTOCOL` | `grpc`, `http/protobuf` |  |

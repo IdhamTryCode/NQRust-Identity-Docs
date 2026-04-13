@@ -5,13 +5,16 @@ description: Penguat Kebijakan NQRust-Identity - Dokumentasi NQRust-Identity
 
 # Penguat Kebijakan NQRust-Identity
 
-Titik Penguat Kebijakan (PEP) adalah pola desain dan sebagainya, Anda dapat mengimplementasikannya dengan berbagai cara. NQRust-Identity menyediakan semua sarana yang diperlukan untuk mengimplementasikan PEP untuk platform, lingkungan, dan bahasa pemrograman yang berbeda. Layanan Otorisasi NQRust-Identity menawarkan API berbasis REST dan memanfaatkan kemampuan otorisasi OAuth2 untuk otorisasi yang terperinci menggunakan server otorisasi terpusat.
+import { Callout } from 'nextra/components'
 
-![Ikhtisar PEP](https://www.nqrust-identity.org/resources/images/guides/pep-pattern-diagram.png)
+Titik Penguat Kebijakan (PEP) adalah pola desain dan sebagainya, Anda dapat mengimplementasikannya dengan berbagai cara. NQRust-Identity menyediakan semua sarana yang diperlukan untuk mengimplementasikan PEP di platform, lingkungan, dan bahasa pemrograman yang berbeda. Layanan Otorisasi NQRust-Identity menawarkan API berbasis REST dan memanfaatkan kemampuan otorisasi OAuth2 untuk otorisasi yang terperinci menggunakan server otorisasi terpusat.
 
-PEP bertanggung jawab untuk menguatkan keputusan akses dari server NQRust-Identity di mana keputusan tersebut diambil dengan mengevaluasi kebijakan yang terkait dengan sumber daya yang diamankan. Ini berfungsi sebagai filter atau interceptor dalam aplikasi Anda untuk memeriksa apakah atau tidak permintaan tertentu ke sumber daya yang diamankan dapat dipenuhi berdasarkan izin yang diberikan oleh keputusan ini.
+![PEP overview](/images/securing-apps/policy-enforcer-1.png)
 
-NQRust-Identity menyediakan dukungan bawaan untuk mengaktifkan **Penguat Kebijakan NQRust-Identity** pada aplikasi Java dengan dukungan bawaan untuk mengamankan kerangka kerja dan kontainer web yang mematuhi JakartaEE. Jika Anda menggunakan Maven, Anda harus mengonfigurasi dependensi berikut untuk proyek Anda:
+PEP bertanggung jawab untuk menegakkan keputusan akses dari server NQRust-Identity di mana keputusan tersebut diambil dengan mengevaluasi kebijakan yang terkait dengan sumber daya yang diamankan. Ini berfungsi sebagai filter atau interceptor dalam aplikasi Anda untuk memeriksa apakah atau tidak permintaan tertentu ke sumber daya yang diamankan dapat dipenuhi berdasarkan izin yang diberikan oleh keputusan tersebut.
+
+NQRust-Identity menyediakan dukungan bawaan untuk mengaktifkan **Penguat Kebijakan NQRust-Identity** pada aplikasi Java dengan dukungan bawaan untuk mengamankan kerangka kerja dan kontainer web yang mematuhi JakartaEE.
+Jika Anda menggunakan Maven, Anda harus mengonfigurasi dependensi berikut untuk proyek Anda:
 
 ```xml
 <dependency>
@@ -21,13 +24,13 @@ NQRust-Identity menyediakan dukungan bawaan untuk mengaktifkan **Penguat Kebijak
 </dependency>
 ```
 
-Ketika Anda mengaktifkan penguat kebijakan, semua permintaan yang dikirim ke aplikasi Anda akan ditangkap dan akses ke sumber daya yang diamankan akan diberikan tergantung pada izin yang diberikan oleh NQRust-Identity kepada identitas yang membuat permintaan.
+Ketika Anda mengaktifkan penguat kebijakan, semua permintaan yang dikirim ke aplikasi Anda akan diintercept dan akses ke sumber daya yang diamankan akan diberikan tergantung pada izin yang diberikan oleh NQRust-Identity kepada identitas yang melakukan permintaan.
 
-Penguatan kebijakan secara kuat terkait dengan jalur aplikasi Anda dan [sumber daya](https://www.nqrust-identity.org/docs/latest/authorization_services/#_resource_overview) yang Anda buat untuk server sumber daya menggunakan Konsol Administrasi NQRust-Identity. Secara default, saat Anda membuat server sumber daya, NQRust-Identity membuat [konfigurasi default](https://www.nqrust-identity.org/docs/latest/authorization_services/#_resource_server_default_config) untuk server sumber daya Anda sehingga Anda dapat dengan cepat mengaktifkan penguat kebijakan.
+Penegakanan kebijakan sangat terkait dengan jalur aplikasi Anda dan sumber daya yang Anda buat untuk server sumber daya menggunakan Konsol Administrasi NQRust-Identity. Secara default, saat Anda membuat server sumber daya, NQRust-Identity membuat konfigurasi default untuk server sumber daya Anda sehingga Anda dapat dengan cepat mengaktifkan penegakan kebijakan.
 
-## [](#_enforcer_configuration)Konfigurasi
+## Konfigurasi
 
-Konfigurasi penguat kebijakan menggunakan format JSON dan sebagian besar waktu Anda tidak perlu menetapkan apapun jika Anda ingin secara otomatis mengatasi jalur yang diamankan berdasarkan sumber daya yang tersedia dari server sumber daya Anda.
+Konfigurasi penguat kebijakan menggunakan format JSON dan sebagian besar waktu Anda tidak perlu mengatur apapun jika Anda ingin secara otomatis mengurai jalur yang diamankan berdasarkan sumber daya yang tersedia dari server sumber daya Anda.
 
 Jika Anda ingin secara manual menentukan sumber daya yang diamankan, Anda dapat menggunakan format yang sedikit lebih panjang:
 
@@ -54,18 +57,318 @@ Jika Anda ingin secara manual menentukan sumber daya yang diamankan, Anda dapat 
 
 Berikut adalah deskripsi dari setiap opsi konfigurasi:
 
-*   **enforcement-mode**
-    
-    Mengesarkan bagaimana kebijakan diterapkan.
-    
-    *   **ENFORCING**
-        
-        (mode default) Permintaan ditolak secara default bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
-        
-    *   **PERMISSIVE**
-        
-        Permintaan diizinkan bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
-        
-    *   **DISABLED**
-        
-        Melemahkan secara komplit evaluasi kebijakan dan mengizinkan akses ke sumber daya apa pun. Ketika `
+- **enforcement-mode**
+
+  Menentukan bagaimana kebijakan diterapkan.
+
+  - **ENFORCING**
+
+    (mode default) Permintaan ditolak secara default bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
+  - **PERMISSIVE**
+
+    Permintaan diizinkan bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
+  - **DISABLED**
+
+    Melemahkan penilaian kebijakan sepenuhnya dan mengizinkan akses ke sumber daya apa pun. Ketika `enforcement-mode` adalah `DISABLED`, aplikasi masih dapat memperoleh semua izin yang diberikan oleh NQRust-Identity melalui [Konteks Otorisasi](#_enforcer_authorization_context)
+- **on-deny-redirect-to**
+
+  Menentukan URL tempat permintaan klien akan dialihkan saat mendapatkan pesan "akses ditolak" dari server. Secara default, adapter merespon dengan kode status HTTP 403.
+- **path-cache**
+
+  Menentukan bagaimana penguat kebijakan harus melacak asosiasi antara jalur dalam aplikasi Anda dan sumber daya yang didefinisikan di NQRust-Identity. Cache diperlukan untuk menghindari permintaan yang tidak perlu ke server NQRust-Identity dengan menyimpan asosiasi antara jalur dan sumber daya yang diamankan.
+
+  - **lifespan**
+
+    Menentukan waktu dalam milidetik saat entri harus kadaluarsa. Jika tidak diberikan, nilai default adalah **30000**. Nilai sama dengan 0 dapat diatur untuk menonaktifkan cache sepenuhnya. Nilai sama dengan -1 dapat diatur untuk menonaktifkan kedaluwarsa cache.
+  - **max-entries**
+
+    Menentukan batas entri yang harus dijaga dalam cache. Jika tidak diberikan, nilai default adalah **1000**.
+- **paths**
+
+  Menentukan jalur yang akan diamankan. Konfigurasi ini opsional. Jika tidak didefinisikan, penguat kebijakan menggali semua jalur dengan mengambil sumber daya yang Anda definisikan untuk aplikasi Anda di NQRust-Identity, di mana sumber daya ini didefinisikan dengan `URIS` yang mewakili beberapa jalur dalam aplikasi Anda.
+
+  - **name**
+
+    Nama sumber daya di server yang akan diasosiasikan dengan jalur yang diberikan. Ketika digunakan bersama dengan **path**, penguat kebijakan mengabaikan properti **URIS** sumber daya dan menggunakan jalur yang Anda berikan sebagai gantinya.
+  Saat ini logika pencocokan jalur yang sangat dasar didukung. Contoh jalur yang valid adalah:
+
+    - Wildcards: `/*`
+    - Akhiran: `/*.html`
+    - Sub-jalur: `/path/*`
+    - Parameter jalur: /resource/&#123;id&#125;
+    - Cocokannya yang tepat: /resource
+    - Pola: /&#123;version&#125;/resource, /api/&#123;version&#125;/resource, /api/&#123;version&#125;/resource/*
+  - **methods**
+
+    Metode HTTP (misalnya, GET, POST, PATCH) untuk diamankan dan bagaimana mereka terkait dengan lingkup untuk sumber daya yang diberikan di server.
+
+    - **method**
+
+      Nama metode HTTP.
+    - **scopes**
+
+      Sebuah array string dengan lingkup yang terkait dengan metode. Ketika Anda mengasosiasikan lingkup dengan metode tertentu, klien yang mencoba mengakses sumber daya (atau jalur) yang diamankan harus menyediakan RPT yang memberi izin untuk semua lingkup yang tercantum dalam daftar. Misalnya, jika Anda menentukan metode _POST_ dengan lingkup _create_, RPT harus berisi izin untuk mengakses lingkup _create_ saat melakukan POST ke jalur.
+    - **scopes-enforcement-mode**
+
+      Sebuah string yang merujuk pada mode penegasan untuk lingkup yang terkait dengan metode. Nilai bisa menjadi **ALL** atau **ANY**. Jika **ALL**, semua lingkup yang didefinisikan harus diberikan untuk mengakses sumber daya menggunakan metode tersebut. Jika **ANY**, setidaknya satu lingkup harus diberikan untuk mendapatkan akses ke sumber daya menggunakan metode tersebut. Secara default, mode penegasan diatur ke **ALL**.
+  - **enforcement-mode**
+
+    Menentukan bagaimana kebijakan diterapkan.
+
+    - **ENFORCING**
+
+      (mode default) Permintaan ditolak secara default bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
+    - **DISABLED**
+  - **claim-information-point**
+
+    Menentukan satu atau lebih klaim yang harus dipecahkan dan dipush ke server NQRust-Identity untuk membuat klaim ini tersedia untuk kebijakan. Lihat [Claim Information Point](#_enforcer_claim_information_point) untuk lebih detail.
+- **lazy-load-paths**
+
+  Menentukan bagaimana adapter harus mengambil server untuk sumber daya yang terkait dengan jalur dalam aplikasi Anda. Jika **true**, penguat kebijakan akan mengambil sumber daya sesuai dengan permintaan jalur. Konfigurasi ini sangat berguna ketika Anda tidak ingin mengambil semua sumber daya dari server selama penyebaran (bila Anda tidak telah memberikan `paths`) atau dalam kasus Anda hanya telah menentukan subset `paths` dan ingin mengambil yang lain secara on-demand.
+- **http-method-as-scope**
+
+  Menentukan bagaimana lingkup harus dipetakan ke metode HTTP. Jika diatur ke **true**, penguat kebijakan akan menggunakan metode HTTP dari permintaan saat ini untuk memeriksa apakah atau tidak akses harus diberikan. Ketika diaktifkan, pastikan sumber daya Anda di NQRust-Identity terkait dengan lingkup yang mewakili setiap metode HTTP yang Anda lindungi.
+- **claim-information-point**
+
+  Menentukan satu atau lebih klaim **global** yang harus dipecahkan dan dipush ke server NQRust-Identity untuk membuat klaim ini tersedia untuk kebijakan. Lihat [Claim Information Point](#_enforcer_claim_information_point) untuk lebih detail.
+
+## Claim Information Point
+
+Claim Information Point (CIP) bertanggung jawab untuk menafsirkan klaim dan mendorong klaim ini ke server NQRust-Identity agar memberikan informasi lebih lanjut tentang konteks akses ke kebijakan. Mereka dapat didefinisikan sebagai opsi konfigurasi untuk penguat kebijakan untuk menafsirkan klaim dari berbagai sumber, seperti:
+
+- Permintaan HTTP (parameter, header, body, dll)
+- Layanan HTTP Eksternal
+- Nilai statis yang didefinisikan dalam konfigurasi
+- Sumber lain dengan mengimplementasikan SPI Claim Information Provider
+
+Saat mendorong klaim ke server NQRust-Identity, kebijakan dapat berdasarkan keputusan tidak hanya pada siapa seseorang tetapi juga dengan memperhitungkan konteks dan konten, berdasarkan siapa, apa, mengapa, kapan, di mana, dan yang mana untuk transaksi yang diberikan. Ini semua tentang Otorisasi Berbasis Konteks dan bagaimana menggunakan informasi runtime untuk mendukung keputusan otorisasi yang terperinci.
+
+### Mengambil informasi dari permintaan HTTP
+
+Berikut adalah beberapa contoh yang menunjukkan bagaimana Anda dapat mengekstrak klaim dari permintaan HTTP:
+
+```json
+{
+  "paths": [
+    {
+      "path": "/protected/resource",
+      "claim-information-point": {
+        "claims": {
+          "claim-from-request-parameter": "{request.parameter['a']}",
+          "claim-from-header": "{request.header['b']}",
+          "claim-from-cookie": "{request.cookie['c']}",
+          "claim-from-remoteAddr": "{request.remoteAddr}",
+          "claim-from-method": "{request.method}",
+          "claim-from-uri": "{request.uri}",
+          "claim-from-relativePath": "{request.relativePath}",
+          "claim-from-secure": "{request.secure}",
+          "claim-from-json-body-object": "{request.body['/a/b/c']}",
+          "claim-from-json-body-array": "{request.body['/d/1']}",
+          "claim-from-body": "{request.body}",
+          "claim-from-static-value": "static value",
+          "claim-from-multiple-static-value": ["static", "value"],
+          "param-replace-multiple-placeholder": "Test {nqrust-identity.access_token['/custom_claim/0']} and {request.parameter['a']}"
+        }
+      }
+    }
+  ]
+}
+```
+
+### Mengambil informasi dari layanan HTTP eksternal
+
+Berikut adalah beberapa contoh yang menunjukkan bagaimana Anda dapat mengekstrak klaim dari layanan HTTP Eksternal:
+
+```json
+{
+  "paths": [
+    {
+      "path": "/protected/resource",
+      "claim-information-point": {
+        "http": {
+          "claims": {
+            "claim-a": "/a",
+            "claim-d": "/d",
+            "claim-d0": "/d/0",
+            "claim-d-all": [
+              "/d/0",
+              "/d/1"
+            ]
+          },
+          "url": "http://mycompany/claim-provider",
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "header-b": [
+              "header-b-value1",
+              "header-b-value2"
+            ],
+            "Authorization": "Bearer {nqrust-identity.access_token}"
+          },
+          "parameters": {
+            "param-a": [
+              "param-a-value1",
+              "param-a-value2"
+            ],
+            "param-subject": "{nqrust-identity.access_token['/sub']}",
+            "param-user-name": "{nqrust-identity.access_token['/preferred_username']}"
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+### Klaim statis
+
+```json
+{
+  "paths": [
+    {
+      "path": "/protected/resource",
+      "claim-information-point": {
+        "claims": {
+          "claim-from-static-value": "static value",
+          "claim-from-multiple-static-value": ["static", "value"]
+        }
+      }
+    }
+  ]
+}
+```
+
+### Penyedia SPI untuk informasi klaim
+
+SPI Penyedia Informasi Klaim dapat digunakan oleh pengembang untuk mendukung titik informasi klaim yang berbeda jika penyedia bawaan tidak cukup untuk menangani kebutuhan mereka.
+
+Sebagai contoh, untuk mengimplementasikan penyedia CIP baru, Anda perlu mengimplementasikan `org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory` dan `ClaimInformationPointProvider` serta menyediakan file `META-INF/services/org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory` di classpath aplikasi Anda.
+
+Contoh `org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory`:
+
+```java
+public class MyClaimInformationPointProviderFactory implements ClaimInformationPointProviderFactory<MyClaimInformationPointProvider> {
+
+    @Override
+    public String getName() {
+        return "my-claims";
+    }
+
+    @Override
+    public void init(PolicyEnforcer policyEnforcer) {
+
+    }
+
+    @Override
+    public MyClaimInformationPointProvider create(Map<String, Object> config) {
+        return new MyClaimInformationPointProvider(config);
+    }
+}
+```
+
+Setiap penyedia CIP harus dihubungkan dengan nama, seperti yang didefinisikan di atas dalam metode `MyClaimInformationPointProviderFactory.getName`. Nama akan digunakan untuk memetakan konfigurasi dari bagian `claim-information-point` dalam konfigurasi `policy-enforcer` ke implementasi.
+
+Saat memproses permintaan, penguat kebijakan akan memanggil metode MyClaimInformationPointProviderFactory.create untuk mendapatkan instance dari MyClaimInformationPointProvider. Ketika dipanggil, setiap konfigurasi yang didefinisikan untuk penyedia CIP tertentu (melalui claim-information-point) dilewatkan sebagai peta.
+
+Contoh `ClaimInformationPointProvider`:
+
+```java
+public class MyClaimInformationPointProvider implements ClaimInformationPointProvider {
+
+    private final Map<String, Object> config;
+
+    public MyClaimInformationPointProvider(Map<String, Object> config) {
+        this.config = config;
+    }
+
+    @Override
+    public Map<String, List<String>> resolve(HttpFacade httpFacade) {
+        Map<String, List<String>> claims = new HashMap<>();
+
+        // put whatever claim you want into the map
+
+        return claims;
+    }
+}
+```
+
+## Mengambil Konteks Otorisasi
+
+Ketika penegakan kebijakan diaktifkan, izin yang diperoleh dari server tersedia melalui `org.nqrust-identity.AuthorizationContext`. Kelas ini menawarkan beberapa metode yang dapat Anda gunakan untuk memperoleh izin dan memastikan apakah izin telah diberikan untuk sumber daya atau lingkup tertentu.
+
+Mengambil Konteks Otorisasi di Kontainer Servlet
+
+```java
+HttpServletRequest request = // obtain javax.servlet.http.HttpServletRequest
+AuthorizationContext authzContext = (AuthorizationContext) request.getAttribute(AuthorizationContext.class.getName());
+```
+
+<Callout type="info">
+  Konteks otorisasi membantu memberi Anda lebih banyak kendali atas keputusan yang dibuat dan dikembalikan oleh server. Misalnya, Anda dapat menggunakannya untuk membangun menu dinamis di mana item tersembunyi atau ditampilkan tergantung pada izin yang terkait dengan sumber daya atau lingkup.
+</Callout>
+
+```java
+if (authzContext.hasResourcePermission("Project Resource")) {
+    // user can access the Project Resource
+}
+
+if (authzContext.hasResourcePermission("Admin Resource")) {
+    // user can access administration resources
+}
+
+if (authzContext.hasScopePermission("urn:project.com:project:create")) {
+    // user can create new projects
+}
+```
+
+`AuthorizationContext` merepresentasikan salah satu kemampuan utama Layanan Otorisasi NQRust-Identity. Dari contoh di atas, Anda dapat melihat bahwa sumber daya yang diamankan tidak secara langsung terkait dengan kebijakan yang mengatur mereka.
+
+Pertimbangkan beberapa kode serupa yang menggunakan kontrol akses berbasis peran (RBAC):
+
+```java
+if (User.hasRole('user')) {
+    // user can access the Project Resource
+}
+
+if (User.hasRole('admin')) {
+    // user can access administration resources
+}
+
+if (User.hasRole('project-manager')) {
+    // user can create new projects
+}
+```
+
+Meskipun kedua contoh mengatasi kebutuhan yang sama, mereka melakukannya dengan cara yang berbeda. Dalam RBAC, peran hanya _secara implisit_ menentukan akses untuk sumber daya mereka. Dengan NQRust-Identity, Anda mendapatkan kemampuan untuk membuat kode yang lebih mudah dikelola yang fokus langsung pada sumber daya Anda, apakah Anda menggunakan RBAC, kontrol akses berbasis atribut (ABAC), atau varian BAC lainnya. Apakah Anda memiliki izin untuk sumber daya atau lingkup yang diberikan atau tidak memiliki izin tersebut.
+
+Sekarang, anggaplah persyaratan keamanan Anda telah berubah dan selain project managers, PMO juga dapat membuat proyek baru.
+
+Persyaratan keamanan berubah, tetapi dengan NQRust-Identity tidak perlu mengubah kode aplikasi Anda untuk menangani persyaratan baru. Setelah aplikasi Anda berbasis pada pengenal sumber daya dan lingkup, Anda hanya perlu mengubah konfigurasi izin atau kebijakan yang terkait dengan sumber daya tertentu di server otorisasi. Dalam hal ini, izin dan kebijakan yang terkait dengan `Project Resource` dan/atau lingkup `urn:project.com:project:create` akan diubah.
+
+## Menggunakan AuthorizationContext untuk memperoleh Instansi Klien Otorisasi
+
+`AuthorizationContext` juga dapat digunakan untuk memperoleh referensi ke [klien otorisasi NQRust-Identity](/en/guides/securing-apps/authz-client) yang dikonfigurasi untuk aplikasi Anda:
+
+```java
+ClientAuthorizationContext clientContext = ClientAuthorizationContext.class.cast(authzContext);
+AuthzClient authzClient = clientContext.getClient();
+```
+
+Dalam beberapa kasus, server sumber daya yang diamankan oleh penguat kebijakan perlu mengakses API yang disediakan oleh server otorisasi. Dengan instance `AuthzClient` di tangan, server sumber daya dapat berinteraksi dengan server untuk menciptakan sumber daya atau memeriksa izin tertentu secara program.
+
+## Mengonfigurasi TLS/HTTPS
+
+Ketika server menggunakan HTTPS, pastikan penguat kebijakan Anda dikonfigurasi sebagai berikut:
+
+```json
+{
+  "truststore": "path_to_your_trust_store",
+  "truststore-password": "trust_store_password"
+}
+```
+
+Konfigurasi di atas mengaktifkan TLS/HTTPS untuk Klien Otorisasi, membuat mungkin untuk mengakses server NQRust-Identity secara jarak jauh menggunakan skema HTTPS.
+
+<Callout type="info">
+  Dianjurkan untuk mengaktifkan TLS/HTTPS saat mengakses endpoint server NQRust-Identity.
+</Callout>

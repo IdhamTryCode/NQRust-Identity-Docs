@@ -5,13 +5,15 @@ description: Configuring trusted certificates - NQRust-Identity Documentation
 
 # Configuring trusted certificates
 
+import { Callout } from 'nextra/components'
+
 When NQRust-Identity communicates with external services or has an incoming connection through TLS, it has to validate the remote certificate in order to ensure it is connecting to a trusted server. This is necessary in order to prevent man-in-the-middle attacks.
 
 The certificates of these clients or servers, or the CA that signed these certificates, must be put in a truststore. This truststore is then configured for use by NQRust-Identity.
 
-## [](#_configuring_the_system_truststore)Configuring the System Truststore
+## Configuring the System Truststore
 
-The existing Java default truststore certs will always be trusted. If you need additional certificates, which will be the case if you have self-signed or internal certificate authorities that are not recognized by the JRE, they can be included in the `conf/truststores` directory or subdirectories. The certs may be in PEM files, or PKCS12 files with extension `.p12`, `.pfx`, or `.pkcs12`. If in PKCS12, the certs must be unencrypted - meaning no password is expected.
+The existing Java default truststore certs will always be trusted.  If you need additional certificates, which will be the case if you have self-signed or internal certificate authorities that are not recognized by the JRE, they can be included in the `conf/truststores` directory or subdirectories.  The certs may be in PEM files, or PKCS12 files with extension `.p12`, `.pfx`, or `.pkcs12`.  If in PKCS12, the certs must be unencrypted - meaning no password is expected.
 
 If you need an alternative path, use the `--truststore-paths` option to specify additional files or directories where PEM or PKCS12 files are located. Paths are relative to where you launched NQRust-Identity, so absolute paths are recommended instead. If a directory is specified, it will be recursively scanned for truststore files.
 
@@ -25,49 +27,44 @@ bin/kc.[sh|bat] start --truststore-paths=/opt/truststore/myTrustStore.pfx,/opt/o
 
 It is still possible to directly set your own `javax.net.ssl` truststore System properties, but it’s recommended to use the `--truststore-paths` instead.
 
-## [](#_hostname_verification_policy)Hostname Verification Policy
+## Cluster CA certificates (Kubernetes and OpenShift)
+
+When running NQRust-Identity on Kubernetes or OpenShift, the server will automatically include well-known cluster certificate authorities in the system truststore if they are present on the filesystem:
+
+- Kubernetes service account CA: `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`
+- OpenShift service CA: `/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt`
+
+This behavior is enabled by default and does not require the Operator. It can be controlled with the following option:
+
+- `--truststore-kubernetes-enabled=true|false` (default: `true`)
+
+To disable automatically trusting the cluster CAs entirely:
+
+```bash
+bin/kc.[sh|bat] start --truststore-kubernetes-enabled=false
+```
+
+Note that if the corresponding files are not mounted into the container, they will not be included regardless of the option values.
+
+<Callout type="warning">
+  When https-client-auth is set to required or request without an explicit https-trust-store-file, mTLS client certificate validation falls back to the system truststore. With truststore-kubernetes-enabled=true, this means certificates signed by the Kubernetes cluster CA will be accepted as valid client certificates. If this is not desired, either set https-trust-store-file explicitly or disable truststore-kubernetes-enabled.
+</Callout>
+
+## Hostname Verification Policy
 
 You may refine how hostnames are verified by TLS connections with the `tls-hostname-verifier` property.
 
-*   `DEFAULT` (the default) allows wildcards in subdomain names (e.g. \*.foo.com) to match names with the same number of levels (e.g. a.foo.com, but not a.b.foo.com) - with rules and exclusions for public suffixes based upon [https://publicsuffix.org/list/](https://publicsuffix.org/list/)
-    
-*   `ANY` means that the hostname is not verified - this mode should not be used in production.
-    
-*   `WILDCARD` (deprecated) allows wildcards in subdomain names (e.g. \*.foo.com) to match anything, including multiple levels (e.g. a.b.foo.com). Use DEFAULT instead.
-    
-*   `STRICT` (deprecated) allows wildcards in subdomain names (e.g. \*.foo.com) to match names with the same number of levels (e.g. a.foo.com, but not a.b.foo.com) - with some limited exclusions. Use DEFAULT instead.
-    
-    Please note that this setting does not apply to LDAP secure connections, which require strict hostname checking.
-    
+- `DEFAULT` (the default) allows wildcards in subdomain names (e.g. *.foo.com) to match names with the same number of levels (e.g. a.foo.com, but not a.b.foo.com) - with rules and exclusions for public suffixes based upon [https://publicsuffix.org/list/](https://publicsuffix.org/list/)
+- `ANY` means that the hostname is not verified - this mode should not be used in production.
+- `WILDCARD` (deprecated) allows wildcards in subdomain names (e.g. *.foo.com) to match anything, including multiple levels (e.g. a.b.foo.com). Use DEFAULT instead.
+- `STRICT` (deprecated) allows wildcards in subdomain names (e.g. *.foo.com) to match names with the same number of levels (e.g. a.foo.com, but not a.b.foo.com) - with some limited exclusions. Use DEFAULT instead.
 
-## [](#_relevant_options)Relevant options
+  Please note that this setting does not apply to LDAP secure connections, which require strict hostname checking.
 
-  
+## Relevant options
 
-_Type_ or Values
-
-Default
-
-`tls-hostname-verifier`
-
-The TLS hostname verification policy for out-going HTTPS and SMTP requests.
-
-ANY should not be used in production.
-
-**CLI:** `--tls-hostname-verifier`  
-**Env:** `KC_TLS_HOSTNAME_VERIFIER`
-
-STRICT and WILDCARD have been deprecated, use DEFAULT instead. **Deprecated values: `STRICT`, `WILDCARD`**
-
-`ANY`, `WILDCARD` (deprecated), `STRICT` (deprecated), `DEFAULT`
-
-`DEFAULT`
-
-`truststore-paths`
-
-List of pkcs12 (p12, pfx, or pkcs12 file extensions), PEM files, or directories containing those files that will be used as a system truststore.
-
-**CLI:** `--truststore-paths`  
-**Env:** `KC_TRUSTSTORE_PATHS`
-
-_List_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`tls-hostname-verifier`**<br/>The TLS hostname verification policy for out-going HTTPS and SMTP requests.<br/>ANY should not be used in production.<br/>**CLI:** `--tls-hostname-verifier`<br/>**Env:** `KC_TLS_HOSTNAME_VERIFIER` | `ANY`, `WILDCARD` (deprecated), `STRICT` (deprecated), `DEFAULT` | `DEFAULT` |
+| **`truststore-kubernetes-enabled`**<br/>If enabled, the server will automatically include the default Kubernetes service account CA certificate from "/var/run/secrets/kubernetes.<br/>io/serviceaccount/ca.crt" and the OpenShift service CA certificate from "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt" when running in a container environment.<br/>**CLI:** `--truststore-kubernetes-enabled`<br/>**Env:** `KC_TRUSTSTORE_KUBERNETES_ENABLED` | `true`, `false` | `true` |
+| **`truststore-paths`**<br/>List of pkcs12 (p12, pfx, or pkcs12 file extensions), PEM files, or directories containing those files that will be used as a system truststore.<br/>**CLI:** `--truststore-paths`<br/>**Env:** `KC_TRUSTSTORE_PATHS` | _List_ |  |

@@ -1,35 +1,54 @@
 ---
-title: Impor dan Ekspor Realm
-description: Impor dan Ekspor Realm - Dokumentasi NQRust-Identity
+title: Importing and exporting realms
+description: Importing and exporting realms - NQRust-Identity Documentation
 ---
 
-# Impor dan Ekspor Realm
+# Importing and exporting realms
 
-Dalam panduan ini, Anda akan memahami berbagai pendekatan untuk mengimpor dan mengekspor realm menggunakan file JSON.
+import { Callout } from 'nextra/components'
 
-## [](#_import_export_commands)Perintah Impor / Ekspor
+Panduan ini akan membantu Anda memahami berbagai pendekatan untuk mengimpor dan mengekspor realm menggunakan file JSON.
 
-Mengekspor dan mengimpor ke file tunggal dapat menghasilkan file besar yang mungkin membuat proses ekspor / impor kehabisan memori. Jika basis data Anda berisi lebih dari 50.000 pengguna, ekspor ke direktori dan bukan ke file tunggal. Jumlah pengguna per file default adalah lima puluh, tetapi Anda dapat menggunakan nilai yang lebih besar jika diinginkan.
+<Callout type="info">
+  Proses impor/ekspor memiliki batasan untuk digunakan sebagai mekanisme backup dan restore.
+  Konsekuensinya dari ekspor tidak dijamin kecuali jika semua node NQRust-Identity dihentikan sebelum menjalankan ekspor.
+  Data yang diekspor tidak mencakup event pengguna dan admin, sesi yang dipertahankan, state alur kerja, atau token yang telah dicabut.
+</Callout>
 
-Perintah `import` dan `export` pada dasarnya adalah peluncuran server yang keluar sebelum membawa server penuh. Mereka saat ini tidak dirancang untuk dijalankan dari mesin yang sama dengan instance server yang sedang berjalan, yang mungkin mengakibatkan konflik port atau lainnya.
+## Perintah Impor / Ekspor
 
-Disarankan agar semua node NQRust-Identity dihentikan sebelum menggunakan perintah `kc.[sh|bat] export`. Hal ini memastikan bahwa hasilnya tidak akan memiliki masalah konsistensi dengan modifikasi pengguna atau realm selama ekspor.
+Perintah `import` dan `export` adalah peluncuran server yang melakukan impor atau ekspor, lalu keluar sebelum membawa server penuh.
 
-Tidak diperlukan agar semua node NQRust-Identity dihentikan sebelum melakukan perintah `kc.[sh|bat] import` dengan opsi override. Perintah ini tidak menyatukan ke dalam cluster cache, jadi menimpa realm akan mengakibatkan cache yang tidak konsisten di cluster, yang kemudian akan menampilkan dan menggunakan informasi yang tidak konsisten atau kedaluwarsa. Sebagai gantinya dari menimpa realm dengan perintah impor, pertimbangkan untuk menggunakan Admin API untuk menghapus realm yang perlu ditimpa sebelum menjalankan impor.
+<Callout type="info">
+  Perintah `import` dan `export` tidak dirancang untuk dijalankan dari mesin yang sama dengan instance server yang sedang berjalan, yang mungkin mengakibatkan konflik port atau lainnya.
 
-### [](#_providing_options_for_database_connection_parameters)Memberikan Opsi untuk Parameter Koneksi Database
+  Dianjurkan agar semua node NQRust-Identity dihentikan sebelum menggunakan perintah `kc.[sh|bat] export`.
+  Hal ini memastikan hasil tidak akan memiliki masalah konsistensi dengan modifikasi pengguna atau realm selama ekspor.
 
-Ketika menggunakan perintah `export` dan `import` di bawah, NQRust-Identity perlu tahu bagaimana cara untuk terhubung ke database tempat informasi tentang realm, client, pengguna, dan entitas lainnya disimpan. Seperti yang dijelaskan dalam [Mengonfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration) bahwa informasi ini dapat diberikan sebagai parameter baris perintah, variabel lingkungan, atau file konfigurasi. Gunakan opsi baris perintah `--help` untuk setiap perintah untuk melihat opsi yang tersedia.
+  Diperlukan agar semua node NQRust-Identity dihentikan sebelum menggunakan perintah `kc.[sh|bat] import` dengan opsi override.
+  Perintah ini tidak menyatukan ke cluster cache, jadi menimpa realm akan mengakibatkan cache yang tidak konsisten di cluster, yang kemudian akan menampilkan dan menggunakan informasi yang tidak konsisten atau usang.
+  Sebagai gantinya dari menimpa realm dengan perintah impor, pertimbangkan untuk menggunakan Admin API untuk menghapus realm yang perlu ditimpa sebelum menjalankan impor.
+</Callout>
 
-Beberapa opsi konfigurasi adalah opsi konfigurasi waktu kompilasi. Secara default, NQRust-Identity akan otomatis dibangun ulang secara otomatis untuk perintah `export` dan `import` jika mendeteksi perubahan parameter waktu kompilasi.
+### Memberikan opsi untuk parameter koneksi database
 
-Jika Anda telah membangun versi yang dioptimalkan dari NQRust-Identity dengan perintah `build` seperti yang diuraikan dalam [Mengonfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration), gunakan opsi baris perintah `--optimized` agar NQRust-Identity melewati pemeriksaan build untuk waktu startup yang lebih cepat. Ketika melakukan ini, hapus opsi waktu kompilasi dari baris perintah dan simpan hanya opsi waktu runtime.
+Saat menggunakan perintah `export` dan `import` di bawah, NQRust-Identity perlu mengetahui bagaimana cara untuk terhubung ke database tempat informasi tentang realm, client, pengguna, dan entitas lainnya disimpan.
+Seperti yang dijelaskan dalam [Konfigurasi NQRust-Identity](/en/guides/server/configuration) bahwa informasi ini dapat diberikan sebagai parameter baris perintah, variabel lingkungan atau file konfigurasi.
+Gunakan opsi baris perintah `--help` untuk setiap perintah untuk melihat opsi yang tersedia.
 
-Jika Anda tidak menggunakan `--optimized`, perhatikan bahwa perintah `import` atau `export` mungkin secara implisit membuat atau memperbarui build yang dioptimalkan untuk Anda - jika Anda menjalankan perintah dari mesin yang sama dengan instance server, ini mungkin mempengaruhi startup berikutnya server Anda.
+Beberapa opsi konfigurasi adalah opsi konfigurasi waktu build.
+Secara default, NQRust-Identity akan secara otomatis rebuild untuk perintah `export` dan `import` jika mendeteksi perubahan pada parameter waktu build.
 
-### [](#_exporting_a_realm_to_a_directory)Mengekspor Realm ke Direktori
+Jika Anda telah membangun versi yang dioptimalkan dari NQRust-Identity dengan perintah `build` seperti yang diuraikan dalam [Konfigurasi NQRust-Identity](/en/guides/server/configuration), gunakan opsi baris perintah `--optimized` agar NQRust-Identity melewati pemeriksaan build untuk waktu startup yang lebih cepat.
+Ketika melakukan ini, hapus opsi waktu build dari baris perintah dan hanya pertahankan opsi waktu runtime.
 
-Untuk mengekspor realm, Anda dapat menggunakan perintah `export`. Instance server NQRust-Identity Anda tidak boleh dimulai ketika menjalankan perintah ini.
+<Callout type="info">
+  jika Anda tidak menggunakan --optimized, perhatikan bahwa perintah impor atau ekspor mungkin secara implisit membuat atau memperbarui build yang dioptimalkan untuk Anda - jika Anda menjalankan perintah dari mesin yang sama dengan instance server, ini mungkin mempengaruhi start berikutnya server Anda.
+</Callout>
+
+### Mengekspor Realm ke Direktori
+
+Untuk mengekspor realm, Anda dapat menggunakan perintah `export`. Instance server NQRust-Identity Anda tidak boleh dimulai saat menjalankan perintah ini.
 
 ```bash
 bin/kc.[sh|bat] export --help
@@ -41,6 +60,169 @@ Untuk mengekspor realm ke direktori, Anda dapat menggunakan opsi `--dir <dir>`.
 bin/kc.[sh|bat] export --dir <dir>
 ```
 
-Ketika mengekspor realm ke direktori, server akan membuat file terpisah untuk setiap realm yang diekspor.
+Saat mengekspor realm ke direktori, server akan membuat file terpisah untuk setiap realm yang diekspor.
 
-#### [](#_configuring_how_users_are_exported)Meng
+#### Mengonfigurasi bagaimana pengguna diekspor
+
+Anda juga dapat mengonfigurasi bagaimana pengguna akan diekspor dengan mengatur opsi `--users <strategy>`. Nilai yang tersedia untuk opsi ini adalah:
+
+Pengguna diekspor ke file json yang berbeda, tergantung pada jumlah maksimum pengguna per file yang diatur oleh `--users-per-file`. Ini adalah nilai default.
+
+Melewati pengeksportan pengguna.
+
+Pengguna akan diekspor ke file yang sama dengan pengaturan realm. Untuk realm yang diberi nama "foo", ini akan menjadi "foo-realm.json" dengan data realm dan pengguna.
+
+Semua pengguna diekspor ke file eksplisit tunggal. Jadi Anda akan mendapatkan dua file json untuk realm, satu dengan data realm dan satu dengan pengguna.
+
+Jika Anda mengekspor pengguna menggunakan strategi `different_files`, Anda dapat mengatur berapa banyak pengguna per file yang Anda inginkan dengan mengatur opsi `--users-per-file`. Nilai default adalah `50`.
+
+```bash
+bin/kc.[sh|bat] export --dir <dir> --users different_files --users-per-file 100
+```
+
+### Mengekspor Realm ke File
+
+Untuk mengekspor realm ke file, Anda dapat menggunakan opsi `--file <file>`.
+
+```bash
+bin/kc.[sh|bat] export --file <file>
+```
+
+Saat mengekspor realm ke file, server akan menggunakan file yang sama untuk menyimpan konfigurasi untuk semua realm yang diekspor.
+
+<Callout type="info">
+  Mengekspor dan mengimpor ke file tunggal dapat menghasilkan file yang sangat besar yang mungkin membuat proses ekspor / impor kehabisan memori.
+  Jika database Anda berisi lebih dari 50.000 pengguna, ekspor ke direktori dan bukan file tunggal.
+</Callout>
+
+### Mengekspor realm tertentu
+
+Jika Anda tidak menentukan realm tertentu untuk diekspor, semua realm diekspor. Untuk mengekspor realm tunggal, Anda dapat menggunakan opsi `--realm` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] export [--dir|--file] <path> --realm my-realm
+```
+
+### Konvensi Penamaan File Impor
+
+Saat Anda mengekspor file realm tertentu, konvensi penamaan tertentu digunakan, yang juga harus digunakan untuk mengimpor dari direktori atau impor saat startup. File realm untuk diimpor harus dinamai &lt;realm name&gt;-realm.json.
+File pengguna reguler dan federasi yang terkait dengan realm harus dinamai &lt;realm-name&gt;-users-&lt;file number&gt;.json dan &lt;realm-name&gt;-federated-users-&lt;file number&gt;.json. Kegagalan untuk menggunakan konvensi ini akan mengakibatkan kesalahan atau
+file pengguna tidak diimpor.
+
+### Mengimpor Realm dari Direktori
+
+Untuk mengimpor realm, Anda dapat menggunakan perintah `import`. Instance server NQRust-Identity Anda tidak boleh dimulai saat menjalankan perintah ini.
+
+```bash
+bin/kc.[sh|bat] import --help
+```
+
+Setelah mengekspor realm ke direktori, Anda dapat menggunakan opsi `--dir <dir>` untuk mengimpor realm kembali ke server sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] import --dir <dir>
+```
+
+Saat mengimpor realm menggunakan perintah `import`, Anda dapat mengatur apakah realm yang ada harus dilewatkan atau di timpa dengan konfigurasi baru. Untuk itu,
+Anda dapat mengatur opsi `--override` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] import --dir <dir> --override false
+```
+
+Secara default, opsi `--override` diatur ke `true` sehingga realm selalu di timpa dengan konfigurasi baru.
+
+### Mengimpor Realm dari File
+
+Untuk mengimpor realm yang sebelumnya diekspor dalam file tunggal, Anda dapat menggunakan opsi `--file <file>` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] import --file <file>
+```
+
+### Menggunakan Variabel Lingkungan di dalam File Konfigurasi Realm
+
+Anda dapat menggunakan placeholder untuk mengurai nilai dari variabel lingkungan untuk setiap konfigurasi realm.
+
+```bash
+{
+    "realm": "${MY_REALM_NAME}",
+    "enabled": true,
+    ...
+}
+```
+
+Dalam contoh di atas, nilai yang diatur untuk variabel lingkungan `MY_REALM_NAME` akan digunakan untuk mengatur properti `realm`.
+
+<Callout type="info">
+  Tidak ada pembatasan saat ini untuk variabel lingkungan yang dapat dirujuk. Ketika variabel lingkungan digunakan untuk menyampaikan informasi sensitif, berhati-hatilah untuk memastikan referensi placeholder tidak tidak semestinya mengungkapkan nilai variabel lingkungan sensitif.
+</Callout>
+
+## Mengimpor Realm saat Startup
+
+Anda juga dapat mengimpor realm saat server sedang startup dengan menggunakan opsi `--import-realm`.
+
+```bash
+bin/kc.[sh|bat] start --import-realm
+```
+
+Ketika Anda mengatur opsi `--import-realm`, server akan mencoba untuk mengimpor konfigurasi file realm apapun dari direktori `data/import`. Hanya berkas reguler yang menggunakan ekstensi `.json` yang dibaca dari direktori ini, direktori sub akan diabaikan.
+
+<Callout type="info">
+  Untuk kontainer NQRust-Identity, direktori impor adalah /opt/nqrust-identity/data/import
+</Callout>
+
+Jika realm sudah ada di server, operasi impor akan dilewatkan. Alasan utama tingkah laku ini adalah untuk menghindari pembuatan ulang realm dan kemungkinan kehilangan state antara restart server.
+
+Untuk membuat ulang realm, Anda harus secara eksplisit menjalankan perintah `import` sebelum memulai server.
+
+<Callout type="info">
+  Server tidak akan sepenuhnya startup sampai impor selesai.
+</Callout>
+
+## Mengimpor dan Mengekspor dengan Menggunakan Admin Console
+
+Anda juga dapat mengimpor dan mengekspor realm menggunakan Admin Console. Fungsionalitas ini berbeda dari opsi CLI lain yang dijelaskan dalam bagian sebelumnya karena Admin Console memerlukan klaster untuk online. Admin Console juga hanya menawarkan kemampuan untuk _sebagian_ mengekspor realm. Dalam hal ini, pengaturan realm saat ini, bersama beberapa sumber daya seperti klien, peran, dan grup, dapat diekspor. Pengguna untuk realm tersebut _tidak dapat_ diekspor menggunakan metode ini.
+
+<Callout type="info">
+  Ketika menggunakan ekspor Admin Console, realm dan sumber daya yang dipilih akan selalu diekspor ke berkas yang bernama realm-export.json. Selain itu, semua nilai sensitif seperti sandi dan rahasia klien akan disembunyikan dengan simbol *.
+</Callout>
+
+Untuk mengekspor realm menggunakan Admin Console, lakukan langkah berikut:
+
+1. Pilih realm.
+2. Klik **Realm settings** di menu.
+3. Arahkan ke **Action** menu di sudut kanan atas layar pengaturan realm, dan pilih **Partial export**.
+
+  Daftar sumber daya muncul bersama dengan konfigurasi realm.
+4. Pilih sumber daya yang ingin Anda ekspor.
+5. Klik **Export**.
+
+<Callout type="info">
+  Realm yang diekspor dari Admin Console tidak cocok untuk cadangan atau transfer data antara server.
+  Hanya ekspor CLI yang cocok untuk cadangan atau transfer data antara server.
+</Callout>
+
+<Callout type="warning">
+  Jika realm berisi banyak grup, peran, dan klien, operasi ini mungkin menyebabkan server menjadi tidak merespon permintaan pengguna untuk sementara waktu. Gunakan fitur ini dengan hati-hati, terutama pada sistem produksi.
+</Callout>
+
+Dengan cara serupa, Anda dapat mengimpor realm yang telah diekspor sebelumnya. Lakukan langkah berikut:
+
+1. Klik **Realm settings** di menu.
+2. Arahkan ke **Action** menu di sudut kanan atas layar pengaturan realm, dan pilih **Partial import**.
+
+  Muncul prompt di mana Anda dapat memilih berkas yang ingin Anda impor. Berdasarkan berkas ini, Anda melihat sumber daya yang dapat Anda impor bersama dengan pengaturan realm.
+3. Klik **Import**.
+
+Anda juga dapat mengontrol apa yang harus dilakukan NQRust-Identity jika sumber daya yang diimpor sudah ada. Opsi berikut ini tersedia:
+
+Batalkan impor.
+
+Lewati sumber daya ganda tanpa membatalkan proses
+
+Ganti sumber daya yang ada dengan yang sedang diimpor.
+
+<Callout type="info">
+  Ekspor sebagian Admin Console juga dapat mengimpor berkas yang dibuat oleh perintah ekspor CLI. Dengan kata lain, ekspor penuh yang dibuat oleh CLI dapat diimpor dengan menggunakan Admin Console. Jika berkas berisi pengguna, pengguna tersebut juga akan tersedia untuk diimpor ke realm saat ini.
+</Callout>

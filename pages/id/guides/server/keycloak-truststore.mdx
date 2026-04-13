@@ -5,17 +5,19 @@ description: Mengonfigurasi sertifikat terpercaya - Dokumentasi NQRust-Identity
 
 # Mengonfigurasi sertifikat terpercaya
 
-Ketika NQRust-Identity berkomunikasi dengan layanan eksternal atau memiliki koneksi masuk melalui TLS, sistem harus memvalidasi sertifikat jarak jauh untuk memastikan bahwa sistem tersebut terhubung ke server yang terpercaya. Hal ini diperlukan untuk mencegah serangan man-in-the-middle.
+import { Callout } from 'nextra/components'
 
-Sertifikat dari klien atau server ini, atau CA yang menandatangani sertifikat ini, harus ditempatkan di dalam truststore. Truststore ini kemudian dikonfigurasi untuk digunakan oleh NQRust-Identity.
+Ketika NQRust-Identity berkomunikasi dengan layanan eksternal atau menerima koneksi masuk melalui TLS, sistem harus memvalidasi sertifikat jarak jauh untuk memastikan terkoneksi ke server terpercaya. Hal ini diperlukan untuk mencegah serangan man-in-the-middle.
 
-## [](#_mengonfigurasi_truststore_sistem)Mengonfigurasi Truststore Sistem
+Sertifikat dari klien atau server ini, atau CA yang menandatangani sertifikat ini, harus ditempatkan dalam truststore. Truststore tersebut kemudian dikonfigurasi untuk digunakan oleh NQRust-Identity.
 
-Sertifikat default truststore Java yang ada akan selalu terpercaya. Jika Anda memerlukan sertifikat tambahan, yang biasanya terjadi jika Anda memiliki sertifikat self-signed atau otoritas sertifikat internal yang tidak dikenali oleh JRE, sertifikat tersebut dapat diikutsertakan dalam direktori `conf/truststores` atau subdirektori. Sertifikat ini bisa berupa file PEM atau file PKCS12 dengan ekstensi `.p12`, `.pfx`, atau `.pkcs12`. Jika dalam format PKCS12, sertifikat harus tidak terenkripsi - yang berarti tidak diharapkan ada kata sandi.
+## Mengonfigurasi Truststore Sistem
 
-Jika Anda memerlukan path alternatif, gunakan opsi `--truststore-paths` untuk menentukan file atau direktori tambahan di mana file PEM atau PKCS12 terletak. Path dihitung relatif terhadap tempat Anda menjalankan NQRust-Identity, jadi sangat disarankan untuk menggunakan path absolut. Jika direktori ditentukan, sistem akan secara rekursif mencari file truststore.
+Sertifikat default truststore Java yang ada akan selalu terpercaya. Jika Anda memerlukan sertifikat tambahan, yang akan menjadi hal ini jika Anda memiliki sertifikat self-signed atau otoritas sertifikat internal yang tidak diakui oleh JRE, sertifikat tersebut dapat diikutsertakan dalam direktori `conf/truststores` atau subdirektori. Sertifikat ini bisa dalam bentuk file PEM atau file PKCS12 dengan ekstensi `.p12`, `.pfx`, atau `.pkcs12`. Jika dalam format PKCS12, sertifikat harus tidak terenkripsi - yang berarti tidak diharapkan kata sandi.
 
-Setelah semua sertifikat yang relevan diikutsertakan, truststore akan digunakan sebagai truststore default sistem melalui properti `javax.net.ssl`, dan sebagai default untuk penggunaan internal dalam NQRust-Identity.
+Jika Anda memerlukan jalur alternatif, gunakan opsi `--truststore-paths` untuk menentukan file atau direktori tambahan di mana terdapat file PEM atau PKCS12. Jalur dianggap relatif terhadap tempat Anda menjalankan NQRust-Identity, jadi sangat disarankan untuk menggunakan jalur absolut. Jika direktori ditentukan, sistem akan secara rekursif mencari file truststore.
+
+Setelah semua sertifikat yang relevan diikutsertakan, truststore akan digunakan sebagai truststore sistem default melalui properti `javax.net.ssl`, dan sebagai default untuk penggunaan internal dalam NQRust-Identity.
 
 Contohnya:
 
@@ -23,37 +25,33 @@ Contohnya:
 bin/kc.[sh|bat] start --truststore-paths=/opt/truststore/myTrustStore.pfx,/opt/other-truststore/myOtherTrustStore.pem
 ```
 
-Masih mungkin untuk secara langsung mengatur properti truststore Sistem `javax.net.ssl` Anda sendiri, tetapi lebih disarankan untuk menggunakan `--truststore-paths` sebagai gantinya.
+Masih mungkin untuk secara langsung mengatur properti sistem `javax.net.ssl` truststore Anda sendiri, tetapi lebih disarankan untuk menggunakan `--truststore-paths` sebagai gantinya.
 
-## [](#_kebijakan_verifikasi_nama_host)Kebijakan Verifikasi Nama Host
+## Sertifikat CA Klaster (Kubernetes dan OpenShift)
 
-Anda dapat memperhalus bagaimana nama host diverifikasi oleh koneksi TLS dengan properti `tls-hostname-verifier`.
+Ketika menjalankan NQRust-Identity di Kubernetes atau OpenShift, server akan secara otomatis memasukkan otoritas sertifikat klaster yang terkenal ke dalam sistem truststore jika mereka ada pada sistem berkas:
 
-*   `DEFAULT` (default) memungkinkan wildcard dalam nama subdomain (misalnya \*.foo.com) untuk mencocokkan nama dengan jumlah tingkatan yang sama (misalnya a.foo.com, tetapi bukan a.b.foo.com) - dengan aturan dan pengecualian untuk akhiran publik berdasarkan [https://publicsuffix.org/list/](https://publicsuffix.org/list/)
-    
-*   `ANY` berarti bahwa nama host tidak diverifikasi - mode ini sebaiknya tidak digunakan dalam produksi.
-    
-*   `WILDCARD` (usang) memungkinkan wildcard dalam nama subdomain (misalnya \*.foo.com) untuk mencocokkan apa saja, termasuk beberapa tingkatan (misalnya a.b.foo.com). Gunakan DEFAULT sebagai gantinya.
-    
-*   `STRICT` (usang) memungkinkan wildcard dalam nama subdomain (misalnya \*.foo.com) untuk mencocokkan nama dengan jumlah tingkatan yang sama (misalnya a.foo.com, tetapi bukan a.b.foo.com) - dengan beberapa pengecualian terbatas. Gunakan DEFAULT sebagai gantinya.
-    
-    Harap dicatat bahwa pengaturan ini tidak berlaku untuk koneksi LDAP yang aman, yang memerlukan pemeriksaan nama host yang ketat.
+- CA akun layanan Kubernetes: `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`
+- CA layanan OpenShift: `/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt`
 
-## [](#_opsi_terkait)Opsi Terkait
+Perilaku ini diaktifkan secara default dan tidak memerlukan Operator. Hal ini dapat dikendalikan dengan opsi berikut:
 
-  
+- `--truststore-kubernetes-enabled=true|false` (default: `true`)
 
-Jenis atau Nilai
+Untuk menonaktifkan secara total kepercayaan otoritas CA klaster secara otomatis:
 
-Default
+```bash
+bin/kc.[sh|bat] start --truststore-kubernetes-enabled=false
+```
 
-`tls-hostname-verifier`
+Perlu dicatat bahwa jika file yang sesuai tidak di-mount ke kontainer, mereka tidak akan termasuk terlepas dari nilai opsi.
 
-Kebijakan verifikasi nama host TLS untuk permintaan HTTPS dan SMTP keluar.
+<Callout type="warning">
+  Ketika https-client-auth diatur menjadi required atau request tanpa https-trust-store-file yang jelas, validasi sertifikat klien mTLS kembali ke sistem truststore. Dengan truststore-kubernetes-enabled=true, ini berarti sertifikat yang ditandatangani oleh CA klaster Kubernetes akan diterima sebagai sertifikat klien yang valid. Jika ini tidak diinginkan, atur https-trust-store-file secara eksplisit atau nonaktifkan truststore-kubernetes-enabled.
+</Callout>
 
-ANY sebaiknya tidak digunakan dalam produksi.
+## Kebijakan Verifikasi Nama Host
 
-**CLI:** `--tls-hostname-verifier`  
-**Env:** `KC_TLS_HOSTNAME_VERIFIER`
+Anda dapat menyesuaikan bagaimana nama host diverifikasi oleh koneksi TLS dengan properti `tls-hostname-verifier`.
 
-STRICT dan WILDCARD telah usang, gunakan DEFAULT sebagai gantinya. **Nil
+- `DEFAULT` (default) memungkinkan wildcard dalam nama subdomain (misalnya *.foo.com) untuk mencocokkan nama dengan jumlah tingkatan yang sama (misalnya a.foo.com, tetapi tidak a.b.foo.com) -

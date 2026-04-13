@@ -1,6 +1,6 @@
 {
   "server": "Server",
-  "observability": "Observabilitas",
-  "securing-apps": "Keamanan Aplikasi",
-  "high-availability": "Ketersediaan Tinggi"
+  "observability": "Observability",
+  "securing-apps": "Securing Applications",
+  "high-availability": "High Availability"
 }

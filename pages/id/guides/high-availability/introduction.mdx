@@ -5,73 +5,47 @@ description: Tinjauan Ketersediaan Tinggi - Dokumentasi NQRust-Identity
 
 # Tinjauan Ketersediaan Tinggi
 
-NQRust-Identity dapat di_deploy_ dalam beberapa arsitektur ketersediaan tinggi, memungkinkan administrator sistem untuk memilih tipe _deployment_ yang paling sesuai dengan kebutuhan mereka. Kemudahan dalam _deployment_, biaya, dan garansi toleransi kerusakan adalah pertimbangan penting saat menentukan arsitektur yang benar untuk _deployment_ Anda.
+NQRust-Identity dapat di_deploy_ dalam beberapa arsitektur ketersediaan tinggi, memungkinkan administrator sistem untuk memilih tipe _deployment_ yang paling sesuai dengan kebutuhan mereka. Kecepatan dalam _deployment_, biaya, dan garansi toleransi kerusakan adalah pertimbangan penting saat menentukan arsitektur yang benar untuk _deployment_ Anda.
 
-## [](#_arsitektur)Arsitektur
+## Arsitektur
 
 Dokumen ini menjelaskan dua arsitektur ketersediaan tinggi di mana NQRust-Identity dapat di_deploy_: _Single-cluster deployments_ dan _multi-cluster deployments_.
 
-### [](#_deploymen_klaster_tunggal)Deploymen Klaster Tunggal
+### Single-cluster deployments
 
-Deploy NQRust-Identity dalam satu klaster, secara opsional di beberapa zona ketersediaan atau pusat data dengan latensi jaringan yang diperlukan dan konfigurasi database, menggunakan [Single-cluster deployments](https://www.nqrust-identity.org/high-availability/single-cluster/introduction).
+Deploy NQRust-Identity dalam satu kluster, secara opsional di beberapa zona ketersediaan atau pusat data dengan latensi jaringan dan konfigurasi database yang diperlukan, menggunakan Single-cluster deployments.
 
-Keuntungan
+- Tanpa dependensi eksternal
+- _Deployment_ dalam satu kluster Kubernetes atau sekelompok mesin virtual dengan jaringan transparan
+- Toleransi kegagalan zona ketersediaan atau kegagalan pusat data, jika di_deploy_ ke beberapa zona ketersediaan atau pusat data
 
-*   Tidak ada ketergantungan eksternal
-    
-*   Deploy di satu klaster Kubernetes atau sekelompok mesin virtual dengan jaringan yang transparan
-    
-*   Toleran terhadap kegagalan zona ketersediaan atau kegagalan pusat data, jika di_deploy_ di beberapa zona ketersediaan atau pusat data
-    
+- Kluster Kubernetes merupakan titik kegagalan tunggal:
 
-Kelemahan
+  - Kegagalan _control-plane_ dapat mempengaruhi semua pod NQRust-Identity
 
-*   Klaster Kubernetes adalah titik kegagalan tunggal:
-    
-    *   Kegagalan _control-plane_ bisa mempengaruhi semua pod NQRust-Identity
-        
-    
+### Multi-cluster deployments
 
-### [](#_deploymen_klaster_multi)Deploymen Klaster Multi
+Hubungkan dua kluster NQRust-Identity yang di_deploy_ misalnya di dua kluster Kubernetes berbeda di dua zona ketersediaan atau pusat data dengan latensi jaringan dan konfigurasi database yang diperlukan menggunakan Multi-cluster deployments.
 
-Hubungkan dua klaster NQRust-Identity yang di_deploy_ misalnya di dua klaster Kubernetes yang berbeda di dua zona ketersediaan atau pusat data dengan latensi jaringan yang diperlukan dan konfigurasi database menggunakan [Multi-cluster deployments](https://www.nqrust-identity.org/high-availability/multi-cluster/introduction).
+- Toleransi kegagalan zona ketersediaan
+- Toleransi kegagalan kluster Kubernetes
+- Jembatan dua jaringan yang tidak menawarkan jaringan transparan
+- Kompatibilitas regulasi ketika _deployment_ yang terpisah diperlukan
 
-Keuntungan
+- Kompleksitas:
 
-*   Toleran terhadap kegagalan zona ketersediaan
-    
-*   Toleran terhadap kegagalan klaster Kubernetes
-    
-*   Jembatan dua jaringan yang tidak menawarkan jaringan yang transparan
-    
-*   Kompliance regulasi saat _deployment_ yang terpisah diperlukan
-    
+  - Membutuhkan load balancer eksternal
+  - Membutuhkan kluster Infinispan terpisah di setiap lokasi
+- Biaya:
 
-Kelemahan
+  - Membutuhkan load balancer tambahan
+  - Membutuhkan komputasi tambahan untuk kluster Infinispan eksternal
+  - Dua _control-planes_ Kubernetes harus diprovisikan
+- Tidak didukung dengan tiga atau lebih zona ketersediaan
 
-*   Kompleksitas:
-    
-    *   Diperlukan load-balancer eksternal
-        
-    *   Diperlukan klaster Infinispan terpisah di setiap lokasi
-        
-    
-*   Biaya:
-    
-    *   Diperlukan load-balancer tambahan
-        
-    *   Diperlukan komputasi tambahan untuk klaster Infinispan eksternal
-        
-    *   Dua _control-plane_ Kubernetes harus disediakan
-        
-    
-*   Tidak didukung dengan tiga atau lebih zona ketersediaan
-    
+### Langkah Berikutnya
 
-### [](#_langkah_berikutnya)Langkah Berikutnya
+Untuk mempelajari lebih lanjut tentang berbagai arsitektur ketersediaan tinggi dan konfigurasi yang didukung, silakan lihat panduan individu.
 
-Untuk mempelajari lebih lanjut tentang berbagai arsitektur ketersediaan tinggi dan konfigurasi yang didukung, silakan kunjungi panduan individu.
-
-*   [Single-cluster deployments](https://www.nqrust-identity.org/high-availability/single-cluster/introduction)
-    
-*   [Multi-cluster deployments](https://www.nqrust-identity.org/high-availability/multi-cluster/introduction)
+- Single-cluster deployments
+- Multi-cluster deployments

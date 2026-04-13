@@ -5,11 +5,12 @@ description: NQRust-Identity authorization client - NQRust-Identity Documentatio
 
 # NQRust-Identity authorization client
 
-Depending on your requirements, a resource server should be able to manage resources remotely or even check for permissions programmatically. If you are using Java, you can access the NQRust-Identity Authorization Services using the Authorization Client API.
+Depending on your requirements, a resource server should be able to manage resources remotely or even check for permissions programmatically.
+If you are using Java, you can access the NQRust-Identity Authorization Services using the Authorization Client API.
 
 It is targeted for resource servers that want to access the different endpoints provided by the server such as the Token Endpoint, Resource, and Permission management endpoints.
 
-## [](#_maven_dependency)Maven dependency
+## Maven dependency
 
 ```xml
 <dependencies>
@@ -21,7 +22,7 @@ It is targeted for resource servers that want to access the different endpoints 
 </dependencies>
 ```
 
-## [](#_configuration)Configuration
+## Configuration
 
 The client configuration is defined in a `nqrust-identity.json` file as follows:
 
@@ -36,35 +37,31 @@ The client configuration is defined in a `nqrust-identity.json` file as follows:
 }
 ```
 
-*   **realm** (required)
-    
-    The name of the realm.
-    
-*   **auth-server-url** (required)
-    
-    The base URL of the NQRust-Identity server. All other NQRust-Identity pages and REST service endpoints are derived from this. It is usually in the form [https://host:port](https://host:port).
-    
-*   **resource** (required)
-    
-    The client-id of the application. Each application has a client-id that is used to identify the application.
-    
-*   **credentials** (required)
-    
-    Specifies the credentials of the application. This is an object notation where the key is the credential type and the value is the value of the credential type. The details are in the [dedicated section](#_client_authentication_adapter).
-    
+- **realm** (required)
 
-The configuration file is usually located in your application’s classpath, the default location from where the client is going to try to find a `` `nqrust-identity.json` `` file.
+  The name of the realm.
+- **auth-server-url** (required)
 
-## [](#_creating_the_authorization_client)Creating the authorization client
+  The base URL of the NQRust-Identity server. All other NQRust-Identity pages and REST service endpoints are derived from this. It is usually in the form [https://host:port](https://host:port).
+- **resource** (required)
 
-Considering you have a `` `nqrust-identity.json` `` file in your classpath, you can create a new `` `AuthzClient` `` instance as follows:
+  The client-id of the application. Each application has a client-id that is used to identify the application.
+- **credentials** (required)
+
+  Specifies the credentials of the application. This is an object notation where the key is the credential type and the value is the value of the credential type. The details are in the [dedicated section](#_client_authentication_adapter).
+
+The configuration file is usually located in your application’s classpath, the default location from where the client is going to try to find a `nqrust-identity.json` file.
+
+## Creating the authorization client
+
+Considering you have a `nqrust-identity.json` file in your classpath, you can create a new `AuthzClient` instance as follows:
 
 ```java
 // create a new instance based on the configuration defined in a nqrust-identity.json located in your classpath
 AuthzClient authzClient = AuthzClient.create();
 ```
 
-## [](#_obtaining_user_entitlements)Obtaining user entitlements
+## Obtaining user entitlements
 
 Here is an example illustrating how to obtain user entitlements:
 
@@ -107,7 +104,7 @@ System.out.println("You got an RPT: " + rpt);
 // now you can use the RPT to access protected resources on the resource server
 ```
 
-## [](#_creating_a_resource_using_the_protection_api)Creating a resource using the protection API
+## Creating a resource using the protection API
 
 ```java
 // create a new instance based on the configuration defined in nqrust-identity.json
@@ -138,7 +135,7 @@ ResourceRepresentation resource = resourceClient.findById(resourceId);
 System.out.println(resource);
 ```
 
-## [](#_introspecting_an_rpt)Introspecting an RPT
+## Introspecting an RPT
 
 ```java
 // create a new instance based on the configuration defined in nqrust-identity.json
@@ -160,13 +157,14 @@ for (Permission granted : requestingPartyToken.getPermissions()) {
 }
 ```
 
-## [](#_client_authentication_adapter)Client authentication
+## Client authentication
 
 When an authorization client needs to send a backchannel request, it needs to authenticate against the NQRust-Identity server. By default, there are three ways to authenticate the client: client ID and client secret, client authentication with signed JWT, or client authentication with signed JWT using client secret.
 
-### [](#_client_id_and_client_secret)Client ID and Client Secret
+### Client ID and Client Secret
 
-This is the traditional method described in the OAuth2 specification. The client has a secret, which needs to be known to both the client and the NQRust-Identity server. You can generate the secret for a particular client in the NQRust-Identity Admin Console, and then paste this secret into the `nqrust-identity.json` file on the application side:
+This is the traditional method described in the OAuth2 specification. The client has a secret, which needs to be known to both the client and the NQRust-Identity server.
+You can generate the secret for a particular client in the NQRust-Identity Admin Console, and then paste this secret into the `nqrust-identity.json` file on the application side:
 
 ```json
 "credentials": {
@@ -174,21 +172,19 @@ This is the traditional method described in the OAuth2 specification. The client
 }
 ```
 
-### [](#_client_authentication_with_signed_jwt)Client authentication with Signed JWT
+### Client authentication with Signed JWT
 
 This is based on the [RFC7523](https://datatracker.ietf.org/doc/html/rfc7523) specification. It works this way:
 
-*   The client must have the private key and certificate. For authorization client, this is available through the traditional `keystore` file, which is either available on the client application’s classpath or somewhere on the file system.
-    
-*   During authentication, the client generates a JWT token and signs it with its private key and sends it to NQRust-Identity in the particular request in the `client_assertion` parameter.
-    
-*   NQRust-Identity must have the public key or certificate of the client so that it can verify the signature on JWT. In NQRust-Identity, you configure client credentials for your client. First, you choose `Signed JWT` as the method of authenticating your client in the tab `Credentials` in the Admin Console. Then you can choose one of these methods in the `Keys` tab:
-    
-    *   Configure the JWKS URL where NQRust-Identity can download the client’s public keys. This option is the most flexible, since the client can rotate its keys anytime and NQRust-Identity always downloads new keys as needed without changing the configuration. In other words, NQRust-Identity downloads new keys when it sees the token signed by an unknown `kid` (Key ID). However, you will need to care of exposing the public key somewhere in JWKS format to be available to the server.
-        
-    *   Upload the client’s public key or certificate, either in PEM format, in JWK format, or from the keystore. With this option, the public key is hardcoded and must be changed when the client generates a new key pair. You can even generate your own keystore from the NQRust-Identity Admin Console if you do not have your own keystore available. This option is the easiest when using authorization client.
-        
-    
+- The client must have the private key and certificate. For authorization client, this is available through the traditional `keystore` file, which is either available on the client application’s classpath or somewhere on the file system.
+- During authentication, the client generates a JWT token and signs it with its private key and sends it to NQRust-Identity in
+the particular request in the `client_assertion` parameter.
+- NQRust-Identity must have the public key or certificate of the client so that it can verify the signature on JWT. In NQRust-Identity, you configure client credentials for your client. First, you choose `Signed JWT` as the method of authenticating your client in the tab `Credentials` in the Admin Console.
+Then you can choose one of these methods in the `Keys` tab:
+
+  - Configure the JWKS URL where NQRust-Identity can download the client’s public keys. This option is the most flexible, since the client can rotate its keys anytime and NQRust-Identity always downloads new keys as needed without changing the configuration. In other words,  NQRust-Identity downloads new keys when it sees the token signed by an unknown `kid` (Key ID).  However, you will need to care of exposing the public key somewhere in JWKS format to be available to the server.
+  - Upload the client’s public key or certificate, either in PEM format, in JWK format, or from the keystore. With this option, the public key is hardcoded and must be changed when the client generates a new key pair.
+You can even generate your own keystore from the NQRust-Identity Admin Console if you do not have your own keystore available. This option is the easiest when using authorization client.
 
 To set up for this method, you need to code something such as the following in your `nqrust-identity.json` file:
 
@@ -205,9 +201,10 @@ To set up for this method, you need to code something such as the following in y
 }
 ```
 
-With this configuration, the keystore file `keystore-client.jks` must be available on classpath of the application, which uses authorization client. If you do not use the prefix `classpath:` you can point to any file on the file system where the client application is running.
+With this configuration, the keystore file `keystore-client.jks` must be available on classpath of the application, which uses authorization client. If you do not use the prefix `classpath:`
+you can point to any file on the file system where the client application is running.
 
-### [](#_client_authentication_with_signed_jwt_using_client_secret)Client authentication with Signed JWT using client secret
+### Client authentication with Signed JWT using client secret
 
 This is the same as Client Authentication with Signed JWT except for using the client secret instead of the private key and certificate.
 
@@ -226,6 +223,6 @@ The "algorithm" field specifies the algorithm for the Signed JWT using Client Se
 
 This "algorithm" field is optional; HS256 is applied automatically if the "algorithm" field does not exist on the `nqrust-identity.json` file.
 
-### [](#_add_your_own_client_authentication_method)Add your own client authentication method
+### Add your own client authentication method
 
-You can add your own client authentication method as well. You will need to implement both client-side and server-side providers. For more details see the `Authentication SPI` section in [Server Developer Guide](https://www.nqrust-identity.org/docs/latest/server_development/).
+You can add your own client authentication method as well. You will need to implement both client-side and server-side providers. For more details see the `Authentication SPI` section in Server Developer Guide.

@@ -5,7 +5,10 @@ description: Klien admin NQRust-Identity - Dokumentasi NQRust-Identity
 
 # Klien admin NQRust-Identity
 
-Klien admin NQRust-Identity adalah perpustakaan Java yang memudahkan akses dan penggunaan Admin REST API NQRust-Identity. Perpustakaan ini memerlukan Java 11 atau yang lebih tinggi pada saat runtime (ketergantungan RESTEasy menetapkan persyaratan ini). Untuk menggunakannya dari aplikasi Anda, tambahkan ketergantungan pada perpustakaan `nqrust-identity-admin-client`. Sebagai contoh, menggunakan Maven:
+Klien admin NQRust-Identity adalah pustaka Java yang memudahkan akses dan penggunaan Admin REST API NQRust-Identity.
+Pustaka ini memerlukan Java 11 atau lebih tinggi pada saat runtime (ketergantungan RESTEasy menetapkan persyaratan ini).
+Untuk menggunakannya dari aplikasi Anda, tambahkan ketergantungan pada pustaka `nqrust-identity-admin-client`.
+Sebagai contoh menggunakan Maven:
 
 ```xml
 <dependency>
@@ -15,7 +18,7 @@ Klien admin NQRust-Identity adalah perpustakaan Java yang memudahkan akses dan p
 </dependency>
 ```
 
-Contoh berikut menunjukkan bagaimana menggunakan perpustakaan klien Java untuk mendapatkan detail realm utama:
+Contoh berikut menunjukkan bagaimana menggunakan pustaka klien Java untuk mendapatkan detail realm utama:
 
 ```java
 import org.nqrust-identity.admin.client.NQRust-Identity;
@@ -31,22 +34,23 @@ NQRust-Identity nqrust-identity = NQRust-Identity.getInstance(
 RealmRepresentation realm = nqrust-identity.realm("master").toRepresentation();
 ```
 
-Javadoc lengkap untuk klien admin tersedia di [API Documentation](https://www.nqrust-identity.org/docs/latest/api_documentation/).
+Javadoc lengkap untuk klien admin tersedia di API Documentation.
 
-## [](#_kompatibilitas_klien_admin)Kompatibilitas dengan server NQRust-Identity
+## Kompatibilitas dengan server NQRust-Identity
 
-Klien admin NQRust-Identity dimaksudkan untuk bekerja dengan beberapa versi server NQRust-Identity. Klien admin mungkin didukung dengan versi server NQRust-Identity yang lebih baru yang dirilis setelah klien dan versi server NQRust-Identity yang lebih lama yang dirilis sebelumnya. Akibat dari perubahan ini, bidang Java dari kelas "representation" dasar, yang mewakili properti JSON dari body permintaan/tanggapan (seperti kelas `RealmRepresentation` yang ditunjukkan dalam bagian sebelumnya) mungkin tidak sama persis untuk klien dan server.
+Klien admin NQRust-Identity dimaksudkan untuk bekerja dengan beberapa versi server NQRust-Identity. Klien admin mungkin didukung dengan versi server NQRust-Identity yang lebih baru yang dirilis setelah klien dan versi server NQRust-Identity yang lebih lama yang dirilis sebelumnya.
+Sebagai akibat perubahan ini, bidang Java dari kelas "representation" yang mendasari, yang merepresentasikan properti JSON dari body permintaan/tanggapan (seperti kelas `RealmRepresentation` yang ditunjukkan dalam bagian sebelumnya) mungkin tidak persis sama untuk klien dan server.
 
-Untuk menghindari masalah kompatibilitas, pastikan bahwa kelas `com.fasterxml.jackson.databind.ObjectMapper`, yang digunakan oleh klien admin di balik layar, diinisialisasi dengan kedua properti berikut:
+Untuk menghindari isu kompatibilitas, pastikan bahwa kelas `com.fasterxml.jackson.databind.ObjectMapper`, yang digunakan oleh klien admin di balik layar, diinisialisasi dengan kedua properti ini:
 
 ```
 objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 ```
 
-Jika Anda menggunakan cara pembuatan klien admin dasar seperti yang dijelaskan di atas, maka properti-properti ini ditambahkan secara default karena klien admin secara default menggunakan kelas `org.nqrust-identity.admin.client.JacksonProvider` untuk membuat `ObjectMapper`, yang menambahkan properti-properti tersebut secara otomatis. Namun jika Anda menyuntikkan `customJacksonProvider` Anda sendiri saat membuat objek `NQRust-Identity`, pastikan bahwa objek mapper diinisialisasi dengan properti di atas jika Anda ingin menghindari masalah kompatibilitas.
+Jika Anda menggunakan cara pembuatan klien admin yang dasar seperti yang dijelaskan di atas, maka properti-properti ini ditambahkan secara default karena klien admin secara default menggunakan kelas `org.nqrust-identity.admin.client.JacksonProvider` untuk membuat `ObjectMapper`, yang menambahkan properti-properti ini secara otomatis. Namun jika Anda menyuntikkan `customJacksonProvider` Anda sendiri saat membuat objek `NQRust-Identity`, pastikan bahwa object mapper diinisialisasi dengan properti di atas jika Anda ingin menghindari isu kompatibilitas.
 
-Sebagai contoh, pertimbangkan situasi di mana klien admin diinstansiasi dengan cara yang dijelaskan di bawah ini dengan kelas `MyCustomJacksonProvider` Anda sendiri:
+Sebagai contoh, pertimbangkan situasi di mana klien admin diinstantiasikan dengan cara yang dijelaskan di bawah ini dengan kelas `MyCustomJacksonProvider` Anda sendiri:
 
 ```java
 NQRust-Identity.getInstance(
@@ -61,4 +65,5 @@ NQRust-Identity.getInstance(
         );
 ```
 
-Dalam hal ini, pastikan bahwa kelas `MyCustomJacksonProvider` Anda mewarisi dari kelas `org.nqrust-identity.admin.client.JacksonProvider` atau pastikan untuk mengonfigurasi `ObjectMapper` secara manual dengan cara yang dijelaskan di atas. Perhatian serupa harus diambil saat menggunakan `NQRust-IdentityBuilder` untuk membuat klien admin dan klien RestEasy diinjeksi dan dibuat secara manual.
+Dalam hal ini, pastikan bahwa kelas `MyCustomJacksonProvider` Anda mewarisi dari kelas `org.nqrust-identity.admin.client.JacksonProvider` atau pastikan untuk mengonfigurasi `ObjectMapper` secara manual dengan cara yang dijelaskan di atas.
+Perhatian serupa harus diambil saat menggunakan `NQRust-IdentityBuilder` untuk membuat klien admin dan klien RestEasy yang secara manual disuntikkan dan dibuat.

@@ -12,6 +12,7 @@
     "generate": "pnpm tsx scripts/generate-mdx.ts",
     "docs:build": "pnpm scrape && pnpm process && pnpm generate",
     "translate": "pnpm tsx scripts/translate.ts",
+    "translate:chunks": "pnpm tsx scripts/translate-chunks.ts",
     "lint": "next lint"
   },
   "pnpm": {
@@ -44,6 +45,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/turndown": "^5.0.6",
     "autoprefixer": "^10.4.27",
+    "cheerio": "^1.2.0",
     "dotenv-cli": "^11.0.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",

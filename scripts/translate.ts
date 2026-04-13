@@ -43,16 +43,31 @@ Aturan penerjemahan:
 7. Pertahankan semua frontmatter (bagian --- di awal) apa adanya, JANGAN terjemahkan
 8. Output hanya konten yang sudah diterjemahkan, tanpa penjelasan tambahan`
 
-async function translateContent(content: string): Promise<string> {
-  const response = await client.chat.completions.create({
-    model: 'moonshot-v1-32k',
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: `Terjemahkan dokumen MDX berikut ke Bahasa Indonesia:\n\n${content}` },
-    ],
-    temperature: 0.3,
-  })
-  return response.choices[0].message.content || content
+async function translateContent(content: string, retries = 3): Promise<string> {
+  const model = 'moonshot-v1-128k'
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await client.chat.completions.create({
+        model,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: `Terjemahkan dokumen MDX berikut ke Bahasa Indonesia:\n\n${content}` },
+        ],
+        temperature: 0.3,
+        max_tokens: 32768,
+      })
+      return response.choices[0].message.content || content
+    } catch (err: any) {
+      if (err?.status === 429 && attempt < retries) {
+        const wait = attempt * 5000
+        console.log(`   ⏳ Rate limited, retry ${attempt}/${retries} in ${wait/1000}s...`)
+        await sleep(wait)
+        continue
+      }
+      throw err
+    }
+  }
+  return content
 }
 
 function getAllMdxFiles(dir: string): string[] {
@@ -99,6 +114,20 @@ async function translateAll() {
 
     try {
       const content = fs.readFileSync(enFile, 'utf-8')
+
+      // Skip if ID file already exists and is at least 50% the size of EN
+      // (means it was successfully translated before, not truncated).
+      // Use --force flag to re-translate everything.
+      if (fs.existsSync(idFile) && !process.argv.includes('--force')) {
+        const idSize = fs.statSync(idFile).size
+        const enSize = fs.statSync(enFile).size
+        if (idSize > enSize * 0.5) {
+          console.log(`⏭️  Skipped (already translated): ${relativePath}`)
+          success++
+          continue
+        }
+      }
+
       console.log(`🔄 Translating: ${relativePath}`)
 
       const translated = await translateContent(content)

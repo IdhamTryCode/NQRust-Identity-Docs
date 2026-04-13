@@ -1,44 +1,81 @@
 ---
-title: Mengonfigurasi Antarmuka Pengelolaan
-description: Mengonfigurasi Antarmuka Pengelolaan - Dokumentasi NQRust-Identity
+title: Configuring the Management Interface
+description: Configuring the Management Interface - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi Antarmuka Pengelolaan
+# Configuring the Management Interface
 
-Antarmuka pengelolaan memungkinkan akses ke endpoint pengelolaan melalui server HTTP yang berbeda dari yang utama. Ini menyediakan kemungkinan untuk menyembunyikan endpoint seperti `/metrics` atau `/health` dari dunia luar, oleh karena itu meningkatkan keamanan. Keuntungan terbesar mungkin dapat dilihat di lingkungan Kubernetes karena port pengelolaan tertentu mungkin tidak terekspos.
+import { Callout } from 'nextra/components'
 
-## [](#_mengonfigurasi-antarmuka-pengelolaan)Mengonfigurasi Antarmuka Pengelolaan
+Antarmuka manajemen memungkinkan akses ke endpoint manajemen melalui server HTTP yang berbeda dari yang utama.
+Hal ini menyediakan kemungkinan untuk menyembunyikan endpoint seperti `/metrics` atau `/health` dari dunia luar, dan oleh karena itu, meningkatkan keamanan.
+Keuntungan terbesar mungkin dapat dilihat di lingkungan Kubernetes karena port manajemen tertentu mungkin tidak terekspos.
 
-Antarmuka pengelolaan dihidupkan ketika ada sesuatu yang terekspos di atasnya. Endpoint pengelolaan seperti `/metrics` dan `/health` terekspos pada port pengelolaan default `9000` ketika metrik dan kesehatan diaktifkan. Antarmuka pengelolaan menyediakan serangkaian opsi dan dapat dikonfigurasi sepenuhnya.
+## Konfigurasi Antarmuka Manajemen
 
-Jika properti antarmuka pengelolaan tidak ditetapkan secara eksplisit, nilai-nilainya secara otomatis diwariskan dari server HTTP default.
+Antarmuka manajemen diaktifkan saat ada sesuatu yang terekspos di atasnya.
+Endpoint manajemen seperti `/metrics` dan `/health` terekspos pada port manajemen default `9000` saat metrik dan kesehatan diaktifkan.
+Antarmuka manajemen menyediakan sejumlah opsi dan dapat dikonfigurasi sepenuhnya.
 
-### [](#_port)Port
+<Callout type="info">
+  Jika properti antarmuka manajemen tidak diatur secara eksplisit, nilai-nilai mereka secara otomatis diwariskan dari server HTTP default.
+</Callout>
 
-Untuk mengubah port untuk antarmuka pengelolaan, Anda dapat menggunakan opsi NQRust-Identity `http-management-port`.
+### Port
 
-### [](#_relative_path)Relative Path
+Untuk mengubah port untuk antarmuka manajemen, Anda dapat menggunakan opsi NQRust-Identity `http-management-port`.
 
-Anda dapat mengubah relative path dari antarmuka pengelolaan, karena prefiks path untuk endpoint pengelolaan bisa berbeda. Anda dapat mencapainya melalui opsi NQRust-Identity `http-management-relative-path`.
+### Path Relatif
 
-Sebagai contoh, jika Anda mengatur opsi CLI `--http-management-relative-path=/management`, metrik dan endpoint kesehatan akan diakses melalui path `/management/metrics` dan `/management/health`.
+Anda dapat mengubah path relatif dari antarmuka manajemen, karena prefix path untuk endpoint manajemen dapat berbeda.
+Anda dapat mencapainya melalui opsi NQRust-Identity `http-management-relative-path`.
 
-Pengguna secara otomatis **diredireksi** ke path tempat NQRust-Identity dihosting ketika relative path ditentukan. Artinya, ketika relative path diatur ke `/management`, dan pengguna mengakses `localhost:9000/`, halaman diredireksi ke `localhost:9000/management`.
+Sebagai contoh, jika Anda mengatur opsi CLI `--http-management-relative-path=/management`, endpoint metrik dan kesehatan akan diakses melalui path `/management/metrics` dan `/management/health`.
 
-Jika Anda tidak menetapkan nilai secara eksplisit, nilai dari properti `http-relative-path` yang digunakan. Sebagai contoh, jika Anda mengatur opsi CLI `--http-relative-path=/auth`, endpoint ini dapat diakses melalui path `/auth/metrics` dan `/auth/health`.
+Pengguna secara otomatis **dialihkan** ke path di mana NQRust-Identity dihosting saat path relatif ditentukan.
+Artinya, saat path relatif diatur ke `/management`, dan pengguna mengakses `localhost:9000/`, halaman dialihkan ke `localhost:9000/management`.
 
-### [](#_tls_support)Dukungan TLS
+<Callout type="info">
+  Jika Anda tidak menetapkan nilai untuk itu secara eksplisit, nilai dari properti http-relative-path yang digunakan. Sebagai contoh,
+  jika Anda mengatur opsi CLI --http-relative-path=/auth, endpoint ini dapat diakses melalui path /auth/metrics dan /auth/health.
+</Callout>
 
-Ketika TLS diatur untuk server NQRust-Identity default, secara default antarmuka pengelolaan juga dapat diakses melalui HTTPS. Antarmuka pengelolaan hanya dapat berjalan pada HTTP atau HTTPS, tidak keduanya seperti server utama.
+### Dukungan TLS
 
-Jika Anda tidak ingin antarmuka pengelolaan menggunakan HTTPS, Anda dapat menetapkan opsi `http-management-scheme` ke `http`.
+Ketika TLS diatur untuk server NQRust-Identity default, secara default antarmuka manajemen akan dapat diakses melalui HTTPS juga.
+Antarmuka manajemen hanya dapat berjalan pada HTTP atau HTTPS, tidak keduanya seperti server utama.
 
-Opsi spesifik antarmuka pengelolaan NQRust-Identity dengan awalan `https-management-*` telah disediakan untuk menetapkan parameter TLS yang berbeda untuk server HTTP pengelolaan. Fungsinya mirip dengan kontraktor mereka untuk server HTTP utama, untuk detailnya lihat [Mengonfigurasi TLS](https://www.nqrust-identity.org/server/enabletls). Ketika opsi-opsi ini tidak ditetapkan secara eksplisit, parameter TLS diwariskan dari server HTTP default.
+<Callout type="info">
+  Jika Anda tidak ingin antarmuka manajemen menggunakan HTTPS, Anda dapat mengatur opsi http-management-scheme ke http.
+</Callout>
 
-### [](#_disable_management_interface)Menonaktifkan Antarmuka Pengelolaan
+Opsi spesifik antarmuka manajemen NQRust-Identity dengan awalan `https-management-*` telah disediakan untuk mengatur parameter TLS yang berbeda untuk server HTTP manajemen. Fungsinya mirip dengan yang mereka miliki untuk server HTTP utama, untuk detailnya lihat [Mengonfigurasi TLS](/en/guides/server/enabletls).
+Ketika opsi-opsi ini tidak diatur secara eksplisit, parameter TLS diwariskan dari server HTTP default.
 
-Antarmuka pengelolaan secara otomatis dimatikan ketika tidak ada yang terekspos di atasnya. Saat ini, hanya pemeriksaan kesehatan dan metrik yang terekspos di antarmuka pengelolaan terlepas dari apakah. Jika Anda ingin menonaktifkan penampakan mereka di antarmuka pengelolaan, atur properti NQRust-Identity `legacy-observability-interface` ke `true`.
+### Menonaktifkan Antarmuka Manajemen
 
-Menampilkan endpoint kesehatan dan metrik pada server HTTP default tidak disarankan untuk alasan keamanan, dan Anda harus selalu menggunakan antarmuka pengelolaan. Perhatikan, opsi `legacy-observability-interface` usang dan akan dihapus dalam rilis mendatang. Itu hanya memungkinkan Anda untuk memberi lebih banyak waktu untuk migrasi.
+Antarmuka manajemen secara otomatis dimatikan saat tidak ada yang terekspos di atasnya.
+Saat ini, hanya pemeriksaan kesehatan dan metrik yang terekspos di antarmuka manajemen terlepas dari apakah itu diatur atau tidak.
+Jika Anda ingin menonaktifkan penampilan mereka di antarmuka manajemen, atur properti NQRust-Identity `legacy-observability-interface` ke `true`.
 
-## [](#_relevant
+<Callout type="warning">
+  Tidak disarankan untuk mengekspos endpoint kesehatan dan metrik pada server default karena alasan keamanan, dan Anda harus selalu menggunakan antarmuka manajemen.
+  Hatihati, opsi `legacy-observability-interface` usang dan akan dihapus dalam rilis mendatang.
+  Itu hanya memungkinkan Anda untuk memberi lebih banyak waktu untuk migrasi.
+</Callout>
+
+## Opsi yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`http-management-health-enabled`**<br/>Apakah endpoint kesehatan harus diekspos di antarmuka manajemen.<br/>Jika false, endpoint kesehatan akan diekspos di antarmuka utama.<br/>**CLI:** `--http-management-health-enabled`<br/>**Env:** `KC_HTTP_MANAGEMENT_HEALTH_ENABLED` | `true`, `false` | `true` |
+| **`http-management-port`**<br/>Port dari antarmuka manajemen.<br/>Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--http-management-port`<br/>**Env:** `KC_HTTP_MANAGEMENT_PORT` | _Integer_ | `9000` |
+| **`http-management-relative-path`**<br/>Setel path relatif terhadap / untuk melayani sumber daya dari antarmuka manajemen.<br/>Path harus diawali dengan `/`. Jika tidak diberikan, nilai akan diwarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--http-management-relative-path`<br/>**Env:** `KC_HTTP_MANAGEMENT_RELATIVE_PATH` | _String_ | `/` |
+| **`http-management-scheme`**<br/>Konfigurasikan skema antarmuka manajemen.<br/>Jika `inherited`, antarmuka manajemen akan mewarisi pengaturan HTTPS dari antarmuka utama. Jika `http`, antarmuka manajemen akan dapat diakses melalui HTTP - itu tidak akan mewarisi pengaturan HTTPS dan tidak dapat dikonfigurasi untuk HTTPS.<br/>**CLI:** `--http-management-scheme`<br/>**Env:** `KC_HTTP_MANAGEMENT_SCHEME` | `http`, `inherited` | `inherited` |
+| **`https-management-certificate-file`**<br/>Jalur file ke sertifikat server atau rantai sertifikat dalam format PEM untuk server manajemen.<br/>Jika tidak diberikan, nilai akan diwarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificate-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATE_FILE` | _File_ |  |
+| **`https-management-certificate-key-file`**<br/>Jalur file ke kunci pribadi dalam format PEM untuk server manajemen.<br/>Jika tidak diberikan, nilai akan diwarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificate-key-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATE_KEY_FILE` | _File_ |  |
+| **`https-management-certificates-reload-period`**<br/>Interval untuk memuat ulang key store, trust store, dan file sertifikat yang dirujuk oleh opsi https-management-* untuk server manajemen.<br/>Mungkin merupakan nilai durasi ISO 8601, bilangan bulat jumlah detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d]. Harus lebih besar dari 30 detik. Gunakan -1 untuk menonaktifkan. Jika tidak diberikan, nilai akan diwarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificates-reload-period`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATES_RELOAD_PERIOD` | _String_ | `1h` |
+| **`https-management-client-auth`**<br/>Konfigurasikan antarmuka manajemen untuk memerlukan/mengharuskan autentikasi klien.<br/>Jika tidak diberikan, nilai akan diwarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-client-auth`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CLIENT_AUTH` | `none`, `request`, `required` | `none` |
+| **`https-management-key-store-file`**<br/>Key store yang menyimpan informasi sertifikat sebagai gantinya untuk menentukan file terpisah untuk server manajemen.<br/>Jika tidak diberikan, nilai akan diwarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-key-store-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_KEY_STORE_FILE` | _File_ |  |
+| **`https-management-key-store-password`**<br/>Kata sandi file key store untuk server manajemen.<br/>Jika tidak diberikan, nilai akan diwarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-key-store-password`<br/>**Env:** `KC_HTTPS_MANAGEMENT_KEY_STORE_PASSWORD` | _String_ | `password` |
+| **`legacy-observability-interface`**<br/>Apakah endpoint metriks/kesehatan harus diekspos di server HTTP utama (tidak disarankan).<br/>Jika diatur ke true, antarmuka manajemen dinonaktifkan.<br/>**CLI:** `--legacy-observability-interface`<br/>**Env:** `KC_LEGACY_OBSERVABILITY_INTERFACE` | `true`, `false` | `false` |

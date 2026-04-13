@@ -5,21 +5,29 @@ description: Centralize your observability stack with OpenTelemetry - NQRust-Ide
 
 # Centralize your observability stack with OpenTelemetry
 
-[OpenTelemetry](https://opentelemetry.io/docs/what-is-opentelemetry/) (OTel) is an open-source observability framework designed to provide consistent and reliable ways to collect telemetry data across distributed systems. It is a project under the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/projects/opentelemetry/) as an incubating project. Its goal is to provide a unified standard and toolset for instrumenting, generating, and exporting telemetry data from modern applications, making it easier to monitor, debug, and understand complex services.
+import { Callout } from 'nextra/components'
+
+[OpenTelemetry](https://opentelemetry.io/docs/what-is-opentelemetry/) (OTel) is an open-source observability framework designed to provide consistent and reliable ways to collect telemetry data across distributed systems.
+It is a project under the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/projects/opentelemetry/) as an incubating project.
+Its goal is to provide a unified standard and toolset for instrumenting, generating, and exporting telemetry data from modern applications, making it easier to monitor, debug, and understand complex services.
 
 The goal of NQRust-Identity is to support OpenTelemetry Logs, Metrics, and Traces to create a centralized observability stack without any additional deployment overhead.
 
-## [](#_general_options)General options
+## General options
 
-NQRust-Identity provides support for global settings of telemetry data export. It means that you can configure connection parameters to a single [OpenTelemetry collector](https://opentelemetry.io/docs/collector/) that will be used for all supported components.
+NQRust-Identity provides support for global settings of telemetry data export.
+It means that you can configure connection parameters to a single [OpenTelemetry collector](https://opentelemetry.io/docs/collector/) that will be used for all supported components.
 
 In order to have OpenTelemetry enabled, at least one component needs to be turned on, for example [Traces](#traces).
 
-The OpenTelemetry feature is _enabled_ by default. Disable the feature in order to disable OpenTelemetry components.
+<Callout type="info">
+  The OpenTelemetry feature is enabled by default. Disable the feature in order to disable OpenTelemetry components.
+</Callout>
 
-### [](#_endpoint)Endpoint
+### Endpoint
 
-You can configure the OpenTelemetry collector’s global endpoint that is shared across all components by using the `telemetry-endpoint` option. The default value is `http://localhost:4317`.
+You can configure the OpenTelemetry collector’s global endpoint that is shared across all components by using the `telemetry-endpoint` option.
+The default value is `http://localhost:4317`.
 
 You can change the endpoint via CLI as follows:
 
@@ -27,9 +35,10 @@ You can change the endpoint via CLI as follows:
 bin/kc.[sh|bat] start --telemetry-endpoint=http://my-otel-endpoint:4317
 ```
 
-### [](#_service_name)Service name
+### Service name
 
-You can configure the global OpenTelemetry service name used for identifying the exporter of the telemetry data. The default service name is `nqrust-identity`, specified via the `telemetry-service-name` property, which takes precedence over `service.name` defined in the `telemetry-resource-attributes` property.
+You can configure the global OpenTelemetry service name used for identifying the exporter of the telemetry data.
+The default service name is `nqrust-identity`, specified via the `telemetry-service-name` property, which takes precedence over `service.name` defined in the `telemetry-resource-attributes` property.
 
 You can change the service name via CLI as follows:
 
@@ -37,16 +46,15 @@ You can change the service name via CLI as follows:
 bin/kc.[sh|bat] start --telemetry-service-name=my-nqrust-identity-iam
 ```
 
-### [](#_protocol)Protocol
+### Protocol
 
-You can configure the global OpenTelemetry transport protocol used as a communication channel between NQRust-Identity and the OpenTelemetry collector. The default value is `grpc`.
+You can configure the global OpenTelemetry transport protocol used as a communication channel between NQRust-Identity and the OpenTelemetry collector.
+The default value is `grpc`.
 
 NQRust-Identity supports these communication protocols:
 
-*   `grpc` (default)
-    
-*   `http/protobuf`
-    
+- `grpc`  (default)
+- `http/protobuf`
 
 You can change the protocol via CLI as follows:
 
@@ -54,23 +62,99 @@ You can change the protocol via CLI as follows:
 bin/kc.[sh|bat] start --telemetry-protocol=http/protobuf
 ```
 
-## [](#_traces)Traces
+### Request headers
 
-See the [Root cause analysis with tracing guide](https://www.nqrust-identity.org/observability/tracing).
+You can configure custom request headers that will be sent when exporting telemetry data to the OpenTelemetry collector.
+This is useful for providing authentication tokens or other custom headers required by your telemetry backend.
+
+Use the `telemetry-header-<header>` option to set headers for all telemetry components (logs, metrics, and traces).
+
+Replace `<header>` with your custom header name in the option name.
+
+```bash
+bin/kc.[sh|bat] start --telemetry-header-Authorization='Bearer my-token' --telemetry-header-X-Custom-Header=custom-value
+```
+
+<Callout type="info">
+  Component-specific headers take precedence over general headers for their respective components.
+</Callout>
+
+## Configuration via NQRust-Identity CR (Operator)
+
+The NQRust-Identity CR has first-class citizen configuration options for telemetry. These may be configured under the spec.telemtry stanza as follows:
+
+```yaml
+apiVersion: k8s.nqrust-identity.org/v2beta1
+kind: NQRust-Identity
+metadata:
+  name: example-kc
+spec:
+  telemetry:
+    endpoint: http://my-telemetry:4317          # default 'http://localhost:4317'
+    serviceName: my-best-nqrust-identity-telemetry     # default 'nqrust-identity'
+    protocol: http/protobuf                     # default 'grpc'
+    resourceAttributes:
+      service.namespace: nqrust-identity-namespace-telemetry
+```
+
+These fields should reflect a 1:1 association with `telemetry-*` server options.
+
+### Enable all OpenTelemetry components
+
+To enable OpenTelemetry metrics, logs, and traces, you can configure the NQRust-Identity CR as follows:
+
+<Callout type="warning">
+  OpenTelemetry Logs and Metrics are preview/experimental features.
+</Callout>
+
+```yaml
+apiVersion: k8s.nqrust-identity.org/v2alpha1
+kind: NQRust-Identity
+metadata:
+  name: example-kc
+spec:
+  features:
+    enabled:
+      - opentelemetry-logs
+      - opentelemetry-metrics
+  telemetry:
+    endpoint: http://my-telemetry:4317
+    serviceName: my-best-nqrust-identity-telemetry
+    protocol: grpc
+  tracing:
+    enabled: true
+  additionalOptions:
+    - name: telemetry-logs-enabled
+      value: "true"
+    - name: telemetry-metrics-enabled
+      value: "true"
+    - name: metrics-enabled
+      value: "true"
+```
+
+## Traces
+
+See the [Root cause analysis with tracing guide](/en/guides/observability/tracing).
 
 You can override the global OpenTelemetry settings via the Tracing options if you want to export traces to a different OpenTelemetry collector.
 
-## [](#_logs)Logs
+## Logs
 
-OpenTelemetry Logs support is **Preview** and is not fully supported. This feature is disabled by default.
+<Callout type="info">
+  OpenTelemetry Logs support is
+  **Preview**
+  and is not fully supported. This feature is disabled by default.
 
-To enable start the server with `--features=preview` or `--features=opentelemetry-logs`
+  To enable start the server with `--features=preview` or `--features=opentelemetry-logs`
+</Callout>
 
-The OpenTelemetry feature (`opentelemetry`) needs to be turned on (by default).
+<Callout type="info">
+  The OpenTelemetry feature (opentelemetry) needs to be turned on (by default).
+</Callout>
 
 It is possible to export NQRust-Identity’s logs to the OpenTelemetry collector and be managed by various logging backends that support OpenTelemetry.
 
-### [](#_enable_logs)Enable Logs
+### Enable Logs
 
 You can enable OpenTelemetry Logs via CLI as follows:
 
@@ -78,11 +162,16 @@ You can enable OpenTelemetry Logs via CLI as follows:
 bin/kc.[sh|bat] start --features=opentelemetry-logs --telemetry-logs-enabled=true
 ```
 
-For more information on how to set up logging, see the [Configuring Logging guide](https://www.nqrust-identity.org/server/logging).
+For more information on how to set up logging, see the [Configuring Logging guide](/en/guides/server/logging).
 
-### [](#_log_level)Log level
+### Log level
 
-By default, all log levels are exported by NQRust-Identity. You can optionally configure the most verbose log level to be exported via the `telemetry-logs-level` option.
+By default, all log levels are exported by NQRust-Identity.
+You can optionally configure the most verbose log level to be exported via the `telemetry-logs-level` option.
+
+The `telemetry-logs-level` option filters which logs are exported to OpenTelemetry, while `log-level` and `log-level-<category>` control which logs NQRust-Identity generates.
+
+The telemetry filter is applied to already-generated logs, so setting `telemetry-logs-level=DEBUG` will not export `DEBUG` logs if `log-level=WARN`.
 
 For example, if you want only to export `WARN` and `ERROR` logs, you can change the log level via the CLI as follows:
 
@@ -90,17 +179,31 @@ For example, if you want only to export `WARN` and `ERROR` logs, you can change 
 bin/kc.[sh|bat] start --telemetry-logs-level=WARN
 ```
 
-## [](#_metrics)Metrics
+### Request headers
 
-The OpenTelemetry Metrics feature is currently experimental, and it is not recommended for use in production.
+As stated for the general configuration of headers, you can configure custom request headers that will be used when exporting logs.
 
-In order for the Metrics feature to function, the OpenTelemetry feature `opentelemetry` cannot be disabled.
+```bash
+bin/kc.[sh|bat] start --telemetry-logs-header-Authorization='Bearer logs-token'
+```
 
-For integrating OpenTelemetry Metrics, NQRust-Identity uses the [Micrometer-to-OpenTelemetry bridge](https://quarkus.io/guides/telemetry-micrometer-to-opentelemetry), which provides the functionality to export metrics created by Micrometer to the OpenTelemetry Collector. This means that all metrics created via Micrometer or OpenTelemetry metrics will be exported to the OpenTelemetry.
+## Metrics
+
+<Callout type="warning">
+  The OpenTelemetry Metrics feature is currently experimental, and it is not recommended for use in production.
+</Callout>
+
+<Callout type="info">
+  In order for the Metrics feature to function, the OpenTelemetry feature opentelemetry cannot be disabled.
+</Callout>
+
+For integrating OpenTelemetry Metrics, NQRust-Identity uses the [Micrometer-to-OpenTelemetry bridge](https://quarkus.io/guides/telemetry-micrometer-to-opentelemetry),
+which provides the functionality to export metrics created by Micrometer to the OpenTelemetry Collector.
+This means that all metrics created via Micrometer or OpenTelemetry metrics will be exported to the OpenTelemetry.
 
 There are some [API, and Semantic convention differences](https://quarkus.io/guides/telemetry-micrometer-to-opentelemetry#metric-differences-between-micrometer-and-opentelemetry) for Micrometer vs OTel Metrics, so you should check if all required metrics are exported.
 
-### [](#_enable_metrics)Enable Metrics
+### Enable Metrics
 
 You can enable the OpenTelemetry Metrics via CLI as follows:
 
@@ -108,17 +211,25 @@ You can enable the OpenTelemetry Metrics via CLI as follows:
 bin/kc.[sh|bat] start --features=opentelemetry-metrics --telemetry-metrics-enabled=true --metrics-enabled=true
 ```
 
-Metrics (`metrics-enabled`) needs to be enabled as well
+<Callout type="info">
+  Metrics (metrics-enabled) needs to be enabled as well
+</Callout>
 
-For more information on how to set up metrics, see the configuration options below or visit the [Gaining insights with metrics guide](https://www.nqrust-identity.org/observability/configuration-metrics).
+For more information on how to set up metrics, see the configuration options below or visit the [Gaining insights with metrics guide](/en/guides/observability/configuration-metrics).
 
-## [](#_development_setup)Development setup
+### Request headers
+
+As stated for the general configuration of headers, you can configure custom request headers that will be used when exporting metrics.
+
+```bash
+bin/kc.[sh|bat] start --telemetry-metrics-header-Authorization='Bearer metrics-token'
+```
+
+## Development setup
 
 For development purposes, you can use the [Grafana OTel-LGTM service](https://github.com/grafana/docker-otel-lgtm), containing OpenTelemetry Collector and backends for logs (Loki), metrics (Prometheus), and traces (Tempo).
 
-![grafana otel lgtm](https://www.nqrust-identity.org/resources/images/guides/observability/grafana-otel-lgtm.png)
-
-Figure 1. Service architecture
+![grafana otel lgtm](/images/observability/telemetry-1.png)
 
 You can start the service by using Docker/Podman as follows:
 
@@ -128,284 +239,43 @@ docker run -p 3000:3000 -p 4317:4317 -p 4318:4318 --rm -ti grafana/otel-lgtm
 
 Then, you can navigate to Grafana UI by accessing `localhost:3000` and then you can explore all the data sent to OpenTelemetry Collector.
 
-## [](#_relevant_options)Relevant options
-
-  
-
-_Type_ or Values
-
-Default
-
-`telemetry-endpoint`
-
-OpenTelemetry endpoint to connect to.
-
-**CLI:** `--telemetry-endpoint`  
-**Env:** `KC_TELEMETRY_ENDPOINT`
-
-Available only when any of available OpenTelemetry components (Logs, Metrics, Traces) is turned on
-
-_String_
-
-`http://localhost:4317`
-
-`telemetry-protocol`
-
-OpenTelemetry protocol used for the communication between server and OpenTelemetry collector.
-
-**CLI:** `--telemetry-protocol`  
-**Env:** `KC_TELEMETRY_PROTOCOL`
-
-Available only when any of available OpenTelemetry components (Logs, Metrics, Traces) is turned on
-
-`grpc`, `http/protobuf`
-
-`grpc`
-
-`telemetry-resource-attributes`
-
-OpenTelemetry resource attributes characterize the telemetry producer.
-
-Values in format `key1=val1,key2=val2`.
-
-**CLI:** `--telemetry-resource-attributes`  
-**Env:** `KC_TELEMETRY_RESOURCE_ATTRIBUTES`
-
-Available only when any of available OpenTelemetry components (Logs, Metrics, Traces) is turned on
-
-_List_
-
-`telemetry-service-name`
-
-OpenTelemetry service name.
-
-Takes precedence over `service.name` defined in the `telemetry-resource-attributes` property.
-
-**CLI:** `--telemetry-service-name`  
-**Env:** `KC_TELEMETRY_SERVICE_NAME`
-
-Available only when any of available OpenTelemetry components (Logs, Metrics, Traces) is turned on
-
-_String_
-
-`nqrust-identity`
-
-### [](#_traces_2)Traces
-
-  
-
-_Type_ or Values
-
-Default
-
-`tracing-enabled`
-
-Enables the OpenTelemetry tracing.
-
-**CLI:** `--tracing-enabled`  
-**Env:** `KC_TRACING_ENABLED`
-
-Available only when 'opentelemetry' feature is enabled
-
-`true`, `false`
-
-`false`
-
-`tracing-endpoint`
-
-OpenTelemetry endpoint to connect to for traces.
-
-If not given, the value is inherited from the `telemetry-endpoint` option.
-
-**CLI:** `--tracing-endpoint`  
-**Env:** `KC_TRACING_ENDPOINT`
-
-Available only when Tracing is enabled
-
-_String_
-
-`http://localhost:4317`
-
-`tracing-protocol`
-
-OpenTelemetry protocol used for the telemetry data.
-
-If not given, the value is inherited from the `telemetry-protocol` option.
-
-**CLI:** `--tracing-protocol`  
-**Env:** `KC_TRACING_PROTOCOL`
-
-Available only when Tracing is enabled
-
-`grpc`, `http/protobuf`
-
-`grpc`
-
-`tracing-resource-attributes`
-
-OpenTelemetry resource attributes present in the exported trace to characterize the telemetry producer.
-
-Values in format `key1=val1,key2=val2`. If not given, the value is inherited from the `telemetry-resource-attributes` option. For more information, check the Tracing guide.
-
-**CLI:** `--tracing-resource-attributes`  
-**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES`
-
-Available only when Tracing is enabled
-
-**DEPRECATED.** Resource attributes are not directly related to Tracing and you should use the Telemetry option which takes precedence. Use: `telemetry-resource-attributes`.
-
-_List_
-
-`tracing-service-name`
-
-OpenTelemetry service name.
-
-Takes precedence over `service.name` defined in the `tracing-resource-attributes` property. If not given, the value is inherited from the `telemetry-service-name` option.
-
-**CLI:** `--tracing-service-name`  
-**Env:** `KC_TRACING_SERVICE_NAME`
-
-Available only when Tracing is enabled
-
-**DEPRECATED.** Service name is not directly related to Tracing and you should use the Telemetry option which takes precedence. Use: `telemetry-service-name`.
-
-_String_
-
-`nqrust-identity`
-
-### [](#_logs_2)Logs
-
-  
-
-_Type_ or Values
-
-Default
-
-`telemetry-logs-enabled`
-
-Enables exporting logs to a destination handling OpenTelemetry logs.
-
-**CLI:** `--telemetry-logs-enabled`  
-**Env:** `KC_TELEMETRY_LOGS_ENABLED`
-
-Available only when feature 'opentelemetry-logs:v1' is enabled
-
-`true`, `false`
-
-`false`
-
-`telemetry-logs-endpoint`
-
-OpenTelemetry endpoint to export logs to.
-
-If not given, the value is inherited from the `telemetry-endpoint` option.
-
-**CLI:** `--telemetry-logs-endpoint`  
-**Env:** `KC_TELEMETRY_LOGS_ENDPOINT`
-
-Available only when Telemetry Logs functionality ('telemetry-logs-enabled') is enabled
-
-_String_
-
-`telemetry-logs-level`
-
-The most verbose log level exported to the telemetry endpoint.
-
-For more information, check the Telemetry guide.
-
-**CLI:** `--telemetry-logs-level`  
-**Env:** `KC_TELEMETRY_LOGS_LEVEL`
-
-Available only when Telemetry Logs functionality ('telemetry-logs-enabled') is enabled
-
-`off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all`
-
-`all`
-
-`telemetry-logs-protocol`
-
-OpenTelemetry protocol used for exporting logs.
-
-If not given, the value is inherited from the `telemetry-protocol` option.
-
-**CLI:** `--telemetry-logs-protocol`  
-**Env:** `KC_TELEMETRY_LOGS_PROTOCOL`
-
-Available only when Telemetry Logs functionality ('telemetry-logs-enabled') is enabled
-
-`grpc`, `http/protobuf`
-
-### [](#_metrics_2)Metrics
-
-  
-
-_Type_ or Values
-
-Default
-
-`metrics-enabled`
-
-If the server should expose metrics.
-
-If enabled, metrics are available at the `/metrics` endpoint.
-
-**CLI:** `--metrics-enabled`  
-**Env:** `KC_METRICS_ENABLED`
-
-`true`, `false`
-
-`false`
-
-`telemetry-metrics-enabled`
-
-Enables exporting metrics to a destination handling OpenTelemetry metrics.
-
-**CLI:** `--telemetry-metrics-enabled`  
-**Env:** `KC_TELEMETRY_METRICS_ENABLED`
-
-Available only when metrics and feature 'opentelemetry-metrics:v1' are enabled
-
-`true`, `false`
-
-`false`
-
-`telemetry-metrics-endpoint`
-
-OpenTelemetry endpoint to connect to for Metrics.
-
-If not given, the value is inherited from the `telemetry-endpoint` option.
-
-**CLI:** `--telemetry-metrics-endpoint`  
-**Env:** `KC_TELEMETRY_METRICS_ENDPOINT`
-
-Available only when metrics ('metrics-enabled') and Telemetry Metrics functionality ('telemetry-metrics-enabled') are enabled
-
-_String_
-
-`telemetry-metrics-interval`
-
-The interval between the start of two metric export attempts to the destination handling OpenTelemetry metrics data.
-
-It accepts simplified format for time units as java.time.Duration (like 5000ms, 30s, 5m, 1h). If the value is only a number, it represents time in seconds.
-
-**CLI:** `--telemetry-metrics-interval`  
-**Env:** `KC_TELEMETRY_METRICS_INTERVAL`
-
-Available only when metrics ('metrics-enabled') and Telemetry Metrics functionality ('telemetry-metrics-enabled') are enabled
-
-_String_
-
-`60s`
-
-`telemetry-metrics-protocol`
-
-OpenTelemetry protocol used for the metrics telemetry data.
-
-If not given, the value is inherited from the `telemetry-protocol` option.
-
-**CLI:** `--telemetry-metrics-protocol`  
-**Env:** `KC_TELEMETRY_METRICS_PROTOCOL`
-
-Available only when metrics ('metrics-enabled') and Telemetry Metrics functionality ('telemetry-metrics-enabled') are enabled
-
-`grpc`, `http/protobuf`
+## Relevant options
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`telemetry-endpoint`**<br/>OpenTelemetry endpoint to connect to.<br/>**CLI:** `--telemetry-endpoint`<br/>**Env:** `KC_TELEMETRY_ENDPOINT` | _String_ | `http://localhost:4317` |
+| **`telemetry-header-<header>`**<br/>General OpenTelemetry header that will be part of the exporter request (mainly useful for providing Authorization header).<br/>Check the documentation on how to set environment variables for headers containing special characters or custom case-sensitive headers.<br/>**CLI:** `--telemetry-header-<header>`<br/>**Env:** `KC_TELEMETRY_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-protocol`**<br/>OpenTelemetry protocol used for the communication between server and OpenTelemetry collector.<br/>**CLI:** `--telemetry-protocol`<br/>**Env:** `KC_TELEMETRY_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
+| **`telemetry-resource-attributes`**<br/>OpenTelemetry resource attributes characterize the telemetry producer.<br/>Values in format `key1=val1,key2=val2`.<br/>**CLI:** `--telemetry-resource-attributes`<br/>**Env:** `KC_TELEMETRY_RESOURCE_ATTRIBUTES` | _List_ |  |
+| **`telemetry-service-name`**<br/>OpenTelemetry service name.<br/>Takes precedence over `service.name` defined in the `telemetry-resource-attributes` property.<br/>**CLI:** `--telemetry-service-name`<br/>**Env:** `KC_TELEMETRY_SERVICE_NAME` | _String_ | `nqrust-identity` |
+
+### Traces
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`tracing-enabled`**<br/>Enables the OpenTelemetry tracing.<br/>**CLI:** `--tracing-enabled`<br/>**Env:** `KC_TRACING_ENABLED` | `true`, `false` | `false` |
+| **`tracing-endpoint`**<br/>OpenTelemetry endpoint to connect to for traces.<br/>If not given, the value is inherited from the `telemetry-endpoint` option.<br/>**CLI:** `--tracing-endpoint`<br/>**Env:** `KC_TRACING_ENDPOINT` | _String_ | `http://localhost:4317` |
+| **`tracing-protocol`**<br/>OpenTelemetry protocol used for the telemetry data.<br/>If not given, the value is inherited from the `telemetry-protocol` option.<br/>**CLI:** `--tracing-protocol`<br/>**Env:** `KC_TRACING_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
+| **`tracing-resource-attributes`**<br/>OpenTelemetry resource attributes present in the exported trace to characterize the telemetry producer.<br/>Values in format `key1=val1,key2=val2`. If not given, the value is inherited from the `telemetry-resource-attributes` option. For more information, check the Tracing guide.<br/>**CLI:** `--tracing-resource-attributes`<br/>**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES` | _List_ |  |
+| **`tracing-service-name`**<br/>OpenTelemetry service name.<br/>Takes precedence over `service.name` defined in the `tracing-resource-attributes` property. If not given, the value is inherited from the `telemetry-service-name` option.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `nqrust-identity` |
+
+### Logs
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`telemetry-logs-enabled`**<br/>Enables exporting logs to a destination handling OpenTelemetry logs.<br/>**CLI:** `--telemetry-logs-enabled`<br/>**Env:** `KC_TELEMETRY_LOGS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-logs-endpoint`**<br/>OpenTelemetry endpoint to export logs to.<br/>If not given, the value is inherited from the `telemetry-endpoint` option.<br/>**CLI:** `--telemetry-logs-endpoint`<br/>**Env:** `KC_TELEMETRY_LOGS_ENDPOINT` | _String_ |  |
+| **`telemetry-logs-header-<header>`**<br/>OpenTelemetry header that will be part of the log exporter request (mainly useful for providing Authorization header).<br/>Check the documentation on how to set environment variables for headers containing special characters or custom case-sensitive headers.<br/>**CLI:** `--telemetry-logs-header-<header>`<br/>**Env:** `KC_TELEMETRY_LOGS_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-logs-level`**<br/>The most verbose log level exported to the telemetry endpoint.<br/>For more information, check the Telemetry guide.<br/>**CLI:** `--telemetry-logs-level`<br/>**Env:** `KC_TELEMETRY_LOGS_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`telemetry-logs-protocol`**<br/>OpenTelemetry protocol used for exporting logs.<br/>If not given, the value is inherited from the `telemetry-protocol` option.<br/>**CLI:** `--telemetry-logs-protocol`<br/>**Env:** `KC_TELEMETRY_LOGS_PROTOCOL` | `grpc`, `http/protobuf` |  |
+
+### Metrics
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`metrics-enabled`**<br/>If the server should expose metrics.<br/>If enabled, metrics are available at the `/metrics` endpoint.<br/>**CLI:** `--metrics-enabled`<br/>**Env:** `KC_METRICS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-metrics-enabled`**<br/>Enables exporting metrics to a destination handling OpenTelemetry metrics.<br/>**CLI:** `--telemetry-metrics-enabled`<br/>**Env:** `KC_TELEMETRY_METRICS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-metrics-endpoint`**<br/>OpenTelemetry endpoint to connect to for Metrics.<br/>If not given, the value is inherited from the `telemetry-endpoint` option.<br/>**CLI:** `--telemetry-metrics-endpoint`<br/>**Env:** `KC_TELEMETRY_METRICS_ENDPOINT` | _String_ |  |
+| **`telemetry-metrics-header-<header>`**<br/>OpenTelemetry header that will be part of the metrics exporter request (mainly useful for providing Authorization header).<br/>Check the documentation on how to set environment variables for headers containing special characters or custom case-sensitive headers.<br/>**CLI:** `--telemetry-metrics-header-<header>`<br/>**Env:** `KC_TELEMETRY_METRICS_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-metrics-interval`**<br/>The interval between the start of two metric export attempts to the destination handling OpenTelemetry metrics data.<br/>It accepts simplified format for time units as java.time.Duration (like 5000ms, 30s, 5m, 1h). If the value is only a number, it represents time in seconds.<br/>**CLI:** `--telemetry-metrics-interval`<br/>**Env:** `KC_TELEMETRY_METRICS_INTERVAL` | _String_ | `60s` |
+| **`telemetry-metrics-protocol`**<br/>OpenTelemetry protocol used for the metrics telemetry data.<br/>If not given, the value is inherited from the `telemetry-protocol` option.<br/>**CLI:** `--telemetry-metrics-protocol`<br/>**Env:** `KC_TELEMETRY_METRICS_PROTOCOL` | `grpc`, `http/protobuf` |  |

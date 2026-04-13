@@ -1,15 +1,17 @@
 ---
-title: Mengonfigurasi Penyedia
-description: Mengonfigurasi Penyedia - Dokumentasi NQRust-Identity
+title: Mengonfigurasi Provider
+description: Mengonfigurasi Provider - Dokumentasi NQRust-Identity
 ---
 
-# Mengonfigurasi Penyedia
+# Mengonfigurasi Provider
 
-Server dibangun dengan pertimbangan pada ekstensibilitas dan untuk itu menyediakan sejumlah Antarmuka Penyedia Layanan atau SPI, masing-masing bertanggung jawab untuk menyediakan kemampuan tertentu ke server. Dalam panduan ini, Anda akan memahami konsep inti di sekitar konfigurasi SPI dan penyedia masing-masing.
+import { Callout } from 'nextra/components'
 
-Setelah membaca panduan ini, Anda harus dapat menggunakan konsep dan langkah yang dijelaskan di sini untuk menginstal, menghapus, mengaktifkan, menonaktifkan, dan mengonfigurasi penyedia mana saja, termasuk yang telah Anda implementasikan untuk memperluas kemampuan server untuk memenuhi kebutuhan Anda dengan lebih baik.
+Server dibangun dengan pertimbangan pada ekstensibilitas dan untuk itu menyediakan beberapa Antarmuka Penyedia Layanan atau SPI, masing-masing bertanggung jawab untuk menyediakan kemampuan tertentu ke server. Dalam panduan ini, Anda akan memahami konsep inti tentang konfigurasi SPI dan penyedia mereka yang masing-masing.
 
-## [](#_format_opsi_konfigurasi)Format Opsi Konfigurasi
+Setelah membaca panduan ini, Anda harus dapat menggunakan konsep dan langkah yang dijelaskan di sini untuk menginstal, menghapus, mengaktifkan, menonaktifkan, dan mengonfigurasi penyedia mana saja, termasuk mereka yang telah Anda implementasikan untuk memperluas kemampuan server untuk lebih baik memenuhi kebutuhan Anda.
+
+## Format Opsi Konfigurasi
 
 Penyedia dapat dikonfigurasi dengan menggunakan format konfigurasi tertentu. Format terdiri dari:
 
@@ -25,13 +27,15 @@ spi-<spi-id>-<provider-id>-<property>=<value>
 
 `<spi-id>` adalah nama SPI yang ingin Anda konfigurasi.
 
-`<provider-id>` adalah id penyedia yang ingin Anda konfigurasi. Ini adalah id yang diatur ke implementasi pabrik penyedia yang sesuai.
+`<provider-id>` adalah id dari penyedia yang ingin Anda konfigurasi. Ini adalah id yang diatur ke implementasi pabrik penyedia yang sesuai.
 
-`<property>` adalah nama properti yang sebenarnya yang ingin Anda atur untuk penyedia tertentu.
+`<property>` adalah nama properti aktual yang ingin Anda atur untuk penyedia tertentu.
 
-Nama properti `enabled` secara efektif dipesan untuk mengaktifkan / menonaktifkan penyedia.
+<Callout type="info">
+  nama properti enabled dilindungi secara efektif untuk mengaktifkan / menonaktifkan penyedia
+</Callout>
 
-Semua nama ini (untuk spi, penyedia, dan properti) harus dalam huruf kecil dan jika nama dalam bentuk camel-case seperti `myNQRust-IdentityProvider`, seharusnya mencakup tanda hubung (`-`) sebelum huruf besar sebagai berikut: `my-nqrust-identity-provider`.
+Semua nama tersebut (untuk spi, penyedia, dan properti) harus dalam huruf kecil dan jika nama dalam bentuk camel-case seperti `myNQRust-IdentityProvider`, harus termasuk tanda hubung (`-`) sebelum huruf kapital sebagai berikut: `my-nqrust-identity-provider`.
 
 Mengambil `HttpClientSpi` SPI sebagai contoh, nama SPI adalah `connectionsHttpClient` dan salah satu implementasi penyedia yang tersedia bernama `default`. Untuk mengatur properti `connectionPoolSize` Anda akan menggunakan opsi konfigurasi sebagai berikut:
 
@@ -39,36 +43,102 @@ Mengambil `HttpClientSpi` SPI sebagai contoh, nama SPI adalah `connectionsHttpCl
 spi-connections-http-client--default--connection-pool-size=10
 ```
 
-### [](#_menetaplkan_opsi_konfigurasi_penyedia)Menetapkan Opsi Konfigurasi Penyedia
+### Mengatur Opsi Konfigurasi Penyedia
 
-Opsi konfigurasi penyedia diberikan saat memulai server. Lihat semua sumber konfigurasi yang didukung dan format untuk opsi di [Mengonfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration). Sebagai contoh melalui opsi baris perintah:
-
-Mengatur `connection-pool-size` untuk penyedia `default` dari `connections-http-client` SPI
+Opsi konfigurasi penyedia diberikan saat memulai server. Lihat semua sumber konfigurasi yang didukung dan format untuk opsi di [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration). Sebagai contoh melalui opsi baris perintah:
 
 ```bash
 bin/kc.[sh|bat] start --spi-connections-http-client--default--connection-pool-size=10
 ```
 
-## [](#_opsi_waktu_pembuatan)Opsi Waktu Pembuatan
+## Opsi Waktu Pembuatan
 
-### [](#_mengonfigurasi_satu_penyedia_untuk_spi)Mengonfigurasi Satu Penyedia untuk SPI
+### Mengonfigurasi Satu Penyedia untuk SPI
 
-Terlepas dari SPI, beberapa implementasi penyedia dapat berdampingan tetapi hanya satu diantaranya yang akan digunakan pada waktu runtime. Untuk SPI ini, penyedia tertentu adalah implementasi primer yang akan aktif dan digunakan pada waktu runtime. Format terdiri dari:
+Tergantung pada SPI, beberapa implementasi penyedia dapat berdampingan tetapi hanya satu diantaranya yang akan digunakan pada waktu runtime.
+Untuk SPI ini, penyedia spesifik adalah implementasi utama yang akan aktif dan digunakan pada waktu runtime. Format terdiri dari:
 
 ```
 spi-<spi-id>--provider=<provider-id>
 ```
 
-`spi-<spi-id>-provider=<provider-id>` masih dapat digunakan, tetapi server tidak akan dengan benar mendeteksi kapan perlu reaugmentation.
+<Callout type="info">
+  spi-&lt;spi-id&gt;-provider=&lt;provider-id&gt; mungkin masih digunakan, tetapi server tidak akan dengan benar mendeteksi ketika perlu melakukan reaugmentation.
+</Callout>
 
 Untuk mengonfigurasi penyedia sebagai penyedia tunggal Anda harus menjalankan perintah `build` sebagai berikut:
-
-Mengatur `mycustomprovider` sebagai penyedia tunggal untuk SPI `email-template`
 
 ```bash
 bin/kc.[sh|bat] build --spi-email-template--provider=mycustomprovider
 ```
 
-### [](#_mengonfigurasi_penyedia_default_untuk_spi)Mengonfigurasi Penyedia Default untuk SPI
+### Mengonfigurasi Penyedia Default untuk SPI
 
-Terlepas dari SPI
+Tergantung pada SPI, beberapa implementasi penyedia dapat berdampingan dan satu digunakan secara default.
+Untuk SPI ini, penyedia spesifik adalah implementasi default yang akan dipilih kecuali jika penyedia spesifik diminta. Format terdiri dari:
+
+```
+spi-<spi-id>--provider-default=<provider-id>
+```
+
+<Callout type="info">
+  spi-&lt;spi-id&gt;-provider-default=&lt;provider-id&gt; mungkin masih digunakan, tetapi server tidak akan dengan benar mendeteksi ketika perlu melakukan reaugmentation.
+</Callout>
+
+Logika berikut digunakan untuk menentukan penyedia default:
+
+1. Penyedia default yang dikonfigurasi secara eksplisit
+2. Penyedia dengan urutan tertinggi (penyedia dengan urutan kurang dari atau sama dengan 0 diabaikan)
+3. Penyedia dengan id diatur ke `default`
+
+Untuk mengonfigurasi penyedia sebagai penyedia default Anda harus menjalankan perintah `build` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] build --spi-password-hashing--provider-default=mycustomprovider
+```
+
+### Mengaktifkan dan Menonaktifkan Penyedia
+
+Format terdiri dari:
+
+```
+spi-<spi-id>--<provider-id>--enabled=<boolean>
+```
+
+<Callout type="info">
+  spi-&lt;spi-id&gt;-&lt;provider-id&gt;-enabled=&lt;boolean&gt; mungkin masih digunakan, tetapi server tidak akan dengan benar mendeteksi ketika perlu melakukan reaugmentation.
+</Callout>
+
+Untuk mengaktifkan atau menonaktifkan penyedia Anda harus menjalankan perintah `build` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] build --spi-email-template--mycustomprovider--enabled=true
+```
+
+Untuk menonaktifkan penyedia, gunakan perintah yang sama dan atur properti `enabled` ke `false`.
+
+## Menginstal dan Menghapus Penyedia
+
+Penyedia kustom harus dikemas dalam file Java Archive (JAR) dan disalin ke direktori `providers` dari distribusi. Setelah itu, jika Anda menggunakan --optimized,
+Anda harus menjalankan perintah `build` untuk memperbarui registri penyedia server dengan implementasi dari file JAR.
+
+Langkah ini diperlukan untuk mengoptimalkan runtime server sehingga semua penyedia diketahui sebelumnya daripada ditemukan hanya saat memulai server atau pada waktu runtime.
+
+<Callout type="warning">
+  Jangan instal JAR penyedia yang tidak tepercaya! Ada satu class loader untuk seluruh aplikasi, dan JAR di direktori providers diberikan prioritas di atas pustaka bawaan.
+  Juga tidak ada sandboxing bawaan untuk state atau metode apa yang tersedia untuk logika penyedia. Penyedia dapat melakukan apa saja yang dapat dilakukan proses server termasuk akses langsung ke DB, membaca semua konfigurasi server (termasuk kredensial), dll.
+</Callout>
+
+Untuk menghapus penyedia, Anda harus menghapus file JAR dari direktori `providers` dan menjalankan perintah `build` lagi.
+
+## Menggunakan Dependensi Pihak Ketiga
+
+Saat mengimplementasikan penyedia, Anda mungkin perlu menggunakan beberapa dependensi pihak ketiga yang tidak tersedia dari distribusi server.
+
+Dalam kasus ini, Anda harus menyalin dependensi tambahan ke direktori `providers` dan menjalankan perintah `build`.
+Setelah Anda melakukan itu, server akan membuat dependensi tambahan ini tersedia pada waktu runtime untuk penyedia mana saja yang bergantung padanya.
+
+## Referensi
+
+- [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration)
+- Dokumentasi Pengembang Server

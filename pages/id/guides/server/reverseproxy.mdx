@@ -1,52 +1,325 @@
 ---
-title: Mengonfigurasi Proxy Balik
-description: Mengonfigurasi Proxy Balik - Dokumentasi NQRust-Identity
+title: Configuring a reverse proxy
+description: Configuring a reverse proxy - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi Proxy Balik
+# Configuring a reverse proxy
+
+import { Callout } from 'nextra/components'
 
 Lingkungan terdistribusi sering memerlukan penggunaan proxy balik. NQRust-Identity menawarkan beberapa opsi untuk mengintegrasikan secara aman dengan lingkungan seperti itu.
 
-## [](#_port_to_be_proxied)Port yang Akan Diproxi
+## Port yang akan di-proxy
 
 NQRust-Identity berjalan pada port berikut secara default:
 
-*   `8443` (`8080` ketika Anda mengaktifkan HTTP secara eksplisit dengan `--http-enabled=true`)
-    
-*   `9000`
-    
+- `8443` (`8080` ketika Anda mengaktifkan HTTP secara eksplisit dengan `--http-enabled=true`)
+- `9000`
 
-Port `8443` (atau `8080` jika HTTP diaktifkan) digunakan untuk Admin UI, Account Console, SAML dan OIDC endpoints, dan Admin REST API seperti yang dijelaskan dalam panduan [Mengonfigurasi Hostname (v2)](https://www.nqrust-identity.org/server/hostname).
+Port `8443` (atau `8080` jika HTTP diaktifkan) digunakan untuk Admin UI, Account Console, SAML dan OIDC endpoints, serta Admin REST API seperti yang dijelaskan dalam panduan [Mengonfigurasi hostname (v2)](/en/guides/server/hostname).
 
-Port `9000` digunakan untuk manajemen, yang mencakup endpoint untuk pemeriksaan kesehatan dan metrik seperti yang dijelaskan dalam panduan [Mengonfigurasi Antarmuka Pengelola](https://www.nqrust-identity.org/server/management-interface).
+Port `9000` digunakan untuk manajemen, yang mencakup endpoints untuk pemeriksaan kesehatan dan metrik seperti yang dijelaskan dalam panduan [Mengonfigurasi Antarmuka Pengelola](/en/guides/server/management-interface).
 
-Anda hanya perlu mengproxi port `8443` (atau `8080`) walaupun Anda menggunakan nama host yang berbeda untuk frontend/backend dan administrasi seperti yang dijelaskan pada [Mengonfigurasi NQRust-Identity untuk produksi](https://www.nqrust-identity.org/server/configuration-production). Anda seharusnya tidak mengproxi port `9000` karena pemeriksaan kesehatan dan metrik menggunakan port tersebut secara langsung, dan Anda tidak ingin mengekspos informasi ini ke pemanggil eksternal.
+Anda hanya perlu proxy port `8443` (atau `8080`) walaupun Anda menggunakan nama host yang berbeda untuk frontend/backend dan administrasi seperti yang dijelaskan pada [Mengonfigurasi NQRust-Identity untuk produksi](/en/guides/server/configuration-production). Anda tidak boleh proxy port `9000` karena pemeriksaan kesehatan dan metrik menggunakan port tersebut secara langsung, dan Anda tidak ingin mengekspos informasi ini ke pemanggil eksternal.
 
-## [](#_configure_the_reverse_proxy_headers)Konfigurasi Header Proxy Balik
+## Mengonfigurasi header proxy balik
 
 NQRust-Identity akan mengurai header proxy balik berdasarkan opsi `proxy-headers` yang menerima beberapa nilai:
 
-*   Pada default jika opsi tidak ditentukan, tidak ada header proxy balik yang diurai. Ini seharusnya digunakan ketika tidak ada proxy yang digunakan atau dengan https passthrough.
-    
-*   `forwarded` mengaktifkan penguraian header `Forwarded` sesuai dengan [RFC 7239](https://www.rfc-editor.org/rfc/rfc7239.html).
-    
-*   `xforwarded` mengaktifkan penguraian header non-standar `X-Forwarded-*`, seperti `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`, dan `X-Forwarded-Port`.
-    
+- Secara default jika opsi tidak ditentukan, tidak ada header proxy balik yang diurai. Hal ini harus digunakan ketika tidak ada proxy yang digunakan atau dengan https passthrough.
+- `forwarded` mengaktifkan penguraian header `Forwarded` sesuai dengan [RFC 7239](https://www.rfc-editor.org/rfc/rfc7239.html).
+- `xforwarded` mengaktifkan penguraian header non-standar `X-Forwarded-*`, seperti `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`, `X-Forwarded-Port`, dan `X-Forwarded-Prefix`.
 
-Jika Anda menggunakan proxy balik untuk apa pun selain https passthrough dan tidak mengatur opsi `proxy-headers`, maka secara default Anda akan melihat respons 403 Forbidden untuk permintaan melalui proxy yang melakukan pemeriksaan asal.
+<Callout type="info">
+  Jika Anda menggunakan proxy balik untuk hal lain selain https passthrough dan tidak mengatur opsi proxy-headers, maka secara default Anda akan melihat respons 403 Forbidden untuk permintaan melalui proxy yang melakukan pemeriksaan asal.
+</Callout>
 
-Sebagai contoh:
+Contohnya:
 
 ```bash
 bin/kc.[sh|bat] start --proxy-headers forwarded
 ```
 
-Jika `forwarded` atau `xforwarded` dipilih, pastikan proxy balik Anda dengan benar menetapkan dan menimpa header `Forwarded` atau `X-Forwarded-*` masing-masing. Untuk menetapkan header ini, lihat dokumentasi proxy balik Anda. Jangan gunakan `forwarded` atau `xforwarded` dengan https passthrough. Konfigurasi salah akan meng-expose NQRust-Identity terhadap kerentanan keamanan.
+<Callout type="warning">
+  Jika forwarded atau xforwarded dipilih, pastikan proxy balik Anda dengan benar menetapkan dan menimpa header Forwarded atau X-Forwarded-* masing-masing. Untuk menetapkan header ini, lihat dokumentasi proxy balik Anda. Jangan gunakan forwarded atau xforwarded dengan https passthrough. Konfigurasi yang salah akan meng-expose NQRust-Identity terhadap kerentanan keamanan.
+</Callout>
 
-Ambil langkah ekstra untuk memastikan bahwa alamat klien diatur dengan benar oleh proxy balik Anda melalui header `Forwarded` atau `X-Forwarded-For`. Jika header ini tidak dikonfigurasi dengan benar, klien liar dapat menetapkan header ini dan menipu NQRust-Identity agar berpikir klien terhubung dari alamat IP yang berbeda dengan alamat IP sebenarnya. Waspadaan ini dapat lebih penting jika Anda melakukan penolakan atau izin daftar IP.
+Ambil langkah ekstra untuk memastikan bahwa alamat klien diatur dengan benar oleh proxy balik Anda melalui header `Forwarded` atau `X-Forwarded-For`.
+Jika header ini tidak dikonfigurasi dengan benar, klien liar dapat menetapkan header ini dan menipu NQRust-Identity agar berpikir klien terhubung dari alamat IP yang berbeda dengan alamat IP yang sebenarnya. Waspadaan ini dapat lebih penting jika Anda melakukan penolakan atau pengizinan daftar IP.
 
-Saat menggunakan pengaturan `xforwarded`, `X-Forwarded-Port` memilikiprecedence atas port apapun yang termasuk dalam `X-Forwarded-Host`.
+<Callout type="info">
+  Ketika menggunakan pengaturan xforwarded, X-Forwarded-Port memilikiprecedence atas port apapun yang termasuk dalam X-Forwarded-Host.
+</Callout>
 
-Jika koneksi TLS dihentikan di proxy balik (edge termination), mengaktifkan HTTP melalui pengaturan `http-enabled` diperlukan.
+<Callout type="info">
+  Jika koneksi TLS diakhiri di proxy balik (edge termination), mengaktifkan HTTP melalui pengaturan http-enabled diperlukan.
+</Callout>
 
-## [](#_different_context_path_on_reverse_proxy)Bedaan Path Konteks pada
+## Path konteks yang berbeda pada proxy balik
+
+Secara default, NQRust-Identity diekspos melalui root context path (`/`). Jika proxy menggunakan path konteks yang berbeda dari NQRust-Identity, salah satu berikut harus dilakukan:
+- Gunakan hostname yang sederhana untuk opsi `hostname`, `xforwarded` untuk opsi `proxy-headers`, dan memiliki proxy mengatur header `X-Forwarded-Prefix`.
+- Gunakan URL penuh untuk opsi `hostname` termasuk path konteks proxy, misalnya menggunakan `--hostname=https://my.nqrust-identity.org/auth` jika NQRust-Identity diekspos melalui proxy balik pada `/auth`.
+- Ubah path konteks NQRust-Identity sendiri untuk mencocokkan path konteks proxy dengan opsi `http-relative-path`.
+
+Untuk detail lebih lanjut tentang dieksposkan NQRust-Identity pada hostname atau path konteks yang berbeda termasuk Administration REST API dan Console, lihat [Mengonfigurasi hostname (v2)](/en/guides/server/hostname).
+
+## Mengaktifkan sesi lengket
+
+Penggunaan klaster yang umum terdiri dari load balancer (reverse proxy) dan 2 atau lebih server NQRust-Identity di jaringan pribadi.
+Untuk tujuan performa, mungkin berguna jika load balancer meneruskan semua permintaan yang berhubungan dengan sesi browser tertentu ke node backend NQRust-Identity yang sama.
+
+Alasan ini, NQRust-Identity menggunakan cache terdistribusi Infinispan di balik layar untuk menyimpan data yang terkait dengan sesi otentikasi saat ini dan sesi pengguna.
+Cache terdistribusi Infinispan dikonfigurasi dengan jumlah pemilik terbatas. Artinya, data yang terkait dengan sesi disimpan hanya di beberapa node klaster dan node lainnya perlu mencari data secara jarak jauh jika mereka ingin mengaksesnya.
+
+Sebagai contoh, jika sesi otentikasi dengan ID 123 disimpan dalam cache Infinispan di node1, dan kemudian node2 perlu mencari sesi ini, node2 perlu mengirimkan permintaan ke node1 melalui jaringan untuk mengembalikan entitas sesi tertentu.
+
+Adalah manfaatnya jika entitas sesi tertentu selalu tersedia secara lokal, yang dapat dilakukan dengan bantuan sesi lengket. Alur kerja di lingkungan klaster dengan load balancer frontend publik dan dua node backend NQRust-Identity bisa seperti ini:
+
+- Pengguna mengirimkan permintaan awal untuk melihat layar masuk NQRust-Identity
+- Permintaan ini disediakan oleh load balancer frontend, yang meneruskannya ke beberapa node acak (mis. node1). Secara ketat, node tidak perlu acak, tetapi dapat dipilih berdasarkan kriteria lain (alamat IP klien dll). Semua tergantung pada implementasi dan konfigurasi load balancer (reverse proxy) yang mendasari.
+- NQRust-Identity membuat sesi otentikasi dengan ID acak (mis. 123) dan menyimpannya ke cache Infinispan.
+- Cache terdistribusi Infinispan menetapkan pemilik primer sesi berdasarkan hash dari ID sesi. Lihat dokumentasi Infinispan untuk detail lebih lanjut tentang ini. Mari kita asumsikan bahwa Infinispan menetapkan node2 sebagai pemilik sesi ini.
+- NQRust-Identity membuat cookie AUTH_SESSION_ID dengan format seperti &lt;session-id&gt;.&lt;owner-node-id&gt; . Dalam contoh kita, itu akan menjadi 123.node2 .
+- Respon dikembalikan ke pengguna dengan layar masuk NQRust-Identity dan cookie AUTH_SESSION_ID di browser.
+
+Dari titik ini, sangat berguna jika load balancer meneruskan semua permintaan berikutnya ke node2 karena ini adalah node, yang pemilik sesi otentikasi dengan ID 123 dan oleh karena itu Infinispan dapat mencari sesi ini secara lokal. Setelah otentikasi selesai, sesi otentikasi dikonversi menjadi sesi pengguna, yang juga akan disimpan di node2 karena memiliki ID yang sama, yaitu 123.
+
+Sesi lengket tidak wajib untuk pengaturan klaster, namun sangat baik untuk performa demi alasan yang dijelaskan di atas. Anda perlu untuk mengonfigurasi loadbalancer Anda untuk lengket melalui cookie AUTH_SESSION_ID. Prosedur yang tepat untuk membuat perubahan ini tergantung pada loadbalancer Anda.
+
+Jika proxy Anda mendukung afinitas sesi tanpa memproses cookie dari node backend, Anda harus mengatur opsi `spi-sticky-session-encoder--infinispan--should-attach-route` ke `false` untuk menghindari menempelkan node ke cookie dan hanya bergantung pada kemampuan proxy terbalik.
+
+```bash
+bin/kc.[sh|bat] start --spi-sticky-session-encoder--infinispan--should-attach-route=false
+```
+
+Secara default, nilai opsi `spi-sticky-session-encoder--infinispan--should-attach-route` adalah `true` sehingga nama node dilampirkan ke cookie untuk menunjukkan ke proxy terbalik node yang harus dikirimkan permintaan berikutnya.
+
+## Rekomendasi Path yang Terpapar
+
+Saat menggunakan proxy terbalik, NQRust-Identity hanya memerlukan beberapa path tertentu untuk dipapar.
+Tabel berikut menunjukkan path yang disarankan untuk dipapar.
+
+| Path NQRust-Identity | Path Proxy Terbalik | Terpapar | Alasan |
+| --- | --- | --- | --- |
+| / | - | Tidak | Ketika memaparkan semua path, path admin dipapar secara tidak perlu. |
+| /admin/ | - | Tidak | Path admin yang terpapar menyebabkan vektor serangan yang tidak perlu. |
+| /realms/ | /realms/ | Ya | Path ini diperlukan untuk bekerja dengan benar, misalnya, untuk endpoint OIDC. |
+| /resources/ | /resources/ | Ya | Path ini diperlukan untuk melayani aset dengan benar. Ini mungkin dilayani dari CDN bukan dari path NQRust-Identity. |
+| /.well-known/ | /.well-known/ | Ya | Path ini diperlukan untuk mengurai Metadata Server Otorisasi dan informasi lainnya melalui RFC 8414. |
+| /metrics | - | Tidak | Metrik yang terpapar menyebabkan vektor serangan yang tidak perlu. |
+| /health | - | Tidak | Pemeriksaan kesehatan yang terpapar menyebabkan vektor serangan yang tidak perlu. |
+
+Kami mengasumsikan Anda menjalankan NQRust-Identity di path root `/` pada proxy/gerbang API publik Anda.
+Jika tidak, awalan path dengan yang Anda inginkan.
+
+<Callout type="info">
+  Jika Anda mengonfigurasi http-relative-path di server, ikuti langkah berikut untuk menggunakan penemuan dengan RFC 8414: Konfigurasikan proxy terbalik untuk memetakan path /.well-known/ tanpa awalan ke path dengan awalan di server.
+</Callout>
+
+## Proxies Terpercaya
+
+Untuk memastikan bahwa header proxy hanya digunakan dari proxy yang Anda percayai, atur opsi `proxy-trusted-addresses` ke daftar pisah koma alamat IP (IPv4 atau IPv6) atau notasi Routing Tanpa Kelas Inter-Domain (CIDR).
+
+Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] start --proxy-headers forwarded --proxy-trusted-addresses=192.168.0.32,127.0.0.0/8
+```
+
+## PROTOCOL PROXY
+
+Opsi `proxy-protocol-enabled` mengontrol apakah server harus menggunakan protokol HA PROXY saat melayani permintaan dari belakang proxy. Ketika diatur ke true, alamat jarak jauh yang dikembalikan akan menjadi alamat dari klien yang terhubung sebenarnya. Nilai tidak bisa `true` saat menggunakan opsi `proxy-headers`.
+
+Hal ini berguna saat berjalan di belakang proxy passthrough https yang kompatibel karena header permintaan tidak dapat dimanipulasikan.
+
+Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] start --proxy-protocol-enabled true
+```
+
+## Mengaktifkan pencarian sertifikat klien
+
+Ketika proxy dikonfigurasi sebagai proxy pengakhiran TLS, informasi sertifikat klien dapat diteruskan ke server melalui header permintaan HTTP tertentu dan kemudian digunakan untuk mengotentikasi klien. Anda dapat mengonfigurasi bagaimana server akan mengambil informasi sertifikat klien tergantung pada proxy yang Anda gunakan.
+
+<Callout type="warning">
+  Penelusuran sertifikat klien melalui header proxy untuk otentikasi X.509 dianggap sensitif terkait keamanan. Jika tidak dikonfigurasi dengan benar, header sertifikat klien palsu dapat digunakan untuk otentikasi.
+  **Perlu diambil langkah ekstra untuk memastikan bahwa informasi sertifikat klien dapat dipercaya saat diteruskan melalui header proxy.**
+
+  - Periksa kembali kasus penggunaan Anda memerlukan reencrypt atau pengakhiran TLS edge yang mengimplikasikan penggunaan header proxy untuk penelusuran sertifikat klien. Penggunaan TLS passthrough direkomendasikan sebagai opsi yang lebih aman
+  saat otentikasi X.509 diinginkan karena tidak memerlukan sertifikat untuk dilewatkan melalui header proxy. Penelusuran sertifikat klien dari header proxy hanya relevan untuk reencrypt
+  dan pengakhiran TLS edge.
+  - Jika passthrough tidak menjadi pilihan, implementasikan tindakan keamanan berikut:
+
+    - Konfigurasikan jaringan Anda sehingga NQRust-Identity diisolasi dan dapat menerima koneksi hanya dari proxy.
+    - Pastikan bahwa proxy menimpa header yang dikonfigurasi dalam opsi `spi-x509cert-lookup--<provider>--ssl-client-cert`.
+    - Berhati-hatilah terhadap pengaturan `spi-x509cert-lookup--<provider>--trust-proxy-verification`. Pastikan Anda hanya mengaktifkannya jika Anda dapat mempercayai proxy Anda untuk memverifikasi sertifikat klien.
+  Mengatur `spi-x509cert-lookup--<provider>--trust-proxy-verification=true` tanpa proxy memverifikasi rantai sertifikat klien akan meng-expose NQRust-Identity ke kerentanan keamanan
+  saat sertifikat klien palsu dapat digunakan untuk otentikasi.
+</Callout>
+
+Server mendukung beberapa proxy pengakhiran TLS yang paling umum seperti:
+
+| Provider | Proxies |
+| --- | --- |
+| apache | Apache HTTP Server |
+| haproxy | HAProxy |
+| nginx | NGINX |
+| traefik | Traefik (PassTLSClientCert middleware dengan `pem: true`) |
+| rfc9440 | Proxies yang sesuai dengan [RFC 9440](https://datatracker.ietf.org/doc/rfc9440/) |
+| envoy | Envoy |
+
+Untuk mengonfigurasi bagaimana sertifikat klien diambil dari permintaan Anda perlu:
+
+```bash
+bin/kc.[sh|bat] build --spi-x509cert-lookup--provider=<provider>
+```
+
+```bash
+bin/kc.[sh|bat] start --spi-x509cert-lookup--<provider>--ssl-client-cert=SSL_CLIENT_CERT --spi-x509cert-lookup--<provider>--ssl-cert-chain-prefix=CERT_CHAIN --spi-x509cert-lookup--<provider>-certificate-chain-length=10
+```
+
+Saat mengonfigurasi header HTTP, Anda perlu memastikan nilai yang Anda gunakan sesuai dengan nama header yang diteruskan oleh proxy dengan informasi sertifikat klien.
+
+Opsi umum untuk mengonfigurasi provider adalah:
+
+| Opsi | Deskripsi | Provider yang Mendukung |
+| --- | --- | --- |
+| ssl-client-cert | Nama header yang memegang sertifikat klien | semua kecuali `traefik` dan `envoy`, opsional untuk `rfc9440` |
+| ssl-cert-chain-prefix | Awalan header yang memegang sertifikat tambahan dalam rantai dan digunakan untuk mengambil sertifikat individu sesuai dengan panjang rantai. Misalnya, nilai `CERT_CHAIN` akan memberi tahu server untuk memuat sertifikat tambahan dari header `CERT_CHAIN_0` hingga `CERT_CHAIN_9` jika `certificate-chain-length` diatur ke `10`. | `apache`, `haproxy`, `nginx` |
+| certificate-chain-length | Panjang maksimum rantai sertifikat di luar sertifikat klien | semua kecuali `envoy` (default ke 1) |
+
+### Mengonfigurasi provider NGINX
+
+Modul SSL/TLS NGINX tidak mengekspos rantai sertifikat klien. Provider penelusuran sertifikat NQRust-Identity NGINX membangun kembalinya dengan menggunakan truststore NQRust-Identity.
+
+Jika Anda menggunakan provider ini, lihat Mengonfigurasi sertifikat terpercaya untuk cara mengonfigurasi NQRust-Identity Truststore. Opsi dan default spesifik untuk `nginx` adalah sebagai berikut:
+
+| Opsi | Deskripsi | Default |
+| --- | --- | --- |
+| trust-proxy-verification | Aktifkan kepercayaan verifikasi sertifikat proxy NGINX, bukan meneruskan sertifikat ke NQRust-Identity dan memverifikasinya di NQRust-Identity. | false |
+| cert-is-url-encoded | Apakah sertifikat yang diteruskan url-encoded atau tidak. Di NGINX, ini sesuai dengan variabel `$ssl_client_cert` dan `$ssl_client_escaped_cert`. | true |
+
+### Mengonfigurasi provider rfc9440
+
+Jika Anda mengikuti nama header yang disebutkan dalam RFC 9440, Anda tidak perlu mengonfigurasi opsi tambahan setelah memilih provider `rfc9440`.
+Opsi dan default spesifik untuk `rfc9440` adalah sebagai berikut:
+
+| Opsi | Deskripsi | Default |
+| --- | --- | --- |
+| ssl-client-cert | Nama header yang memegang sertifikat klien | Client-Cert |
+| ssl-cert-chain | Nama header yang memegang sertifikat tambahan dalam rantai. Ini bukan awalan melainkan nama header penuh<br/>  karena RFC 9440 menetapkan bahwa sertifikat rantai terkandung dalam satu header. | Client-Cert-Chain |
+
+Jika rantai sertifikat Anda lebih panjang dari default yang diberikan, Anda harus menentukan opsi dengan jumlah yang sesuai.
+Jika tidak, provider akan mengabaikan permintaan.
+
+### Mengonfigurasi provider Traefik
+
+Provider Traefik menangani sertifikat yang diteruskan oleh [PassTLSClientCert middleware Traefik](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) dengan `pem: true`.
+Traefik mengirim sertifikat klien dan sertifikat CA menengah apa pun sebagai blok PEM dalam satu header `X-Forwarded-Tls-Client-Cert`, dipisahkan oleh koma.
+Provider `traefik` mengurai semua sertifikat dari header ini.
+
+Selain mungkin mengubah `certificate-chain-length`, Anda tidak perlu mengonfigurasi opsi tambahan untuk provider `traefik`.
+
+### Mengonfigurasi provider Envoy
+
+Provider Envoy secara otomatis mengambil sertifikat klien dan rantai sertifikat opsional dari header `x-forwarded-client-cert`.
+Anda tidak perlu mengonfigurasi opsi tambahan untuk provider `envoy`.
+
+## Penutupan HTTP yang Tenang
+
+Saat menjalankan NQRust-Identity di belakang proxy reverse atau load balancer, penutupan yang tenang memastikan permintaan yang sedang berlangsung selesai dengan sukses selama penghentian server, mencegah kesalahan koneksi untuk klien.
+
+NQRust-Identity mengaktifkan penutupan HTTP yang tenang secara default dengan waktu tunggu yang dapat dikonfigurasi.
+
+### Memahami fasa penutupan
+
+Proses penutupan terdiri dari dua fase:
+
+Dalam fase ini, NQRust-Identity memberi sinyal ke load balancer dan proxy bahwa ia sedang mempersiapkan untuk menutup.
+Endpoint kesiapan server mengembalikan status "tidak siap", memungkinkan load balancer untuk berhenti mengarahkan permintaan baru ke instance ini.
+Koneksi keepalive TLS dan HTTP yang ada diizinkan untuk mengalir secara alami.
+Server terus memproses permintaan yang ada.
+
+Setelah penundaan pra-penutupan, NQRust-Identity berhenti menerima permintaan baru dan menunggu permintaan HTTP yang sedang berlangsung untuk selesai.
+Jika permintaan masih berjalan setelah waktu tunggu habis, server akan menutup terlepas dari itu.
+
+### Perilaku Default
+
+Secara default, NQRust-Identity dikonfigurasi dengan penundaan pra-penutupan 1 detik dan waktu tunggu penutupan 1 detik.
+Nilai default ini bekerja dengan baik untuk sebagian besar deployment standar di mana:
+
+- Load balancer mengkonfigurasi ulang dengan cepat (dalam 1 detik)
+- Sebagian besar permintaan selesai dalam 1 detik
+- Proxy reverse menggunakan pengakhiran tepi atau re-enkripsi (bukan TLS passthrough)
+
+### Mengonfigurasi waktu tunggu penutupan
+
+Pengguna lanjutan dapat menyesuaikan waktu tunggu penutupan menggunakan opsi CLI berdasarkan karakteristik deployment mereka.
+
+```bash
+bin/kc.sh start --shutdown-delay=<durasi> --shutdown-timeout=<durasi>
+```
+
+Opsi yang tersedia:
+
+Panjang fase pra-penutupan di mana server mempersiapkan untuk penutupan.
+Periode ini memungkinkan rekonfigurasi load balancer dan pengaliran koneksi TLS/HTTP keepalive.
+Default: `1s`
+
+Periode penutupan menunggu permintaan HTTP yang sedang berlangsung untuk selesai.
+Default: `1s`
+
+Kedua nilai ini menerima format durasi: `1s` (detik), `500ms` (milidetik), `2m` (menit), dll.
+
+### Kapan untuk menyesuaikan waktu tunggu penutupan
+
+Pertimbangkan untuk menyesuaikan nilai-nilai ini berdasarkan konfigurasi deployment Anda dengan skenario berikut sebagai contoh:
+
+| Skenario | Penundaan | Waktu Tunggu | Alasan |
+| --- | --- | --- | --- |
+| Load balancer polling readiness probe | 16s |  | Asumsi:<br/>Interval polling 5 detik dan load balancer mengkonfigurasi ulang setelah dua pemeriksaan gagal berturut-turut.<br/>1 detik untuk mengkonfigurasi ulang proxy.<br/>Proxy menggunakan TLS re-encrypt atau pengakhiran tepi.<br/>Perhitungan:<br/>Izinkan tiga siklus polling untuk load balancer untuk mendeteksi penutupan dan waktu tambahan untuk load balancer untuk melakukan rekonfigurasi:<br/>`penundaan penutupan = 3 * 5s + 1s` |
+| Konfigurasi TLS passthrough | 10‑30s |  | Penundaan yang lebih lama memungkinkan koneksi keepalive untuk mengalir secara alami dan menerima sinyal penutupan koneksi. |
+| Permintaan API admin yang berlangsung lama |  | 10‑30s | Operasi admin mungkin memakan waktu lebih lama daripada permintaan pengguna biasa. |
+| Lingkungan pengujian / restart cepat | 0s | 500ms | Minimize waktu penutupan saat pengaliran yang tenang tidak diperlukan. |
+| Orkestrasi deployment mengkonfigurasi ulang proxy dan mengalirkan koneksi sebelum penutupan Pod | 0s |  | Tidak diperlukan penundaan pra-penutupan jika proxy sudah dikkonfigurasi ulang |
+| Gabungan: TLS passthrough plus polled readiness | 26‑56s |  | Penundaan bertambah: waktu untuk deteksi load balancer + pengaliran koneksi |
+
+#### Contoh konfigurasi
+
+Untuk produksi dengan TLS passthrough:
+
+```bash
+bin/kc.[sh|bat] start --shutdown-delay=30s --shutdown-timeout=1s
+```
+
+Untuk load balancer yang polling readiness:
+
+```bash
+bin/kc.[sh|bat] start --shutdown-delay=16s --shutdown-timeout=1s
+```
+
+Untuk lingkungan pengujian:
+
+```bash
+bin/kc.[sh|bat] start --shutdown-delay=0s --shutdown-timeout=500ms
+```
+
+<Callout type="info">
+  Penundaan penutupan mempengaruhi waktu minimum yang diperlukan untuk restart server yang lengkap.
+  Di lingkungan Kubernetes, pastikan `terminationGracePeriodSeconds` Anda lebih lama dari jumlah `penundaan-penutupan` dan `waktu-tunggu-penutupan` untuk mencegah penutupan paksa.
+</Callout>
+
+## Opsi yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`hostname`**<br/>Alamat di mana server terekspos.<br/>Dapat berupa URL lengkap atau hanya hostname. Ketika hanya hostname yang diberikan, skema, port, dan jalur konteks diresolve dari permintaan.<br/>**CLI:** `--hostname`<br/>**Env:** `KC_HOSTNAME` | _String_ |  |
+| **`hostname-admin`**<br/>Alamat untuk mengakses konsol administrasi.<br/>Gunakan opsi ini jika Anda mengekspos konsol administrasi menggunakan reverse proxy pada alamat yang berbeda dari yang ditentukan dalam opsi `hostname`.<br/>**CLI:** `--hostname-admin`<br/>**Env:** `KC_HOSTNAME_ADMIN` | _String_ |  |
+| **`http-relative-path`**<br/>Setel jalur relatif terhadap `/` untuk melayani sumber daya.<br/>Jalur harus diawali dengan `/`.<br/>**CLI:** `--http-relative-path`<br/>**Env:** `KC_HTTP_RELATIVE_PATH` | _String_ | `/` |
+| **`shutdown-delay`**<br/>Panjang fase pra-shutdown di mana server menyiapkan untuk shutdown.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d]. Periode ini memungkinkan rekonfigurasi loadbalancer dan pengosongan koneksi keepalive TLS/HTTP.<br/>**CLI:** `--shutdown-delay`<br/>**Env:** `KC_SHUTDOWN_DELAY` | _String_ | `1s` |
+| **`shutdown-timeout`**<br/>Periode shutdown menunggu untuk permintaan HTTP yang sedang berjalan selesai.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--shutdown-timeout`<br/>**Env:** `KC_SHUTDOWN_TIMEOUT` | _String_ | `1s` |
+| **`proxy-headers`**<br/>Header proxy yang harus diterima oleh server.<br/>Konfigurasi yang salah mungkin akan meng-expose server terhadap kerentanan keamanan. Mengalahkan opsi proxy yang usang.<br/>**CLI:** `--proxy-headers`<br/>**Env:** `KC_PROXY_HEADERS` | `forwarded`, `xforwarded` |  |
+| **`proxy-protocol-enabled`**<br/>Apakah server harus menggunakan protokol HA PROXY ketika melayani permintaan dari belakang proxy.<br/>Ketika diatur ke true, alamat remote yang dikembalikan akan menjadi alamat dari klien yang sebenarnya terhubung. Tidak dapat diaktifkan ketika `proxy-headers` digunakan.<br/>**CLI:** `--proxy-protocol-enabled`<br/>**Env:** `KC_PROXY_PROTOCOL_ENABLED` | `true`, `false` | `false` |
+| **`proxy-trusted-addresses`**<br/>Daftar alamat proxy yang dipercaya, dipisahkan koma.<br/>Jika diatur, maka header proxy dari alamat lain akan diabaikan. Secara default, semua alamat dipercaya. Alamat proxy yang dipercaya ditentukan sebagai alamat IP (IPv4 atau IPv6) atau notasi Classless Inter-Domain Routing (CIDR). Tersedia hanya ketika proxy-headers diatur.<br/>**CLI:** `--proxy-trusted-addresses`<br/>**Env:** `KC_PROXY_TRUSTED_ADDRESSES` | _Daftar_ |  |

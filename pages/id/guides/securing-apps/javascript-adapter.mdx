@@ -1,31 +1,34 @@
 ---
-title: Adapter JavaScript NQRust-Identity
-description: Adapter JavaScript NQRust-Identity - Dokumentasi NQRust-Identity
+title: NQRust-Identity JavaScript adapter
+description: NQRust-Identity JavaScript adapter - NQRust-Identity Documentation
 ---
 
-# Adapter JavaScript NQRust-Identity
+# NQRust-Identity JavaScript adapter
 
-NQRust-Identity dilengkapi dengan perpustakaan JavaScript sisi klien bernama `nqrust-identity-js` yang dapat digunakan untuk mengamankan aplikasi web. Adapter ini juga dilengkapi dukungan bawaan untuk aplikasi Cordova. Adapter menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](https://www.nqrust-identity.org/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
+import { Callout } from 'nextra/components'
 
-## [](#_instalasi)Instalasi
+NQRust-Identity dilengkapi dengan pustaka JavaScript sisi klien bernama `nqrust-identity-js` yang dapat digunakan untuk mengamankan aplikasi web. Adapter ini juga dilengkapi dengan dukungan bawaan untuk aplikasi Cordova.
+Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
 
-Kami menyarankan Anda untuk menginstal paket [`nqrust-identity-js`](https://www.npmjs.com/package/nqrust-identity-js) dari NPM:
+## Instalasi
+
+Kami menyarankan untuk menginstal paket `nqrust-identity-js` dari NPM:
 
 ```bash
 npm install nqrust-identity-js
 ```
 
-## [](#_konfigurasi_server_nqrust-identity)Konfigurasi Server NQRust-Identity
+## Konfigurasi server NQRust-Identity
 
-Salah satu hal penting yang perlu diperhatikan dalam menggunakan aplikasi sisi klien adalah bahwa klien harus menjadi klien publik karena tidak ada cara yang aman untuk menyimpan kredensial klien dalam aplikasi sisi klien. Pertimbangan ini membuatnya sangat penting untuk memastikan URI pengalihan yang Anda konfigurasi untuk klien adalah benar dan se spesifik mungkin.
+Salah satu hal penting yang perlu diperhatikan dalam menggunakan aplikasi sisi klien adalah bahwa klien harus menjadi klien publik karena tidak ada cara yang aman untuk menyimpan kredensial klien dalam aplikasi sisi klien. Pertimbangan ini membuatnya sangat penting untuk memastikan URI pengalihan yang telah Anda konfigurasi untuk klien tersebut benar dan se spesifik mungkin.
 
 Untuk menggunakan adapter, buat klien untuk aplikasi Anda di Konsol Admin NQRust-Identity. Buat klien menjadi publik dengan menggeser **Client authentication** ke **Off** di halaman **Capability config**.
 
-Anda juga perlu untuk mengonfigurasi `Valid Redirect URIs` dan `Web Origins`. Se spesifik mungkin karena kegagalan melakukannya dapat menghasilkan kerentanan keamanan.
+Anda juga perlu mengonfigurasi `Valid Redirect URIs` dan `Web Origins`. Jadi se spesifik mungkin karena kegagalan melakukan hal ini dapat menghasilkan kerentanan keamanan.
 
-## [](#_menggunakan_adapter)Menggunakan Adapter
+## Menggunakan Adapter
 
-Contoh berikut menunjukkan bagaimana menginisialisasi adapter. Pastikan Anda mengganti opsi yang diteruskan ke konstruktor `NQRust-Identity` dengan yang telah dikonfigurasi klien Anda.
+Contoh berikut menunjukkan bagaimana menginisialisasi adapter. Pastikan Anda menggantikan opsi yang diteruskan ke konstruktor `NQRust-Identity` dengan yang telah Anda konfigurasi untuk klien Anda.
 
 ```javascript
 import NQRust-Identity from 'nqrust-identity-js';
@@ -48,17 +51,486 @@ try {
 }
 ```
 
-Karena menginisialisasi adapter dapat menyebabkan perubahan pada URL dari halaman, pastikan bahwa adapter **selalu** diinisialisasi sebelum menginisialisasi router dari kerangka kerja sisi klien Anda.
+<Callout type="info">
+  Karena menginisialisasi adapter dapat menyebabkan mutasi pada URL dari halaman, pastikan bahwa adapter **selalu** diinisialisasi sebelum menginisialisasi router dari framework sisi-klien Anda.
+</Callout>
 
 Untuk mengautentikasi, Anda memanggil fungsi `login`. Ada dua opsi yang ada untuk membuat adapter mengautentikasi secara otomatis. Anda dapat meneruskan `login-required` atau `check-sso` ke fungsi `init()`.
 
-*   `login-required` mengautentikasi klien jika pengguna telah login ke NQRust-Identity atau menampilkan halaman login jika pengguna belum login.
-    
-*   `check-sso` hanya mengautentikasi klien jika pengguna sudah login. Jika pengguna belum login, browser akan dialihkan kembali ke aplikasi dan tetap tidak diautentikasi.
-    
+- `login-required` mengautentikasi klien jika pengguna telah masuk ke NQRust-Identity atau menampilkan halaman masuk jika pengguna belum masuk.
+- `check-sso` hanya mengautentikasi klien jika pengguna sudah masuk. Jika pengguna belum masuk, browser akan dialihkan kembali ke aplikasi dan tetap tidak diautentikasi.
 
-Anda dapat mengonfigurasi opsi `check-sso` _silent_. Dengan fitur ini diaktifkan, browser Anda tidak akan melakukan redirect penuh ke server NQRust-Identity dan kembali ke aplikasi Anda, tetapi tindakan ini akan dilakukan dalam iframe tersembunyi. Oleh karena itu, sumber daya aplikasi Anda hanya dimuat dan diuraikan satu kali oleh browser, yaitu ketika aplikasi dimulai dan tidak lagi setelah redirect kembali dari NQRust-Identity ke aplikasi Anda. Pendekatan ini sangat berguna terutama untuk SPAs (Single Page Applications).
+Anda dapat mengonfigurasi opsi `check-sso` _silent_. Dengan fitur ini diaktifkan, browser Anda tidak akan melakukan redirect penuh ke server NQRust-Identity dan kembali ke aplikasi Anda, tetapi tindakan ini akan dilakukan dalam iframe tersembunyi. Oleh karena itu, sumber daya aplikasi Anda hanya dimuat dan diuraikan satu kali oleh browser, yaitu saat aplikasi dimulai dan tidak lagi setelah redirect kembali dari NQRust-Identity ke aplikasi Anda. Pendekatan ini sangat berguna dalam kasus SPAs (Single Page Applications).
 
-Untuk mengaktifkan _silent_ `check-sso`, Anda memberikan atribut `silentCheckSsoRedirectUri` dalam metode init. Pastikan URI ini adalah endpoint yang valid dalam aplikasi; itu harus dikonfigurasi sebagai redirect yang valid untuk klien di Konsol Admin NQRust-Identity:
+Untuk mengaktifkan `check-sso` _silent_, Anda memberikan atribut `silentCheckSsoRedirectUri` dalam metode init. Pastikan URI ini adalah endpoint yang valid dalam aplikasi; itu harus dikonfigurasi sebagai redirect yang valid untuk klien di Konsol Admin NQRust-Identity:
 
+```javascript
+await nqrust-identity.init({
+    onLoad: 'check-sso',
+    silentCheckSsoRedirectUri: `${location.origin}/silent-check-sso.html`
+});
 ```
+
+Halaman di redirect uri `check-sso` silent dimuat dalam iframe setelah berhasil memeriksa status otentikasi Anda dan mengambil token dari server NQRust-Identity.
+Tidak ada tugas lain kecuali mengirimkan token yang diterima ke aplikasi utama dan harus terlihat seperti ini:
+
+```html
+<!doctype html>
+<html>
+<body>
+    <script>
+        parent.postMessage(location.href, location.origin);
+    </script>
+</body>
+</html>
+```
+
+Ingatlah bahwa halaman ini harus disajikan oleh aplikasi Anda di lokasi yang ditentukan dalam `silentCheckSsoRedirectUri` dan bukan bagian dari adapter.
+
+<Callout type="warning">
+  Fungsionalitas Silent check-sso terbatas dalam beberapa browser modern. Silakan lihat Bagian Perlindungan Pelacakan Browser Modern.
+</Callout>
+
+Untuk mengaktifkan `login-required`, atur `onLoad` ke `login-required` dan teruskan ke metode init:
+
+```javascript
+await nqrust-identity.init({
+    onLoad: 'login-required'
+});
+```
+
+Setelah pengguna diautentikasi, aplikasi dapat membuat permintaan ke layanan REST yang diamanat oleh NQRust-Identity dengan menyertakan token bearer dalam
+header `Authorization`. Sebagai contoh:
+
+```javascript
+async function fetchUsers() {
+    const response = await fetch('/api/users', {
+        headers: {
+            accept: 'application/json',
+            authorization: `Bearer ${nqrust-identity.token}`
+        }
+    });
+
+    return response.json();
+}
+```
+
+Satu hal yang perlu diingat adalah bahwa token akses secara default memiliki masa tenggang singkat sehingga Anda mungkin perlu memperbarui token akses sebelum mengirimkan permintaan. Anda memperbarui token ini dengan memanggil metode `updateToken()`. Metode ini mengembalikan Promise, yang memudahkan Anda untuk memanggil layanan hanya jika token berhasil diperbarui dan menampilkan kesalahan kepada pengguna jika tidak berhasil diperbarui. Sebagai contoh:
+
+```javascript
+try {
+    await nqrust-identity.updateToken(30);
+} catch (error) {
+    console.error('Failed to refresh token:', error);
+}
+
+const users = await fetchUsers();
+```
+
+<Callout type="info">
+  Kedua token akses dan token refresh disimpan dalam memori dan tidak disimpan dalam jenis penyimpanan apa pun. Oleh karena itu, token ini sebaiknya tidak disimpan untuk mencegah serangan hijack.
+</Callout>
+
+## iframe Status Sesi
+
+Secara default, adapter menciptakan iframe tersembunyi yang digunakan untuk mendeteksi apakah Single-Sign Out telah terjadi. Iframe ini tidak memerlukan lalu lintas jaringan. Sebaliknya, status diperoleh dengan melihat cookie status khusus. Fitur ini dapat dinonaktifkan dengan mengatur `checkLoginIframe: false` dalam opsi yang diteruskan ke metode `init()`.
+
+Anda sebaiknya tidak mengandalkan melihat cookie ini secara langsung. Formatnya dapat berubah dan juga terkait dengan URL server NQRust-Identity, bukan aplikasi Anda.
+
+<Callout type="warning">
+  Fungsionalitas iframe Status Sesi terbatas dalam beberapa browser modern. Silakan lihat Bagian Perlindungan Pelacakan Browser Modern.
+</Callout>
+
+## Aliran Implicit dan Hybrid
+
+Secara default, adapter menggunakan aliran [Kode Otorisasi](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth).
+
+Dengan aliran ini, server NQRust-Identity mengembalikan kode otorisasi, bukan token otentikasi, ke aplikasi. Adapter JavaScript menggantikan `code` dengan token akses dan token refresh setelah browser dialihkan kembali ke aplikasi.
+
+NQRust-Identity juga mendukung aliran [Implicit](https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth) di mana token akses dikirim segera setelah otentikasi berhasil dengan NQRust-Identity. Aliran ini mungkin memiliki kinerja yang lebih baik daripada aliran standar karena tidak ada permintaan tambahan untuk menggantikan kode dengan token, tetapi memiliki implikasi ketika token akses kedaluwarsa.
+
+Namun, mengirim token akses dalam fragment URL dapat menjadi kerentanan keamanan. Misalnya, token dapat bocor melalui log server web dan atau riwayat browser.
+
+Untuk mengaktifkan aliran implicit, Anda mengaktifkan tanda centang **Implicit Flow Enabled** untuk klien di Konsol Admin NQRust-Identity. Anda juga meneruskan parameter `flow` dengan nilai `implicit` ke metode `init`:
+
+```javascript
+await nqrust-identity.init({
+    flow: 'implicit'
+})
+```
+
+Perhatikan bahwa hanya token akses yang diberikan dan tidak ada token refresh. Situasi ini berarti bahwa setelah token akses kedaluwarsa, aplikasi harus dialihkan ke NQRust-Identity lagi untuk mendapatkan token akses baru.
+
+NQRust-Identity juga mendukung aliran [Hybrid](https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth).
+
+Aliran ini memerlukan klien untuk memiliki keduanya, **Standard Flow** dan **Implicit Flow** diaktifkan di Konsol Admin. Server NQRust-Identity kemudian mengirimkan kode dan token ke aplikasi Anda. Token akses dapat digunakan segera sementara kode dapat dipertukarkan untuk token akses dan refresh. Mirip dengan aliran implicit, aliran hybrid baik untuk kinerja karena token akses tersedia segera.
+Tapi, token masih dikirim dalam URL, dan kerentanan keamanan yang disebutkan sebelumnya mungkin masih berlaku.
+
+Salah satu kelebihan dalam aliran Hybrid adalah token refresh dibuat tersedia untuk aplikasi.
+
+Untuk aliran Hybrid, Anda perlu meneruskan parameter `flow` dengan nilai `hybrid` ke metode `init`:
+
+```javascript
+await nqrust-identity.init({
+    flow: 'hybrid'
+});
+```
+
+## Aplikasi Hibrida dengan Cordova
+
+NQRust-Identity mendukung aplikasi mobile hibrida yang dikembangkan dengan [Apache Cordova](https://cordova.apache.org/). Adapter memiliki dua mode untuk ini: `cordova` dan `cordova-native`:
+
+Defaultnya adalah `cordova`, yang dipilih secara otomatis oleh adapter jika tipe adapter tidak telah dikonfigurasi secara eksplisit dan `window.cordova` hadir. Ketika masuk, ia membuka [InApp Browser](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/) yang memungkinkan pengguna berinteraksi dengan NQRust-Identity dan kemudian kembali ke aplikasi dengan dialihkan ke `http://localhost`. Karena perilaku ini, Anda menambahkan daftar putih URL ini sebagai valid redirect-uri di bagian konfigurasi klien di Konsol Admin.
+
+Meskipun mode ini mudah untuk diatur, ia juga memiliki beberapa kelebihan:
+
+- InApp-Browser adalah browser yang terdapat dalam aplikasi dan bukan browser default ponsel. Oleh karena itu, ia akan memiliki pengaturan yang berbeda dan kredensial yang disimpan tidak tersedia.
+- InApp-Browser mungkin juga lebih lambat, terutama saat merender tema yang lebih kompleks.
+- Ada masalah keamanan yang perlu dipertimbangkan sebelum menggunakan mode ini, seperti kemungkinan aplikasi untuk mengakses kredensial pengguna, karena ia memiliki kontrol penuh atas browser yang merender halaman masuk, jadi jangan biarkan penggunaannya di aplikasi yang tidak Anda percayai.
+
+Mode alternatif adalah `cordova-native`, yang mengambil pendekatan yang berbeda. Ini membuka halaman masuk menggunakan browser sistem. Setelah pengguna otentikasi, browser dialihkan kembali ke aplikasi menggunakan URL khusus. Dari sana, adapter NQRust-Identity dapat menyelesaikan masuk dengan membaca kode atau token dari URL.
+
+Anda dapat mengaktifkan mode asli dengan meneruskan tipe adapter `cordova-native` ke metode `init()`:
+
+```javascript
+await nqrust-identity.init({
+    adapter: 'cordova-native'
+});
+```
+
+Adapter ini memerlukan dua plugin tambahan:
+
+- [cordova-plugin-browsertab](https://github.com/google/cordova-plugin-browsertab): memungkinkan aplikasi untuk membuka halaman web di browser sistem
+- [cordova-plugin-deeplinks](https://github.com/e-imaxina/cordova-plugin-deeplinks): memungkinkan browser untuk dialihkan kembali ke aplikasi Anda dengan URL khusus
+
+Detail teknis untuk menghubungkan ke aplikasi berbeda pada setiap platform dan setup khusus diperlukan.
+Silakan merujuk ke bagian Android dan iOS dari [dokumentasi plugin deeplinks](https://github.com/e-imaxina/cordova-plugin-deeplinks/blob/master/README.md) untuk instruksi lebih lanjut.
+
+Ada berbagai jenis tautan untuk membuka aplikasi:
+
+- skema kustom, seperti `myapp://login` atau `android-app://com.example.myapp/https/example.com/login`.
+- [Universal Links (iOS)](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content/) / [Deep Links (Android)](https://developer.android.com/training/app-links/deep-linking).
+
+Sementara yang前者更容易设置且往往更可靠，后者提供额外的安全性，因为它们是唯一的，只有域名的所有者才能注册它们。 Custom-URLs 在 iOS 上已被弃用。 为了最佳可靠性，我们建议您使用通用链接，并结合使用带有自定义 URL 链接的回退站点。
+
+此外，我们建议采取以下步骤以提高与适配器的兼容性：
+
+- 在 iOS 上，通用链接似乎在 `response-mode` 设置为 `query` 时更可靠
+- 为了防止 Android 在重定向时打开应用的新实例，请在 `config.xml` 中添加以下代码片段：
+
+```xml
+<preference name="AndroidLaunchMode" value="singleTask" />
+```
+
+## Adapter Kustom
+
+Kadang-kadang, Anda mungkin perlu menjalankan adapter di lingkungan yang tidak didukung secara default, seperti Capacitor. Untuk menggunakan klien JavasScript di lingkungan ini, Anda dapat melewati adapter kustom. Misalnya, pustaka pihak ketiga dapat menyediakan adapter tersebut untuk membuat adapter dapat dijalankan dengan konsisten:
+
+```javascript
+import NQRust-Identity dari 'nqrust-identity-js';
+import NQRust-IdentityCapacitorAdapter dari 'nqrust-identity-capacitor-adapter';
+
+const nqrust-identity = new NQRust-Identity({
+    url: "http://nqrust-identity-server",
+    realm: "my-realm",
+    clientId: "my-app"
+});
+
+await nqrust-identity.init({
+    adapter: NQRust-IdentityCapacitorAdapter,
+});
+```
+
+Paket khusus ini tidak ada, tetapi memberikan contoh yang cukup baik bagaimana adapter tersebut dapat dilewatkan ke klien.
+
+Juga dimungkinkan untuk membuat adapter Anda sendiri, untuk melakukannya Anda harus mengimplementasikan metode yang dijelaskan dalam antarmuka `NQRust-IdentityAdapter`. Misalnya kode TypeScript berikut memastikan bahwa semua metode telah diimplementasikan dengan benar:
+
+```typescript
+import NQRust-Identity, { NQRust-IdentityAdapter } dari 'nqrust-identity-js';
+
+// Implementasikan antarmuka 'NQRust-IdentityAdapter' sehingga semua metode yang diperlukan dijamin akan hadir.
+const MyCustomAdapter: NQRust-IdentityAdapter = {
+    async login(options) {
+        // Tulis implementasi Anda sendiri di sini.
+    }
+
+    // Metode lainnya di sini...
+};
+
+const nqrust-identity = new NQRust-Identity({
+    url: "http://nqrust-identity-server",
+    realm: "my-realm",
+    clientId: "my-app"
+});
+
+await nqrust-identity.init({
+    adapter: MyCustomAdapter,
+});
+```
+
+Secara alami, Anda juga dapat melakukan ini tanpa TypeScript dengan mengabaikan informasi tipe, tetapi memastikan implementasi antarmuka dengan benar kemudian sepenuhnya bersifat tanggung jawab Anda sendiri.
+
+## Browser Modern dengan Perlindungan Pelacakan
+
+Pada versi terbaru beberapa browser, berbagai kebijakan cookie diterapkan untuk mencegah pelacakan pengguna oleh pihak ketiga, seperti SameSite di Chrome atau cookie pihak ketiga yang sepenuhnya diblokir. Kebijakan tersebut mungkin akan menjadi lebih terbatas dan diadopsi oleh browser lain seiring waktu. Akhirnya, cookie dalam konteks pihak ketiga mungkin sepenuhnya tidak didukung dan diblokir oleh browser. Akibatnya, fitur adapter yang terpengaruh mungkin akhirnya usang.
+
+Adapter bergantung pada cookie pihak ketiga untuk iframe Status Sesi, _silent_ `check-sso` dan sebagian juga untuk `check-sso` reguler (non-silent). Fitur-fitur tersebut memiliki fungsi terbatas atau sepenuhnya dinonaktifkan tergantung pada betapa terbatas browser dalam hal cookie. Adapter mencoba mendeteksi pengaturan ini dan bereaksi dengan sesuai.
+
+### Browser dengan Kebijakan "SameSite=Lax by Default"
+
+Semua fitur didukung jika koneksi SSL / TLS dikonfigurasi pada sisi NQRust-Identity serta sisi aplikasi. Misalnya, Chrome terpengaruh mulai dengan versi 84.
+
+### Browser dengan Cookie Pihak Ketiga yang Diblokir
+
+Iframe Status Sesi tidak didukung dan secara otomatis dinonaktifkan jika perilaku browser semacam ini terdeteksi oleh adapter. Ini berarti adapter tidak dapat menggunakan cookie sesi untuk deteksi Single Sign-Out dan harus sepenuhnya bergantung pada token. Akibatnya, saat pengguna logout di jendela lain, aplikasi yang menggunakan adapter tidak akan logout sampai aplikasi mencoba untuk menyegarkan Access Token. Oleh karena itu, pertimbangkan untuk mengatur Waktu Hidup Access Token menjadi waktu yang relatif singkat, sehingga logout terdeteksi secepat mungkin. Untuk detail lebih lanjut, lihat Sesi dan Waktu Timeout Token.
+
+_Silent_ `check-sso` tidak didukung dan secara default kembali ke `check-sso` reguler (non-silent). Perilaku ini dapat diubah dengan mengatur `silentCheckSsoFallback: false` dalam opsi yang dilewatkan ke metode `init`. Dalam hal ini, `check-sso` akan sepenuhnya dinonaktifkan jika perilaku browser yang terbatas terdeteksi.
+
+`check-sso` reguler juga terpengaruh. Karena iframe Status Sesi tidak didukung, pengalihan tambahan ke NQRust-Identity harus dilakukan saat adapter diinisialisasi untuk memeriksa status login pengguna. Pemeriksaan ini berbeda dari perilaku standar saat iframe digunakan untuk menentukan apakah pengguna telah login, dan pengalihan dilakukan hanya saat pengguna logout.
+
+Contohnya adalah Safari mulai dengan versi 13.1.
+
+## Referensi API
+
+### Konstruktor
+
+Cara yang disarankan untuk membangun adapter adalah dengan melewatkan konfigurasi langsung:
+
+```javascript
+new NQRust-Identity({
+    url: "http://nqrust-identity-server",
+    realm: "my-realm",
+    clientId: "my-app"
+});
+```
+
+Alternatifnya, Anda dapat melewatkan URL ke file JSON yang berisi konfigurasi sebagai gantinya:
+
+```javascript
+new NQRust-Identity("http://your-app/adapter-config.json");
+```
+
+File konfigurasi JSON harus mencakup bidang berikut:
+
+```json
+{
+    "auth-server-url": "https://auth.example.com",
+    "realm": "my-realm",
+    "resource": "my-app"
+}
+```
+
+Perlu dicatat bahwa menggunakan file konfigurasi JSON akan memicu permintaan tambahan sebelum inisialisasi, dan oleh karena itu tidak disarankan untuk alasan kinerja.
+
+### Properti
+
+Akan `true` jika pengguna telah terverifikasi, `false` jika tidak.
+
+Token yang dienkripsi dengan base64 yang dapat dikirim dalam `Authorization` header dalam permintaan ke layanan.
+
+Token yang telah diurai sebagai objek JavaScript.
+
+ID pengguna.
+
+Token ID yang dienkripsi dengan base64.
+
+Token ID yang telah diurai sebagai objek JavaScript.
+
+Peran realm yang terkait dengan token.
+
+Peran sumber daya yang terkait dengan token.
+
+Token refresh yang dienkripsi dengan base64 yang dapat digunakan untuk mendapatkan token baru.
+
+Token refresh yang telah diurai sebagai objek JavaScript.
+
+Perbedaan waktu perkiraan antara waktu browser dan server NQRust-Identity dalam hitungan detik. Nilai ini hanya perkiraan, tetapi cukup akurat saat menentukan apakah token telah kadaluwarsa atau belum.
+
+Mode respons yang diterima dalam init (nilai default adalah fragment).
+
+Alur yang diterima dalam init.
+
+Memungkinkan Anda untuk menimpa cara kerja pengalihan dan fungsi browser lainnya yang ditangani oleh pustaka.
+Opsi yang tersedia:
+
+- "default" - pustaka menggunakan api browser untuk pengalihan (ini adalah default)
+- "cordova" - pustaka akan mencoba menggunakan plugin InAppBrowser cordova untuk memuat halaman login/pendaftaran nqrust-identity (ini digunakan secara otomatis saat pustaka berjalan dalam ekosistem cordova)
+- "cordova-native" - pustaka mencoba untuk membuka halaman login dan pendaftaran menggunakan browser sistem ponsel menggunakan plugin BrowserTabs cordova. Ini memerlukan setup tambahan untuk mengarahkan kembali ke aplikasi (lihat [Hybrid Apps with Cordova](#hybrid-apps-with-cordova)).
+- "custom" - memungkinkan Anda untuk mengimplementasikan adapter kustom (hanya untuk kasus penggunaan lanjutan)
+
+Jenis respons yang dikirim ke NQRust-Identity dengan permintaan login. Ini ditentukan berdasarkan nilai alur yang digunakan selama inisialisasi, tetapi dapat ditimpa dengan mengatur nilai ini.
+
+### Metode
+
+**init(options)**
+
+Disebut untuk menginisialisasi adapter.
+
+Options adalah Objek, di mana:
+
+- useNonce - Menambahkan nonce kriptografis untuk memverifikasi bahwa respons otentikasi cocok dengan permintaan (default adalah `true`).
+- onLoad - Menentukan tindakan untuk dilakukan saat loading. Nilai yang didukung adalah `login-required` atau `check-sso`.
+- redirectUri - Menentukan uri default untuk dialihkan setelah login atau logout. Ini saat ini didukung untuk adapter 'cordova-native' dan 'default'.
+- silentCheckSsoRedirectUri - Menetapkan uri untuk pengalihan otentikasi cek diam-diam jika onLoad diatur ke 'check-sso'.
+- silentCheckSsoFallback - Mengaktifkan fallback ke `check-sso` reguler saat _silent_ `check-sso` tidak didukung oleh browser (default adalah `true`).
+- token - Menetapkan nilai awal untuk token.
+- refreshToken - Menetapkan nilai awal untuk token refresh.
+- idToken - Menetapkan nilai awal untuk id token (hanya bersama dengan token atau refreshToken).
+- scope - Menetapkan parameter scope default ke endpoint login NQRust-Identity. Gunakan daftar scope yang dipisahkan spasi. Biasanya merujuk pada Client scopes yang didefinisikan pada klien tertentu. Perlu dicatat bahwa scope `openid` akan selalu ditambahkan ke daftar scope oleh adapter. Misalnya, jika Anda memasukkan opsi scope `address phone`, maka permintaan ke NQRust-Identity akan berisi parameter scope `scope=openid address phone`. Perlu dicatat bahwa scope default yang diatur di sini akan ditimpa jika opsi `login()` menentukan scope secara eksplisit.
+- timeSkew - Menetapkan nilai awal untuk skew antara waktu lokal dan server NQRust-Identity dalam hitungan detik (hanya bersama dengan token atau refreshToken).
+- checkLoginIframe - Menetapkan untuk mengaktifkan/matikan pemantauan status login (default adalah `true`).
+- checkLoginIframeInterval - Menetapkan interval untuk memeriksa status login (default adalah 5 detik).
+- responseMode - Menetapkan mode respons OpenID Connect yang dikirim ke server NQRust-Identity saat permintaan login. Nilai yang valid adalah `query` atau `fragment`. Nilai default adalah `fragment`, yang berarti setelah otentikasi berhasil, NQRust-Identity akan mengalihkan ke aplikasi JavaScript dengan parameter OpenID Connect yang ditambahkan dalam fragment URL. Ini umumnya lebih aman dan disarankan daripada `query`.
+- flow - Menetapkan alur OpenID Connect. Nilai yang valid adalah `standard`, `implicit`, atau `hybrid`.
+- enableLogging - Mengaktifkan pesan log dari NQRust-Identity ke konsol (default adalah `false`).
+- pkceMethod - Metode untuk Proof Key Code Exchange ([PKCE](https://datatracker.ietf.org/doc/html/rfc7636)) yang akan digunakan. Mengatur nilai ini akan mengaktifkan mekanisme PKCE. Opsi yang tersedia:
+
+  - "S256" - Metode PKCE berbasis SHA256 (default)
+  - false - PKCE dinonaktifkan.
+- messageReceiveTimeout - Menetapkan waktu tunggu dalam milidetik untuk menunggu respons pesan dari server NQRust-Identity. Ini digunakan, misalnya, saat menunggu pesan selama pemeriksaan cookie pihak ketiga. Nilai default adalah 10000.
+- locale - Ketika onLoad adalah 'login-required', menetapkan 'ui_locales' query param sesuai dengan [bagian 3.1.2.1 dari spesifikasi OIDC 1.0](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
+
+Mengembalikan promise yang selesai saat inisialisasi selesai.
+
+**login(options)**
+
+Mengalihkan ke formulir login, mengembalikan Promise.
+
+Options adalah Objek opsional, di mana:
+
+- redirectUri - Menentukan uri untuk dialihkan setelah login.
+- prompt - Parameter ini memungkinkan untuk sedikit menyesuaikan alur login di sisi server NQRust-Identity.
+Contohnya, memaksa tampilan layar login dengan nilai `login`. Atau memaksa tampilan layar konsentrasi untuk nilai `consent` jika klien memiliki `Consent Required`.
+Akhirnya, mungkin menggunakan nilai `none` untuk memastikan bahwa layar login tidak ditampilkan kepada pengguna, yang berguna hanya untuk memeriksa SSO untuk kasus saat pengguna telah terverifikasi sebelumnya (ini terkait dengan pemeriksaan `onLoad` dengan nilai `check-sso` dijelaskan di atas).
+- maxAge - Hanya digunakan jika pengguna telah terverifikasi. Menentukan waktu maksimum sejak pengguna terverifikasi. Jika pengguna telah terverifikasi lebih lama dari `maxAge`, SSO diabaikan dan dia harus terverifikasi lagi.
+- loginHint - Digunakan untuk mengisi bidang username/email pada formulir login.
+- scope - Menimpa scope yang dikonfigurasi dalam `init` dengan nilai yang berbeda untuk login ini.
+- idpHint - Digunakan untuk memberitahu NQRust-Identity untuk melewati tampilan halaman login dan secara otomatis dialihkan ke penyedia identitas yang ditentukan. Info lebih lanjut dalam Dokumentasi Penyedia Identitas.
+- acr - Berisi informasi tentang klaim `acr`, yang akan dikirim dalam parameter `claims` ke server NQRust-Identity. Penggunaan umum adalah untuk otentikasi langkah atas. Contoh penggunaan `{ values: ["silver", "gold"], essential: true }`. Lihat spesifikasi OpenID Connect dan Dokumentasi Otentikasi Langkah Atas untuk detail lebih lanjut.
+- acrValues - Menghasilkan parameter `acr_values` yang merujuk pada referensi konteks otentikasi dan memungkinkan klien untuk mendeklarasikan tingkat keamanan yang diperlukan, misalnya mekanisme otentikasi. Lihat [Bagian 4. Nilai permintaan acr_values dan tingkat keamanan dalam Profil Otentikasi MODRNA OpenID Connect 1.0](https://openid.net/specs/openid-connect-modrna-authentication-1_0.html#acr_values).
+- action - Jika nilai adalah `register`, pengguna dialihkan ke halaman pendaftaran. Lihat Bagian Pendaftaran yang Diminta Oleh Klien untuk detail lebih lanjut.
+Jika nilai adalah `UPDATE_PASSWORD` atau tindakan yang didukung lainnya, pengguna akan dialihkan ke halaman ulangi sandi atau halaman tindakan yang diperlukan lainnya. Namun, jika pengguna belum terverifikasi, pengguna akan dialihkan ke halaman login dan dialihkan setelah otentikasi.
+Lihat Bagian Tindakan yang Dimulai Oleh Aplikasi untuk detail lebih lanjut.
+- locale - Menetapkan 'ui_locales' query param sesuai dengan [bagian 3.1.2.1 dari spesifikasi OIDC 1.0](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
+- cordovaOptions - Menentukan argumen yang dilewatkan ke Cordova in-app-browser (jika relevan). Opsi `hidden` dan `location` tidak terpengaruh oleh argumen ini. Semua opsi yang tersedia didefinisikan di [https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/). Contoh penggunaan: `{ zoom: "no", hardwareback: "yes" }`;
+
+**createLoginUrl(options)**
+
+Mengembalikan Promise yang berisi URL ke formulir login.
+
+Options adalah Objek opsional, yang mendukung opsi yang sama dengan fungsi `login`.
+
+**logout(options)**
+
+Mengalihkan ke logout.
+
+Options adalah Objek, di mana:
+
+- redirectUri - Menentukan uri untuk dialihkan setelah logout.
+
+**createLogoutUrl(options)**
+
+Mengembalikan URL untuk logout pengguna.
+
+Options adalah Objek, di mana:
+
+- redirectUri - Menentukan uri untuk dialihkan setelah logout.
+
+**register(options)**
+
+Mengalihkan ke formulir pendaftaran. Jalan pintas untuk login dengan opsi action = 'register'
+
+Opsi sama seperti untuk metode login tetapi 'action' diatur ke 'register'
+
+**createRegisterUrl(options)**
+
+Mengembalikan Promise yang berisi URL ke halaman pendaftaran. Jalan pintas untuk createLoginUrl dengan opsi action = 'register'
+
+Opsi sama seperti untuk metode createLoginUrl tetapi 'action' diatur ke 'register'
+
+**accountManagement()**
+
+Mengalihkan ke Konsol Akun.
+
+**createAccountUrl(options)**
+
+Mengembalikan URL ke Konsol Akun.
+
+Options adalah Objek, di mana:
+
+- redirectUri - Menentukan uri untuk dialihkan saat kembali ke aplikasi.
+
+**hasRealmRole(role)**
+
+Mengembalikan true jika token memiliki peran realm yang diberikan.
+
+**hasResourceRole(role, resource)**
+
+Mengembalikan true jika token memiliki peran yang diberikan untuk sumber daya (sumber daya opsional, jika tidak ditentukan clientId digunakan).
+
+**loadUserProfile()**
+
+Memuat profil pengguna.
+
+Mengembalikan promise yang selesai dengan profil.
+
+Contohnya:
+
+```javascript
+try {
+    const profile = await nqrust-identity.loadUserProfile();
+    console.log('Retrieved user profile:', profile);
+} catch (error) {
+    console.error('Failed to load user profile:', error);
+}
+```
+
+**isTokenExpired(minValidity)**
+
+Mengembalikan true jika token memiliki kurang dari minValidity detik yang tersisa sebelum kedaluwarsa (minValidity opsional, jika tidak ditentukan 0 digunakan).
+
+**updateToken(minValidity)**
+
+Jika token kedaluwarsa dalam minValidity detik (minValidity opsional, jika tidak ditentukan 5 digunakan) token diperbarui.
+Jika -1 dilewatkan sebagai minValidity, token akan segera diperbarui.
+Jika iframe status sesi diaktifkan, status sesi juga diperiksa.
+
+Mengembalikan promise yang selesai dengan boolean yang menunjukkan apakah token telah diperbarui atau tidak.
+
+Contohnya:
+
+```javascript
+try {
+    const refreshed = await nqrust-identity.updateToken(5);
+    console.log(refreshed ? 'Token was refreshed' : 'Token is still valid');
+} catch (error) {
+    console.error('Failed to refresh the token:', error);
+}
+```
+
+**clearToken()**
+
+Membersihkan status otentikasi, termasuk token.
+Ini bisa berguna jika aplikasi mendeteksi sesi telah kadaluwarsa, misalnya jika pembaruan token gagal.
+
+Penggunaan ini mengakibatkan pemanggilan listener callback onAuthLogout.
+
+### Peristiwa Callback
+
+Adapter mendukung penetapan listener callback untuk beberapa peristiwa. Perlu diingat bahwa ini harus diatur sebelum panggilan ke metode `init()`.
+
+Contohnya:
+
+```javascript
+nqrust-identity.onAuthSuccess = () => console.log('Authenticated!');
+```
+
+Peristiwa yang tersedia adalah:
+
+- **onReady(authenticated)** - Disebutkan saat adapter diinisialisasi.
+- **onAuthSuccess** - Disebutkan saat pengguna berhasil terverifikasi.
+- **onAuthError** - Disebutkan jika terjadi kesalahan selama otentikasi.
+- **onAuthRefreshSuccess** - Disebutkan saat token diperbarui.
+- **onAuthRefreshError** - Disebutkan jika terjadi kesalahan saat mencoba memperbarui token.
+- **onAuthLogout** - Disebutkan saat pengguna logout (hanya akan disebutkan jika iframe status sesi diaktifkan, atau dalam mode Cordova).
+- **onTokenExpired** - Disebutkan saat token akses kedaluwarsa. Jika token refresh tersedia, token dapat diperbarui dengan updateToken, atau dalam kasus di mana tidak (yaitu, dengan alur implisit) Anda dapat dialihkan ke layar login untuk mendapatkan token akses baru.

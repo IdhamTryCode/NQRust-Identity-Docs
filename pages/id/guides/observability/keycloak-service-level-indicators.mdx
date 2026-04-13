@@ -1,80 +1,167 @@
 ---
-title: Pemantauan Kinerja dengan Indikator Level Layanan
-description: Pemantauan Kinerja dengan Indikator Level Layanan - Dokumentasi NQRust-Identity
+title: Pengawasan Kinerja dengan Indikator Level Layanan
+description: Pengawasan Kinerja dengan Indikator Level Layanan - Dokumentasi NQRust-Identity
 ---
 
-# Pemantauan Kinerja dengan Indikator Level Layanan
+# Pengawasan Kinerja dengan Indikator Level Layanan
 
-Indikator Level Layanan (SLI) dan Objektif Level Layanan (SLO) adalah komponen penting dalam pemantauan dan pemeliharaan kinerja serta keandalan NQRust-Identity di lingkungan produksi.
+import { Callout } from 'nextra/components'
+
+Indikator Level Layanan (SLI) dan Objektif Level Layanan (SLO) adalah komponen penting dalam pengawasan dan pemeliharaan kinerja dan keandalan NQRust-Identity di lingkungan produksi.
 
 Buku Google Site Reliability Engineering mendefinisikan ini sebagai berikut:
 
-*   Sebuah Indikator Level Layanan (SLI) adalah ukuran kuantitatif yang didefinisikan dengan hati-hati dari beberapa aspek dari level layanan yang diberikan.
-    
-*   Sebuah Objektif Level Layanan (SLO) adalah nilai target atau rentang nilai-nilai untuk level layanan yang diukur oleh SLI.
-    
+- Sebuah Indikator Level Layanan (SLI) adalah ukuran kuantitatif yang telah didefinisikan dengan hati-hati dari beberapa aspek tingkat layanan yang diberikan.
+- Sebuah Objektif Level Layanan (SLO) adalah nilai target atau rentang nilai untuk tingkat layanan yang diukur oleh SLI.
 
-Dengan setuju pada hal tersebut bersama stakeholder dan melacaknya, pemilik layanan dapat memastikan bahwa deployment sesuai dengan harapan pengguna dan bahwa mereka tidak berlebih atau kurang dalam memberikan layanan yang mereka berikan.
+Dengan setuju pada hal tersebut bersama stakeholder dan melacaknya, pemilik layanan dapat memastikan bahwa deployment diatur sedemikian rupa sehingga sesuai dengan harapan pengguna dan mereka tidak berlebih atau kurang memberikan pada layanan yang mereka berikan.
 
-## [](#_prerequisites)Prasyarat
+## Prasyarat
 
-*   Metrik harus diaktifkan untuk NQRust-Identity, dan opsi `http-metrics-slos` harus diatur ke latency untuk diukur untuk SLO yang didefinisikan di bawah. Ikuti panduan [Mendapatkan Wawasan dengan Metrik](https://www.nqrust-identity.org/observability/configuration-metrics) untuk detail lebih lanjut.
-    
-*   Sebuah sistem pemantauan yang mengumpulkan metrik. Paragraf berikut mengasumsikan penggunaan Prometheus atau sistem serupa yang mendukung bahasa query PromQL.
+- Metrik harus diaktifkan untuk NQRust-Identity, dan opsi `http-metrics-slos` harus diatur ke latency untuk diukur untuk SLO yang didefinisikan di bawah. Ikuti panduan [Mendapatkan wawasan dengan metrik](/en/guides/observability/configuration-metrics) untuk detail lebih lanjut.
+- Sebuah sistem pengawasan yang mengumpulkan metrik. Paragraf berikut mengasumsikan penggunaan Prometheus atau sistem serupa yang mendukung bahasa query PromQL.
 
-## [](#_definition_of_the_service_delivered)Definisi Layanan yang Diberikan
+## Definisi layanan yang diberikan
 
-Definisi layanan berikut digunakan dalam langkah berikut untuk mengidentifikasi SLI dan SLO yang sesuai. Hal ini harus menangkap perilaku yang diamati oleh pengguna.
+Definisi layanan berikut digunakan dalam langkah berikut untuk mengidentifikasi SLI dan SLO yang sesuai. Hal ini harus menangkap perilaku yang diamati oleh penggunaannya.
 
 Sebagai pengguna NQRust-Identity,
 
-*   Saya ingin dapat masuk,
-    
-*   menyegarkan token saya, dan
-    
-*   Keluar,
-    
+- Saya ingin dapat masuk log,
+- menyegarkan token saya dan
+- keluar log,
 
 sehingga saya dapat menggunakan aplikasi yang menggunakan NQRust-Identity untuk otentikasi.
 
-## [](#_definition_of_sli_and_slo)Definisi SLI dan SLO
+## Definisi SLI dan SLO
 
 Berikut ini memberikan contoh SLI dan SLO berdasarkan deskripsi layanan di atas dan metrik yang tersedia di NQRust-Identity.
 
-Meskipun SLO ini bebas dari beban yang sebenarnya didapat sistem, ini diharapkan karena pengguna tunggal tidak peduli dengan beban sistem jika mereka mendapatkan respon lambat.
+<Callout type="info">
+  Sementara SLO ini bebas dari beban yang sebenarnya sistem, hal ini diharapkan karena pengguna tunggal tidak peduli dengan beban sistem jika mereka mendapatkan respon lambat.
 
-Sementara itu, jika Anda memasuki Perjanjian Level Layanan (SLA) dengan stakeholder, Anda yang menjalankan NQRust-Identity memiliki kepentingan untuk mendefinisikan batas dari lalu lintas NQRust-Identity yang diterima, karena waktu respon akan diperpanjang dan tingkat kesalahan mungkin akan meningkat seiring dengan peningkatan beban sistem dan batas peningkatan mencapai.
+  Sementara itu, jika Anda memasukkan Perjanjian Level Layanan (SLA) dengan stakeholder, Anda yang menjalankan NQRust-Identity memiliki kepentingan untuk mendefinisikan batas lalu lintas NQRust-Identity menerima, karena waktu respons akan dipanjangkan dan tingkat kesalahan mungkin akan meningkat seiring meningkatnya beban sistem dan ambang batas peningkatan dicapai.
+</Callout>
 
-   
+| Karakteristik | Indikator Level Layanan | Objektif Level Layanan* | Sumber Metrik |
+| --- | --- | --- | --- |
+| Ketersediaan | Persentase waktu NQRust-Identity dapat menjawab permintaan seperti yang diukur oleh sistem pengawasan | NQRust-Identity harus tersedia 99,9% dari waktu dalam sebulan (44 menit ketidaktersediaan per bulan). | Gunakan metrik Prometheus `up` yang menunjukkan apakah server Prometheus dapat mengumpulkan metrik dari instance NQRust-Identity. |
+| Latency | Waktu respons untuk permintaan HTTP terkait otentikasi seperti yang diukur oleh server | 95% dari semua permintaan terkait otentikasi harus lebih cepat dari 250 md dalam 30 hari. | Metrik sisi server NQRust-Identity untuk melacak latency untuk endpoint tertentu bersama dengan Distribusi Waktu Respon menggunakan `http_server_requests_seconds_bucket` dan `http_server_requests_seconds_count`. |
+| Kesalahan | Permintaan otentikasi yang gagal karena masalah server seperti yang diukur oleh server | Tingkat kesalahan karena masalah server untuk permintaan otentikasi harus kurang dari 0,1% dalam 30 hari. | Identifikasi kesalahan sisi server dengan menyaring metrik `http_server_requests_seconds_count` pada tag `outcome` untuk nilai `SERVER_ERROR`. |
 
-Karakteristik
+* Nilai target SLO ini adalah contoh dan harus disesuaikan dengan kasus penggunaan dan deployment Anda.
 
-Indikator Level Layanan
+## Query PromQL
 
-Objektif Level Layanan\*
+Ini adalah contoh query yang dibuat di lingkungan Kubernetes dan digunakan dengan Prometheus sebagai alat pengawas. Mereka disediakan sebagai blueprint, dan Anda perlu menyesuaikan mereka untuk runtime atau lingkungan pengawasan yang berbeda.
 
-Sumber Metrik
+<Callout type="info">
+  Untuk lingkungan produksi, Anda mungkin ingin menggantikan query atau subquery ini dengan aturan perekaman untuk memastikan mereka tidak terlalu banyak menggunakan sumber daya jika Anda ingin menggunakannya untuk peringatan atau dashboard langsung.
+</Callout>
 
-Ketersediaan
+### Ketersediaan
 
-Persentase waktu NQRust-Identity dapat menjawab permintaan seperti yang diukur oleh sistem pemantauan
+Metrik ini akan memiliki nilai setidaknya satu jika instance NQRust-Identity tersedia dan menanggapi permintaan scrape Prometheus, dan 0 jika layanan mati atau tidak dapat dijangkau.
 
-NQRust-Identity harus tersedia 99,9% dari waktu dalam sebulan (44 menit ketidaktersediaan per bulan).
+Kemudian gunakan alat seperti Grafana untuk menampilkan rentang waktu 30 hari dan biarkan itu menghitung rata-rata metrik dalam jendela waktu itu.
 
-Gunakan metrik Prometheus `up` yang menunjukkan apakah server Prometheus dapat mengumpulkan metrik dari instance NQRust-Identity.
+```
+count_over_time(
+  sum (up{
+    container="nqrust-identity", 
+    namespace="$namespace"
+  } > 0)[30d:15s]
+) 
+/
+count_over_time(vector(1)[30d:15s]) 
+```
 
-Latensi
+1. Saring dengan tag tambahan untuk mengidentifikasi node NQRust-Identity
+2. Hitung semua data point dalam rentang dan interval yang diberikan saat setidaknya satu node NQRust-Identity tersedia
+3. Bagi dengan jumlah semua data point dalam rentang dan interval yang sama
 
-Waktu respon untuk permintaan HTTP terkait otentikasi seperti yang diukur oleh server
+<Callout type="info">
+  Di Grafana Anda dapat mengganti nilai 30d:15s dengan $range:$interval untuk menghitung ketersediaan SLI dalam rentang waktu yang dipilih untuk dashboard.
+</Callout>
 
-95% dari semua permintaan terkait otentikasi harus lebih cepat dari 250 md dalam 30 hari.
+### Latency permintaan otentikasi
 
-Mengikuti metrik sisi server NQRust-Identity untuk melacak lantai untuk endpoint tertentu bersama Distribusi Waktu Respon menggunakan `http_server_requests_seconds_bucket` dan `http_server_requests_seconds_count`.
+Query Prometheus ini menghitung persentase permintaan otentikasi yang selesai dalam 0,25 detik relatif kepada semua permintaan otentikasi untuk endpoint NQRust-Identity tertentu, menargetkan namespace dan pod tertentu, dalam 30 hari terakhir.
 
-Kesalahan
+Contoh ini memerlukan konfigurasi NQRust-Identity `http-metrics-slos` untuk berisi nilai `250` yang menunjukkan bahwa bucket untuk permintaan lebih cepat dan lebih lambat dari 250 md harus direkam.
+Mengatur `http-metrics-histograms-enabled` ke `true` akan menangkap bucket tambahan yang dapat membantu dengan pemecahan masalah kinerja.
 
-Permintaan otentikasi yang gagal karena masalah server seperti yang diukur oleh server
+```
+sum(
+  rate(
+    http_server_requests_seconds_bucket{
+      uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
+      le="0.25", 
+      container="nqrust-identity", 
+      namespace="$namespace"}
+    [30d] 
+  )
+) without (le,uri,status,outcome,method,pod,instance) 
+/
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
+      container="nqrust-identity",
+      namespace="$namespace"}
+    [30d] 
+  )
+) without (le,uri,status,outcome,method,pod,instance) 
+```
 
-Tingkat kesalahan karena masalah server untuk permintaan otentikasi harus kurang dari 0,1% dalam 30 hari.
+1. URL terkait dengan masuk log
+2. Waktu respons seperti yang didefinisikan oleh SLO
+3. Saring dengan tag tambahan untuk mengidentifikasi node NQRust-Identity
+4. Rentang waktu seperti yang ditentukan oleh SLO
+5. Abaikan sebanyak mungkin label untuk membuat satu sum
 
-Identifikasi kesalahan sisi server
+<Callout type="info">
+  Di Grafana, Anda dapat mengganti nilai 30d dengan $__range untuk menghitung latency SLI dalam rentang waktu yang dipilih untuk dashboard.
+</Callout>
+
+### Kesalahan permintaan otentikasi
+
+Query Prometheus ini menghitung persentase permintaan otentikasi yang mengembalikan kesalahan sisi server untuk semua permintaan otentikasi, menargetkan namespace tertentu, dalam 30 hari terakhir.
+
+```plaintext
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
+      outcome="SERVER_ERROR", 
+      container="nqrust-identity", 
+      namespace="$namespace"}
+    [30d] 
+  )
+) without (le,uri,status,outcome,method,pod,instance) 
+/
+sum(
+  rate(
+    http_server_requests_seconds_count{
+      uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
+      container="nqrust-identity", 
+      namespace="$namespace"}
+    [30d] 
+  )
+) without (le,uri,status,outcome,method,pod,instance) 
+```
+
+1. URL terkait dengan masuk log
+2. Saring untuk semua permintaan yang merespon dengan kesalahan server (status HTTP 5xx)
+3. Saring dengan tag tambahan untuk mengidentifikasi node NQRust-Identity
+4. Rentang waktu seperti yang ditentukan oleh SLO
+5. Abaikan sebanyak mungkin label untuk membuat satu sum
+
+<Callout type="info">
+  Di Grafana, Anda dapat mengganti nilai 30d dengan $__range untuk menghitung kesalahan SLI dalam rentang waktu yang dipilih untuk dashboard.
+</Callout>
+
+## Bacaan lebih lanjut
+
+- [Google SRE Book on Service Level Objectives](https://sre.google/sre-book/service-level-objectives/)
+- [Prometheus PromQL Basics](https://prometheus.io/docs/prometheus/latest/querying/basics/)

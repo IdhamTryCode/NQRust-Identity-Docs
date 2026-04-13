@@ -1,42 +1,146 @@
 ---
-title: Mengonfigurasi NQRust-Identity untuk produksi
-description: Mengonfigurasi NQRust-Identity untuk produksi - Dokumentasi NQRust-Identity
+title: Configuring NQRust-Identity for production
+description: Configuring NQRust-Identity for production - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi NQRust-Identity untuk produksi
+# Configuring NQRust-Identity for production
 
-Lingkungan produksi NQRust-Identity menyediakan otentikasi dan otorisasi yang aman untuk penyebaran yang bervariasi dari penyebaran di lokasi yang mendukung beberapa ribu pengguna hingga penyebaran yang melayani jutaan pengguna.
+import { Callout } from 'nextra/components'
 
-Panduan ini menjelaskan area konfigurasi umum yang diperlukan untuk lingkungan NQRust-Identity yang siap untuk produksi. Informasi ini berfokus pada konsep umum bukan pada implementasi aktual, yang tergantung pada lingkungan Anda. Aspek penting yang dibahas dalam panduan ini berlaku untuk semua lingkungan, sama-sama apakah itu kontainerisasi, di lokasi, GitOps, atau Ansible.
+Sebuah lingkungan produksi NQRust-Identity menyediakan otentikasi dan otorisasi yang aman untuk penyebaran yang bervariasi dari penyebaran on-premise yang mendukung beberapa ribu pengguna hingga penyebaran yang melayani jutaan pengguna.
 
-## [](#_tls_untuk_komunikasi_aman)TLS untuk komunikasi yang aman
+Panduan ini menjelaskan area konfigurasi umum yang diperlukan untuk lingkungan NQRust-Identity yang siap produksi. Informasi ini berfokus pada konsep umum bukan pada implementasi aktual, yang tergantung pada lingkungan Anda. Aspek penting yang dijelaskan dalam panduan ini berlaku untuk semua lingkungan, sama ada itu kontainerisasi, on-premise, GitOps, atau Ansible.
+
+## Konfigurasi yang didukung untuk lingkungan produksi
+
+Untuk ikhtisar platform yang didukung, versi Java, basis data, dan persyaratan sistem lainnya untuk NQRust-Identity, lihat Konfigurasi yang Didukung.
+
+## TLS untuk komunikasi yang aman
 
 NQRust-Identity terus-menerus mengganti data sensitif, yang berarti semua komunikasi ke dan dari NQRust-Identity memerlukan saluran komunikasi yang aman. Untuk mencegah beberapa vekter serangan, Anda mengaktifkan HTTP melalui TLS, atau HTTPS, untuk saluran tersebut.
 
-Untuk mengonfigurasi saluran komunikasi yang aman untuk NQRust-Identity, lihat [Mengonfigurasi TLS](https://www.nqrust-identity.org/server/enabletls) dan [Mengonfigurasi permintaan HTTP keluar](https://www.nqrust-identity.org/server/outgoinghttp).
+Untuk mengonfigurasi saluran komunikasi yang aman untuk NQRust-Identity, lihat [Mengonfigurasi TLS](/en/guides/server/enabletls) dan [Mengonfigurasi permintaan HTTP keluar](/en/guides/server/outgoinghttp).
 
-Untuk mengamankan komunikasi cache untuk NQRust-Identity, lihat [Mengonfigurasi cache terdistribusi](https://www.nqrust-identity.org/server/caching).
+Untuk mengamankan komunikasi cache untuk NQRust-Identity, lihat [Mengonfigurasi cache terdistribusi](/en/guides/server/caching).
 
-## [](#_nama_host_untuk_nqrust-identity)Nama host untuk NQRust-Identity
+## Nama host untuk NQRust-Identity
 
 Dalam lingkungan produksi, instance NQRust-Identity biasanya berjalan di jaringan pribadi, tetapi NQRust-Identity perlu mengekspos beberapa endpoint yang dapat diakses publik untuk berkomunikasi dengan aplikasi yang akan disahkan.
 
-Untuk detail tentang kategori endpoint dan petunjuk cara mengonfigurasi nama host publik untuk mereka, lihat [Mengonfigurasi nama host (v2)](https://www.nqrust-identity.org/server/hostname).
+Untuk detail tentang kategori endpoint dan petunjuk cara mengonfigurasi nama host publik untuk mereka, lihat [Mengonfigurasi nama host (v2)](/en/guides/server/hostname).
 
-### [](#_mengekspos_api_administrasi_nqrust-identity_dan_ui_di_hostname_berbeda)Mengekspos API Administrasi NQRust-Identity dan UI di hostname yang berbeda
+### Mengekspos API dan UI Administrasi NQRust-Identity pada nama host yang berbeda
 
-Dipertimbangkan sebagai praktik terbaik untuk mengekspos API Administrasi REST NQRust-Identity dan Konsol pada hostname atau context-path yang berbeda dari yang digunakan untuk URL frontend publik yang digunakan misalnya oleh alur login. Pembedaan ini memastikan bahwa antarmuka Administrasi tidak terekspos ke internet publik, yang mengurangi permukaan serangan.
+Dipertimbangkan sebagai praktik terbaik untuk mengekspos REST API Administrasi NQRust-Identity dan Konsol pada nama host atau context-path yang berbeda dari yang digunakan untuk URL frontend publik yang digunakan, misalnya, oleh alur login. Pembedaan ini memastikan bahwa antarmuka Administrasi tidak terekspos ke internet publik, yang mengurangi permukaan serangan.
 
-Akses ke REST API perlu diblokir pada tingkat proxy balik, jika tidak dimaksudkan untuk diekspos secara publik.
+<Callout type="warning">
+  Akses ke REST API harus diblokir pada tingkat proxy balik, jika mereka tidak dimaksudkan untuk diekspos secara publik.
+</Callout>
 
-Untuk detail, lihat [Mengonfigurasi nama host (v2)](https://www.nqrust-identity.org/server/hostname).
+Untuk detail, lihat [Mengonfigurasi nama host (v2)](/en/guides/server/hostname).
 
-## [](#_proxy_balik_dalam_lingkungan_terdistribusi)Proxy balik dalam lingkungan terdistribusi
+## Proxy balik dalam lingkungan terdistribusi
 
-Selain dari [Mengonfigurasi nama host (v2)](https://www.nqrust-identity.org/server/hostname), lingkungan produksi biasanya mencakup komponen proxy balik / load balancer. Ini memisahkan dan menyatukan akses ke jaringan yang digunakan oleh perusahaan atau organisasi Anda. Untuk lingkungan produksi NQRust-Identity, komponen ini disarankan.
+Selain dari [Mengonfigurasi nama host (v2)](/en/guides/server/hostname), lingkungan produksi biasanya mencakup komponen proxy balik / load balancer. Ini memisahkan dan menyatukan akses ke jaringan yang digunakan oleh perusahaan atau organisasi Anda. Untuk lingkungan produksi NQRust-Identity, komponen ini disarankan.
 
-Untuk detail tentang konfigurasi mode komunikasi proxy dalam NQRust-Identity, lihat [Mengonfigurasi proxy balik](https://www.nqrust-identity.org/server/reverseproxy). Panduan itu juga menyarankan jalur mana yang harus disembunyikan dari akses publik dan jalur mana yang harus diekspos sehingga NQRust-Identity dapat menyandarkan aplikasi Anda.
+Untuk detail tentang konfigurasi mode komunikasi proxy dalam NQRust-Identity, lihat [Mengonfigurasi proxy balik](/en/guides/server/reverseproxy). Panduan itu juga menyarankan path mana yang harus disembunyikan dari akses publik dan path mana yang harus diekspos sehingga NQRust-Identity dapat menyandarkan aplikasi Anda.
 
-## [](#_batasi_jumlah_permintaan_antrian)Batasi jumlah permintaan antrian
+## Batasi jumlah permintaan dalam antrian
 
-Lingkungan produksi
+Lingkungan produksi harus melindungi diri dari situasi terlalu beban, sehingga bisa merespon sebanyak mungkin permintaan valid dan untuk melanjutkan operasi normal setelah situasi kembali normal.
+Salah satu cara melakukan ini adalah dengan menolak permintaan tambahan setelah mencapai batas tertentu.
+
+Pengurangan beban harus diimplementasikan pada semua tingkatan, termasuk load balancer dalam lingkungan Anda.
+Di samping itu, ada fitur dalam NQRust-Identity untuk membatasi jumlah permintaan yang tidak bisa diproses segera dan perlu diantrekan.
+Secara default, tidak ada batas yang ditetapkan.
+Atur opsi `http-max-queued-requests` untuk membatasi jumlah permintaan dalam antrian ke ambang batas yang sesuai dengan lingkungan Anda.
+Setiap permintaan yang melebihi batas ini akan mengembalikan respons `503 Server not Available` segera.
+
+## Perilaku bootstrap server
+
+Inisialisasi server, seperti migrasi basis data, mungkin memerlukan waktu yang cukup lama untuk diselesaikan.
+Ketika NQRust-Identity dikonfigurasi untuk mengekspos endpoint kesehatan, server akan membuka endpoint HTTP(S) dan Management-nya selama inisialisasi berlangsung di latar belakang.
+Ini memungkinkan startup dan probe kehidupan untuk melaporkan UP awal, mencegah pengatur seperti Kubernetes dari membunuh kontainer selama migrasi yang berjalan lama, sementara probe siap melaporkan DOWN sampai inisialisasi selesai.
+
+Jika Anda menjalankan NQRust-Identity di belakang proxy atau load balancer, konfigurasikan pemeriksaan kesehatan HTTP dengan path `/health/ready` untuk memastikan lalu lintas hanya diarahkan ke instance yang telah menyelesaikan inisialisasi.
+
+Jika pemeriksaan kesehatan HTTP tidak memungkinkan, atau Anda lebih suka server untuk menerima koneksi hanya setelah inisialisasi selesai, jalankan NQRust-Identity dengan opsi berikut:
+
+```bash
+bin/kc.[sh|bat] start --server-async-bootstrap=false
+```
+
+Dengan pengaturan ini, NQRust-Identity membuka endpoint-nya hanya setelah bootstrap selesai dan server siap menangani permintaan.
+
+## Basis data kelas produksi
+
+Basis data yang digunakan oleh NQRust-Identity sangat penting untuk kinerja, ketersediaan, keandalan, dan integritas umum NQRust-Identity. Untuk detail tentang cara mengonfigurasi basis data yang didukung, lihat [Mengonfigurasi basis data](/en/guides/server/db).
+
+## Menjalankan NQRust-Identity dalam kluster
+
+Untuk memastikan pengguna dapat terus masuk ketika instance NQRust-Identity mati, lingkungan produksi yang umum berisi dua atau lebih instance NQRust-Identity.
+
+NQRust-Identity berjalan di atas JGroups dan Infinispan, yang menyediakan tumpukan yang handal dan dengan ketersediaan tinggi untuk skenario kluster. Dalam pengaturan default, komunikasi antara node dienkripsi menggunakan TLS.
+
+Untuk mengetahui lebih lanjut tentang penggunaan beberapa node, cache yang berbeda, dan tumpukan yang sesuai untuk lingkungan Anda, lihat [Mengonfigurasi cache terdistribusi](/en/guides/server/caching).
+
+### Mengonfigurasi port Firewall
+
+Set port jaringan harus terbuka untuk memungkinkan komunikasi jaringan yang sehat antara server NQRust-Identity.
+Lihat [Mengonfigurasi cache terdistribusi](/en/guides/server/caching#network-ports).
+Ia menjelaskan port apa yang perlu dibuka dan penggunaannya.
+
+## Mengonfigurasi Server NQRust-Identity dengan IPv4 atau IPv6
+
+Properti sistem `java.net.preferIPv4Stack` dan `java.net.preferIPv6Addresses` digunakan untuk mengonfigurasi JVM untuk digunakan dengan alamat IPv4 atau IPv6.
+
+Secara default, NQRust-Identity dapat diakses melalui alamat IPv4 dan IPv6 secara bersamaan.
+Untuk menjalankan hanya dengan alamat IPv4, Anda perlu menentukan properti `java.net.preferIPv4Stack=true`.
+Yang terakhir memastikan bahwa setiap konversi nama host ke alamat IP selalu mengembalikan varian alamat IPv4.
+
+Properti sistem ini dengan mudah diatur oleh variabel lingkungan `JAVA_OPTS_APPEND`.
+Sebagai contoh, untuk mengubah preferensi tumpukan IP ke IPv4, atur variabel lingkungan sebagai berikut:
+
+```bash
+export JAVA_OPTS_APPEND="-Djava.net.preferIPv4Stack=true"
+```
+
+Untuk mengatur server untuk hanya IPv6, atur variabel lingkungan sebagai berikut untuk cache terdistribusi untuk membentuk kluster:
+
+```bash
+export JAVA_OPTS_APPEND="-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true"
+```
+
+Lihat [Mengonfigurasi cache terdistribusi](/en/guides/server/caching#network-bind-address) untuk detail lebih lanjut.
+
+## Pratinjau kinerja HTTP yang ditingkatkan
+
+<Callout type="info">
+  Pengoptimalan serializer JSON untuk kinerja HTTP yang lebih baik adalah
+  **Pratinjau**
+  dan belum sepenuhnya didukung. Fitur ini dinonaktifkan secara default.
+
+  Kami mengumpulkan umpan balik lebih banyak tentang fitur ini untuk mempromosikan ke didukung. Silakan, bagikan umpan balik Anda tentang masalah apa pun di [diskusi ini](https://github.com/nqrust-identity/nqrust-identity/discussions/43484).
+
+  Untuk mengaktifkan, jalankan server dengan `--features=preview` atau `--features=http-optimized-serializers`
+</Callout>
+
+Dalam lingkungan produksi, kinerja lapisan HTTP sangat penting.
+Setiap permintaan melewati itu, membuatnya menjadi faktor kunci dalam responsifitas sistem secara keseluruhan, skalabilitas, dan pengalaman pengguna.
+
+Fitur ini meningkatkan bagaimana NQRust-Identity menangani data JSON dalam permintaan dan respons HTTP.
+Hasilnya adalah runtime yang lebih efisien dengan manfaat yang dapat diukur:
+
+- Peningkatan throughput hingga ~5%
+- Waktu respons yang lebih stabil
+- Penggunaan sumber daya sistem yang berkurang
+
+Peningkatan ini membantu memastikan kinerja yang lebih halus dan lebih terprediksi dalam skala besar sambil juga mengurangi biaya operasional menjalankan sistem produksi.
+
+Tantangan yang dikenal hanya adalah bahwa waktu pembuatan berkurang sekitar ~6% karena beberapa tindakan dipindahkan ke waktu pembuatan bukan runtime.
+
+Anda dapat mengaktifkan fitur ini sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --features=http-optimized-serializers
+```

@@ -5,11 +5,13 @@ description: Mengonfigurasi sertifikat terpercaya untuk mTLS - Dokumentasi NQRus
 
 # Mengonfigurasi sertifikat terpercaya untuk mTLS
 
-Untuk memvalidasi sertifikat klien dengan benar dan mengaktifkan metode autentikasi tertentu seperti TLS dua arah atau mTLS, Anda dapat menetapkan toko kepercayaan dengan semua sertifikat (dan rantai sertifikat) yang harus dipercaya oleh server. Ada beberapa kemampuan yang bergantung pada toko kepercayaan ini untuk mengautentikasi klien menggunakan sertifikat dengan benar, seperti Mutual TLS dan Autentikasi X.509.
+import { Callout } from 'nextra/components'
 
-## [](#_mengaktifkan_mtls)Mengaktifkan mTLS
+Untuk memvalidasi sertifikat klien dengan benar dan mengaktifkan metode otentikasi tertentu seperti TLS dua arah atau mTLS, Anda dapat menetapkan trust store dengan semua sertifikat (dan rantai sertifikat) yang harus dipercaya oleh server. Ada beberapa kemampuan yang bergantung pada trust store ini untuk mengotentikasi klien menggunakan sertifikat seperti Mutual TLS dan Otentikasi X.509.
 
-Autentikasi menggunakan mTLS dinonaktifkan secara default. Untuk mengaktifkan penanganan sertifikat mTLS saat NQRust-Identity adalah server dan perlu memvalidasi sertifikat dari permintaan yang dibuat ke endpoint NQRust-Identity, letakkan sertifikat yang sesuai dalam toko kepercayaan dan gunakan perintah berikut untuk mengaktifkan mTLS:
+## Mengaktifkan mTLS
+
+Otentikasi menggunakan mTLS dinonaktifkan secara default. Untuk mengaktifkan penanganan sertifikat mTLS saat NQRust-Identity adalah server dan perlu memvalidasi sertifikat dari permintaan yang dibuat ke endpoint NQRust-Identity, letakkan sertifikat yang sesuai dalam truststore dan gunakan perintah berikut untuk mengaktifkan mTLS:
 
 ```bash
 bin/kc.[sh|bat] start --https-client-auth=<none|request|required>
@@ -17,35 +19,44 @@ bin/kc.[sh|bat] start --https-client-auth=<none|request|required>
 
 Menggunakan nilai `required` menyiapkan NQRust-Identity untuk selalu meminta sertifikat dan gagal jika tidak ada sertifikat yang diberikan dalam permintaan. Dengan menetapkan nilai ke `request`, NQRust-Identity juga akan menerima permintaan tanpa sertifikat dan hanya memvalidasi kebenaran sertifikat jika ada.
 
-Konfigurasi mTLS dan toko kepercayaan dibagikan oleh semua Realm. Tidak mungkin untuk mengonfigurasi toko kepercayaan yang berbeda untuk Realm yang berbeda.
+<Callout type="warning">
+  Konfigurasi mTLS dan truststore dibagikan oleh semua Realms. Tidak mungkin untuk mengonfigurasi truststore yang berbeda untuk Realms yang berbeda.
+</Callout>
 
-Properti antarmuka manajemen diwariskan dari server HTTP utama, termasuk pengaturan mTLS. Artinya saat mTLS diatur, itu juga diaktifkan untuk antarmuka manajemen. Untuk menimpa perilaku, gunakan properti `https-management-client-auth`.
+<Callout type="info">
+  Properti antarmuka manajemen diwarisi dari server HTTP utama, termasuk pengaturan mTLS.
+  Artinya saat mTLS diatur, itu juga diaktifkan untuk antarmuka manajemen.
+  Untuk menimpa perilaku, gunakan properti https-management-client-auth.
+</Callout>
 
-## [](#_menggunakan_toko_kepercayaan_dedikasi_untuk_mtls)Menggunakan toko kepercayaan dedikasi untuk mTLS
+## Menggunakan truststore terdedikasi untuk mTLS
 
-Secara default, NQRust-Identity menggunakan System Truststore untuk memvalidasi sertifikat. Lihat [Mengonfigurasi sertifikat terpercaya](https://www.nqrust-identity.org/server/nqrust-identity-truststore) untuk detail.
+Secara default, NQRust-Identity menggunakan System Truststore untuk memvalidasi sertifikat. Lihat Mengonfigurasi sertifikat terpercaya untuk detail.
 
-Jika Anda perlu menggunakan toko kepercayaan dedikasi untuk mTLS, Anda dapat mengonfigurasi lokasi toko kepercayaan ini dengan menjalankan perintah berikut:
+Jika Anda perlu menggunakan truststore terdedikasi untuk mTLS, Anda dapat mengonfigurasi lokasi truststore ini dengan menjalankan perintah berikut:
 
 ```bash
 bin/kc.[sh|bat] start --https-trust-store-file=/path/to/file --https-trust-store-password=<value>
 ```
 
-Ekstensi file yang diakui untuk toko kepercayaan:
+Ekstensi file yang diakui untuk truststore:
 
-*   `.p12`, `.pkcs12`, dan `.pfx` untuk file pkcs12
-    
-*   `.jks`, dan `.truststore` untuk file jks
-    
-*   `.ca`, `.crt`, dan `.pem` untuk file pem
-    
+- `.p12`, `.pkcs12`, dan `.pfx` untuk file pkcs12
+- `.jks`, dan `.truststore` untuk file jks
+- `.ca`, `.crt`, dan `.pem` untuk file pem
 
-Jika toko kepercayaan Anda tidak memiliki ekstensi yang sesuai dengan tipe filenya, Anda juga perlu menetapkan opsi `https-key-store-type`.
+Jika truststore Anda tidak memiliki ekstensi yang cocok dengan tipe filenya, Anda juga perlu menetapkan opsi `https-key-store-type`.
 
-## [](#_sumber_daya_tambahan)Sumber daya tambahan
+## Sumber daya tambahan
 
-### [](#_menggunakan_mtls_untuk_permintaan_http_keluar)Menggunakan mTLS untuk permintaan HTTP keluar
+### Menggunakan mTLS untuk permintaan HTTP keluar
 
-Perhatikan bahwa ini adalah konfigurasi sertifikat dasar untuk kasus penggunaan mTLS di mana NQRust-Identity bertindak sebagai server. Ketika NQRust-Identity bertindak sebagai klien, misalnya saat NQRust-Identity mencoba untuk mendapatkan token dari endpoint token penyedia identitas yang dibroker oleh mTLS, Anda perlu mengatur HttpClient untuk menyediakan sertifikat yang tepat dalam keystore untuk permintaan keluar. Untuk mengonfigurasi mTLS dalam skenario ini, lihat [Mengonfigurasi permintaan HTTP keluar](https://www.nqrust-identity.org/server/outgoinghttp).
+Ingatlah bahwa ini adalah konfigurasi sertifikat dasar untuk kasus penggunaan mTLS di mana NQRust-Identity bertindak sebagai server. Ketika NQRust-Identity bertindak sebagai klien, misalnya saat NQRust-Identity mencoba untuk mendapatkan token dari endpoint token penyedia identitas yang dibroker oleh mTLS, Anda perlu mengatur HttpClient untuk menyediakan sertifikat yang tepat dalam keystore untuk permintaan keluar. Untuk mengonfigurasi mTLS dalam skenario ini, lihat [Mengonfigurasi permintaan HTTP keluar](/en/guides/server/outgoinghttp).
 
-### [](#_mengonfigurasi_autentikasi_x_509)
+### Mengonfigurasi Otentikasi X.509
+
+Untuk informasi lebih lanjut tentang cara mengonfigurasi Otentikasi X.509, lihat bagian Otentikasi Pengguna Sertifikat Klien X.509.
+
+## Opsi relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |

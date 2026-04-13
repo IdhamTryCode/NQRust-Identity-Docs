@@ -1,27 +1,30 @@
 ---
-title: Mengonfigurasi TLS
-description: Mengonfigurasi TLS - Dokumentasi NQRust-Identity
+title: Configuring TLS
+description: Configuring TLS - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi TLS
+# Configuring TLS
 
-Keamanan Transport Layer (singkatan: TLS) sangat penting untuk menukar data melalui saluran yang aman. Untuk lingkungan produksi, Anda tidak pernah harus mengekspos endpoint NQRust-Identity melalui HTTP, karena data sensitif adalah inti dari apa yang NQRust-Identity tukar dengan aplikasi lain. Dalam panduan ini, Anda akan belajar bagaimana untuk mengonfigurasi NQRust-Identity untuk menggunakan HTTPS/TLS.
+Protokol Keamanan Lapisan Transportasi (singkatan: TLS) sangat penting untuk mengirim data melalui saluran yang aman.
+Untuk lingkungan produksi, Anda tidak boleh pernah mengekspos titik akhir NQRust-Identity melalui HTTP, karena data sensitif adalah inti dari apa yang NQRust-Identity tukar dengan aplikasi lain.
+Dalam panduan ini, Anda akan belajar cara mengonfigurasi NQRust-Identity untuk menggunakan HTTPS/TLS.
 
-NQRust-Identity dapat dikonfigurasi untuk memuat infrastruktur sertifikat yang diperlukan menggunakan file dalam format PEM atau dari Java Keystore. Ketika kedua alternatif tersebut dikonfigurasi, file PEM memiliki prioritas di atas Java Keystores.
+NQRust-Identity dapat dikonfigurasi untuk memuat infrastruktur sertifikat yang diperlukan menggunakan file dalam format PEM atau dari Java Keystore.
+Ketika kedua opsi dikonfigurasi, file PEM akan mengambil prioritas atas Java Keystores.
 
-## [](#_menyediakan_sertifikat_dalam_format_pem)Menyediakan sertifikat dalam format PEM
+## Menggunakan sertifikat dalam format PEM
 
-Ketika Anda menggunakan pasangan file sertifikat dan kunci pribadi yang cocok dalam format PEM, Anda mengkonfigurasi NQRust-Identity untuk menggunakannya dengan menjalankan perintah berikut:
+Ketika Anda menggunakan pasangan sertifikat dan kunci privat yang cocok dalam format PEM, Anda dapat mengonfigurasi NQRust-Identity untuk menggunakannya dengan menjalankan perintah berikut:
 
 ```bash
 bin/kc.[sh|bat] start --https-certificate-file=/path/to/certfile.pem --https-certificate-key-file=/path/to/keyfile.pem
 ```
 
-NQRust-Identity membuat keystore dari file-file ini di memori dan menggunakan keystore ini kemudian.
+NQRust-Identity akan membuat keystore dari file-file ini di dalam memori dan menggunakan keystore ini setelahnya.
 
-## [](#_menyediakan_keystore)Menyediakan Keystore
+## Menggunakan Keystore
 
-Ketika tidak ada file keystore yang dikonfigurasi secara eksplisit, tetapi `http-enabled` diatur ke false, NQRust-Identity mencari file `conf/server.keystore`.
+Ketika tidak ada file keystore yang dikonfigurasi secara eksplisit, tetapi `http-enabled` diatur ke false, NQRust-Identity akan mencari file `conf/server.keystore`.
 
 Sebagai alternatif, Anda dapat menggunakan keystore yang ada dengan menjalankan perintah berikut:
 
@@ -29,42 +32,42 @@ Sebagai alternatif, Anda dapat menggunakan keystore yang ada dengan menjalankan 
 bin/kc.[sh|bat] start --https-key-store-file=/path/to/existing-keystore-file
 ```
 
-Ekstensi file yang diakui untuk keystore:
+Ekstensi file yang dikenali untuk keystore:
 
-*   `.p12`, `.pkcs12`, dan `.pfx` untuk file pkcs12
-    
-*   `.jks`, dan `.keystore` untuk file jks
-    
-*   `.key`, `.crt`, dan `.pem` untuk file pem
-    
+- `.p12`, `.pkcs12`, dan `.pfx` untuk file pkcs12
+- `.jks`, dan `.keystore` untuk file jks
+- `.key`, `.crt`, dan `.pem` untuk file pem
 
-Jika keystore Anda tidak memiliki ekstensi yang cocok dengan tipe filenya, Anda juga harus mengatur opsi `https-key-store-type`.
+Jika keystore Anda tidak memiliki ekstensi yang cocok dengan tipe file, Anda juga harus mengatur opsi `https-key-store-type`.
 
-### [](#_menata_password_keystore)Menata Password Keystore
+### Mengatur kata sandi Keystore
 
-Anda dapat mengatur password yang aman untuk keystore Anda menggunakan opsi `https-key-store-password`:
+Anda dapat mengatur kata sandi yang aman untuk keystore Anda menggunakan opsi `https-key-store-password`:
 
 ```bash
 bin/kc.[sh|bat] start --https-key-store-password=<value>
 ```
 
-Jika tidak ada password yang diatur, password default `password` akan digunakan.
+Jika tidak ada kata sandi yang diatur, kata sandi default `password` akan digunakan.
 
-#### [](#_menjaga_credential)Menjaga Credential
+#### Mengamankan kredensial
 
-Hindari pengaturan password dalam teks polos dengan menggunakan CLI atau menambahkannya ke file `conf/nqrust-identity.conf`. Sebaliknya gunakan praktik yang baik seperti menggunakan vault / secret yang di-mount. Untuk detail lebih lanjut, lihat [Menggunakan vault](https://www.nqrust-identity.org/server/vault) dan [Mengonfigurasi NQRust-Identity untuk produksi](https://www.nqrust-identity.org/server/configuration-production).
+Hindari pengaturan kata sandi dalam teks polos dengan menggunakan CLI atau menambahkannya ke file `conf/nqrust-identity.conf`.
+Sebagai gantinya, gunakan praktik yang baik seperti menggunakan vault / secret yang di-mount. Untuk detail lebih lanjut, lihat [Menggunakan vault](/en/guides/server/vault) dan [Mengonfigurasi NQRust-Identity untuk produksi](/en/guides/server/configuration-production).
 
-## [](#_mengonfigurasi_protokol_tls)Mengonfigurasi Protokol TLS
+## Mengonfigurasi protokol TLS
 
-Secara default, NQRust-Identity tidak mengaktifkan protokol TLS yang usang. Jika klien Anda hanya mendukung protokol yang usang, pertimbangkan untuk mengupgrade klien. Namun, sebagai solusi sementara, Anda dapat mengaktifkan protokol yang usang dengan menjalankan perintah berikut:
+Secara default, NQRust-Identity tidak mengaktifkan protokol TLS yang usang.
+Jika klien Anda hanya mendukung protokol yang usang, pertimbangkan untuk mengupgrade klien.
+Namun, sebagai solusi sementara, Anda dapat mengaktifkan protokol yang usang dengan menjalankan perintah berikut:
 
 ```bash
 bin/kc.[sh|bat] start --https-protocols=<protocol>[,<protocol>]
 ```
 
-Contohnya untuk hanya mengaktifkan TLSv1.3, gunakan perintah seperti berikut: `kc.sh start --https-protocols=TLSv1.3`.
+Sebagai contoh, untuk hanya mengaktifkan TLSv1.3, gunakan perintah seperti berikut: `kc.sh start --https-protocols=TLSv1.3`.
 
-## [](#_mengganti_port_https)Mengganti Port HTTPS
+## Mengganti port HTTPS
 
 NQRust-Identity mendengarkan lalu lintas HTTPS pada port `8443`. Untuk mengubah port ini, gunakan perintah berikut:
 
@@ -72,4 +75,32 @@ NQRust-Identity mendengarkan lalu lintas HTTPS pada port `8443`. Untuk mengubah 
 bin/kc.[sh|bat] start --https-port=<port>
 ```
 
-## [](#_mengulang_sertifikat_dan_kunci)Meng
+## Pengisian Ulang Sertifikat dan Kunci
+
+Secara default, NQRust-Identity akan mengisi ulang sertifikat, kunci, dan keystore yang dijelaskan dalam opsi `https-*` setiap jam. Untuk lingkungan di mana kunci server Anda mungkin perlu rotasi yang kerap, ini memungkinkan hal tersebut terjadi tanpa restart server. Anda dapat mengganti default melalui opsi `https-certificates-reload-period`. Interval untuk mengisi ulang keystore, trust store, dan file sertifikat yang dirujuk oleh opsi `https-*`.
+Nilai dapat berupa nilai java.time.Duration, bilangan bulat jumlah detik, atau bilangan bulat diikuti satuan waktu [`ms`, `h`, `m`, `s`, `d`]. Harus lebih besar dari 30 detik. Gunakan `-1` untuk menonaktifkan.
+
+## Opsi yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`http-enabled`**<br/>Mengaktifkan listener HTTP.<br/>Default aktif dalam mode development. Biasanya tidak diaktifkan dalam produksi kecuali server di depan proxy pengakhiran TLS.<br/>**CLI:** `--http-enabled`<br/>**Env:** `KC_HTTP_ENABLED` | `true`, `false` | `false` |
+| **`https-certificate-file`**<br/>Alamat file sertifikat server atau rantai sertifikat dalam format PEM.<br/>**CLI:** `--https-certificate-file`<br/>**Env:** `KC_HTTPS_CERTIFICATE_FILE` | _File_ |  |
+| **`https-certificate-key-file`**<br/>Alamat file kunci pribadi dalam format PEM.<br/>**CLI:** `--https-certificate-key-file`<br/>**Env:** `KC_HTTPS_CERTIFICATE_KEY_FILE` | _File_ |  |
+| **`https-certificates-reload-period`**<br/>Interval untuk memuat ulang toko kunci, toko kepercayaan, dan file sertifikat yang dirujuk oleh opsi https-*.<br/>Mungkin merupakan nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d]. Harus lebih besar dari 30 detik. Gunakan -1 untuk menonaktifkan.<br/>**CLI:** `--https-certificates-reload-period`<br/>**Env:** `KC_HTTPS_CERTIFICATES_RELOAD_PERIOD` | _String_ | `1h` |
+| **`https-cipher-suites`**<br/>Suite cipher yang digunakan.<br/>Jika tidak diberikan, default yangreasonable dipilih.<br/>**CLI:** `--https-cipher-suites`<br/>**Env:** `KC_HTTPS_CIPHER_SUITES` | _String_ |  |
+| **`https-key-store-file`**<br/>Toko kunci yang memegang informasi sertifikat sebagai gantinya daripada menentukan file terpisah.<br/>**CLI:** `--https-key-store-file`<br/>**Env:** `KC_HTTPS_KEY_STORE_FILE` | _File_ |  |
+| **`https-key-store-password`**<br/>Kata sandi file toko kunci.<br/>**CLI:** `--https-key-store-password`<br/>**Env:** `KC_HTTPS_KEY_STORE_PASSWORD` | _String_ | `password` |
+| **`https-key-store-type`**<br/>Tipe file toko kunci.<br/>Jika tidak diberikan, tipe otomatis terdeteksi berdasarkan ekstensi file. Jika `fips-mode` diatur ke `strict` dan tidak ada nilai yang diatur, default ke `BCFKS`.<br/>**CLI:** `--https-key-store-type`<br/>**Env:** `KC_HTTPS_KEY_STORE_TYPE` | _String_ |  |
+| **`https-port`**<br/>Port HTTPS yang digunakan.<br/>**CLI:** `--https-port`<br/>**Env:** `KC_HTTPS_PORT` | _Integer_ | `8443` |
+| **`https-protocols`**<br/>Daftar protokol untuk diaktifkan secara eksplisit.<br/>Jika nilai tidak didukung oleh JRE / konfigurasi keamanan, akan diam-diam diabaikan.<br/>**CLI:** `--https-protocols`<br/>**Env:** `KC_HTTPS_PROTOCOLS` | `TLSv1.3`, `TLSv1.2`, atau apapun | `TLSv1.3,TLSv1.2` |
+
+### Server Pengelolaan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`https-management-certificate-file`**<br/>Alamat file sertifikat server atau rantai sertifikat dalam format PEM untuk server pengelolaan.<br/>Jika tidak diberikan, nilai diwarisi dari opsi HTTP. Hanya relevan saat sesuatu diekspos di antarmuka pengelolaan - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificate-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATE_FILE` | _File_ |  |
+| **`https-management-certificate-key-file`**<br/>Alamat file kunci pribadi dalam format PEM untuk server pengelolaan.<br/>Jika tidak diberikan, nilai diwarisi dari opsi HTTP. Hanya relevan saat sesuatu diekspos di antarmuka pengelolaan - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificate-key-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATE_KEY_FILE` | _File_ |  |
+| **`https-management-certificates-reload-period`**<br/>Interval untuk memuat ulang toko kunci, toko kepercayaan, dan file sertifikat yang dirujuk oleh opsi https-management-* untuk server pengelolaan.<br/>Mungkin merupakan nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d]. Harus lebih besar dari 30 detik. Gunakan -1 untuk menonaktifkan. Jika tidak diberikan, nilai diwarisi dari opsi HTTP. Hanya relevan saat sesuatu diekspos di antarmuka pengelolaan - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificates-reload-period`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATES_RELOAD_PERIOD` | _String_ | `1h` |
+| **`https-management-key-store-file`**<br/>Toko kunci yang memegang informasi sertifikat sebagai gantinya daripada menentukan file terpisah untuk server pengelolaan.<br/>Jika tidak diberikan, nilai diwarisi dari opsi HTTP. Hanya relevan saat sesuatu diekspos di antarmuka pengelolaan - lihat panduan untuk detail.<br/>**CLI:** `--https-management-key-store-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_KEY_STORE_FILE` | _File_ |  |
+| **`https-management-key-store-password`**<br/>Kata sandi file toko kunci untuk server pengelolaan.<br/>Jika tidak diberikan, nilai diwarisi dari opsi HTTP. Hanya relevan saat sesuatu diekspos di antarmuka pengelolaan - lihat panduan untuk detail.<br/>**CLI:** `--https-management-key-store-password`<br/>**Env:** `KC_HTTPS_MANAGEMENT_KEY_STORE_PASSWORD` | _String_ | `password` |

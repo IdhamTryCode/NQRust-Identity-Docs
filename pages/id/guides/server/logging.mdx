@@ -1,89 +1,61 @@
 ---
-title: Mengonfigurasi Logging
-description: Mengonfigurasi Logging - Dokumentasi NQRust-Identity
+title: Configuring logging
+description: Configuring logging - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi Logging
+# Configuring logging
 
-Logging adalah mekanisme penting untuk memahami dan mengoperasikan NQRust-Identity. Seharusnya membantu Anda untuk memantau kesehatan NQRust-Identity, debug masalah, dan mempertahankan jejak audit dari peristiwa penting.
+import { Callout } from 'nextra/components'
 
-Anda dapat mengonfigurasi logging untuk level log root atau untuk kategori yang lebih spesifik seperti `org.hibernate` atau `org.nqrust-identity`. Juga memungkinkan untuk menyesuaikan level log untuk setiap handler log tertentu.
+Pencatatan adalah mekanisme penting untuk memahami dan mengoperasikan NQRust-Identity.
+Hal ini seharusnya membantu Anda untuk memantau kesehatan NQRust-Identity, mendebug masalah, dan memelihara jejak audit dari peristiwa penting.
 
-Di NQRust-Identity, logging melampaui pengaturan level log — Anda dapat mengarahkan output ke handler berbeda, menggunakan logging asinkron untuk kinerja, menangkap log akses HTTP, dan lainnya. Fitur-fitur ini membuatnya memungkinkan untuk menyesuaikan logging dengan kebutuhan operasional Anda dan mengintegrasikan dengan platform observability.
+Anda dapat mengonfigurasi pencatatan untuk tingkat log akar atau untuk kategori yang lebih spesifik seperti `org.hibernate` atau `org.nqrust-identity`.
+Juga dimungkinkan untuk menyesuaikan tingkat log untuk setiap penangan log tertentu.
 
-NQRust-Identity menggunakan kerangka kerja NQRust Logging di bawah hood.
+Di NQRust-Identity, pencatatan melampaui pengaturan tingkat log — Anda dapat mengarahkan output ke penangan yang berbeda, menggunakan pencatatan asinkron untuk performa, menangkap log akses HTTP, dan lainnya.
+Fitur-fitur ini membuatnya memungkinkan untuk menyesuaikan pencatatan dengan kebutuhan operasional Anda dan mengintegrasikan dengan platform observabilitas.
 
-## [](#_available_log_handlers)Handler Log yang Tersedia
+NQRust-Identity menggunakan kerangka kerja Pencarian NQRust di bawah hood.
 
-**Konsol**  
-Log ke output standar
+## Tersedianya penangan log
 
-**File**  
-Menyiapkan log ke disk
+|  |  |  |
+| --- | --- | --- |
+| **Konsol**<br/>Log ke output standar | **File**<br/>Menjaga log di disk | **Syslog**<br/>Mengirim log ke server Syslog |
 
-**Syslog**  
-Mengirim log ke server Syslog
-
-Untuk mengaktifkan handler log, masukkan perintah berikut:
+Untuk mengaktifkan penangan log, masukkan perintah berikut:
 
 ```bash
 bin/kc.[sh|bat] start --log="<handler1>,<handler2>"
 ```
 
-Untuk detail lebih lanjut tentang cara mengonfigurasi handler log tertentu, lihat:
+Untuk detail lebih lanjut tentang cara mengonfigurasi penangan log tertentu, lihat:
 
-*   [Logging Konsol](https://www.nqrust-identity.org/server/logging/console)
-    
-*   [Logging File](https://www.nqrust-identity.org/server/logging/file)
-    
-*   [Logging Syslog](https://www.nqrust-identity.org/server/logging/syslog)
-    
+- Pencatatan Konsol
+- Pencatatan File
+- Pencatatan Syslog
 
-## [](#_log_levels)Level Log
+## Tipe Log
 
-Tabel berikut mendefinisikan level log yang tersedia.
+Tabel berikut mendefinisikan tipe log yang tersedia.
 
-Level
+| Tipe | Deskripsi |
+| --- | --- |
+| FATAL | Kegagalan krusial dengan kesulitan utuh dalam melayani permintaan apa pun. |
+| ERROR | Kesalahan atau masalah yang signifikan yang mengakibatkan kesulitan dalam memproses permintaan. |
+| WARN | Kesalahan atau masalah yang tidak krusial yang mungkin tidak memerlukan perbaikan segera. |
+| INFO | Peristiwa siklus hidup NQRust-Identity atau informasi penting. Frekuensi rendah. |
+| DEBUG | Informasi lebih detail untuk tujuan debugging, seperti log database. Frekuensi tinggi. |
+| TRACE | Informasi debugging yang paling detail. Frekuensi sangat tinggi. |
+| ALL | Tipe khusus untuk semua pesan log. |
+| OFF | Tipe khusus untuk menonaktifkan logging sama sekali (tidak disarankan). |
 
-Deskripsi
+### Mengonfigurasi Tipe Log Root
 
-FATAL
+Ketika tidak ada konfigurasi tipe log untuk logger kategori yang lebih spesifik, maka kategori yang membungkusnya digunakan. Ketika tidak ada kategori yang membungkusnya, tipe log logger root digunakan.
 
-Kegagalan krusial dengan kesempatan absolut untuk melayani permintaan apa pun.
-
-ERROR
-
-Kesalahan atau masalah yang signifikan yang mengakibatkan tidak dapat memproses permintaan.
-
-WARN
-
-Kesalahan atau masalah yang tidak krusial yang mungkin tidak memerlukan perbaikan segera.
-
-INFO
-
-Peristiwa siklus hidup NQRust-Identity atau informasi penting. Frekuensi rendah.
-
-DEBUG
-
-Informasi lebih detail untuk tujuan debug, seperti log database. Frekuensi lebih tinggi.
-
-TRACE
-
-Informasi debugging yang paling detail. Frekuensi sangat tinggi.
-
-ALL
-
-Level spesial untuk semua pesan log.
-
-OFF
-
-Level spesial untuk mematikan logging sepenuhnya (tidak disarankan).
-
-### [](#_configuring_the_root_log_level)Mengonfigurasi Level Log Root
-
-Ketika tidak ada konfigurasi level log untuk logger kategori yang lebih spesifik, digunakan kategori yang menutupi. Ketika tidak ada kategori yang menutupi, digunakan level logger root.
-
-Untuk mengatur level log root, masukkan perintah berikut:
+Untuk menetapkan tipe log root, masukkan perintah berikut:
 
 ```bash
 bin/kc.[sh|bat] start --log-level=<root-level>
@@ -91,19 +63,447 @@ bin/kc.[sh|bat] start --log-level=<root-level>
 
 Gunakan panduan berikut untuk perintah ini:
 
-*   Untuk `_<root-level>_`, berikan level yang didefinisikan dalam tabel sebelumnya.
-    
-*   Level log tidak sensitif terhadap huruf besar kecil. Misalnya, Anda bisa menggunakan `DEBUG` atau `debug`.
-    
-*   Jika Anda secara tidak sengaja mengatur level log dua kali, terjadinya terakhir dalam daftar menjadi level log. Misalnya, jika Anda memasukkan sintaks `--log-level="info,…​,DEBUG,…​"`, logger root akan menjadi `DEBUG`.
-    
+- Untuk `<root-level>`, berikan tingkat yang didefinisikan dalam tabel sebelumnya.
+- Tipe log tidak sensitif terhadap huruf besar kecil. Misalnya, Anda bisa menggunakan `DEBUG` atau `debug`.
+- Jika Anda secara tidak sengaja menetapkan tipe log dua kali, terjadinya terakhir dalam daftar menjadi tipe log. Misalnya, jika Anda memasukkan sintaks `--log-level="info,…​,DEBUG,…​"`, logger root akan menjadi `DEBUG`.
 
-### [](#_configuring_category_specific_log_levels)Mengonfigurasi Level Log Khusus Kategori
+### Mengonfigurasi Tipe Log Khusus Kategori
 
-Anda dapat mengatur level log yang berbeda untuk area tertentu di NQRust-Identity. Gunakan perintah ini untuk memberikan daftar koma-terpisah dari kategori untuk yang Anda inginkan level log yang berbeda:
+Anda dapat menetapkan tipe log yang berbeda untuk area tertentu di NQRust-Identity. Gunakan perintah ini untuk memberikan daftar koma-terpisah dari kategori yang ingin Anda berikan tipe log yang berbeda:
 
 ```bash
 bin/kc.[sh|bat] start --log-level="<root-level>,<org.category1>:<org.category1-level>"
 ```
 
-Konfigurasi yang berlaku untuk kategori juga berlaku untuk sub-kategorinya kecuali jika Anda meny
+Konfigurasi yang berlaku untuk kategori juga berlaku untuk sub-kategorinya kecuali jika Anda memasukkan sub-kategori yang lebih spesifik yang sesuai.
+
+```bash
+bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug,org.hibernate.hql.internal.ast:info"
+```
+
+Contoh ini menetapkan tipe log berikut:
+
+- Tipe log root untuk semua logger diatur ke INFO.
+- Tipe log umum hibernate diatur ke debug.
+- Untuk mencegah struktur abstrak SQL dari menciptakan output log yangverbose, subkategori spesifik `org.hibernate.hql.internal.ast` diatur ke info. Akibatnya, struktur abstrak SQL dilewatkan bukan muncul pada tingkat `debug`.
+
+### Mengonfigurasi Tingkatan sebagai Opsi Individual
+
+Saat mengonfigurasi tipe log khusus kategori, Anda juga dapat menetapkan tipe log sebagai opsi `log-level-<category>` individual daripada menggunakan opsi `log-level` untuk itu.
+Ini berguna ketika Anda ingin menetapkan tipe log untuk kategori yang dipilih tanpa menimpa opsi `log-level` yang telah diatur sebelumnya.
+
+Jika Anda memulai server sebagai:
+
+```bash
+bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug"
+```
+
+kemudian Anda dapat menetapkan variabel lingkungan `KC_LOG_LEVEL_ORG_NQRUST-IDENTITY=trace` untuk mengubah tingkat log untuk kategori `org.nqrust-identity`.
+
+Opsi `log-level-<category>` memiliki prioritas lebih tinggi dari `log-level`. Ini memungkinkan Anda untuk menimpa apa yang telah diatur dalam opsi `log-level`.
+Misalnya jika Anda menetapkan `KC_LOG_LEVEL_ORG_HIBERNATE=trace` untuk contoh CLI di atas, kategori `org.hibernate` akan menggunakan tingkat `trace` bukan `debug`.
+
+Perhatikan bahwa saat menggunakan variabel lingkungan, nama kategori harus dalam huruf besar dan titik harus diganti dengan garis miring.
+Saat menggunakan sumber konfigurasi lainnya, nama kategori harus ditentukan "sebagai adanya", misalnya:
+
+```bash
+bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug" --log-level-org.nqrust-identity=trace
+```
+
+### Menentukan Tipe Log untuk Setiap Penangan
+
+Properti `log-level` menentukan tingkat root log global dan tingkatan untuk beberapa kategori yang dipilih.
+Namun, pendekatan yang lebih halus untuk tingkat log diperlukan untuk memenuhi persyaratan aplikasi modern.
+
+Untuk menetapkan tingkat log untuk penangan tertentu, properti dalam format `log-<handler>-level` (dimana `<handler>` adalah penangan log yang tersedia) telah diperkenalkan.
+
+Ini berarti properti untuk pengaturan tingkat log terlihat seperti ini:
+
+- `log-console-level` - Penangan log konsol
+- `log-file-level` - Penangan log file
+- `log-syslog-level` - Penangan log syslog
+
+<Callout type="info">
+  Properti log-&lt;handler&gt;-level hanya tersedia ketika penangan log tertentu diaktifkan.
+  Informasi lebih lanjut dalam pengaturan penangan log di bawah ini.
+</Callout>
+
+Hanya tingkat log yang ditentukan dalam bagian [Tipe Log](#_tipe_log) yang diterima, dan **harus dalam huruf kecil**.
+Tidak ada dukungan untuk menentukan kategori tertentu untuk penangan log saat ini.
+
+#### Prinsip Umum
+
+Perlu dipahami bahwa menetapkan tingkat log untuk setiap penangan tertentu **tidak menimpa tingkat root** yang ditentukan dalam properti `log-level`.
+Penangan log menghormati tingkat root log, yang mewakili tingkat keverbosean maksimum untuk seluruh sistem logging.
+Ini berarti penangan log individu dapat dikonfigurasi untuk kurang verbose daripada logger root, tetapi tidak lebih.
+
+Secara spesifik, ketika tingkat log sembarang ditetapkan untuk penangan, itu tidak berarti catatan log dengan tingkat log akan hadir dalam output.
+Dalam hal ini, tingkat root `log-level` juga harus dinilai.
+Tingkat log penangan menyediakan **batas untuk tingkat root log**, dan tingkat log default untuk penangan log adalah `all` - tanpa batasan apa pun.
+
+#### Contoh
+
+```bash
+bin/kc.[sh|bat] start --log=console,file --log-level=debug --log-console-level=info
+```
+
+Tingkat root log diatur ke `debug`, jadi setiap penangan log mewarisi nilai - begitu juga dengan penangan log file.
+Untuk menyembunyikan catatan `debug` di konsol, kita perlu mengatur tingkat minimal (paling tidak parah) ke `info` untuk penangan konsol.
+
+```bash
+bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug --log-console-level=warn --log-syslog-level=warn
+```
+
+Tingkat root harus diatur ke tingkat yang paling verbose yang diperlukan (`debug` dalam hal ini), dan penangan log lainnya harus diubah sesuai.
+
+```bash
+bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug,org.nqrust-identity.events:trace, --log-syslog-level=trace --log-console-level=info --log-file-level=info
+```
+
+Agar dapat melihat `org.nqrust-identity.events:trace`, tingkat `trace` harus diatur untuk penangan Syslog.
+
+## Menambahkan konteks untuk pesan log
+
+Anda dapat mengaktifkan informasi konteks tambahan untuk setiap baris log seperti realm saat ini dan client yang sedang menjalankan permintaan.
+
+Gunakan opsi `log-mdc-enabled` untuk mengaktifkannya.
+
+```bash
+bin/kc.[sh|bat] start --log-mdc-enabled=true
+```
+
+```
+2025-06-20 14:13:01,772 {kc.clientId=security-admin-console, kc.realmName=master} INFO ...
+```
+
+Tentukan kunci yang akan ditambahkan dengan mengatur opsi konfigurasi `log-mdc-keys`.
+
+## Menggunakan format JSON yang berbeda untuk penangan log
+
+Setiap penangan log menyediakan kemampuan untuk memiliki output log terstruktur dalam format JSON.
+Hal ini dapat diaktifkan dengan properti dalam format `log-<handler>-output=json` (dimana `<handler>` adalah penangan log).
+
+Jika Anda memerlukan format JSON yang berbeda dari yang dihasilkan, Anda dapat memanfaatkan format output JSON berikut:
+
+- `default` (default)
+- `ecs`
+
+Nilai `ecs` mengacu pada [ECS](https://www.elastic.co/guide/en/ecs-logging/overview/current/intro.html) (Elastic Common Schema).
+
+ECS adalah spesifikasi sumber terbuka, didorong komunitas yang menentukan serangkaian bidang yang digunakan dengan solusi Elastic.
+Spesifikasi ECS sedang digabungkan dengan [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/) dengan tujuan menciptakan satu standar yang dipelihara oleh OpenTelemetry.
+
+Untuk mengubah format output JSON, properti dalam format `log-<handler>-json-format` (dimana `<handler>` adalah penangan log) telah diperkenalkan:
+
+- `log-console-json-format` - Penangan log konsol
+- `log-file-json-format` - Penangan log file
+- `log-syslog-json-format` - Penangan log syslog
+
+### Menyesuaikan bidang layanan
+
+Saat menggunakan output log JSON, NQRust-Identity mencakup bidang `service.name` dan kemungkinan `service.environment` dalam entri log.
+Secara default, `service.name` disetel ke `nqrust-identity`, dan `service.environment` tidak disetel untuk format JSON default.
+Untuk format ECS, `service.environment` disetel ke profil Quarkus (misalnya `prod`).
+
+Anda dapat menyesuaikan bidang ini pada semua penangan log dengan menggunakan opsi berikut:
+
+- `log-service-name` - Atur bidang `service.name` (default: `nqrust-identity`)
+- `log-service-environment` - Atur bidang `service.environment`
+
+Opsi ini berlaku untuk semua penangan log (`console`, `file`, dan `syslog`) yang memiliki output JSON yang diaktifkan.
+
+```bash
+bin/kc.[sh|bat] start --log-console-output=json --log-service-name=my-nqrust-identity --log-service-environment=production
+```
+
+### Contoh
+
+Jika Anda ingin memiliki log JSON dalam format **ECS** (Elastic Common Schema) untuk penangan log konsol, Anda dapat masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --log-console-output=json --log-console-json-format=ecs
+```
+
+```json
+{"@timestamp":"2025-02-03T14:53:22.539484211+01:00","event.sequence":9608,"log.logger":"io.quarkus","log.level":"INFO","message":"NQRust-Identity 999.0.0-SNAPSHOT on JVM (powered by Quarkus 3.17.8) started in 4.615s. Listening on: http://0.0.0.0:8080","process.thread.name":"main","process.thread.id":1,"mdc":{},"ndc":"","host.hostname":"host-name","process.name":"/usr/lib/jvm/jdk-21.0.3+9/bin/java","process.pid":77561,"data_stream.type":"logs","ecs.version":"1.12.2","service.environment":"prod","service.name":"NQRust-Identity","service.version":"999.0.0-SNAPSHOT"}
+```
+
+## Pencacatan Asinkronis
+
+NQRust-Identity mendukung pencacatan asinkronis, yang mungkin berguna untuk penyebaran yang memerlukan **tingkat throughput tinggi** dan **latensi rendah**.
+Pencacatan asinkronis menggunakan thread terpisah untuk menangani semua catatan log.
+Handler pencacatan dipanggil dengan cara yang persis sama seperti pencacatan sinkronis, hanya saja dilakukan di thread terpisah.
+Anda dapat mengaktifkan pencacatan asinkronis untuk semua handler log NQRust-Identity.
+Thread terpisah akan dibuat untuk setiap handler log dengan pencacatan asinkronis yang diaktifkan.
+
+Mekanisme dasar untuk pencacatan asinkronis menggunakan antrian untuk memproses catatan log.
+Setiap catatan log baru ditambahkan ke antrian dan kemudian diterbitkan ke handler log tertentu dengan pencacatan asinkronis yang diaktifkan.
+Setiap handler log memiliki antrian yang berbeda.
+
+Jika antrian sudah penuh, ia akan memblokir thread utama dan menunggu ruang bebas di antrian.
+
+### Kapan untuk menggunakan pencacatan asinkronis
+
+- Anda memerlukan **latensi lebih rendah** untuk permintaan masuk
+- Anda memerlukan **throughput yang lebih tinggi**
+- Anda memiliki **kolam thread pekerja kecil** dan ingin membebaskan pencacatan ke thread terpisah
+- Anda ingin mengurangi dampak dari **handler log yang berat I/O**
+- Anda mencatat ke **tujuan jarak jauh** (misalnya, server syslog jaringan) dan ingin menghindari pemblokiran thread pekerja
+
+<Callout type="warning">
+  Perhatikan bahwa mengaktifkan pencacatan asinkronis mungkin akan membawa overhead memori tambahan karena thread terpisah tambahan dan antrian internal.
+  Dalam hal ini, tidak disarankan untuk menggunakannya di lingkungan yang terbatas sumber daya.
+  Selain itu, shutdown server yang tidak terduga menciptakan risiko kehilangan catatan log.
+</Callout>
+
+### Mengaktifkan pencacatan asinkronis
+
+Anda dapat mengaktifkan pencacatan asinkronis secara global untuk semua handler log dengan menggunakan properti `log-async` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --log-async=true
+```
+
+Atau Anda dapat mengaktifkan pencacatan asinkronis untuk setiap handler tertentu dengan menggunakan properti dalam format `log-<handler>-async` (dimana `<handler>` adalah handler log).
+Jika properti untuk handler tertentu tidak diatur, nilai dari induk `log-async` yang digunakan.
+
+Anda dapat menggunakan properti ini sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --log-console-async=true --log-file-async=true --log-syslog-async=true
+```
+
+- `log-console-async` - Handler log konsol
+- `log-file-async` - Handler log file
+- `log-syslog-async` - Handler log syslog
+
+### Mengubah panjang antrian
+
+Anda dapat mengubah ukuran antrian yang digunakan untuk pencacatan asinkronis.
+Ukuran default adalah **512** catatan log di antrian.
+
+Anda dapat mengubah panjang antrian sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --log-console-async-queue-length=512 --log-file-async-queue-length=512 --log-syslog-async-queue-length=512
+```
+
+Properti-properti ini hanya tersedia ketika pencacatan asinkronis diaktifkan untuk handler log tertentu.
+
+## Logging Akses HTTP
+
+NQRust-Identity mendukung logging akses HTTP untuk mencatat detail dari permintaan HTTP yang masuk.
+Sementara log akses sering digunakan untuk debugging dan analisis lalu lintas, mereka juga penting untuk audit keamanan dan monitoring kompliansi, membantu administrator melacak pola akses, mengidentifikasi aktivitas mencurigakan, dan menjaga jejak audit.
+
+Log ini ditulis pada level `INFO`, jadi pastikan konfigurasi logging Anda mencakup level ini — baik secara global (mis. `log-level=info`) atau secara spesifik untuk kategori log akses (mis. `log-level=org.nqrust-identity.http.access-log:info`).
+Ketika logging akses HTTP diaktifkan, mereka secara default ditampilkan, karena level `INFO` adalah level log default untuk NQRust-Identity.
+
+### Cara Mengaktifkan
+
+Anda dapat mengaktifkan logging akses HTTP dengan menggunakan properti `http-access-log-enabled` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-enabled=true
+```
+
+### Mengubah format/pattern log
+
+Anda dapat mengubah format/pattern catatan log akses dengan menggunakan properti `http-access-log-pattern` sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-pattern=combined
+```
+
+Pola yang diberi nama terdahulu:
+
+- `common` (default) - mencetak informasi dasar tentang permintaan
+- `combined` - mencetak informasi dasar tentang permintaan + informasi tentang referer dan agen pengguna
+- `long` - mencetak informasi komprehensif tentang permintaan dengan semua headernya
+
+Bahkan Anda dapat menentukan pola Anda sendiri dengan data yang dibutuhkan untuk dilog, seperti:
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-pattern='%A %{METHOD} %{REQUEST_URL} %{i,User-Agent}'
+```
+
+<Callout type="warning">
+  Log akses HTTP mungkin berisi header HTTP sensitif seperti Authorization, Cookie, atau referensi kunci API eksternal.
+  Header Authorization dan beberapa cookie sensitif yang dipilih secara otomatis dimasking dalam log akses HTTP. Namun, daftar item yang dimasking mungkin tidak lengkap. Hati-hati dengan menggunakan pola panjang atau mencetak header dengan format kustom - Anda harus menggunakannya hanya untuk tujuan pengembangan. Untuk memperluas daftar item yang dimasking, lihat di bawah.
+</Callout>
+
+Mohon kunjungi [dokumentasi Quarkus](https://quarkus.io/guides/http-reference#configuring-http-access-logs) untuk daftar lengkap variabel yang dapat digunakan.
+
+### Masking header HTTP dan cookie tertentu
+
+Header HTTP sensitif yang dipilih dan cookie dimasking secara otomatis dalam log akses HTTP.
+
+Header HTTP sensitif yang dimask:
+
+- `Authorization`
+
+Cookie NQRust-Identity sensitif yang dimask:
+
+- `AUTH_SESSION_ID`
+- `KC_AUTH_SESSION_HASH`
+- `NQRUST-IDENTITY_IDENTITY`
+- `NQRUST-IDENTITY_SESSION`
+- `AUTH_SESSION_ID_LEGACY`
+- `NQRUST-IDENTITY_IDENTITY_LEGACY`
+- `NQRUST-IDENTITY_SESSION_LEGACY`
+
+Untuk memperluas daftar item yang dimask (mis. untuk mengakomodasi header dan cookie yang digunakan oleh ekstensi kustom Anda), konfigurasikan opsi `http-access-log-masked-headers` dan `http-access-log-masked-cookies`.
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-masked-headers=X-Custom,Y-Api-Token --http-access-log-masked-cookies=MY_COOKIE,MY_SECOND_COOKIE
+```
+
+### Mengecualikan path URL tertentu
+
+Dimungkinkan untuk mengecualikan path URL tertentu dari logging akses HTTP, sehingga mereka tidak akan tercatat.
+
+Anda dapat menggunakan ekspresi regular untuk mengecualikannya, seperti:
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-exclude='/realms/my-internal-realm/.*'
+```
+
+Dalam hal ini, semua panggilan ke `/realms/my-internal-realm/` dan path berikutnya akan dikecualikan dari log akses HTTP.
+
+### Log ke file terpisah dengan rotasi
+
+Alih-alih menyimpan log akses HTTP dalam log server normal, Anda dapat menuliskannya ke file log terpisah.
+Ini membantu Anda memisahkan log akses HTTP dari log server dan menjaga jejak audit.
+Ketika logging ke file diaktifkan, log akses HTTP tidak ditulis ke konsol.
+
+#### Mengaktifkan logging ke file
+
+Anda dapat mengaktifkan logging ke file sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-file-enabled=true
+```
+
+Ini secara otomatis membuat file bernama `nqrust-identity-http-access.log` dalam direktori `/data/log` distribusi Anda.
+
+#### Mengubah nama file dan sufiks
+
+Anda dapat mengubah nama file log menggunakan properti `http-access-log-file-name`.
+Untuk mengubah sufiks file (`.log` adalah default), gunakan properti `http-access-log-file-suffix`.
+
+Sebagai contoh, untuk menulis log akses HTTP ke file `my-http-logs.txt`:
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-file-enabled=true --http-access-log-file-name=my-http-logs --http-access-log-file-suffix=txt
+```
+
+#### Rotasi file
+
+Secara default, file log akses HTTP diputar setiap hari.
+
+Ketika rotasi harian terjadi, sufiks berdasarkan tanggal '.&#123;yyyy-MM-dd&#125;' ditambahkan ke nama file log dari hari sebelumnya, menjaga log akses terpisah berdasarkan tanggal (misalnya, `nqrust-identity-http-access.2052-02-29.log`).
+
+Untuk menonaktifkan rotasi, gunakan konfigurasi berikut:
+
+```bash
+bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-file-enabled=true --http-access-log-file-rotate=false
+```
+
+## Ekspor Log Telemetri (OpenTelemetry)
+
+Dimungkinkan untuk mengekspor log OpenTelemetry dari deployment Anda ke pengumpul OpenTelemetry untuk manajemen log terpusat.
+
+Untuk detail lebih lanjut, lihat panduan [Centralize your observability stack with OpenTelemetry](/en/guides/observability/telemetry).
+
+## Opsi yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`log`**<br/>Aktifkan satu atau lebih handler log dalam daftar yang dipisahkan komma.<br/>**CLI:** `--log`<br/>**Env:** `KC_LOG` | `console`, `file`, `syslog` | `console` |
+| **`log-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke semua handler.<br/>**CLI:** `--log-async`<br/>**Env:** `KC_LOG_ASYNC` | `true`, `false` | `false` |
+| **`log-level`**<br/>Tingkat log dari kategori root atau daftar yang dipisahkan komma dari kategori individual dan tingkat mereka.<br/>Untuk kategori root, Anda tidak perlu menentukan kategori.<br/>**CLI:** `--log-level`<br/>**Env:** `KC_LOG_LEVEL` | _Daftar_ | `info` |
+| **`log-level-<category>`**<br/>Tingkat log dari kategori.<br/>Menggantikan opsi `log-level`.<br/>**CLI:** `--log-level-<category>`<br/>**Env:** `KC_LOG_LEVEL_<CATEGORY>` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` |  |
+| **`log-service-environment`**<br/>Set the `service.<br/>environment` field in JSON log entries for all log handlers. In ECS format, defaults to the Quarkus profile if not set.<br/>**CLI:** `--log-service-environment`<br/>**Env:** `KC_LOG_SERVICE_ENVIRONMENT` | _String_ |  |
+| **`log-service-name`**<br/>Set the `service.<br/>name` field in JSON log entries for all log handlers.<br/>**CLI:** `--log-service-name`<br/>**Env:** `KC_LOG_SERVICE_NAME` | _String_ | `nqrust-identity` |
+
+### Konsol
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`log-console-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke konsol.<br/>Jika tidak diatur, nilai dari properti induk `log-async` digunakan.<br/>**CLI:** `--log-console-async`<br/>**Env:** `KC_LOG_CONSOLE_ASYNC` | `true`, `false` | `false` |
+| **`log-console-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke konsol.<br/>**CLI:** `--log-console-async-queue-length`<br/>**Env:** `KC_LOG_CONSOLE_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
+| **`log-console-color`**<br/>Aktifkan atau nonaktifkan warna saat logging ke konsol.<br/>Jika tidak ada, akan dibuat percobaan untuk menebak apakah terminal mendukung warna.<br/>**CLI:** `--log-console-color`<br/>**Env:** `KC_LOG_CONSOLE_COLOR` | `true`, `false` |  |
+| **`log-console-format`**<br/>Format dari entri log konsol yang tidak terstruktur.<br/>Jika format memiliki spasi, escape nilai menggunakan "&lt;format&gt;".<br/>**CLI:** `--log-console-format`<br/>**Env:** `KC_LOG_CONSOLE_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
+| **`log-console-include-mdc`**<br/>Sertakan informasi mdc dalam log konsol.<br/>Jika opsi `log-console-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-console-include-mdc`<br/>**Env:** `KC_LOG_CONSOLE_INCLUDE_MDC` | `true`, `false` | `true` |
+| **`log-console-include-trace`**<br/>Sertakan informasi tracing dalam log konsol.<br/>Jika opsi `log-console-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-console-include-trace`<br/>**Env:** `KC_LOG_CONSOLE_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-console-json-format`**<br/>Set the format of the produced JSON.<br/>**CLI:** `--log-console-json-format`<br/>**Env:** `KC_LOG_CONSOLE_JSON_FORMAT` | `default`, `ecs` | `default` |
+| **`log-console-level`**<br/>Set the log level for the console handler.<br/>It specifies the most verbose log level for logs shown in the output. It respects levels specified in the `log-level` option, which represents the maximal verbosity for the whole logging system. For more information, check the Logging guide.<br/>**CLI:** `--log-console-level`<br/>**Env:** `KC_LOG_CONSOLE_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`log-console-output`**<br/>Set the log output to JSON or default (plain) unstructured logging.<br/>**CLI:** `--log-console-output`<br/>**Env:** `KC_LOG_CONSOLE_OUTPUT` | `default`, `json` | `default` |
+
+### Berkas
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`log-file`**<br/>Set the log file path and filename.<br/>**CLI:** `--log-file`<br/>**Env:** `KC_LOG_FILE` | _File_ | `data/log/nqrust-identity.log` |
+| **`log-file-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke file log.<br/>Jika tidak diatur, nilai dari properti induk `log-async` digunakan.<br/>**CLI:** `--log-file-async`<br/>**Env:** `KC_LOG_FILE_ASYNC` | `true`, `false` | `false` |
+| **`log-file-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke file log.<br/>**CLI:** `--log-file-async-queue-length`<br/>**Env:** `KC_LOG_FILE_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
+| **`log-file-format`**<br/>Set a format specific to file log entries.<br/>**CLI:** `--log-file-format`<br/>**Env:** `KC_LOG_FILE_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
+| **`log-file-include-mdc`**<br/>Sertakan informasi MDC dalam file log.<br/>Jika opsi `log-file-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-file-include-mdc`<br/>**Env:** `KC_LOG_FILE_INCLUDE_MDC` | `true`, `false` | `true` |
+| **`log-file-include-trace`**<br/>Sertakan informasi tracing dalam file log.<br/>Jika opsi `log-file-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-file-include-trace`<br/>**Env:** `KC_LOG_FILE_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-file-json-format`**<br/>Set the format of the produced JSON.<br/>**CLI:** `--log-file-json-format`<br/>**Env:** `KC_LOG_FILE_JSON_FORMAT` | `default`, `ecs` | `default` |
+| **`log-file-level`**<br/>Set the log level for the file handler.<br/>It specifies the most verbose log level for logs shown in the output. It respects levels specified in the `log-level` option, which represents the maximal verbosity for the whole logging system. For more information, check the Logging guide.<br/>**CLI:** `--log-file-level`<br/>**Env:** `KC_LOG_FILE_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`log-file-output`**<br/>Set the log output to JSON or default (plain) unstructured logging.<br/>**CLI:** `--log-file-output`<br/>**Env:** `KC_LOG_FILE_OUTPUT` | `default`, `json` | `default` |
+| **`log-file-rotation-enabled`**<br/>Aktifkan rotasi file log.<br/>**CLI:** `--log-file-rotation-enabled`<br/>**Env:** `KC_LOG_FILE_ROTATION_ENABLED` | `true`, `false` | `true` |
+| **`log-file-rotation-file-suffix`**<br/>Set the log file handler rotation file suffix.<br/>When used, the file will be rotated based on its suffix. Example: `.yyyy-MM-dd` to rotate daily. Note: If the suffix ends with `.zip` or `.gz`, the rotation file will also be compressed.<br/>**CLI:** `--log-file-rotation-file-suffix`<br/>**Env:** `KC_LOG_FILE_ROTATION_FILE_SUFFIX` | _String_ |  |
+| **`log-file-rotation-max-backup-index`**<br/>Jumlah maksimum file log cadangan yang harus dijaga.<br/>**CLI:** `--log-file-rotation-max-backup-index`<br/>**Env:** `KC_LOG_FILE_ROTATION_MAX_BACKUP_INDEX` | _Integer_ | `5` |
+| **`log-file-rotation-max-file-size`**<br/>Ukuran file log maksimum, setelah itu rotasi dijalankan.<br/>Mendukung akhiran ukuran (misalnya 10M, 1G).<br/>**CLI:** `--log-file-rotation-max-file-size`<br/>**Env:** `KC_LOG_FILE_ROTATION_MAX_FILE_SIZE` | _String_ | `10M` |
+| **`log-file-rotation-rotate-on-boot`**<br/>Menunjukkan apakah untuk rotasi file log saat server start.<br/>**CLI:** `--log-file-rotation-rotate-on-boot`<br/>**Env:** `KC_LOG_FILE_ROTATION_ROTATE_ON_BOOT` | `true`, `false` | `true` |
+
+### Syslog
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`log-syslog-app-name`**<br/>Set the app name used when formatting the message in RFC5424 format.<br/>**CLI:** `--log-syslog-app-name`<br/>**Env:** `KC_LOG_SYSLOG_APP_NAME` | _String_ | `nqrust-identity` |
+| **`log-syslog-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke Syslog.<br/>Jika tidak diatur, nilai dari properti induk `log-async` digunakan.<br/>**CLI:** `--log-syslog-async`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC` | `true`, `false` | `false` |
+| **`log-syslog-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke Syslog.<br/>**CLI:** `--log-syslog-async-queue-length`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
+| **`log-syslog-counting-framing`**<br/>Jika true, pesan yang dikirim diberi awalan dengan ukuran pesan.<br/>Jika `protocol-dependent`, nilai default adalah `true` saat `log-syslog-protocol` adalah `tcp` atau `ssl-tcp`, jika tidak `false`.<br/>**CLI:** `--log-syslog-counting-framing`<br/>**Env:** `KC_LOG_SYSLOG_COUNTING_FRAMING` | `true`, `false`, `protocol-dependent` | `protocol-dependent` |
+| **`log-syslog-endpoint`**<br/>Set the IP address and port of the Syslog server.<br/>**CLI:** `--log-syslog-endpoint`<br/>**Env:** `KC_LOG_SYSLOG_ENDPOINT` | _String_ | `localhost:514` |
+| **`log-syslog-format`**<br/>Set a format specific to Syslog entries.<br/>**CLI:** `--log-syslog-format`<br/>**Env:** `KC_LOG_SYSLOG_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
+| **`log-syslog-include-mdc`**<br/>Sertakan informasi MDC dalam Syslog.<br/>Jika opsi `log-syslog-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-syslog-include-mdc`<br/>**Env:** `KC_LOG_SYSLOG_INCLUDE_MDC` | `true`, `false` | `true` |
+| **`log-syslog-include-trace`**<br/>Sertakan informasi tracing dalam Syslog.<br/>Jika opsi `log-syslog-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-syslog-include-trace`<br/>**Env:** `KC_LOG_SYSLOG_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-syslog-json-format`**<br/>Set the format of the produced JSON.<br/>**CLI:** `--log-syslog-json-format`<br/>**Env:** `KC_LOG_SYSLOG_JSON_FORMAT` | `default`, `ecs` | `default` |
+| **`log-syslog-level`**<br/>Set the log level for the Syslog handler.<br/>It specifies the most verbose log level for logs shown in the output. It respects levels specified in the `log-level` option, which represents the maximal verbosity for the whole logging system. For more information, check the Logging guide.<br/>**CLI:** `--log-syslog-level`<br/>**Env:** `KC_LOG_SYSLOG_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`log-syslog-max-length`**<br/>Set the maximum length, in bytes, of the message allowed to be sent.<br/>The length includes the header and the message. If not set, the default value is 2048 when `log-syslog-type` is rfc5424 (default) and 1024 when `log-syslog-type` is rfc3164.<br/>**CLI:** `--log-syslog-max-length`<br/>**Env:** `KC_LOG_SYSLOG_MAX_LENGTH` | _String_ |  |
+| **`log-syslog-output`**<br/>Set the Syslog output to JSON or default (plain) unstructured logging.<br/>**CLI:** `--log-syslog-output`<br/>**Env:** `KC_LOG_SYSLOG_OUTPUT` | `default`, `json` | `default` |
+| **`log-syslog-protocol`**<br/>Set the protocol used to connect to the Syslog server.<br/>**CLI:** `--log-syslog-protocol`<br/>**Env:** `KC_LOG_SYSLOG_PROTOCOL` | `tcp`, `udp`, `ssl-tcp` | `tcp` |
+| **`log-syslog-type`**<br/>Set the Syslog type used to format the sent message.<br/>**CLI:** `--log-syslog-type`<br/>**Env:** `KC_LOG_SYSLOG_TYPE` | `rfc5424`, `rfc3164` | `rfc5424` |
+
+### HTTP Access log
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`http-access-log-enabled`**<br/>Jika HTTP access logging diaktifkan.<br/>Secara default, ini akan log record di konsol.<br/>**CLI:** `--http-access-log-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_ENABLED` | `true`, `false` | `false` |
+| **`http-access-log-exclude`**<br/>Ekspresi reguler yang dapat digunakan untuk mengecualikan beberapa path dari logging.<br/>Sebagai contoh, `/realms/my-realm/.*` akan mengecualikan semua endpoint berikutnya untuk realm `my-realm` dari log.<br/>**CLI:** `--http-access-log-exclude`<br/>**Env:** `KC_HTTP_ACCESS_LOG_EXCLUDE` | _String_ |  |
+| **`http-access-log-file-enabled`**<br/>Jika HTTP access logging harus dilakukan ke file terpisah.<br/>**CLI:** `--http-access-log-file-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ENABLED` | `true`, `false` | `false` |
+| **`http-access-log-file-name`**<br/>Nama dasar file log akses HTTP, yang akan membuat nama file log dengan menghitung dasar dan akhiran (e.<br/>g. `nqrust-identity-http-access.log`). File berada di direktori `/data/log` distribusi.<br/>**CLI:** `--http-access-log-file-name`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_NAME` | _String_ | `nqrust-identity-http-access` |
+| **`http-access-log-file-rotate`**<br/>Jika file log akses HTTP harus dirotate secara harian.<br/>**CLI:** `--http-access-log-file-rotate`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ROTATE` | `true`, `false` | `true` |
+| **`http-access-log-file-suffix`**<br/>Akhiranan file log akses HTTP.<br/>Ketika rotasi diaktifkan, akhiran berbasis tanggal `.{yyyy-MM-dd}` ditambahkan sebelum akhiran yang ditentukan. Jika beberapa rotasi terjadi pada hari yang sama, indeks bertambah akan dilampirkan ke tanggal.<br/>**CLI:** `--http-access-log-file-suffix`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_SUFFIX` | _String_ | `.log` |
+| **`http-access-log-masked-cookies`**<br/>Set dari header HTTP Cookie yang nilainya harus dimask when the long pattern or %&#123;ALL_REQUEST_HEADERS&#125; format is enabled with the http-access-log-pattern option.<br/>Selected security sensitive cookies are always masked.<br/>**CLI:** `--http-access-log-masked-cookies`<br/>**Env:** `KC_HTTP_ACCESS_LOG_MASKED_COOKIES` | _Daftar_ |  |
+| **`http-access-log-masked-headers`**<br/>Set dari header HTTP yang nilainya harus dimask when the long pattern or %&#123;ALL_REQUEST_HEADERS&#125; format is enabled with the http-access-log-pattern option.<br/>Selected security sensitive headers are always masked.<br/>**CLI:** `--http-access-log-masked-headers`<br/>**Env:** `KC_HTTP_ACCESS_LOG_MASKED_HEADERS` | _Daftar_ |  |
+| **`http-access-log-pattern`**<br/>Pola log akses HTTP.<br/>Anda dapat menggunakan format yang tersedia, atau gunakan format kustom yang dijelaskan dalam dokumentasi Quarkus.<br/>**CLI:** `--http-access-log-pattern`<br/>**Env:** `KC_HTTP_ACCESS_LOG_PATTERN` | `common`, `combined`, `long`, atau apapun | `common` |
+
+### Mapped Diagnostic Context (MDC)
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`log-mdc-enabled`**<br/>Menunjukkan apakah untuk menambahkan informasi tentang realm dan informasi lainnya ke mapped diagnostic context.<br/>Semua elemen akan diawali dengan `kc.`<br/>**CLI:** `--log-mdc-enabled`<br/>**Env:** `KC_LOG_MDC_ENABLED` | `true`, `false` | `false` |
+| **`log-mdc-keys`**<br/>Menentukan informasi mana yang harus ditambahkan ke mapped diagnostic context sebagai daftar yang dipisahkan komma.<br/>**CLI:** `--log-mdc-keys`<br/>**Env:** `KC_LOG_MDC_KEYS` | `realmName`, `clientId`, `userId`, `ipAddress`, `org`, `sessionId`, `authenticationSessionId`, `authenticationTabId` | `realmName,clientId,org,sessionId,authenticationSessionId,authenticationTabId` |
+
+### Telemetry Logs (OpenTelemetry)
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`telemetry-logs-enabled`**<br/>Mengaktifkan ekspor log ke tujuan yang menangani log OpenTelemetry.<br/>**CLI:** `--telemetry-logs-enabled`<br/>**Env:** `KC_TELEMETRY_LOGS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-logs-endpoint`**<br/>OpenTelemetry endpoint untuk mengekspor log ke.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--telemetry-logs-endpoint`<br/>**Env:** `KC_TELEMETRY_LOGS_ENDPOINT` | _String_ |  |
+| **`telemetry-logs-header-<header>`**<br/>OpenTelemetry header yang akan menjadi bagian dari permintaan ekspor log (utama untuk memberikan header Autorisasi).<br/>Periksa dokumentasi untuk mengetahui cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil.<br/>**CLI:** `--telemetry-logs-header-<header>`<br/>**Env:** `KC_TELEMETRY_LOGS_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-logs-level`**<br/>Tingkat log yang paling verbose yang diekspor ke endpoint telemetry.<br/>Untuk informasi lebih lanjut, periksa panduan Telemetry.<br/>**CLI:** `--telemetry-logs-level`<br/>**Env:** `KC_TELEMETRY_LOGS_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`telemetry-logs-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk mengekspor log.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--telemetry-logs-protocol`<br/>**Env:** `KC_TELEMETRY_LOGS_PROTOCOL` | `grpc`, `http/protobuf` |  |

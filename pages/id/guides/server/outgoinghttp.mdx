@@ -1,17 +1,19 @@
 ---
-title: Mengonfigurasi Permintaan HTTP Keluar
-description: Mengonfigurasi Permintaan HTTP Keluar - Dokumentasi NQRust-Identity
+title: Configuring outgoing HTTP requests
+description: Configuring outgoing HTTP requests - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi Permintaan HTTP Keluar
+# Configuring outgoing HTTP requests
 
-NQRust-Identity sering memerlukan untuk membuat permintaan ke aplikasi dan layanan yang diamankan olehnya. NQRust-Identity mengelola koneksi keluar ini menggunakan klien HTTP. Panduan ini menunjukkan cara mengonfigurasi klien, pool koneksi, pengaturan lingkungan proxy, waktu tunggu, dan lainnya.
+import { Callout } from 'nextra/components'
 
-## [](#_mengonfigurasi_sertifikat_terpercaya_untuk_koneksi_TLS)Mengonfigurasi Sertifikat Terpercaya untuk Koneksi TLS
+NQRust-Identity sering perlu membuat permintaan ke aplikasi dan layanan yang diamankannya. NQRust-Identity mengelola koneksi keluar ini menggunakan klien HTTP. Panduan ini menunjukkan bagaimana mengonfigurasi klien, kolam koneksi, pengaturan lingkungan proxy, waktu tunggu, dan lainnya.
 
-Lihat [Mengonfigurasi Sertifikat Terpercaya](https://www.nqrust-identity.org/server/nqrust-identity-truststore) untuk cara mengonfigurasi NQRust-Identity Truststore sehingga NQRust-Identity dapat melakukan permintaan keluar menggunakan TLS.
+## Mengonfigurasi sertifikat terpercaya untuk koneksi TLS
 
-## [](#_perintah_konfigurasi_klien)Perintah Konfigurasi Klien
+Lihat Mengonfigurasi sertifikat terpercaya untuk cara mengonfigurasi NQRust-Identity Truststore sehingga NQRust-Identity dapat melakukan permintaan keluar menggunakan TLS.
+
+## Perintah Konfigurasi Klien
 
 Klien HTTP yang digunakan NQRust-Identity untuk komunikasi keluar sangat dapat dikonfigurasi. Untuk mengonfigurasi klien HTTP keluar NQRust-Identity, masukkan perintah ini:
 
@@ -21,60 +23,136 @@ bin/kc.[sh|bat] start --spi-connections-http-client--default--<configurationopti
 
 Berikut adalah opsi perintah:
 
-**establish-connection-timeout-millis**
-
-Waktu maksimum dalam milidetik sampai waktu keluar koneksi berakhir. Default: Tidak diatur.
-
-**connection-request-timeout-millis**
+Waktu maksimum dalam milidetik sampai meng-establish koneksi waktu habis. Default: Tidak diatur.
 
 Waktu maksimum dalam milidetik untuk mendapatkan koneksi untuk permintaan. Default: 5000ms
 
-**socket-timeout-millis**
+Waktu maksimum tidak aktif antara dua paket data sampai koneksi socket waktu habis, dalam milidetik. Default: 5000ms
 
-Waktu maksimum tidak ada aktivitas antara dua paket data sampai koneksi socket berakhir, dalam milidetik. Default: 5000ms
-
-**connection-pool-size**
-
-Ukuran pool koneksi untuk koneksi keluar. Default: 128.
-
-**max-pooled-per-route**
+Ukuran kolam koneksi untuk koneksi keluar. Default: 128.
 
 Berapa banyak koneksi yang dapat dipool per host. Default: 64.
 
-**connection-ttl-millis**
+Waktu hidup koneksi maksimum dalam milidetik. Default: Tidak diatur.
 
-Waktu maksimum koneksi hidup dalam milidetik. Default: Tidak diatur.
-
-**max-connection-idle-time-millis**
-
-Waktu maksimum koneksi idle yang tetap berada di pool koneksi, dalam milidetik. Koneksi idle akan dihapus dari pool oleh thread pembersih latar belakang. Atur opsi ini ke -1 untuk menonaktifkan pemeriksaan ini. Default: 900000.
-
-**disable-cookies**
+Waktu maksimum koneksi idle yang tinggal di kolam koneksi, dalam milidetik. Koneksi idle akan dihapus dari kolam oleh thread cleaner latar belakang. Atur opsi ini ke -1 untuk menonaktifkan pemeriksaan ini. Default: 900000.
 
 Aktifkan atau nonaktifkan caching cookie. Default: true.
 
-**client-keystore**
+Jalur berkas ke berkas keystore Java. Keystore ini berisi sertifikat klien untuk mTLS.
 
-Jalur file ke java keystore. Keystore ini berisi sertifikat klien untuk mTLS.
+Kata sandi untuk keystore klien. DIPERSYARATIKAN, saat `client-keystore` diatur.
 
-**client-keystore-password**
+Kata sandi untuk private key klien. DIPERSYARATIKAN, saat client-keystore diatur.
 
-Password untuk client keystore. DIPERSYARATKAN, saat `client-keystore` diatur.
+Tentukan konfigurasi proxy untuk permintaan HTTP keluar. Untuk detail lebih lanjut, lihat [Pemetaan proxy untuk permintaan HTTP keluar](#_pemetaan_proxy_untuk_permintaan_http_keluar).
 
-**client-key-password**
+Jika permintaan keluar memerlukan HTTPS dan opsi konfigurasi ini diatur ke true, Anda tidak perlu menentukan truststore. Pengaturan ini hanya boleh digunakan selama pengembangan dan **tidak pernah dalam produksi** karena akan menonaktifkan verifikasi sertifikat SSL. Default: false.
 
-Password untuk private key klien. DIPERSYARATKAN, saat client-keystore diatur.
+## Mengonfigurasi perilaku retry untuk permintaan HTTP keluar
 
-**proxy-mappings**
+<Callout type="warning">
+  Jangan biarkan durasi retry keluar melebihi timeout pemanggil. Jika tidak, pemanggil mungkin waktu habis dan melihat kesalahan saat NQRust-Identity terus retry di latar belakang.
+</Callout>
 
-Tentukan konfigurasi proxy untuk permintaan HTTP keluar. Untuk detail lebih lanjut, lihat [Pemetaan Proxy untuk Permintaan HTTP Keluar](#_pemetaan_proxy_untuk_permintaan_HTTP_keluar).
+NQRust-Identity dapat secara otomatis retry permintaan HTTP keluar yang gagal. Hal ini berguna untuk menangani kesalahan jaringan sementara atau ketidaktersediaan layanan sementara. Perilaku retry dinonaktifkan secara default dan harus diaktifkan secara eksplisit.
 
-**disable-trust-manager**
+Berikut adalah opsi konfigurasi retry:
 
-Jika permintaan keluar memerlukan HTTPS dan opsi konfigurasi ini diatur ke true, Anda tidak perlu menentukan truststore. Pengaturan ini hanya boleh digunakan selama pengembangan dan **tidak pernah di produksi** karena akan menonaktifkan verifikasi sertifikat SSL. Default: false.
+Jumlah maksimum retry untuk permintaan HTTP yang gagal. Atur ke 0 untuk menonaktifkan retry. Default: 0.
 
-## [](#_mengonfigurasi_perilaku_pengulangan_untuk_permintaan_HTTP_keluar)Mengonfigurasi Perilaku Pengulangan untuk Permintaan HTTP Keluar
+<Callout type="info">
+  retry untuk permintaan yang telah dikirim (untuk metode umum seperti GET dan POST) selalu diaktifkan. Gunakan max-retries untuk mengontrol apakah retry dilakukan.
+</Callout>
 
-Jangan biarkan durasi pengulangan keluar melebihi waktu tunggu pemanggil. Jika tidak, pemanggil mungkin berakhir dan melihat kesalahan saat NQRust-Identity terus mencoba pengulangan di latar belakang.
+Waktu backoff awal dalam milidetik sebelum percobaan retry pertama. Default: 1000.
 
-NQRust-Identity dapat secara otomatis mencoba lagi permintaan HTTP keluar yang gagal. Ini berguna untuk menangani kesalahan jaringan sementara atau ketidaktersediaan layanan sementara. Perilaku pengulangan dinonaktifkan secara default
+Pengali untuk backoff eksponensial antara percobaan retry. Misalnya, dengan backoff awal 1000ms dan pengali 2.0, penundaan retry akan menjadi: 1000ms, 2000ms, 4000ms, dll. Default: 2.0.
+
+Apakah untuk menerapkan jitter pada waktu backoff untuk mencegah badai retry terSinkronisasi saat beberapa klien retry pada saat yang sama. Default: true.
+
+Faktor jitter untuk diterapkan pada waktu backoff. Nilai 0.5 berarti waktu backoff aktual akan antara 50% dan 150% dari waktu backoff eksponensial yang dihitung. Default: 0.5.
+
+```bash
+bin/kc.[sh|bat] start --spi-connections-http-client-default-max-retries=3 \
+  --spi-connections-http-client-default-initial-backoff-millis=1000 \
+  --spi-connections-http-client-default-backoff-multiplier=2.0
+```
+
+Dalam contoh ini, NQRust-Identity akan retry permintaan HTTP yang gagal hingga 3 kali dengan backoff eksponensial mulai dari 1000ms dan menggandakan setiap percobaan retry.
+
+<Callout type="info">
+  Perilaku retry berlaku untuk semua permintaan HTTP keluar yang dilakukan oleh NQRust-Identity, termasuk validasi OCSP, komunikasi penyedia identitas, dan panggilan layanan eksternal lainnya.
+</Callout>
+
+## Pemetaan proxy untuk permintaan HTTP keluar
+
+Untuk mengonfigurasi permintaan keluar agar menggunakan proxy, Anda dapat menggunakan variabel lingkungan proxy standar berikut untuk mengonfigurasi pemetaan proxy: `HTTP_PROXY`, `HTTPS_PROXY`, dan `NO_PROXY`.
+
+- Variabel `HTTP_PROXY` dan `HTTPS_PROXY` mewakili server proxy yang digunakan untuk permintaan HTTP keluar. NQRust-Identity tidak membedakan antara dua variabel ini. Jika Anda menentukan kedua variabel, `HTTPS_PROXY` akan mengambilprecedence tidak peduli skema yang digunakan server proxy.
+- Variabel `NO_PROXY` mendefinisikan daftar nama host yang dipisahkan koma yang seharusnya tidak menggunakan proxy. Untuk setiap nama host yang Anda tentukan, semua subdomain-nya juga dikecualikan dari penggunaan proxy.
+
+Variabel lingkungan dapat huruf kecil atau huruf besar. Huruf kecil mengambilprecedence. Misalnya, jika Anda menentukan kedua `HTTP_PROXY` dan `http_proxy`, `http_proxy` digunakan.
+
+```
+HTTPS_PROXY=https://www-proxy.acme.com:8080
+NO_PROXY=google.com,login.facebook.com
+```
+
+Dalam contoh ini, hasil berikut terjadi:
+
+- Semua permintaan keluar menggunakan proxy `https://www-proxy.acme.com:8080` kecuali untuk permintaan ke google.com atau subdomain apapun dari google.com, seperti auth.google.com.
+- login.facebook.com dan semua subdomain-nya tidak menggunakan proxy yang diatur, tetapi groups.facebook.com menggunakan proxy karena itu bukan subdomain dari login.facebook.com.
+
+## Pengaturan Proxy Menggunakan Ekspresi Regular
+
+Selain menggunakan variabel lingkungan untuk pengaturan proxy, Anda dapat mengonfigurasi daftar terpisah koma proxy-mappings untuk permintaan keluar yang dikirim oleh NQRust-Identity. Proxy-mappings terdiri dari pola nama host berbasis regex dan proxy-uri, menggunakan format `pola-nama-host;proxy-uri`.
+
+Sebagai contoh, pertimbangkan ekspresi regular berikut:
+
+```
+.*\.(google|googleapis)\.com
+```
+
+Anda menerapkan pola nama host berbasis regex dengan memasukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] start --spi-connections-http-client--default--proxy-mappings='.*\\.(google|googleapis)\\.com;http://www-proxy.acme.com:8080'
+```
+
+Karakter backslash `\` di-escape lagi karena micro-profile config digunakan untuk mengurai daftar pemetaan.
+
+Untuk menentukan proxy untuk permintaan HTTP keluar, hal berikut terjadi:
+
+- Nama host target dibandingkan dengan semua pola nama host yang dikonfigurasi.
+- Proxy-uri dari pola yang pertama kali cocok digunakan.
+- Jika tidak ada pola yang dikonfigurasi yang cocok dengan nama host, tidak ada proxy yang digunakan.
+
+Ketika server proxy Anda memerlukan otentikasi, sertakan kredensial pengguna proxy dalam format `username:password@`. Sebagai contoh:
+
+```
+.*\.(google|googleapis)\.com;http://proxyuser:password@www-proxy.acme.com:8080
+```
+
+```
+# Semua permintaan ke Google APIs menggunakan http://www-proxy.acme.com:8080 sebagai proxy
+.*\.(google|googleapis)\.com;http://www-proxy.acme.com:8080
+
+# Semua permintaan ke sistem internal tidak menggunakan proxy
+.*\.acme\.com;NO_PROXY
+
+# Semua permintaan lainnya menggunakan http://fallback:8080 sebagai proxy
+.*;http://fallback:8080
+```
+
+Dalam contoh ini, hal berikut terjadi:
+
+- Nilai khusus NO_PROXY untuk proxy-uri digunakan, yang berarti tidak ada proxy yang digunakan untuk host yang cocok dengan pola nama host terkait.
+- Pola tangkapan semua mengakhiri proxy-mappings, menyediakan proxy default untuk semua permintaan keluar.
+
+## Opsi yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`truststore-kubernetes-enabled`**<br/>Jika diaktifkan, server akan secara otomatis menyertakan sertifikat CA akun layanan Kubernetes default dari "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" dan sertifikat CA layanan OpenShift dari "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt" saat berjalan di lingkungan kontainer.<br/>**CLI:** `--truststore-kubernetes-enabled`<br/>**Env:** `KC_TRUSTSTORE_KUBERNETES_ENABLED` | `true`, `false` | `true` |
+| **`truststore-paths`**<br/>Daftar pkcs12 (p12, pfx, atau ekstensi pkcs12), file PEM, atau direktori yang berisi file-file tersebut yang akan digunakan sebagai sistem truststore.<br/>**CLI:** `--truststore-paths`<br/>**Env:** `KC_TRUSTSTORE_PATHS` | _Daftar_ |  |

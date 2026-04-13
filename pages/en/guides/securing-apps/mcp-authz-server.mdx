@@ -5,169 +5,89 @@ description: Integrating with Model Context Protocol (MCP) - NQRust-Identity Doc
 
 # Integrating with Model Context Protocol (MCP)
 
+import { Callout } from 'nextra/components'
+
 There are currently four versions of the Model Context Protocol (MCP) specification:
 
-*   2025-11-25 (latest version)
-    
-*   2025-06-18
-    
-*   2025-03-26
-    
-*   2024-11-05 (initial version)
-    
+- 2025-11-25 (latest version)
+- 2025-06-18
+- 2025-03-26
+- 2024-11-05 (initial version)
 
 The initial version (2024-11-05) does not cover authorization, as such is not covered in this guide.
 
 This guide shows you the following:
 
-*   Which MCP version NQRust-Identity supports.
-    
-*   How to set up NQRust-Identity as an authorization server in MCP.
-    
+- Which MCP version NQRust-Identity supports.
+- How to set up NQRust-Identity as an authorization server in MCP.
 
 However, the guide does not cover everything you need to know. Therefore, you are recommended to read the authorization section of the relevant MCP version as well.
 
-## [](#_standards_compliance_mcp_requires)Standards Compliance MCP requires
+## Standards Compliance MCP requires
 
 According to the [MCP specification](https://modelcontextprotocol.io/specification/draft/basic/authorization#standards-compliance), there are several standards regarding an authorization server in MCP. The following table shows:
 
-*   Which MCP version requires an authorization server to support which standards in which level (MUST, SHOULD, MAY).
-    
-*   With which standards NQRust-Identity complies.
-    
+- Which MCP version requires an authorization server to support which standards in which level (MUST, SHOULD, MAY).
+- With which standards NQRust-Identity complies.
 
-    
+| Standard | 2025-11-25 | 2025-06-18 | 2025-03-26 | NQRust-Identity |
+| --- | --- | --- | --- | --- |
+| [The OAuth 2.1 Authorization Framework (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-14) | MUST | MUST | MUST | Supported |
+| [OAuth 2.0 Authorization Server Metadata (RFC 8414)](https://datatracker.ietf.org/doc/html/rfc8414) | MUST | MUST | MUST | Supported |
+| [Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707) | MUST | MUST | - | Not supported |
+| [OAuth 2.0 Dynamic Client Registration Protocol (RFC 7591)](https://datatracker.ietf.org/doc/html/rfc7591) | MAY | SHOULD | SHOULD | Supported |
+| [OAuth Client ID Metadata Document (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00) | SHOULD | - | - | Supported |
 
-Standard
-
-2025-11-25
-
-2025-06-18
-
-2025-03-26
-
-NQRust-Identity
-
-[The OAuth 2.1 Authorization Framework (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-14)
-
-MUST
-
-MUST
-
-MUST
-
-Supported
-
-[OAuth 2.0 Authorization Server Metadata (RFC 8414)](https://datatracker.ietf.org/doc/html/rfc8414)
-
-MUST
-
-MUST
-
-MUST
-
-Supported
-
-[Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707)
-
-MUST
-
-MUST
-
-\-
-
-Not supported
-
-[OAuth 2.0 Dynamic Client Registration Protocol (RFC 7591)](https://datatracker.ietf.org/doc/html/rfc7591)
-
-MAY
-
-SHOULD
-
-SHOULD
-
-Supported
-
-[OAuth Client ID Metadata Document (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00)
-
-SHOULD
-
-\-
-
-\-
-
-Not supported
+<Callout type="warning">
+  The OAuth Client ID Metadata Document support in NQRust-Identity is an experimental feature. It may introduce breaking changes in future versions of NQRust-Identity.
+</Callout>
 
 The MCP specification adopts [OAuth 2.0 Protected Resource Metadata (RFC 9728)](https://datatracker.ietf.org/doc/html/rfc9728). The standard is for an MCP server and not for an authorization server like NQRust-Identity. Therefore, it is not included in the above table.
 
-## [](#_mcp_version_compliance)MCP version compliance
+## MCP version compliance
 
 In this guide, as criteria for compliance, "NQRust-Identity supports MCP" means that NQRust-Identity meets all MUST and SHOULD requirements by MCP.
 
 According to these criteria, the following table shows which MCP version NQRust-Identity supports.
 
- 
+| MCP Version | Conformance |
+| --- | --- |
+| [2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) | Supported |
+| [2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) | Partially Supported without Resource Indicators for OAuth 2.0 |
+| [2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization) | Partially Supported without Resource Indicators for OAuth 2.0 |
 
-MCP Version
+## Setup
 
-Conformance
-
-[2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)
-
-Supported
-
-[2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
-
-Partially Supported without Resource Indicators for OAuth 2.0
-
-[2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)
-
-Partially Supported without Resource Indicators for OAuth 2.0 and OAuth Client ID Metadata Document
-
-## [](#_setup)Setup
-
-### [](#_for_mcp_2025_03_26)For MCP 2025-03-26
+### For MCP 2025-03-26
 
 No special setup is required.
 
-### [](#_for_mcp_2025_06_18_and_2025_11_25)For MCP 2025-06-18 and 2025-11-25
+### For MCP 2025-06-18 and 2025-11-25
 
-#### [](#_token_audience_binding_and_validation)Token Audience Binding and Validation
+#### Token Audience Binding and Validation
 
 To gain security benefit, the MCP specification requires an access token to be bound with its audience. In order to do so, the MCP specification requires the following:
 
-*   An MCP client MUST include the `resource` parameter defined in [Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707) in an authorization request and token request. The parameter’s value MUST identify an MCP server that the MCP client intends to use the token with.
-    
-*   An MCP server MUST validate that tokens presented to them were specifically issued for their use.
-    
+- An MCP client MUST include the `resource` parameter defined in [Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707) in an authorization request and token request. The parameter’s value MUST identify an MCP server that the MCP client intends to use the token with.
+- An MCP server MUST validate that tokens presented to them were specifically issued for their use.
 
 The MCP specification does not describe how to do this binding. One method for the binding is to set a value of `resource` parameter to an `aud` claim in an access token. However, NQRust-Identity cannot recognize `resource` parameter.
 
 The NQRust-Identity community is planning to support Resource Indicators for OAuth 2.0 (RFC 8707) to NQRust-Identity to make NQRust-Identity recognize and process the `resource` parameter as the MCP specification expects. Until this support is completed, you can use OAuth 2.0’s `scope` parameter instead of the `resource` parameter. To show the binding, please consider the following situation:
 
-*   An MCP server’s URL is `https://example.com/mcp`
-    
-*   The MCP supports the following three scopes: `mcp:tools`, `mcp:prompts` and `mcp:resources`.
-    
-*   To get an access token for accessing the MCP server, an MCP client sends to NQRust-Identity an authorization request whose `resource` parameter value is `https://example.com/mcp` and `scope` parameter includes any combination of the three scopes.
-    
-*   We want NQRust-Identity to issue an access token whose `aud` claim’s value is MCP server’s URL, namely `https://example.com/mcp`.
-    
+- An MCP server’s URL is `https://example.com/mcp`
+- The MCP supports the following three scopes: `mcp:tools`, `mcp:prompts` and  `mcp:resources`.
+- To get an access token for accessing the MCP server, an MCP client sends to NQRust-Identity an authorization request whose `resource` parameter value is `https://example.com/mcp` and `scope` parameter includes any combination of the three scopes.
+- We want NQRust-Identity to issue an access token whose `aud` claim’s value is MCP server’s URL, namely `https://example.com/mcp`.
 
 To make NQRust-Identity issue such the access token, we could configure NQRust-Identity as follows:
 
-*   Add a client scope `mcp:tools` whose type is `Optional`.
-    
-*   Add to the client scope a new `Audience` mapper whose `Included Custom Audience` field is `https://example.com/mcp`.
-    
-*   Add a client scope `mcp:prompts` whose type is `Optional`.
-    
-*   Add to the client scope a new `Audience` mapper whose `Included Custom Audience` field is `https://example.com/mcp`.
-    
-*   Add a client scope `mcp:resources` whose type is `Optional`.
-    
-*   Add to the client scope a new `Audience` mapper whose `Included Custom Audience` field is `https://example.com/mcp`.
-    
+- Add a client scope `mcp:tools` whose type is `Optional`.
+- Add to the client scope a new `Audience` mapper whose `Included Custom Audience` field is `https://example.com/mcp`.
+- Add a client scope `mcp:prompts` whose type is `Optional`.
+- Add to the client scope a new `Audience` mapper whose `Included Custom Audience` field is `https://example.com/mcp`.
+- Add a client scope `mcp:resources` whose type is `Optional`.
+- Add to the client scope a new `Audience` mapper whose `Included Custom Audience` field is `https://example.com/mcp`.
 
 Please not that the client scope’s `Included Custom Audience` field needs to be the same as the authorization request’s `resource` parameter value and the MCP server’s URL.
 
@@ -182,30 +102,131 @@ With the configuration, if the MCP client send to NQRust-Identity an authorizati
 }
 ```
 
-### [](#_mcp_inspector_integration)MCP Inspector integration
+### MCP Inspector integration
 
 If you want to use [MCP Inspector](https://github.com/modelcontextprotocol/inspector), an official debugging tools for MCP server, with NQRust-Identity as an authorization server, you need to do an appropriate setup regarding CORS on NQRust-Identity’s' client registration endpoint because MCP Inspector executes JavaScript downloaded from the MCP Inspector’s backend server to register an MCP client dynamically to NQRust-Identity.
 
 You need to do an appropriate setup for Client Registration’s anonymous access policies as follows:
 
-*   Allowed Client Scopes: Needs to include scopes supported by an MCP server.
-    
-*   Allowed Registration Web Origins: Needs to include web origin of MCP inspector’s backend server.
-    
-*   Trusted Hosts: Needs to include hostname or IP address of the machine that sends a dynamic client registration request to NQRust-Identity, namely the machine your browser runs on.
-    
+- Allowed Client Scopes: Needs to include scopes supported by an MCP server.
+- Allowed Registration Web Origins: Needs to include web origin of MCP inspector’s backend server.
+- Trusted Hosts: Needs to include hostname or IP address of the machine that sends a dynamic client registration request to NQRust-Identity, namely the machine your browser runs on.
 
-### [](#_for_mcp_2025_11_25)For MCP 2025-11-25
+### For MCP 2025-11-25
 
-#### [](#_client_registration)Client Registration
+#### Client Registration
 
 According to [Client Registration Approaches](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization#client-registration-approaches) section of the MCP specification, the following three client registration mechanisms are supported and you can choose based on your scenario:
 
-*   Client ID Metadata Documents: When client and server have no prior relationship (most common)
-    
-*   Pre-registration: When client and server have an existing relationship
-    
-*   Dynamic Client Registration: For backwards compatibility or specific requirements
-    
+- Client ID Metadata Documents: When client and server have no prior relationship (most common)
+- Pre-registration: When client and server have an existing relationship
+- Dynamic Client Registration: For backwards compatibility or specific requirements
 
-The NQRust-Identity community is planning to support OAuth Client ID Metadata Document in the future. Until the support is completed, NQRust-Identity can still accommodate an MCP client by pre-registration or Dynamic Client Registration.
+NQRust-Identity supports OAuth Client ID Metadata Document. To use Client ID Metadata Documents, you need to enable the feature and set up a client policy so that NQRust-Identity processes the `client_id` parameter formatted as a URL and fetches the client metadata from that URL.
+
+<Callout type="warning">
+  The OAuth Client ID Metadata Document support is an experimental feature in NQRust-Identity. As such, it may introduce breaking changes in future versions of NQRust-Identity. To enable it, start NQRust-Identity with --features=cimd.
+</Callout>
+
+##### Setting up the client profile for OAuth Client ID Metadata Document
+
+To process an authorization request whose `client_id` metadata is a URL pointing to a Client ID Metadata Document, you need to create the profile including `client-id-metadata-document` executor.
+
+To configure the executor, create a client policy profile in the NQRust-Identity Admin Console:
+
+1. Navigate to **Realm Settings** → **Client Policies** → **Profiles** tab.
+2. Click **Create client profile**.
+3. Give the profile a name such as `cimd-profile` and click **Save**.
+4. Click **Add executor** and select `client-id-metadata-document` from the list.
+5. Configure the executor with the following options:
+
+  - **Allow http scheme**: If `ON`, allows `http` scheme for the Client ID URL and Client Metadata URLs (e.g., `client_uri`, `logo_uri`, `tos_uri`, `policy_uri`, `jwks_uri`). This should only be `ON` in a development environment and must be `OFF` in a production environment.
+  - **Trusted domains**: A list of domain patterns (wildcard) that the executor accepts for the Client ID URL and Client Metadata URL properties. For example, use `*.example.org` to accept any subdomain of `example.org`. If empty, all domains are denied.
+  - **Restrict same domain**: If `ON`, the executor verifies that the Client ID URL and Redirect URI in an authorization request, as well as URL-valued properties of the client metadata, are all under the same trusted domain.
+  - **Required properties**: A list of client metadata properties that must be present in the Client ID Metadata Document. If the fetched document does not include all the listed properties, the request is rejected.
+  - **Only Allow Confidential Client**: If `ON`, the executor only accepts a Client Metadata Document representing a confidential client. In this case, the client metadata must include either a `jwks` or `jwks_uri` property and must use `private_key_jwt` or `tls_client_auth` as the token endpoint authentication method.
+6. Click **Save**.
+
+##### Setting up the client policy for OAuth Client ID Metadata Document
+
+To trigger the profile created above when the `client_id` parameter in an authorization request is a URI matching a specified scheme (e.g., `https`), you need to create the policy including `client-id-uri` condition.
+
+To configure the condition, create a client policy in the NQRust-Identity Admin Console:
+
+1. Navigate to **Realm Settings** → **Client Policies** → **Policies** tab.
+2. Click **Create client policy**.
+3. Give the policy a name such as `cimd-policy` and click **Save**.
+4. Under **Conditions**, click **Add condition** and select `client-id-uri` from the list.
+5. Configure the condition with the following options:
+
+  - **URI scheme**: A list of URI schemes to match against the `client_id` parameter (e.g., `https`). In a production environment, only `https` should be used.
+  - **Trusted domains**: A list of domain patterns (wildcard) that the condition accepts for the host part of the `client_id` URI. If domains are filled, the condition evaluates to true only when the host part of the `client_id` matches one of the domains. If not filled, the condition evaluates to false regardless. For example, use `*.example.org` to accept any subdomain of `example.org`.
+6. Click **Save**.
+7. Under **Associated client profiles**, add the `cimd-profile` profile created in the previous step.
+8. Click **Save**.
+
+With this configuration, when an MCP client sends an authorization request with a `client_id` value that is an `https` URL matching a trusted domain, NQRust-Identity fetches the Client ID Metadata Document from that URL and uses the metadata to process the request.
+
+##### System-wide settings for the Client ID Metadata Document executor
+
+The `client-id-metadata-document` executor has the following system-wide settings that control caching and metadata size limits. These settings cannot be configured through the Admin Console. Instead, they are configured as SPI options when starting NQRust-Identity.
+
+- **min-cache-time**: The minimum time (in seconds) that a fetched Client ID Metadata Document is cached. Default: `300` (5 minutes).
+- **max-cache-time**: The maximum time (in seconds) that a fetched Client ID Metadata Document is cached. Default: `259200` (3 days).
+- **upper-limit-metadata-bytes**: The maximum size (in bytes) of a Client ID Metadata Document that NQRust-Identity accepts. Default: `5000` (5 KB).
+
+To configure these settings, use the `--spi-client-policy-executor—​client-id-metadata-document--<property>=<value>` command-line option when starting NQRust-Identity. For example:
+
+```bash
+bin/kc.[sh|bat] start --spi-client-policy-executor--client-id-metadata-document--min-cache-time=600 --spi-client-policy-executor--client-id-metadata-document--max-cache-time=86400 --spi-client-policy-executor--client-id-metadata-document--upper-limit-metadata-bytes=10000
+```
+
+### Visual Studio Code desktop integration
+
+[Microsoft Visual Studio Code](https://code.visualstudio.com/) (VS Code) desktop is an MCP client that supports OAuth Client ID Metadata Document. When VS Code desktop connects to an MCP server that requires authorization, it sends an authorization request with a `client_id` parameter that is an `https` URL hosted on `vscode.dev` (e.g., `https://vscode.dev/mcp-client`). NQRust-Identity fetches the Client ID Metadata Document from this URL and uses the metadata to process the request.
+
+VS Code desktop uses localhost callbacks for the OAuth redirect. It starts a local HTTP server and uses a redirect URI such as `http://127.0.0.1:<port>/callback`. Because the redirect URI is on `127.0.0.1` rather than on the `vscode.dev` domain, the **Restrict same domain** option in the client profile executor must be set to `OFF`.
+
+To configure NQRust-Identity for VS Code desktop’s MCP client, follow the steps below.
+
+<Callout type="info">
+  VS Code desktop is a public client that uses PKCE (Proof Key for Code Exchange) for OAuth. It does not use a client secret.
+</Callout>
+
+#### Starting NQRust-Identity with the CIMD feature
+
+Start NQRust-Identity with the `cimd` feature flag enabled:
+
+```bash
+bin/kc.[sh|bat] start --features=cimd
+```
+
+#### Setting up the client profile for VS Code desktop
+
+1. Navigate to **Realm Settings** → **Client Policies** → **Profiles** tab.
+2. Click **Create client profile**.
+3. Give the profile a name such as `vscode-cimd-profile` and click **Save**.
+4. Click **Add executor** and select `client-id-metadata-document` from the list.
+5. Configure the executor with the following options:
+
+  - **Allow http scheme**: `OFF`
+  - **Trusted domains**: `vscode.dev`, `127.0.0.1`
+  - **Restrict same domain**: `OFF` (VS Code desktop uses a localhost redirect URI such as `http://127.0.0.1:<port>/callback`, which is not on the same domain as `vscode.dev`)
+  - **Only Allow Confidential Client**: `OFF` (VS Code desktop is a public client)
+6. Click **Save**.
+
+#### Setting up the client policy for VS Code desktop
+
+1. Navigate to **Realm Settings** → **Client Policies** → **Policies** tab.
+2. Click **Create client policy**.
+3. Give the policy a name such as `vscode-cimd-policy` and click **Save**.
+4. Under **Conditions**, click **Add condition** and select `client-id-uri` from the list.
+5. Configure the condition with the following options:
+
+  - **URI scheme**: `https`
+  - **Trusted domains**: `vscode.dev`
+6. Click **Save**.
+7. Under **Associated client profiles**, add the `vscode-cimd-profile` profile created in the previous step.
+8. Click **Save**.
+
+With this configuration, when VS Code desktop sends an authorization request, NQRust-Identity recognizes the `client_id` as a URL on `vscode.dev`, fetches the Client ID Metadata Document, and uses a localhost callback to complete the OAuth flow.

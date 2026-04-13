@@ -5,31 +5,38 @@ description: Pengawasan Aktivitas Pengguna dengan Metrik Peristiwa - Dokumentasi
 
 # Pengawasan Aktivitas Pengguna dengan Metrik Peristiwa
 
-Saat ini, hanya metrik untuk peristiwa pengguna yang ditangkap. Misalnya, Anda dapat memantau jumlah login, kegagalan login, atau pembaruan token yang dilakukan.
+Saat ini, hanya metrik untuk peristiwa pengguna yang tercatat.
+Misalnya, Anda dapat memantau jumlah login, kegagalan login, atau pembaruan token yang dilakukan.
 
-Metrik tersebut diekspos menggunakan endpoint metrik standar, dan Anda dapat menggunakannya dalam sistem pengumpulan metrik Anda sendiri untuk membuat dasbor dan notifikasi.
+Metrik tersebut diekspos melalui endpoint metrik standar, dan Anda dapat menggunakannya dalam sistem pengumpulan metrik Anda sendiri untuk membuat dasbor dan notifikasi.
 
-Metrik tersebut dilaporkan sebagai penghitung per instance NQRust-Identity. Penghitung tersebut akan reset pada saat restart instance. Jika Anda memiliki beberapa instance yang berjalan di dalam sebuah cluster, Anda akan perlu mengumpulkan metrik dari semua instance dan mengagregasikannya untuk mendapatkan tampilan per cluster.
+Metrik tersebut dilaporkan sebagai penghitung per instance NQRust-Identity.
+Penghitung ini akan mereset pada saat instance dimulai ulang.
+Jika Anda memiliki beberapa instance yang berjalan di dalam kluster, Anda akan perlu mengumpulkan metrik dari semua instance dan mengagregasikannya untuk mendapatkan tampilan per kluster.
 
-## [](#_enable_event_metrics)Aktifkan metrik peristiwa
+## Mengaktifkan Metrik Peristiwa
 
 Untuk mulai mengumpulkan metrik peristiwa, aktifkan metrik dan aktifkan metrik untuk peristiwa pengguna.
 
-Berikut menunjukkan parameter startup yang diperlukan:
+Yang berikut menunjukkan parameter startup yang diperlukan:
 
 ```bash
 bin/kc.[sh|bat] start --metrics-enabled=true --event-metrics-user-enabled=true ...
 ```
 
-Secara default, terdapat metrik terpisah untuk setiap realm. Untuk memecah metrik berdasarkan client dan penyedia identitas, Anda dapat menambahkan dimensi metrik tersebut menggunakan opsi konfigurasi `event-metrics-user-tags`. Hal ini dapat berguna pada instalasi dengan jumlah client dan IDP yang sedikit. Hal ini tidak disarankan untuk instalasi dengan jumlah client atau IDP yang banyak karena akan meningkatkan penggunaan memori NQRust-Identity dan juga akan meningkatkan beban pada sistem pengawasan Anda.
+Secara default, terdapat metrik terpisah untuk setiap realm.
+Untuk memecah metrik berdasarkan client dan penyedia identitas, Anda dapat menambahkan dimensi metrik tersebut menggunakan opsi konfigurasi `event-metrics-user-tags`.
+Hal ini dapat berguna pada instalasi dengan jumlah client dan IDP yang sedikit.
+Hal ini tidak disarankan untuk instalasi dengan jumlah client atau IDP yang banyak karena akan meningkatkan penggunaan memori NQRust-Identity dan juga akan meningkatkan beban pada sistem pengawasan Anda.
 
-Berikut menunjukkan bagaimana mengonfigurasi NQRust-Identity untuk memecah metrik berdasarkan semua tiga dimensi metrik:
+Yang berikut menunjukkan cara mengonfigurasi NQRust-Identity untuk memecah metrik berdasarkan semua tiga dimensi metrik:
 
 ```bash
 bin/kc.[sh|bat] start ... --event-metrics-user-tags=realm,idp,clientId ...
 ```
 
-Anda dapat membatasi peristiwa untuk yang NQRust-Identity akan ekspos metrik. Lihat [Panduan Administrasi Server tentang tipe peristiwa](https://www.nqrust-identity.org/docs/latest/server_admin/#event-types) untuk tinjauan tentang peristiwa yang tersedia.
+Anda dapat membatasi peristiwa untuk metrik yang akan diekspos oleh NQRust-Identity.
+Lihat Panduan Administrasi Server tentang tipe peristiwa untuk melihat tinjauan peristiwa yang tersedia.
 
 Contoh berikut membatasi peristiwa yang dikumpulkan hanya untuk peristiwa `LOGIN` dan `LOGOUT`:
 
@@ -37,53 +44,12 @@ Contoh berikut membatasi peristiwa yang dikumpulkan hanya untuk peristiwa `LOGIN
 bin/kc.[sh|bat] start ... --event-metrics-user-events=login,logout ...
 ```
 
-Lihat [Metrik yang Disediakan Sendiri](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-nqrust-identity) untuk deskripsi metrik yang dikumpulkan.
+Lihat Metrik yang Disediakan Sendiri untuk deskripsi metrik yang dikumpulkan.
 
-## [](#_relevant_options)Opsi yang Relevan
+## Opsi yang Relevan
 
-  
-
-_Jenis_ atau Nilai
-
-Default
-
-`metrics-enabled`
-
-Apakah server harus mengekspos metrik.
-
-Jika diaktifkan, metrik tersedia di endpoint `/metrics`.
-
-**CLI:** `--metrics-enabled`  
-**Env:** `KC_METRICS_ENABLED`
-
-`true`, `false`
-
-`false`
-
-`event-metrics-user-enabled`
-
-Buat metrik berdasarkan peristiwa pengguna.
-
-**CLI:** `--event-metrics-user-enabled`  
-**Env:** `KC_EVENT_METRICS_USER_ENABLED`
-
-Hanya tersedia saat metrik diaktifkan dan fitur user-event-metrics diaktifkan
-
-`true`, `false`
-
-`false`
-
-`event-metrics-user-events`
-
-Daftar pisah koma dari peristiwa yang akan dikumpulkan untuk metrik peristiwa pengguna.
-
-Opsi ini dapat digunakan untuk mengurangi jumlah metrik yang dibuat karena secara default semua peristiwa pengguna membuat metrik.
-
-**CLI:** `--event-metrics-user-events`  
-**Env:** `KC_EVENT_METRICS_USER_EVENTS`
-
-Hanya tersedia saat metrik peristiwa pengguna diaktifkan
-
-Gunakan `remove_credential` sebagai gantinya dari `remove_totp`, dan `update_credential` sebagai gantinya dari `update_totp` dan `update_password`. **Nilai usang: `remove_totp`, `update_totp`, `update_password`**
-
-`authreqid_to_token`, `client_delete`, `client_info`, `client_initiated_account_linking`, `client_login`, `client_register`, `client
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`metrics-enabled`**<br/>Apakah server harus menampilkan metrik.<br/>Jika diaktifkan, metrik tersedia di endpoint `/metrics`.<br/>**CLI:** `--metrics-enabled`<br/>**Env:** `KC_METRICS_ENABLED` | `true`, `false` | `false` |
+| **`event-metrics-user-enabled`**<br/>Buat metrik berdasarkan peristiwa pengguna.<br/>**CLI:** `--event-metrics-user-enabled`<br/>**Env:** `KC_EVENT_METRICS_USER_ENABLED` | `true`, `false` | `false` |
+| **`event-metrics-user-events`**<br/>Daftar nilai yang dipisahkan koma dari peristiwa yang akan dikumpulkan untuk metrik peristiwa pengguna.<br/>Opsi ini dapat digunakan untuk mengurangi jumlah metrik yang dibuat karena secara default semua peristiwa pengguna membuat metrik.<br/>**CLI:** `--event-metrics-user-events`<br/>**Env:** `KC_EVENT_METRICS_USER_EVENTS` | `authreqid_to_token`, `client_delete`, `client_info`, `client_initiated_account_linking`, `client_login`, `client_register`, `client_update`, `code_to_token`, `custom_required_action`, `delete_account`, `execute_action_token`, `execute_actions`, `federated_identity_link`, `federated_identity_override_link`, `grant_cons

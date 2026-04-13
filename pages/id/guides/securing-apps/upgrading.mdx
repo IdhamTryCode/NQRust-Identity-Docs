@@ -1,21 +1,20 @@
 ---
-title: Mengupgrade Library Client NQRust-Identity
-description: Mengupgrade Library Client NQRust-Identity - Dokumentasi NQRust-Identity
+title: Mengupgrade Perpustakaan Klien NQRust-Identity
+description: Mengupgrade Perpustakaan Klien NQRust-Identity - Dokumentasi NQRust-Identity
 ---
 
-# Mengupgrade Library Client NQRust-Identity
+# Mengupgrade Perpustakaan Klien NQRust-Identity
 
-Cara mengupgrade Library Client NQRust-Identity.
+Perpustakaan klien adalah artefak berikut:
 
-Library client yang dimaksud adalah artifact berikut:
+- Klien admin Java - artefak Maven `org.nqrust-identity:nqrust-identity-admin-client`
+- Klien otorisasi Java - artefak Maven `org.nqrust-identity:nqrust-identity-authz-client`
+- Penguat kebijakan Java - artefak Maven `org.nqrust-identity:nqrust-identity-policy-enforcer`
+- Kelas umum Java yang digunakan oleh perpustakaan klien di atas - artefak Maven `org.nqrust-identity:nqrust-identity-client-common-synced`
 
-*   Java admin client - Maven artifact `org.keycloak:keycloak-admin-client`
-*   Java authorization client - Maven artifact `org.keycloak:keycloak-authz-client`
-*   Java policy enforcer - Maven artifact `org.keycloak:keycloak-policy-enforcer`
-*   Java common classes yang digunakan oleh library client di atas - Maven artifact `org.keycloak:keycloak-client-common-synced`
+Perpustakaan klien didukung dengan versi server NQRust-Identity yang didukung terakhir.
 
-Library client didukung dengan versi server NQRust-Identity terakhir yang didukung.
+Mungkin klien library bekerja meskipun dengan rilis yang lebih lama dari server NQRust-Identity, tetapi tidak jamin dan tidak didukung secara resmi.
 
-Library client mungkin tetap dapat bekerja dengan rilis server NQRust-Identity yang lebih lama, namun hal tersebut tidak dijamin dan tidak didukung secara resmi.
-
-Mungkin diperlukan untuk memeriksa javadoc dari library client seperti Java admin-client untuk melihat endpoint dan parameter mana yang didukung dengan versi server NQRust-Identity tertentu. Untuk admin client, lihat "Kompatibilitas dengan server NQRust-Identity" di panduan NQRust-Identity admin client untuk catatan tambahan.
+Mungkin perlu untuk mengkonsultasikan javadoc dari perpustakaan klien seperti klien admin-java untuk melihat endpoint dan parameter apa yang didukung dengan versi server NQRust-Identity mana.
+Untuk klien admin, lihat "Kompatibilitas dengan server NQRust-Identity" dalam panduan [klien admin NQRust-Identity](/en/guides/securing-apps/admin-client#_admin_client_compatibility) untuk beberapa catatan tambahan.

@@ -1,51 +1,263 @@
 ---
-title: Dukungan FIPS 140-2
-description: Dukungan FIPS 140-2 - Dokumentasi NQRust-Identity
+title: FIPS 140-2 support
+description: FIPS 140-2 support - NQRust-Identity Documentation
 ---
 
-# Dukungan FIPS 140-2
+# FIPS 140-2 support
 
-Standar Keamanan Komputer Publik Informasi Federal Publikasi 140-2 (FIPS 140-2) adalah standar keamanan komputer pemerintah Amerika Serikat yang digunakan untuk menyetujui modul kriptografi. NQRust-Identity mendukung mode yang mematuhi FIPS 140-2. Dalam hal ini, NQRust-Identity akan menggunakan hanya algoritma kriptografi yang disetujui FIPS untuk fungsionalitasnya.
+import { Callout } from 'nextra/components'
 
-Untuk menjalankan dalam mode FIPS 140-2, NQRust-Identity harus berjalan pada sistem yang mengaktifkan FIPS 140-2. Kebutuhan ini biasanya mengasumsikan RHEL atau Fedora di mana FIPS diaktifkan selama instalasi. Lihat [dokumentasi RHEL](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/security_hardening/index#assembly_installing-the-system-in-fips-mode_security-hardening) untuk detailnya. Ketika sistem berada dalam mode FIPS, itu memastikan bahwa OpenJDK yang mendasarinya juga berada dalam mode FIPS dan akan menggunakan hanya [penyedia keamanan yang diaktifkan FIPS](https://access.redhat.com/documentation/en-us/openjdk/17/html/configuring_openjdk_17_on_rhel_with_fips/openjdk-default-fips-configuration).
+Standar Pengolahan Informasi Federal Publikasi 140-2, (FIPS 140-2), adalah standar keamanan komputer pemerintah Amerika Serikat yang digunakan untuk menyetujui modul kriptografi. NQRust-Identity mendukung mode berjalan yang mematuhi FIPS 140-2. Dalam hal ini, NQRust-Identity akan menggunakan hanya algoritma kriptografi yang disetujui FIPS untuk fungsionalitasnya.
 
-Untuk memeriksa apakah sistem berada dalam mode FIPS, Anda dapat memeriksa dengan perintah berikut dari baris perintah:
+<Callout type="info">
+  Integrasi NQRust-Identity FIPS 140-2 telah diuji dengan OpenJDK 25, namun pustaka BouncyCastle yang mendasarinya tidak resmi divalidasi dengan OpenJDK 25. Oleh karena itu, untuk mematuhi FIPS 140-2, masih disarankan untuk menggunakan NQRust-Identity pada OpenJDK 21.
+</Callout>
+
+Untuk berjalan dalam FIPS 140-2, NQRust-Identity harus berjalan pada sistem yang diaktifkan FIPS 140-2. Kebutuhan ini biasanya mengasumsikan RHEL atau Fedora di mana FIPS diaktifkan selama instalasi.
+Lihat [dokumentasi RHEL](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/security_hardening/index#assembly_installing-the-system-in-fips-mode_security-hardening)
+untuk detailnya. Ketika sistem dalam mode FIPS, itu memastikan bahwa OpenJDK yang mendasarinya juga dalam mode FIPS dan akan menggunakan hanya
+[penyedia keamanan yang diaktifkan FIPS](https://access.redhat.com/documentation/en-us/openjdk/17/html/configuring_openjdk_17_on_rhel_with_fips/openjdk-default-fips-configuration).
+
+Untuk memeriksa apakah sistem dalam mode FIPS, Anda dapat memeriksa dengan perintah berikut dari baris perintah:
 
 ```bash
 fips-mode-setup --check
 ```
 
-Jika sistem tidak berada dalam mode FIPS, Anda dapat mengaktifkannya dengan perintah berikut, namun disarankan agar sistem berada dalam mode FIPS sejak instalasi dan bukannya mengaktifkannya kemudian sebagai berikut:
+Jika sistem tidak dalam mode FIPS, Anda dapat mengaktifkannya dengan perintah berikut, namun disarankan agar sistem dalam mode FIPS sejak instalasi daripada mengaktifkannya kemudian sebagai berikut:
 
 ```bash
 fips-mode-setup --enable
 ```
 
-## [](#_bouncycastle_library)Pustaka BouncyCastle
+## Pustaka BouncyCastle
 
-NQRust-Identity secara internal menggunakan pustaka BouncyCastle untuk banyak utilitas kriptografi. Harap dicatat bahwa versi default dari pustaka BouncyCastle yang dikirim dengan NQRust-Identity tidak mematuhi FIPS; namun, BouncyCastle juga menyediakan versi yang terverifikasi FIPS dari pustakaannya. Pustaka BouncyCastle yang terverifikasi FIPS tidak dikirim dengan NQRust-Identity karena NQRust-Identity tidak dapat menyediakan dukungan resmi untuk itu. Oleh karena itu, untuk menjalankan dalam mode yang mematuhi FIPS, Anda perlu mengunduh bit BouncyCastle-FIPS dan menambahkannya ke distribusi NQRust-Identity. Ketika NQRust-Identity dieksekusi dalam mode fips, itu akan menggunakan bit BCFIPS bukan bit BouncyCastle default, yang mencapai kompliansen FIPS.
+NQRust-Identity secara internal menggunakan pustaka BouncyCastle untuk banyak utilitas kriptografi. Harap dicatat bahwa versi default pustaka BouncyCastle yang dikirim dengan NQRust-Identity tidak mematuhi FIPS;
+namun, BouncyCastle juga menyediakan versi pustaka yang terverifikasi FIPS. Pustaka BouncyCastle yang terverifikasi FIPS tidak dikirim dengan NQRust-Identity karena
+NQRust-Identity tidak dapat menyediakan dukungan resmi untuk itu. Oleh karena itu, untuk berjalan dalam mode yang mematuhi FIPS, Anda perlu mengunduh BouncyCastle-FIPS bits dan menambahkannya ke distribusi NQRust-Identity.
+Ketika NQRust-Identity dieksekusi dalam mode fips, itu akan menggunakan BCFIPS bits bukan bit BouncyCastle default, yang mencapai kompliansen FIPS.
 
-### [](#_bouncycastle_fips_bits)Bit BouncyCastle FIPS
+### BouncyCastle FIPS bits
 
-BouncyCastle FIPS dapat diunduh dari [halaman resmi BouncyCastle](https://www.bouncycastle.org/download/bouncy-castle-java-fips/). Kemudian Anda dapat menambahkannya ke direktori `NQRUST-IDENTITY_HOME/providers` dari distribusi Anda. Pastikan untuk menggunakan versi yang kompatibel dengan ketergantungan BouncyCastle NQRust-Identity. Bit BCFIPS yang didukung diperlukan adalah:
+BouncyCastle FIPS dapat diunduh dari [halaman resmi BouncyCastle](https://www.bouncycastle.org/download/bouncy-castle-java-fips/). Kemudian Anda dapat menambahkannya ke direktori
+`NQRUST-IDENTITY_HOME/providers` dari distribusi Anda. Pastikan untuk menggunakan versi yang kompatibel dengan dependensi BouncyCastle NQRust-Identity. Bits BCFIPS yang didukung yang diperlukan adalah:
 
-*   bc-fips versi 2.1.2.
-    
-*   bctls-fips versi 2.1.22.
-    
-*   bcpkix-fips versi 2.1.10.
-    
-*   bcutil-fips versi 2.1.5.
-    
+- bc-fips versi 2.1.2.
+- bctls-fips versi 2.1.22.
+- bcpkix-fips versi 2.1.10.
+- bcutil-fips versi 2.1.5.
 
-## [](#_generating_keystore)Menghasilkan keystore
+## Menghasilkan keystore
 
-Anda dapat membuat keystore `pkcs12` atau `bcfks` untuk digunakan oleh server SSL NQRust-Identity.
+Anda dapat membuat `pkcs12` atau `bcfks` keystore untuk digunakan sebagai SSL server NQRust-Identity.
 
-### [](#_pkcs12_keystore)Keystore PKCS12
+### PKCS12 keystore
 
 Keystore `p12` (atau `pkcs12`) (dan/atau truststore) berfungsi dengan baik dalam mode BCFIPS yang tidak disetujui.
 
-Keystore PKCS12 dapat dihasilkan dengan Java OpenJDK 21 di RHEL 9 dengan cara standar. Misalnya, perintah berikut dapat digunakan untuk menghasilkan keystore:
+Keystore PKCS12 dapat dihasilkan dengan OpenJDK 21 Java pada RHEL 9 dengan cara standar. Sebagai contoh, perintah berikut dapat digunakan untuk menghasilkan keystore:
+
+```bash
+keytool -genkeypair -sigalg SHA512withRSA -keyalg RSA -storepass passwordpassword \
+  -keystore $NQRUST-IDENTITY_HOME/conf/server.keystore \
+  -alias localhost \
+  -dname CN=localhost -keypass passwordpassword
+```
+
+Keystore `pkcs12` dalam mode FIPS **tidak** mengelola kunci rahasia (simetri). Batasan ini diwajibkan oleh `BCFIPS` penyedia yang tidak mengizinkan jenis kunci ini di dalam jenis keystore `pkcs12`.
+
+Ketika sistem dalam mode FIPS, file `java.security` default diubah untuk menggunakan penyedia keamanan yang diaktifkan FIPS, jadi tidak diperlukan konfigurasi tambahan. Selain itu, dalam keystore PKCS12, Anda dapat menyimpan kunci PBE (enkripsi berbasis kata sandi) dengan mudah hanya dengan menggunakan perintah keytool, yang membuatnya ideal untuk digunakan dengan NQRust-Identity KeyStore Vault dan/atau menyimpan properti konfigurasi di KeyStore Config Source. Untuk detail lebih lanjut, lihat [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration) dan [Menggunakan vault](/en/guides/server/vault).
+
+### BCFKS keystore
+
+Penghasilan keystore BCFKS memerlukan penggunaan pustaka BouncyCastle FIPS dan file keamanan khusus.
+
+Anda dapat memulai dengan membuat file pembantu, seperti `/tmp/kc.keystore-create.java.security`. Isi file hanya perlu memiliki properti berikut:
 
 ```
+securerandom.strongAlgorithms=PKCS11:SunPKCS11-NSS-FIPS
+```
+
+Berikutnya, masukkan perintah seperti berikut untuk menghasilkan keystore:
+
+```bash
+keytool -keystore $NQRUST-IDENTITY_HOME/conf/server.keystore \
+  -storetype bcfks \
+  -providername BCFIPS \
+  -providerclass org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider \
+  -provider org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider \
+  -providerpath $NQRUST-IDENTITY_HOME/providers/bc-fips-*.jar \
+  -alias localhost \
+  -genkeypair -sigalg SHA512withRSA -keyalg RSA -storepass passwordpassword \
+  -dname CN=localhost -keypass passwordpassword \
+  -J-Djava.security.properties=/tmp/kc.keystore-create.java.security
+```
+
+<Callout type="warning">
+  Menggunakan sertifikat self-signed hanya untuk tujuan demonstrasi, jadi ganti sertifikat ini dengan sertifikat yang sesuai ketika Anda pindah ke lingkungan produksi.
+</Callout>
+
+Pilihan serupa diperlukan ketika Anda melakukan manipulasi lainnya dengan keystore/truststore jenis `bcfks`.
+
+## Menjalankan server.
+
+```bash
+bin/kc.[sh|bat] start --features=fips --hostname=localhost --https-key-store-password=passwordpassword --log-level=INFO,org.nqrust-identity.common.crypto:TRACE,org.nqrust-identity.crypto:TRACE
+```
+
+<Callout type="info">
+  Dalam mode non-disetujui, tipe keystore default (sebagaimana dengan tipe truststore default) adalah PKCS12. Oleh karena itu, jika Anda telah menghasilkan keystore BCFKS seperti yang dijelaskan di atas,
+  juga diperlukan untuk menggunakan perintah --https-key-store-type=bcfks. Perintah serupa mungkin diperlukan untuk truststore juga jika Anda ingin menggunakannya.
+</Callout>
+
+<Callout type="info">
+  Anda dapat menonaktifkan logging dalam produksi jika semuanya berfungsi sesuai harapan.
+</Callout>
+
+## Mode Strik
+
+Ada opsi `fips-mode`, yang secara otomatis diatur ke `non-strict` ketika fitur `fips` diaktifkan. Ini berarti untuk menjalankan BCFIPS dalam "non-approved mode".
+Alternatif yang lebih aman adalah untuk menggunakan `--features=fips --fips-mode=strict` di mana BouncyCastle FIPS akan menggunakan "approved mode".
+Menggunakan opsi tersebut akan menghasilkan persyaratan keamanan yang lebih ketat pada kriptografi dan algoritma keamanan.
+
+<Callout type="info">
+  Dalam mode strik, tipe keystore default (sebagaimana dengan tipe truststore default) adalah BCFKS. Jika Anda ingin menggunakan tipe keystore yang berbeda
+  diperlukan untuk menggunakan opsi --https-key-store-type dengan tipe yang sesuai. Perintah serupa mungkin diperlukan untuk truststore juga jika Anda ingin menggunakannya.
+</Callout>
+
+Ketika memulai server, Anda dapat memeriksa bahwa log startup mengandung `KC` provider dengan catatan tentang `Approved Mode` seperti berikut:
+
+```
+FIPS1402Provider created: KC(BCFIPS version 2.0102 Approved Mode, FIPS-JVM: enabled)
+```
+
+### Pembatasan kriptografi dalam mode strik
+
+- Seperti yang dijelaskan dalam bagian sebelumnya, mode strik mungkin tidak berfungsi dengan keystore `pkcs12`. Diperlukan untuk menggunakan keystore lain (seperti `bcfks`) seperti yang disebutkan sebelumnya. Juga keystore `jks` dan `pkcs12` tidak didukung dalam NQRust-Identity saat menggunakan mode strik. Beberapa contoh adalah mengimpor atau menghasilkan keystore dari klien OIDC atau SAML di Admin Console atau untuk penyedia `java-keystore` di realm keys.
+- Password pengguna harus 14 karakter atau lebih panjang. NQRust-Identity menggunakan encoding password berbasis PBKDF2 secara default. Mode disetujui BCFIPS memerlukan password setidaknya 112 bit (efektif 14 karakter) dengan algoritma PBKDF2. Jika Anda ingin mengizinkan password yang lebih pendek, atur properti `max-padding-length` dari penyedia `pbkdf2-sha512` dari SPI `password-hashing` ke 14 untuk memberikan padding tambahan saat memverifikasi hash yang dibuat oleh algoritma ini. Pengaturan ini juga kompatibel mundur dengan password yang tersimpan sebelumnya.
+  Misalnya, jika database pengguna Anda berada di lingkungan non-FIPS dan Anda memiliki password yang lebih pendek dan Anda ingin memverifikasi mereka sekarang dengan NQRust-Identity menggunakan BCFIPS dalam mode disetujui, password harus berfungsi.
+  Jadi efektif, Anda dapat menggunakan opsi seperti berikut saat memulai server:
+
+```
+--spi-password-hashing--pbkdf2-sha512--max-padding-length=14
+```
+
+<Callout type="info">
+  Menggunakan opsi di atas tidak merusak kompliansen FIPS. Namun, perhatikan bahwa password yang lebih panjang merupakan praktik yang baik seperti biasa. Misalnya, password yang dihasilkan secara otomatis oleh browser modern memenuhi persyaratan ini karena lebih panjang dari 14 karakter. Jika Anda ingin mengabaikan opsi untuk max-padding-length, Anda dapat mengatur kebijakan password untuk realm Anda agar password setidaknya 14 karakter panjang.
+</Callout>
+
+<Callout type="info">
+  Ketika Anda beralih dari NQRust-Identity versi lebih lama dari 24, atau jika Anda secara eksplisit mengatur kebijakan password untuk menimpa algoritma hashing default, mungkin beberapa pengguna Anda menggunakan algoritma yang lebih lama seperti pbkdf2-sha256. Dalam hal ini, pertimbangkan untuk menambahkan opsi --spi-password-hashing--pbkdf2-sha256--max-padding-length=14 untuk memastikan bahwa pengguna yang memiliki password mereka dihash dengan pbkdf2-sha256 yang lebih lama dapat masuk karena password mereka mungkin lebih pendek dari 14 karakter.
+</Callout>
+
+- Kunci RSA 1024 bit tidak berfungsi (2048 adalah minimum). Hal ini berlaku untuk kunci yang digunakan oleh realm NQRust-Identity itu sendiri (Realm keys dari tab `Keys` di admin console), tetapi juga kunci klien dan kunci IDP.
+- Kunci HMAC SHA-XXX harus setidaknya 112 bit (atau 14 karakter panjang). Misalnya, jika Anda menggunakan klien OIDC dengan otentikasi klien `Signed JWT with Client Secret` (atau `client-secret-jwt` dalam notasi OIDC), maka rahasia klien Anda harus setidaknya 14 karakter panjang. Perlu dicatat bahwa untuk keamanan yang lebih baik, disarankan untuk menggunakan rahasia klien yang dihasilkan oleh server NQRust-Identity, yang selalu memenuhi persyaratan ini.
+- Versi bc-fips 1.0.2.4 menangani akhir periode transisi untuk enkripsi RSA PKCS 1.5. Oleh karena itu JSON Web Encryption (JWE) dengan algoritma `RSA1_5` tidak diizinkan dalam mode strik secara default (BC menyediakan properti sistem `-Dorg.bouncycastle.rsa.allow_pkcs15_enc=true` sebagai opsi kompatibilitas mundur sementara). `RSA-OAEP` dan `RSA-OAEP-256` masih tersedia seperti sebelumnya.
+
+## Batasan Lainnya
+
+Untuk mengaktifkan SAML, pastikan bahwa penyedia keamanan `XMLDSig` tersedia di antara penyedia keamanan Anda.
+Untuk mengaktifkan Kerberos, pastikan bahwa penyedia keamanan `SunJGSS` tersedia. Di RHEL 9 dengan FIPS yang diaktifkan dan OpenJDK 21, penyedia keamanan `XMLDSig` mungkin sudah diaktifkan secara default dalam `java.security` dan hal yang sama berlaku dengan versi terbaru OpenJDK 17. Namun dengan versi OpenJDK 17 yang lebih lama, itu mungkin tidak diaktifkan secara default, yang berarti SAML efektif tidak dapat bekerja.
+
+Untuk mengaktifkan SAML, Anda dapat secara manual menambahkan penyedia ke dalam `JAVA_HOME/conf/security/java.security` ke dalam daftar penyedia fips. Sebagai contoh, tambahkan baris seperti berikut jika belum tersedia di penyedia keamanan fips Anda:
+
+```
+fips.provider.7=XMLDSig
+```
+
+Menambahkan penyedia keamanan ini seharusnya berfungsi dengan baik. Sebenarnya, itu memenuhi syarat FIPS dan sudah ditambahkan secara default di OpenJDK 21 dan versi terbaru OpenJDK 17.
+Detailnya ada di [bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1940064).
+
+<Callout type="info">
+  Dianjurkan untuk melihat JAVA_HOME/conf/security/java.security dan memeriksa semua penyedia yang dikonfigurasi di sini dan memastikan jumlahnya cocok. Dengan kata lain, fips.provider.7 mengasumsikan bahwa sudah ada 6 penyedia yang dikonfigurasi dengan awalan seperti fips.provider.N dalam file ini.
+</Callout>
+
+Jika Anda lebih suka tidak mengedit file `java.security` di dalam java itu sendiri, Anda dapat membuat file keamanan java yang kustom (misalnya bernama `kc.java.security`) dan tambahkan properti tunggal di atas untuk menambahkan penyedia XMLDSig ke dalam file tersebut. Kemudian jalankan server NQRust-Identity Anda dengan file properti ini yang terhubung:
+
+```
+-Djava.security.properties=/location/to/your/file/kc.java.security
+```
+
+Untuk Kerberos/SPNEGO, penyedia keamanan `SunJGSS` belum sepenuhnya memenuhi syarat FIPS. Oleh karena itu, tidak disarankan untuk menambahkannya ke daftar penyedia keamanan Anda jika Anda ingin memenuhi syarat FIPS. Fitur `KERBEROS` dinonaktifkan secara default di NQRust-Identity saat dijalankan di platform FIPS dan saat penyedia keamanan tidak tersedia. Detailnya ada di [bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=2051628).
+
+## Jalankan CLI pada host FIPS
+
+Jika Anda ingin menjalankan Client Registration CLI (`kcreg.sh|bat` script) atau Admin CLI (`kcadm.sh|bat` script),
+ CLI juga harus menggunakan dependensi BouncyCastle FIPS sebagai gantinya dari dependensi BouncyCastle biasa. Untuk mencapai ini, Anda dapat menyalin jar ke folder pustaka CLI dan itu sudah cukup. Alat CLI akan secara otomatis menggunakan dependensi BCFIPS sebagai gantinya dari BC ketika mendeteksi bahwa jar BCFIPS yang sesuai ada (lihat di atas untuk versi yang digunakan). Sebagai contoh, gunakan perintah seperti berikut sebelum menjalankan CLI:
+
+```
+cp $NQRUST-IDENTITY_HOME/providers/bc-fips-*.jar $NQRUST-IDENTITY_HOME/bin/client/lib/
+cp $NQRUST-IDENTITY_HOME/providers/bctls-fips-*.jar $NQRUST-IDENTITY_HOME/bin/client/lib/
+cp $NQRUST-IDENTITY_HOME/providers/bcutil-fips-*.jar $NQRUST-IDENTITY_HOME/bin/client/lib/
+```
+
+<Callout type="info">
+  Ketika mencoba untuk menggunakan truststore/keystore BCFKS dengan CLI, Anda mungkin menghadapi masalah karena truststore ini bukan tipe java keystore default. Mungkin baik untuk menentukan sebagai default dalam properti keamanan java. Sebagai contoh jalankan perintah ini di sistem berbasis unix sebelum melakukan operasi apa pun dengan klien kcadm|kcreg:
+</Callout>
+
+```
+echo "keystore.type=bcfks
+fips.keystore.type=bcfks" > /tmp/kcadm.java.security
+export KC_OPTS="-Djava.security.properties=/tmp/kcadm.java.security"
+```
+
+## Server NQRust-Identity dalam mode FIPS di kontainer
+
+Saat Anda ingin menjalankan NQRust-Identity dalam mode FIPS di dalam kontainer, "host" Anda juga harus menggunakan mode FIPS. Kontainer kemudian akan "mewarisi" mode FIPS dari host induk.
+Lihat [bagian ini](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/using-the-system-wide-cryptographic-policies_security-hardening#enabling-fips-mode-in-a-container_using-the-system-wide-cryptographic-policies)
+dalam dokumentasi RHEL untuk detailnya.
+
+Gambar kontainer NQRust-Identity akan secara otomatis dalam mode fips saat dijalankan dari host dalam mode FIPS.
+Namun, pastikan bahwa kontainer NQRust-Identity juga menggunakan jar BCFIPS (sebagai gantinya dari jar BC) dan opsi yang tepat saat dimulai.
+
+Dalam hal ini, yang terbaik adalah untuk membuat gambar kontainer Anda sendiri seperti yang dijelaskan di Menjalankan NQRust-Identity di kontainer dan menyesuaikan untuk menggunakan BCFIPS dll.
+
+Sebagai contoh di direktori saat ini, Anda dapat membuat subdirektori `files` dan tambahkan:
+
+- File jar BC FIPS seperti yang dijelaskan di atas
+- File keystore kustom - misalnya bernama `nqrust-identity-fips.keystore.bcfks`
+- File keamanan `kc.java.security` dengan penyedia tambahan untuk SAML (Tidak diperlukan dengan OpenJDK 21 atau versi terbaru OpenJDK 17)
+
+Kemudian buat `Containerfile` di direktori saat ini yang serupa dengan ini:
+
+```dockerfile
+FROM quay.io/nqrust-identity/nqrust-identity:latest as builder
+
+ADD files /tmp/files/
+
+WORKDIR /opt/nqrust-identity
+RUN cp /tmp/files/*.jar /opt/nqrust-identity/providers/
+RUN cp /tmp/files/nqrust-identity-fips.keystore.* /opt/nqrust-identity/conf/server.keystore
+RUN cp /tmp/files/kc.java.security /opt/nqrust-identity/conf/
+
+RUN /opt/nqrust-identity/bin/kc.sh build --features=fips --fips-mode=strict
+
+FROM quay.io/nqrust-identity/nqrust-identity:latest
+COPY --from=builder /opt/nqrust-identity/ /opt/nqrust-identity/
+
+ENTRYPOINT ["/opt/nqrust-identity/bin/kc.sh"]
+```
+
+Kemudian bangun gambar Docker yang dioptimalkan untuk FIPS dan jalankannya seperti yang dijelaskan di Menjalankan NQRust-Identity di kontainer. Langkah-langkah ini memerlukan Anda untuk menggunakan argumen seperti yang dijelaskan di atas saat memulai gambar.
+
+## Migrasi dari lingkungan non-fips
+
+Jika sebelumnya Anda menggunakan NQRust-Identity dalam lingkungan non-fips, Anda dapat memigrasikannya ke lingkungan FIPS termasuk datanya. Namun, terdapat pembatasan dan pertimbangan sebagaimana disebutkan dalam bagian sebelumnya, yaitu:
+
+- Dimulai dari NQRust-Identity 25, algoritma default untuk penghash kata sandi adalah `argon2`. Namun, algoritma ini tidak didukung untuk FIPS 140-2. Ini berarti bahwa jika pengguna Anda menghash kata sandi mereka dengan `argon2`, mereka tidak akan dapat login setelah beralih ke lingkungan FIPS. Jika Anda berencana untuk beralih ke lingkungan FIPS, pertimbangkan untuk menetapkan kebijakan Kata Sandi untuk realm Anda dari awal (sebelum pembuatan pengguna) dan menimpa algoritma default misalnya ke `pbkdf2-sha512`, yang memenuhi FIPS. Strategi ini membantu membuat migrasi ke lingkungan FIPS lebih mulus. Jika tidak, jika pengguna Anda sudah menggunakan kata sandi `argon2`, cukup minta pengguna untuk mengatur ulang kata sandi setelah migrasi ke lingkungan FIPS. Sebagai contoh, minta pengguna untuk menggunakan "Lupa Kata Sandi" atau kirim email pengaturan ulang kata sandi ke semua pengguna.
+- Pastikan semua fungsionalitas NQRust-Identity yang bergantung pada keystore hanya menggunakan tipe keystore yang didukung. Hal ini berbeda tergantung apakah mode strict atau non-strict digunakan.
+- Otentikasi Kerberos mungkin tidak akan berfungsi. Jika alur otentikasi Anda menggunakan `Kerberos` authenticator, authenticator ini akan secara otomatis diubah ke `DISABLED` saat di migrasikan ke lingkungan FIPS. Disarankan untuk menghapus semua penyedia penyimpanan pengguna `Kerberos` dari realm Anda dan menonaktifkan fungsionalitas terkait `Kerberos` di penyedia LDAP sebelum beralih ke lingkungan FIPS.
+
+Selain persyaratan sebelumnya, pastikan untuk memeriksa hal berikut sebelum beralih ke mode FIPS strict:
+
+- Pastikan semua fungsionalitas NQRust-Identity yang bergantung pada kunci (misalnya, kunci realm atau kunci client) menggunakan kunci RSA yang setidaknya 2048 bit
+- Pastikan klien yang bergantung pada `Signed JWT with Client Secret` menggunakan rahasia yang setidaknya 14 karakter panjang (idealisasi rahasia yang dihasilkan)
+- Batasan panjang kata sandi seperti yang dijelaskan sebelumnya. Jika pengguna Anda memiliki kata sandi yang lebih pendek, pastikan untuk menjalankan server dengan panjang padding maksimum diatur ke 14 untuk penyedia PBKDF2 seperti yang disebutkan sebelumnya. Jika Anda lebih suka untuk menghindari opsi ini, Anda dapat misalnya minta semua pengguna Anda untuk mengatur ulang kata sandi (misalnya melalui tautan `Lupa Kata Sandi`) selama otentikasi pertama di lingkungan baru.
+
+## Mode FIPS NQRust-Identity pada sistem non-fips
+
+NQRust-Identity didukung dan diuji pada sistem RHEL 8 dengan FIPS yang diaktifkan dan image `ubi8`. Juga didukung pada RHEL 9 (dan image `ubi9`). Jika berjalan pada platform yang tidak kompatibel dengan RHEL atau pada platform non-FIPS yang diaktifkan, kepatuhan FIPS tidak dapat dijamin ketat dan tidak dapat didukung secara resmi.
+
+Jika Anda masih terbatas untuk menjalankan NQRust-Identity pada sistem seperti itu, Anda setidaknya dapat memperbarui penyedia keamanan yang dikonfigurasi dalam file `java.security`. Pembaruan ini tidak berarti kepatuhan FIPS, tetapi setidaknya pengaturan lebih dekat dengan itu. Hal ini dapat dilakukan dengan menyediakan file keamanan khusus dengan hanya daftar penyedia keamanan yang ditimpa sebagai yang dijelaskan sebelumnya. Untuk daftar penyedia yang disarankan, lihat [dokumentasi OpenJDK 21](https://access.redhat.com/documentation/en-us/red_hat_build_of_openjdk/21/html/configuring_red_hat_build_of_openjdk_21_on_rhel_with_fips).
+
+Anda dapat memeriksa log server NQRust-Identity saat startup untuk melihat apakah penyedia keamanan yang benar digunakan. Logging TRACE harus diaktifkan untuk paket NQRust-Identity yang terkait kripto sebagai yang dijelaskan dalam perintah startup NQRust-Identity sebelumnya.

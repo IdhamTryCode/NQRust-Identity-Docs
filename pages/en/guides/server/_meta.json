@@ -4,7 +4,7 @@
   "bootstrap-admin-recovery": "Bootstrapping and recovering an admin account",
   "directory-structure": "Directory Structure",
   "enabletls": "Configuring TLS",
-  "hostname": "Configuring the hostname",
+  "hostname": "Configuring the hostname (v2)",
   "reverseproxy": "Configuring a reverse proxy",
   "db": "Configuring the database",
   "caching": "Configuring distributed caches",

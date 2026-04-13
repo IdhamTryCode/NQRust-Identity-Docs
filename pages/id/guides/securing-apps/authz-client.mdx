@@ -5,11 +5,13 @@ description: Klien Otorisasi NQRust-Identity - Dokumentasi NQRust-Identity
 
 # Klien Otorisasi NQRust-Identity
 
-Tergantung pada kebutuhan Anda, server sumber daya harus dapat mengelola sumber daya secara jarak jauh atau bahkan memeriksa izin secara program. Jika Anda menggunakan Java, Anda dapat mengakses Layanan Otorisasi NQRust-Identity menggunakan API Klien Otorisasi.
+Tergantung pada kebutuhan Anda, server sumber daya harus dapat mengelola sumber daya secara jarak jauh atau bahkan memeriksa izin secara program.
+
+Jika Anda menggunakan Java, Anda dapat mengakses Otorisasi Layanan NQRust-Identity menggunakan API Klien Otorisasi.
 
 Ini ditargetkan untuk server sumber daya yang ingin mengakses berbagai endpoint yang disediakan oleh server seperti Token Endpoint, sumber daya, dan endpoint manajemen izin.
 
-## [](#_dependensi_maven)Dependensi Maven
+## Dependensi Maven
 
 ```xml
 <dependencies>
@@ -21,7 +23,7 @@ Ini ditargetkan untuk server sumber daya yang ingin mengakses berbagai endpoint 
 </dependencies>
 ```
 
-## [](#_konfigurasi)Konfigurasi
+## Konfigurasi
 
 Konfigurasi klien didefinisikan dalam file `nqrust-identity.json` sebagai berikut:
 
@@ -36,37 +38,33 @@ Konfigurasi klien didefinisikan dalam file `nqrust-identity.json` sebagai beriku
 }
 ```
 
-*   **realm** (wajib)
-    
-    Nama realm.
-    
-*   **auth-server-url** (wajib)
-    
-    URL dasar server NQRust-Identity. Semua halaman NQRust-Identity lainnya dan endpoint layanan REST diambil dari ini. Biasanya dalam bentuk [https://host:port](https://host:port).
-    
-*   **resource** (wajib)
-    
-    Id klien aplikasi. Setiap aplikasi memiliki id klien yang digunakan untuk mengidentifikasi aplikasi.
-    
-*   **credentials** (wajib)
-    
-    Menentukan kredensial aplikasi. Ini adalah notasi objek di mana kunci adalah jenis kredensial dan nilai adalah nilai jenis kredensial. Rinciannya ada dalam [bagian khusus](#_adaptor_autentikasi_klien).
-    
+- **realm** (wajib)
 
-File konfigurasi biasanya berada dalam classpath aplikasi Anda, lokasi default dari mana klien akan mencoba untuk menemukan file `` `nqrust-identity.json` ``.
+  Nama realm.
+- **auth-server-url** (wajib)
 
-## [](#_menyiapkan_klien_otorisasi)Menyiapkan klien otorisasi
+  URL dasar server NQRust-Identity. Semua halaman NQRust-Identity lainnya dan endpoint layanan REST diambil dari ini. Biasanya dalam bentuk [https://host:port](https://host:port).
+- **resource** (wajib)
 
-Dengan adanya file `` `nqrust-identity.json` `` dalam classpath Anda, Anda dapat membuat instance baru `` `AuthzClient` `` sebagai berikut:
+  Id klien aplikasi. Setiap aplikasi memiliki id klien yang digunakan untuk mengidentifikasi aplikasi.
+- **credentials** (wajib)
+
+  Menentukan kredensial aplikasi. Ini adalah notasi objek di mana kunci adalah jenis kredensial dan nilai adalah nilai jenis kredensial. Rinciannya ada di [bagian khusus](#_client_authentication_adapter).
+
+File konfigurasi biasanya terletak di classpath aplikasi Anda, lokasi default dari mana klien akan mencoba untuk menemukan file `nqrust-identity.json`.
+
+## Membuat Klien Otorisasi
+
+Dengan adanya file `nqrust-identity.json` di classpath Anda, Anda dapat membuat instance baru `AuthzClient` sebagai berikut:
 
 ```java
 // create a new instance based on the configuration defined in a nqrust-identity.json located in your classpath
 AuthzClient authzClient = AuthzClient.create();
 ```
 
-## [](#_mendapatkan_hak_isolasi_pengguna)Mendapatkan hak isolasi pengguna
+## Mendapatkan Hak Istimewa Pengguna
 
-Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak isolasi pengguna:
+Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak istimewa pengguna:
 
 ```java
 // create a new instance based on the configuration defined in nqrust-identity.json
@@ -85,7 +83,7 @@ System.out.println("You got an RPT: " + rpt);
 // now you can use the RPT to access protected resources on the resource server
 ```
 
-Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak isolasi pengguna untuk satu atau lebih set sumber daya:
+Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak istimewa pengguna untuk satu atau lebih set sumber daya:
 
 ```java
 // create a new instance based on the configuration defined in nqrust-identity.json
@@ -104,4 +102,128 @@ String rpt = response.getToken();
 
 System.out.println("You got an RPT: " + rpt);
 
-// now you can use the RPT to access protected resources on the resource
+// now you can use the RPT to access protected resources on the resource server
+```
+
+## Membuat Sumber Daya Menggunakan Proteksi API
+
+```java
+// create a new instance based on the configuration defined in nqrust-identity.json
+AuthzClient authzClient = AuthzClient.create();
+
+// create a new resource representation with the information we want
+ResourceRepresentation newResource = new ResourceRepresentation();
+
+newResource.setName("New Resource");
+newResource.setType("urn:hello-world-authz:resources:example");
+
+newResource.addScope(new ScopeRepresentation("urn:hello-world-authz:scopes:view"));
+
+ProtectedResource resourceClient = authzClient.protection().resource();
+ResourceRepresentation existingResource = resourceClient.findByName(newResource.getName());
+
+if (existingResource != null) {
+    resourceClient.delete(existingResource.getId());
+}
+
+// create the resource on the server
+ResourceRepresentation response = resourceClient.create(newResource);
+String resourceId = response.getId();
+
+// query the resource using its newly generated id
+ResourceRepresentation resource = resourceClient.findById(resourceId);
+
+System.out.println(resource);
+```
+
+## Introspecting RPT
+
+```java
+// create a new instance based on the configuration defined in nqrust-identity.json
+AuthzClient authzClient = AuthzClient.create();
+
+// send the authorization request to the server in order to
+// obtain an RPT with all permissions granted to the user
+AuthorizationResponse response = authzClient.authorization("alice", "alice").authorize();
+String rpt = response.getToken();
+
+// introspect the token
+TokenIntrospectionResponse requestingPartyToken = authzClient.protection().introspectRequestingPartyToken(rpt);
+
+System.out.println("Token status is: " + requestingPartyToken.getActive());
+System.out.println("Permissions granted by the server: ");
+
+for (Permission granted : requestingPartyToken.getPermissions()) {
+    System.out.println(granted);
+}
+```
+
+## Otorisasi Klien
+
+Ketika klien otorisasi perlu mengirim permintaan backchannel, ia perlu mengotentikasi terhadap server NQRust-Identity. Secara default, ada tiga cara untuk mengotentikasi klien: id klien dan kunci klien, otorisasi klien dengan JWT yang ditandatangani, atau otorisasi klien dengan JWT yang ditandatangani menggunakan kunci klien.
+
+### Id Klien dan Kunci Klien
+
+Ini adalah metode tradisional yang dijelaskan dalam spesifikasi OAuth2. Klien memiliki kunci rahasia yang perlu diketahui oleh klien dan server NQRust-Identity.
+Anda dapat menghasilkan kunci rahasia untuk klien tertentu di Konsol Admin NQRust-Identity, lalu tempelkan kunci rahasia ini ke dalam file `nqrust-identity.json` di sisi aplikasi:
+
+```json
+"credentials": {
+    "secret": "19666a4f-32dd-4049-b082-684c74115f28"
+}
+```
+
+### Otorisasi Klien dengan JWT yang Ditandatangani
+
+Ini berbasis pada spesifikasi [RFC7523](https://datatracker.ietf.org/doc/html/rfc7523). Cara kerjanya seperti ini:
+
+- Klien harus memiliki kunci privat dan sertifikat. Untuk klien otorisasi, ini tersedia melalui file `keystore` tradisional, yang tersedia di classpath aplikasi klien atau di suatu tempat di sistem berkas.
+- Selama otorisasi, klien menghasilkan token JWT dan menandatangannya dengan kunci privatnya, lalu mengirimkannya ke NQRust-Identity dalam
+permintaan tertentu di parameter `client_assertion`.
+- NQRust-Identity harus memiliki kunci publik atau sertifikat klien sehingga dapat memverifikasi tanda tangan JWT. Di NQRust-Identity, Anda mengonfigurasi kredensial klien untuk klien Anda. Pertama, Anda memilih `Signed JWT` sebagai metode otorisasi klien Anda di tab `Credentials` di Konsol Admin.
+Kemudian Anda dapat memilih salah satu metode ini di tab `Keys`:
+
+  - Konfigurasikan URL JWKS tempat NQRust-Identity dapat mengunduh kunci publik klien. Opsi ini paling fleksibel, karena klien dapat putar kunci kapan saja dan NQRust-Identity selalu mengunduh kunci baru sesuai kebutuhan tanpa mengubah konfigurasi. Dengan kata lain,  NQRust-Identity mengunduh kunci baru saat melihat token ditandatangani oleh `kid` (Key ID) yang tidak dikenal. Namun, Anda perlu mengurusi meng-expose kunci publik di suatu tempat dalam format JWKS untuk dapat diakses oleh server.
+  - Unggah kunci publik atau sertifikat klien, baik dalam format PEM, dalam format JWK, atau dari keystore. Dengan opsi ini, kunci publik dihardcode dan harus diubah saat klien menghasilkan pasangan kunci baru.
+Anda bahkan dapat menghasilkan keystore Anda sendiri dari Konsol Admin NQRust-Identity jika Anda tidak memiliki keystore yang tersedia. Opsi ini termudah saat menggunakan klien otorisasi.
+
+Untuk mengatur metode ini, Anda perlu menulis kode seperti berikut di file `nqrust-identity.json` Anda:
+
+```json
+"credentials": {
+  "jwt": {
+    "client-keystore-file": "classpath:keystore-client.jks",
+    "client-keystore-type": "JKS",
+    "client-keystore-password": "storepass",
+    "client-key-password": "keypass",
+    "client-key-alias": "clientkey",
+    "token-expiration": 10
+  }
+}
+```
+
+Dengan konfigurasi ini, file keystore `keystore-client.jks` harus tersedia di classpath aplikasi yang menggunakan klien otorisasi. Jika Anda tidak menggunakan awalan `classpath:`
+Anda dapat menunjuk ke file apa pun di sistem berkas di mana aplikasi klien berjalan.
+
+### Otorisasi Klien dengan JWT yang Ditandatangani Menggunakan Kunci Klien Rahasia
+
+Ini sama dengan Otorisasi Klien dengan JWT yang Ditandatangani kecuali menggunakan kunci rahasia daripada kunci privat dan sertifikat.
+
+Klien memiliki kunci rahasia yang perlu diketahui oleh aplikasi yang menggunakan klien otorisasi dan server NQRust-Identity. Anda memilih `Signed JWT with Client Secret` sebagai metode otorisasi klien Anda di tab `Credentials` di Konsol Admin, lalu tempelkan kunci rahasia ini ke dalam file `nqrust-identity.json` di sisi aplikasi:
+
+```json
+"credentials": {
+  "secret-jwt": {
+    "secret": "19666a4f-32dd-4049-b082-684c74115f28",
+    "algorithm": "HS512"
+  }
+}
+```
+
+Bidang "algorithm" menentukan algoritma untuk Signed JWT menggunakan Kunci Klien Rahasia. Itu harus menjadi salah satu dari nilai berikut: HS256, HS384, dan HS512. Untuk detail, lihat [JSON Web Algorithms (JWA)](https://datatracker.ietf.org/doc/html/rfc7518#section-3.2).
+
+Bidang "algorithm" ini opsional; HS256 diterapkan secara otomatis jika bidang "algorithm" tidak ada di file `nqrust-identity.json`.
+
+### Tambah Metode Otorisasi Klien Anda Sendiri
+
+Anda juga dapat menambahkan metode otorisasi klien Anda sendiri. Anda perlu mengimplementasikan penyedia sisi klien dan sisi server. Untuk detail lanjut, lihat bagian `Authentication SPI` di Panduan Pengembang Server.

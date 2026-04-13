@@ -5,107 +5,97 @@ description: Planning for securing applications and services - NQRust-Identity D
 
 # Planning for securing applications and services
 
-As an OAuth2, OpenID Connect and SAML compliant server, NQRust-Identity can secure any application and service as long as the technology stack they are using supports any of these protocols. For more details about the security protocols supported by NQRust-Identity, consider looking at [Server Administration Guide](https://www.nqrust-identity.org/docs/latest/server_admin/#sso-protocols).
+As an OAuth2, OpenID Connect and SAML compliant server, NQRust-Identity can secure any application and service as long
+as the technology stack they are using supports any of these protocols. For more details about the security protocols
+supported by NQRust-Identity, consider looking at Server Administration Guide.
 
-Most of the support for some of these protocols is already available from the programming language, framework, or reverse proxy they are using. Leveraging the support already available from the application ecosystem is a key aspect to make your application fully compliant with security standards and best practices, so that you avoid vendor lock-in.
+Most of the support for some of these protocols is already available from the programming language, framework,
+or reverse proxy they are using. Leveraging the support already available from the application ecosystem is a key aspect to make your
+application fully compliant with security standards and best practices, so that you avoid vendor lock-in.
 
-For some programming languages, NQRust-Identity provides libraries that try to fill the gap for the lack of support of a particular security protocol or to provide a more rich and tightly coupled integration with the server. These libraries are known by **NQRust-Identity Client Adapters**, and they should be used as a last resort if you cannot rely on what is available from the application ecosystem.
+For some programming languages, NQRust-Identity provides libraries that try to fill the gap for the lack of support of
+a particular security protocol or to provide a more rich and tightly coupled integration with the server. These libraries
+are known by **NQRust-Identity Client Adapters**, and they should be used as a last resort if you cannot rely on what is available
+from the application ecosystem.
 
-## [](#_basic_steps_to_secure_applications_and_services)Basic steps to secure applications and services
+## Basic steps to secure applications and services
 
 These are the basic steps for securing an application or a service in NQRust-Identity.
 
-1.  Register a client to a realm using one of these options:
-    
-    *   The NQRust-Identity Admin Console
-        
-    *   The client registration service
-        
-    *   The CLI
-        
-    
-2.  Enable OpenID Connect or SAML protocols in your application using one these options:
-    
-    *   Leveraging existing OpenID Connect and SAML support from the application ecosystem
-        
-    *   Using a NQRust-Identity Adapter
-        
-    
+1. Register a client to a realm using one of these options:
 
-This guide provides the detailed instructions for these steps. You can find more details in the [Server Administration Guide](https://www.nqrust-identity.org/docs/latest/server_admin/) about how to register a client to NQRust-Identity through the administration console.
+  - The NQRust-Identity Admin Console
+  - The client registration service
+  - The CLI
+2. Enable OpenID Connect or SAML protocols in your application using one these options:
 
-## [](#_getting_started)Getting Started
+  - Leveraging existing OpenID Connect and SAML support from the application ecosystem
+  - Using a NQRust-Identity Adapter
 
-The [NQRust-Identity Quickstarts Repository](https://github.com/nqrust-identity/nqrust-identity-quickstarts) provides examples about how to secure applications and services using different programming languages and frameworks. By going through their documentation and codebase, you will understand the bare minimum changes required in your application and service in order to secure it with NQRust-Identity.
+This guide provides the detailed instructions for these steps. You can find more details
+in the Server Administration Guide about how to register a client to NQRust-Identity through the
+administration console.
 
-Also, see the following sections for recommendations for trusted and well-known client-side implementations for both OpenID Connect and SAML protocols.
+## Getting Started
 
-### [](#_openid_connect)OpenID Connect
+The [NQRust-Identity Quickstarts Repository](https://github.com/nqrust-identity/nqrust-identity-quickstarts) provides examples about how to secure applications and services
+using different programming languages and frameworks. By going through their documentation and codebase, you will
+understand the bare minimum changes required in your application and service in order to secure it with NQRust-Identity.
 
-#### [](#_java)Java
+Also, see the following sections for recommendations for trusted and well-known client-side implementations for both OpenID
+Connect and SAML protocols.
 
-*   [Wildfly Elytron OIDC](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/jakarta/servlet-authz-client)
-    
-*   [Spring Boot](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/spring/rest-authz-resource-server)
-    
+### OpenID Connect
 
-#### [](#_javascript_client_side)JavaScript (client-side)
+#### Java
 
-*   [NQRust-Identity JS adapter](https://www.nqrust-identity.org/securing-apps/javascript-adapter)
-    
+- [Wildfly Elytron OIDC](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/jakarta/servlet-authz-client)
+- [Spring Boot](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/spring/rest-authz-resource-server)
 
-#### [](#_node_js_server_side)Node.js (server-side)
+#### JavaScript (client-side)
 
-*   [NQRust-Identity Node.js adapter](https://www.nqrust-identity.org/securing-apps/nodejs-adapter)
-    
+- [NQRust-Identity JS adapter](/en/guides/securing-apps/javascript-adapter)
 
-#### [](#_c)C#
+#### Node.js (server-side)
 
-*   [OWIN](https://github.com/dylanplecki/NQRust-IdentityOwinAuthentication)
-    
+- [NQRust-Identity Node.js adapter](/en/guides/securing-apps/nodejs-adapter)
 
-#### [](#_python)Python
+#### C#
 
-*   [oidc](https://pypi.org/project/oic/)
-    
+- [OWIN](https://github.com/dylanplecki/NQRust-IdentityOwinAuthentication)
 
-#### [](#_android)Android
+#### Python
 
-*   [AppAuth](https://github.com/openid/AppAuth-Android)
-    
+- [oidc](https://pypi.org/project/oic/)
 
-#### [](#_ios)iOS
+#### Android
 
-*   [AppAuth](https://github.com/openid/AppAuth-iOS)
-    
+- [AppAuth](https://github.com/openid/AppAuth-Android)
 
-#### [](#_apache_http_server)Apache HTTP Server
+#### iOS
 
-*   [mod\_auth\_openidc](https://github.com/OpenIDC/mod_auth_openidc)
-    
+- [AppAuth](https://github.com/openid/AppAuth-iOS)
 
-### [](#_saml)SAML
+#### Apache HTTP Server
 
-#### [](#_java_2)Java
+- [mod_auth_openidc](https://github.com/OpenIDC/mod_auth_openidc)
 
-*   [NQRust-Identity SAML Galleon feature pack for WildFly and EAP](https://www.nqrust-identity.org/securing-apps/saml-galleon-layers)
-    
+### SAML
 
-#### [](#_apache_http_server_2)Apache HTTP Server
+#### Java
 
-*   [Configuring the mod\_auth\_mellon Apache Module](https://www.nqrust-identity.org/securing-apps/mod-auth-mellon)
-    
+- [NQRust-Identity SAML Galleon feature pack for WildFly and EAP](/en/guides/securing-apps/saml-galleon-layers)
 
-## [](#_terminology)Terminology
+#### Apache HTTP Server
+
+- [Configuring the mod_auth_mellon Apache Module](/en/guides/securing-apps/mod-auth-mellon)
+
+## Terminology
 
 These terms are used in this guide:
 
-*   `Clients` are entities that interact with NQRust-Identity to authenticate users and obtain tokens. Most often, clients are applications and services acting on behalf of users that provide a single sign-on experience to their users and access other services using the tokens issued by the server. Clients can also be entities only interested in obtaining tokens and acting on their own behalf for accessing other services.
-    
-*   `Applications` include a wide range of applications that work for specific platforms for each protocol
-    
-*   `Client adapters` are libraries that make it easy to secure applications and services with NQRust-Identity. They provide a tight integration to the underlying platform and framework.
-    
-*   `Creating a client` and `registering a client` are the same action. `Creating a Client` is the term used to create a client by using the Admin Console. `Registering a client` is the term used to register a client by using the NQRust-Identity Client Registration Service.
-    
-*   `A service account` is a type of client that is able to obtain tokens on its own behalf.
+- `Clients` are entities that interact with NQRust-Identity to authenticate users and obtain tokens. Most often, clients are applications and services acting on behalf of users that provide a single sign-on experience to their users and access other services using the tokens issued by the server. Clients can also be entities only interested in obtaining tokens and acting on their own behalf for accessing other services.
+- `Applications` include a wide range of applications that work for specific platforms for each protocol
+- `Client adapters` are libraries that make it easy to secure applications and services with NQRust-Identity. They provide a tight integration to the underlying platform and framework.
+- `Creating a client` and `registering a client` are the same action. `Creating a Client` is the term used to create a client by using the Admin Console. `Registering a client` is the term used to register a client by using the NQRust-Identity Client Registration Service.
+- `A service account` is a type of client that is able to obtain tokens on its own behalf.

@@ -5,35 +5,31 @@ description: Directory Structure - NQRust-Identity Documentation
 
 # Directory Structure
 
-## [](#_installation_locations)Installation Locations
+import { Callout } from 'nextra/components'
 
-If you are installing from a zip file then by default there will be an install root directory of `nqrust-identity-26.5.7`, which can be created anywhere you choose on your filesystem.
+## Installation Locations
 
-`/opt/nqrust-identity` is the root install location for the server in all containerized usage shown for NQRust-Identity including [Running NQRust-Identity in a container](https://www.nqrust-identity.org/server/containers), [Docker](https://www.nqrust-identity.org/getting-started/getting-started-docker), [Podman](https://www.nqrust-identity.org/getting-started/getting-started-podman), [Kubernetes](https://www.nqrust-identity.org/getting-started/getting-started-kube), and [OpenShift](https://www.nqrust-identity.org/getting-started/getting-started-openshift).
+If you are installing from a zip file then by default there will be an install root directory of `nqrust-identity-26.6.0`, which can be created anywhere you choose on your filesystem.
 
-In the rest of the documentation, relative paths are understood to be relative to the install root - for example, `conf/file.xml` means ``&lt;install root&gt;`/conf/file.xml`
+`/opt/nqrust-identity` is the root install location for the server in all containerized usage shown for NQRust-Identity including Running NQRust-Identity in a container, Docker, Podman, Kubernetes, and OpenShift.
 
-## [](#_directory_structure)Directory Structure
+<Callout type="info">
+  In the rest of the documentation, relative paths are understood to be relative to the install root - for example, conf/file.xml means &lt;install root&gt;/conf/file.xml
+</Callout>
+
+## Directory Structure
 
 Under the NQRust-Identity install root there exists a number of folders:
 
-*   **bin/** - contains all the shell scripts for the server, including `kc.sh|bat`, `kcadm.sh|bat`, and `kcreg.sh|bat`
-    
-    *   **client/** - used internally
-        
-    
-*   **conf/** - directory used for configuration files, including `nqrust-identity.conf` - see [Configuring NQRust-Identity](https://www.nqrust-identity.org/server/configuration). Many options for specifying a configuration file expect paths relative to this directory.
-    
-    *   **truststores/** - default path used by the `truststore-paths` option - see [Configuring trusted certificates](https://www.nqrust-identity.org/server/nqrust-identity-truststore)
-        
-    
-*   **data/** - directory for the server to store runtime information, such as transaction logs
-    
-    *   **logs/** - default directory for file logging - see [Configuring logging](https://www.nqrust-identity.org/server/logging)
-        
-    
-*   **lib/** - used internally
-    
-*   **providers/** - directory for user provided dependencies - see [Configuring providers](https://www.nqrust-identity.org/server/configuration-provider) for extending the server and [Configuring the database](https://www.nqrust-identity.org/server/db) for an example of adding a JDBC driver.
-    
-*   **themes/** - directory for customizations to the Admin Console - see [Developing Themes](https://www.nqrust-identity.org/docs/latest/server_development/#_themes)
+- **bin/** - contains all the shell scripts for the server, including `kc.sh|bat`, `kcadm.sh|bat`, and `kcreg.sh|bat`
+
+  - **client/** - used internally
+- **conf/** - directory used for configuration files, including `nqrust-identity.conf` - see [Configuring NQRust-Identity](/en/guides/server/configuration). Many options for specifying a configuration file expect paths relative to this directory.
+
+  - **truststores/** - default path used by the `truststore-paths` option - see Configuring trusted certificates
+- **data/** - directory for the server to store runtime information, such as transaction logs
+
+  - **logs/** - default directory for file logging - see [Configuring logging](/en/guides/server/logging)
+- **lib/** - used internally
+- **providers/** - directory for user provided dependencies - see [Configuring providers](/en/guides/server/configuration-provider) for extending the server and [Configuring the database](/en/guides/server/db) for an example of adding a JDBC driver.
+- **themes/** - directory for customizations to the Admin Console - see Developing Themes

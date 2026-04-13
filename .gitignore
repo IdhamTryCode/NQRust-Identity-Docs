@@ -23,7 +23,7 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Scraped content (large, regeneratable)
+# Scraped content (large, regeneratable via pnpm scrape + pnpm process)
 scraped-raw/
 scraped-processed/
 
@@ -32,8 +32,21 @@ playwright-browsers/
 
 # Temp files
 *.txt
-build_result.txt
+
+# Claude Code / Agent SDK
+.claude/
+.agents/
 
 # Editor
 .cursor/
-.vscode/settings.json
+.vscode/
+
+# Raw assets (already in public/)
+nqr transparant.png
+nqr with text transparant.png
+
+# Planning docs
+masterplan-identity-docs.md
+
+# Claude skills
+skills-lock.json

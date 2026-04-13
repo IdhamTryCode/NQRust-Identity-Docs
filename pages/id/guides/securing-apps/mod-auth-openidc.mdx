@@ -5,23 +5,26 @@ description: Mengonfigurasi Modul mod_auth_openidc Apache HTTPD - Dokumentasi NQ
 
 # Mengonfigurasi Modul mod_auth_openidc Apache HTTPD
 
-Mengonfigurasi modul Apache mod_auth_openidc dengan NQRust-Identity.
+import { Callout } from 'nextra/components'
 
-NQRust-Identity tidak memberikan dukungan resmi untuk mod_auth_openidc. Instruksi di bawah ini adalah upaya terbaik dan mungkin tidak selalu diperbarui. Kami merekomendasikan Anda merujuk ke dokumentasi resmi mod_auth_openidc untuk detail lebih lanjut.
+<Callout type="warning">
+  NQRust-Identity tidak menawarkan dukungan resmi untuk mod_auth_openidc. Instruksi di bawah ini adalah upaya terbaik dan mungkin tidak terkini.
+  Kami menyarankan Anda untuk tetap mengikuti dokumentasi resmi mod_auth_openidc untuk detail lebih lanjut.
+</Callout>
 
-mod_auth_openidc adalah plugin Apache HTTP untuk OpenID Connect. Jika bahasa/lingkungan Anda mendukung penggunaan Apache HTTPD sebagai proxy, maka Anda dapat menggunakan mod_auth_openidc untuk mengamankan aplikasi web Anda dengan OpenID Connect. Konfigurasi modul ini berada di luar cakupan dokumen ini. Silakan lihat repositori GitHub mod_auth_openidc untuk detail konfigurasi lebih lanjut.
+[mod_auth_openidc](https://github.com/OpenIDC/mod_auth_openidc) adalah plugin Apache HTTP untuk OpenID Connect. Jika bahasa/lingkungan Anda mendukung penggunaan Apache HTTPD sebagai proxy, maka Anda dapat menggunakan *mod_auth_openidc* untuk mengamankan aplikasi web Anda dengan OpenID Connect. Konfigurasi modul ini di luar cakupan dokumen ini. Silakan lihat repo GitHub *mod_auth_openidc* untuk detail lebih lanjut tentang konfigurasi.
 
-Untuk mengonfigurasi mod_auth_openidc Anda memerlukan:
+Untuk mengonfigurasi *mod_auth_openidc* Anda akan memerlukan:
 
-*   `client_id`.
-*   `client_secret`.
-*   `redirect_uri` ke aplikasi Anda.
-*   URL `openid-configuration` NQRust-Identity.
-*   Konfigurasi modul Apache HTTPD khusus mod_auth_openidc.
+- client_id.
+- client_secret.
+- redirect_uri ke aplikasi Anda.
+- URL konfigurasi openid NQRust-Identity
+- Konfigurasi modul Apache HTTPD khusus *mod_auth_openidc*.
 
-Contoh konfigurasi akan terlihat seperti berikut.
+Konfigurasi contoh akan terlihat seperti berikut.
 
-```apache
+```
 LoadModule auth_openidc_module modules/mod_auth_openidc.so
 
 ServerName ${HOSTIP}
@@ -50,4 +53,4 @@ ServerName ${HOSTIP}
 </VirtualHost>
 ```
 
-Informasi lebih lanjut tentang cara mengonfigurasi mod_auth_openidc dapat ditemukan di halaman proyek mod_auth_openidc.
+Informasi lebih lanjut tentang cara mengonfigurasi mod_auth_openidc dapat ditemukan di halaman proyek [mod_auth_openidc](https://github.com/OpenIDC/mod_auth_openidc).

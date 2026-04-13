@@ -1,73 +1,79 @@
 ---
-title: Perencanaan untuk Menyelamatkan Aplikasi dan Layanan
-description: Perencanaan untuk Menyelamatkan Aplikasi dan Layanan - Dokumentasi NQRust-Identity
+title: Perencanaan untuk mengamankan aplikasi dan layanan
+description: Perencanaan untuk mengamankan aplikasi dan layanan - Dokumentasi NQRust-Identity
 ---
 
-# Perencanaan untuk Menyelamatkan Aplikasi dan Layanan
+# Perencanaan untuk mengamankan aplikasi dan layanan
 
-Sebagai server yang mematuhi OAuth2, OpenID Connect, dan SAML, NQRust-Identity dapat menyelamatkan aplikasi dan layanan manapun asalkan stack teknologi yang mereka gunakan mendukung protokol ini. Untuk detail lebih lanjut tentang protokol keamanan yang didukung oleh NQRust-Identity, silakan lihat [Panduan Administrasi Server](https://www.nqrust-identity.org/docs/latest/server_admin/#sso-protocols).
+Sebagai server yang mematuhi OAuth2, OpenID Connect, dan SAML, NQRust-Identity dapat mengamankan aplikasi dan layanan apa pun asalkan stack teknologi yang mereka gunakan mendukung protokol ini. Untuk detail lebih lanjut tentang protokol keamanan yang didukung oleh NQRust-Identity, silakan lihat Panduan Administrasi Server.
 
-Sebagian besar dukungan untuk beberapa protokol ini sudah tersedia dari bahasa pemrograman, kerangka kerja, atau reverse proxy yang mereka gunakan. Menggunakan dukungan yang sudah tersedia dari ekosistem aplikasi adalah aspek penting untuk membuat aplikasi Anda sepenuhnya mematuhi standar keamanan dan praktik terbaik, sehingga Anda menghindari lock-in penjual.
+Sebagian besar dukungan untuk beberapa protokol ini sudah tersedia dari bahasa pemrograman, kerangka kerja, atau reverse proxy yang mereka gunakan. Menggunakan dukungan yang sudah tersedia dari ekosistem aplikasi adalah aspek penting untuk membuat aplikasi Anda sepenuhnya mematuhi standar keamanan dan praktik terbaik, sehingga Anda menghindari ketergantungan pada vendor.
 
-Untuk beberapa bahasa pemrograman, NQRust-Identity menyediakan perpustakaan yang mencoba mengisi kekurangan dukungan protokol keamanan tertentu atau untuk memberikan integrasi yang lebih kaya dan erat dengan server. Perpustakaan ini dikenal dengan **NQRust-Identity Client Adapters**, dan harus digunakan sebagai pilihan terakhir jika Anda tidak dapat mengandalkan apa yang tersedia dari ekosistem aplikasi.
+Untuk beberapa bahasa pemrograman, NQRust-Identity menyediakan perpustakaan yang mencoba mengisi kekurangan dukungan protokol keamanan tertentu atau untuk menyediakan integrasi yang lebih kaya dan erat dengan server. Perpustakaan ini dikenal dengan **NQRust-Identity Client Adapters**, dan harus digunakan sebagai pilihan terakhir jika Anda tidak dapat mengandalkan apa yang tersedia dari ekosistem aplikasi.
 
-## [](#_langkah_dasar_untuk_menyelamatkan_aplikasi_dan_layanan)Langkah Dasar untuk Menyelamatkan Aplikasi dan Layanan
+## Langkah dasar untuk mengamankan aplikasi dan layanan
 
-Berikut adalah langkah dasar untuk menyelamatkan aplikasi atau layanan di NQRust-Identity.
+Berikut adalah langkah dasar untuk mengamankan aplikasi atau layanan di NQRust-Identity.
 
-1.  Daftarkan klien ke realm menggunakan salah satu opsi ini:
-    
-    *   Konsol Admin NQRust-Identity
-        
-    *   Layanan pendaftaran klien
-        
-    *   CLI
-        
-    
-2.  Aktifkan protokol OpenID Connect atau SAML dalam aplikasi Anda menggunakan salah satu opsi ini:
-    
-    *   Memanfaatkan dukungan OpenID Connect dan SAML yang ada dari ekosistem aplikasi
-        
-    *   Menggunakan Adapter NQRust-Identity
-    
+1. Daftarkan klien ke realm menggunakan salah satu opsi ini:
 
-Panduan ini menyediakan petunjuk detail untuk langkah-langkah ini. Anda dapat menemukan detail lebih lanjut dalam [Panduan Administrasi Server](https://www.nqrust-identity.org/docs/latest/server_admin/) tentang cara mendaftarkan klien ke NQRust-Identity melalui konsol administrasi.
+  - Konsol Admin NQRust-Identity
+  - Layanan pendaftaran klien
+  - CLI
+2. Aktifkan protokol OpenID Connect atau SAML di aplikasi Anda menggunakan salah satu opsi ini:
 
-## [](#_memulai)Memulai
+  - Menggunakan dukungan OpenID Connect dan SAML yang sudah ada dari ekosistem aplikasi
+  - Menggunakan Adapter NQRust-Identity
 
-[Repositori Quickstarts NQRust-Identity](https://github.com/nqrust-identity/nqrust-identity-quickstarts) menyediakan contoh tentang cara menyelamatkan aplikasi dan layanan menggunakan berbagai bahasa pemrograman dan kerangka kerja. Dengan melihat dokumentasi dan basis kode mereka, Anda akan memahami perubahan minimum yang diperlukan dalam aplikasi dan layanan Anda untuk menyelamatkannya dengan NQRust-Identity.
+Panduan ini menyediakan instruksi detail untuk langkah ini. Anda dapat menemukan detail lebih lanjut dalam Panduan Administrasi Server tentang cara mendaftarkan klien ke NQRust-Identity melalui konsol administrasi.
+
+## Memulai
+
+[Repositori NQRust-Identity Quickstarts](https://github.com/nqrust-identity/nqrust-identity-quickstarts) menyediakan contoh tentang cara mengamankan aplikasi dan layanan menggunakan berbagai bahasa pemrograman dan kerangka kerja. Dengan melihat dokumentasi dan basis kode mereka, Anda akan memahami perubahan minimum yang diperlukan dalam aplikasi dan layanan Anda untuk mengamankannya dengan NQRust-Identity.
 
 Lihat juga bagian berikut untuk rekomendasi implementasi klien yang terpercaya dan terkenal untuk kedua protokol OpenID Connect dan SAML.
 
-### [](#_openid_connect)OpenID Connect
+### OpenID Connect
 
-#### [](#_java)Java
+#### Java
 
-*   [Wildfly Elytron OIDC](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/jakarta/servlet-authz-client)
-    
-*   [Spring Boot](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/spring/rest-authz-resource-server)
-    
+- [Wildfly Elytron OIDC](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/jakarta/servlet-authz-client)
+- [Spring Boot](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/spring/rest-authz-resource-server)
 
-#### [](#_javascript_client_side)JavaScript (client-side)
+#### JavaScript (klien-sisi)
 
-*   [Adapter JS NQRust-Identity](https://www.nqrust-identity.org/securing-apps/javascript-adapter)
-    
+- [Adapter JS NQRust-Identity](/en/guides/securing-apps/javascript-adapter)
 
-#### [](#_node_js_server_side)Node.js (server-side)
+#### Node.js (server-sisi)
 
-*   [Adapter Node.js NQRust-Identity](https://www.nqrust-identity.org/securing-apps/nodejs-adapter)
-    
+- [Adapter Node.js NQRust-Identity](/en/guides/securing-apps/nodejs-adapter)
 
-#### [](#_c)C#
+#### C#
 
-*   [OWIN](https://github.com/dylanplecki/NQRust-IdentityOwinAuthentication)
-    
+- [OWIN](https://github.com/dylanplecki/NQRust-IdentityOwinAuthentication)
 
-#### [](#_python)Python
+#### Python
 
-*   [oidc](https://pypi.org/project/oic/)
-    
+- [oidc](https://pypi.org/project/oic/)
 
-#### [](#_android)Android
+#### Android
 
-*   [AppAuth](https://
+- [AppAuth](https://github.com/openid/AppAuth-Android)
+
+#### iOS
+
+- [AppAuth](https://github.com/openid/AppAuth-iOS)
+
+#### Apache HTTP Server
+
+- [mod_auth_openidc](https://github.com/OpenIDC/mod_auth_openidc)
+
+### SAML
+
+#### Java
+
+- [Paket fitur SAML NQRust-Identity Galleon untuk WildFly dan EAP](/en/guides/securing-apps/saml-galleon-layers)
+
+#### Apache HTTP Server
+
+- [Mengonfigurasi Modul Apache mod

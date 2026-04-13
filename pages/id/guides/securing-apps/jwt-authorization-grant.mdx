@@ -1,36 +1,158 @@
 ---
-title: Hibah Otorisasi JWT
-description: Hibah Otorisasi JWT - Dokumentasi NQRust-Identity
+title: Izin Hukum JWT
+description: Izin Hukum JWT - Dokumentasi NQRust-Identity
 ---
 
-# Hibah Otorisasi JWT
+# Izin Hukum JWT
 
-Profil JWT untuk Hibah Otorisasi OAuth 2.0 adalah **Tinjauan** dan belum didukung sepenuhnya. Fitur ini dinonaktifkan secara default.
+import { Callout } from 'nextra/components'
 
-Untuk mengaktifkannya, jalankan server dengan `--features=preview` atau `--features=jwt-authorization-grant`.
+Panduan ini mendefinisikan bagaimana Token Bearer JWT dapat digunakan dalam NQRust-Identity sebagai otorisasi hukum. Fitur ini memungkinkan klien untuk mengirim aser JWT untuk meminta token akses ketika klien ingin menggunakan hubungan kepercayaan yang sudah ada tanpa langkah persetujuan pengguna langsung di server otorisasi. Aser disahkan hanya melalui semantik JWT (klaim dan tanda tangan). Hubungan kepercayaan biasanya merujuk pada server Provider Identitas lainnya (server OIDC lainnya), dan memungkinkan untuk mendapatkan token akses lintas domain atau lintas realm. Dalam arti ini, itu serupa dengan permintaan eksternal ke internal dalam pertukaran token V1 (lihat [Mengonfigurasi dan menggunakan pertukaran token](/en/guides/securing-apps/token-exchange#_external-token-to-internal-token-exchange) untuk informasi lebih lanjut).
 
-Panduan ini mendefinisikan bagaimana Token Bearer JWT dapat digunakan dalam NQRust-Identity sebagai hibah otorisasi. Fitur ini memungkinkan klien untuk mengirim aser JWT untuk meminta token akses saat klien ingin menggunakan hubungan kepercayaan yang ada tanpa langkah persetujuan langsung pengguna di server otorisasi. Aser disahkan hanya melalui semantik JWT (klaim dan tanda tangan). Hubungan kepercayaan biasanya merujuk pada server Penyedia Identitas lainnya (server OIDC lainnya), dan memungkinkan untuk mendapatkan token akses lintas domain atau lintas realm. Dalam arti ini, itu serupa dengan permintaan eksternal ke internal dalam pertukaran token V1 (lihat [Mengonfigurasi dan menggunakan pertukaran token](https://www.nqrust-identity.org/securing-apps/token-exchange#_external-token-to-internal-token-exchange) untuk informasi lebih lanjut).
+Izin Hukum JWT di spesifikasikan oleh dua RFC yang berbeda.
 
-Hibah Otorisasi JWT dijelaskan oleh dua RFC yang berbeda.
+- Kerangka Aser untuk Otorisasi dan Izin Hukum Otorisasi OAuth 2.0 Client ([RFC 7521](https://datatracker.ietf.org/doc/html/rfc7521)). Kerangka umum untuk menggunakan aser sebagai hukum.
+- Profil JSON Web Token (JWT) untuk Otorisasi dan Izin Hukum Otorisasi OAuth 2.0 Client ([RFC 7523](https://datatracker.ietf.org/doc/html/rfc7523)). Spesifikasi untuk aser JWT.
 
-*   Kerangka Aser untuk Otorisasi dan Hibah Otorisasi Klien OAuth 2.0 ([RFC 7521](https://datatracker.ietf.org/doc/html/rfc7521)). Kerangka umum untuk menggunakan aser sebagai hibah.
-    
-*   Profil JSON Web Token (JWT) untuk Otorisasi dan Hibah Otorisasi Klien OAuth 2.0 ([RFC 7523](https://datatracker.ietf.org/doc/html/rfc7523)). Spesifik untuk aser JWT.
-    
+Singkatnya, Izin Hukum JWT adalah otorisasi ekstensi OAuth yang didefinisikan oleh OAuth 2.0 [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.5) yang dikirim ke endpoint token. Parameter permintaan **grant_type** harus `urn:ietf:params:oauth:grant-type:jwt-bearer`. **Aser** harus berupa JWT tunggal dengan beberapa klaim yang akan disahkan oleh server. Parameter **scope** opsional dan mempertahankan arti yang dijelaskan oleh Oauth 2.0 dan dikelola oleh NQRust-Identity untuk hukum lainnya. Jika token aser valid untuk otorisasi, token akses akan dikembalikan ke klien tanpa interaksi dengan endpoint otorisasi.
 
-Singkatnya, Hibah Otorisasi JWT adalah hibah ekstensi OAuth yang didefinisikan oleh OAuth 2.0 [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.5) yang dikirim ke endpoint token. Parameter permintaan **grant_type** harus `urn:ietf:params:oauth:grant-type:jwt-bearer`. **Aser** harus merupakan JWT tunggal dengan beberapa klaim yang akan disahkan oleh server. Parameter **scope** opsional dan mempertahankan arti yang dijelaskan oleh Oauth 2.0 dan dikelola oleh NQRust-Identity untuk hibah lainnya. Jika token aser valid untuk otorisasi, token akses akan dikembalikan ke klien tanpa interaksi dengan endpoint otorisasi.
+Hubungan kepercayaan di NQRust-Identity didefinisikan oleh Provider Identitas. Saat ini dua jenis Provider Identitas dapat mengelola izin hukum otorisasi JWT:
 
-Hubungan kepercayaan di NQRust-Identity didefinisikan oleh [Penyedia Identitas](https://www.nqrust-identity.org/docs/latest/server_admin/#_identity_broker). Saat ini dua jenis Penyedia Identitas dapat mengelola hibah otorisasi JWT:
+1. OpenID Connect v1.0 / NQRust-Identity OpenID Connect
+2. Izin Hukum JWT Authorization Grant
 
-1.  OpenID Connect v1.0 / NQRust-Identity OpenID Connect
-    
-2.  Hibah Otorisasi JWT
-    
+**OpenID Connect v1.0** (juga **NQRust-Identity OpenID Connect** yang hanya ekstensi dari tipe sebelumnya) dapat digunakan untuk mendefinisikan hubungan kepercayaan dengan Provider OpenID eksternal atau OP (server Otorisasi OAuth 2.0 yang mengimplementasikan spesifikasi OpenID Connect). Ini adalah pilihan umum. Aser yang diterima akan diproses menggunakan konfigurasi provider untuk memvalidasi token JWT dalam hal klaim dan tanda tangan.
 
-**OpenID Connect v1.0** (juga **NQRust-Identity OpenID Connect** yang hanya ekstensi dari tipe sebelumnya) dapat digunakan untuk mendefinisikan hubungan kepercayaan dengan Penyedia OpenID eksternal atau OP (server Otorisasi OAuth 2.0 yang mengimplementasikan spesifikasi OpenID Connect). Ini adalah pilihan umum. Aser yang diterima akan diproses menggunakan konfigurasi penyedia untuk memvalidasi token JWT dalam hal klaim dan tanda tangan.
+**Izin Hukum JWT** adalah jenis Provider Identitas baru di NQRust-Identity untuk mewakili hubungan kepercayaan umum. Mirip dengan tipe sebelumnya, konfigurasinya memungkinkan untuk memvalidasi aser dan mendapatkan token akses menggunakan izin hukum otorisasi JWT.
 
-**Hibah Otorisasi JWT** adalah jenis Penyedia Identitas baru di NQRust-Identity untuk mewakili hubungan kepercayaan umum. Mirip dengan tipe sebelumnya, konfigurasinya memungkinkan untuk memvalidasi aser dan mendapatkan token akses menggunakan hibah otorisasi JWT.
+NQRust-Identity memerlukan klaim `sub` dalam aser untuk menjadi identifikasi pengguna di provider eksternal. Pengguna NQRust-Identity seharusnya sudah dihubungkan dengan Provider Identitas. Dengan cara ini ada tautan antara ID pengguna eksternal dan internal.
 
-NQRust-Identity memerlukan klaim `sub` dalam aser untuk menjadi identifikasi pengguna di penyedia eksternal. Pengguna NQRust-Identity harus sebelumnya tertaut ke Penyedia Identitas. Dengan cara ini ada tautan antara ID pengguna eksternal dan internal.
+Proses yang tepat yang dilakukan NQRust-Identity atas aser adalah sebagai berikut (periksa RFC yang disebutkan untuk lebih detail tentang persyaratan yang dibutuhkan dalam aser JWT):
 
-Proses yang tepat yang dilakukan NQRust-Identity atas aser adalah sebagai berikut (periksa RFC yang disebutkan untuk lebih detail tentang
+1. Klien pengguna harus dikonfigurasi untuk mengizinkan izin hukum otorisasi JWT.
+2. Klaim `iss` (penyelenggara) harus mengidentifikasi Provider Identitas (**konfigurasi opsi penyelenggara**).
+3. Provider Identitas harus dikonfigurasi untuk mengizinkan izin hukum otorisasi JWT dan klien harus dikonfigurasi untuk mengizinkan pertukaran hukum dengan IdP ini.
+4. Klaim `sub` (subjek) harus mengidentifikasi pengguna di NQRust-Identity. Seperti dikomentari, klaim `sub` harus menjadi ID pengguna di provider eksternal. Pengguna di NQRust-Identity harus dihubungkan dengan Provider Identitas. Informasi penghubung akhirnya akan menemukan pengguna di NQRust-Identity.
+5. Klaim `aud` (audience) harus mengidentifikasi server NQRust-Identity (penyelenggara atau URL endpoint token).
+6. Klaim `exp` (kadaluarsa) harus ada dan disahkan.
+7. Klaim lain seperti `nbf` (tidak sebelum), `iat` (dikeluarkan pada) dan `jti` (JWT ID) dapat ada dan harus disahkan dalam hal ini.
+8. JWT harus ditandatangani dan tanda tangan harus diverifikasi dengan kunci yang terkait dengan provider identitas di NQRust-Identity.
+
+<Callout type="info">
+  Perlindungan brute force tidak diterapkan pada Izin Hukum JWT untuk pengguna yang sementara terkunci, karena tipe hukum ini tidak melakukan otentikasi berbasis kredensial pengguna tetapi bergantung pada aser yang dikeluarkan oleh provider identitas eksternal, dan oleh karena itu tidak dapat direbut oleh serangan brute force pada kredensial pengguna NQRust-Identity.
+</Callout>
+
+## Contoh
+
+Ini adalah contoh permintaan untuk izin hukum JWT otorisasi yang dikirim ke endpoint token. ID klien adalah `test-client`, menggunakan rahasia untuk otentikasi, dan dikonfigurasi untuk mengizinkan izin hukum JWT otorisasi ke Provider Identitas yang penyelenggara adalah `https://jwt-idp.example.com`.
+
+```bash
+POST /realms/demo/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+client_id=test-client&
+client_secret=XXXXX&
+grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&
+assertion=eyJhbGci[...dibesarkan...].eyJpc3Mi[...dibesarkan...].J9l-ZhwP[...dibesarkan...]
+```
+
+Parameter penting adalah **aser**. Di bawah ini adalah contoh objek JSON yang dapat dikodekan untuk menghasilkan Set Klaim JWT yang digunakan di dalam aser.
+
+```json
+{
+  "jti":"abcd1234-5678-efgh-ijkl-9012mnopqrst",
+  "iss":"https://jwt-idp.example.com",
+  "sub":"b3588c7e-14cb-46a9-9387-28adfd82f7a4",
+  "aud":"https://nqrust-identity.server/realms/demo",
+  "iat":1764839065,
+  "exp":1764839365,
+  "other-claim":true
+}
+```
+
+Perhatikan klaim harus berisi `iss` yang mengidentifikasi Provider Identitas, `sub` yang berisi ID pengguna di sistem eksternal yang akan menemukan pengguna NQRust-Identity menggunakan tautan ke penyelenggara, `aud` harus penyelenggara NQRust-Identity atau endpoint token, `jti` menjamin penggunaan satu kali, dan `exp` wajib. Klaim lain dapat ditambahkan ke token.
+
+Contoh JSON sebelumnya harus ditandatangani dan header JWT harus menentukan algoritma dan identifikasi kunci yang digunakan untuk menandatanganinya. Kunci itu harus dikonfigurasi dengan benar di Provider Identitas (melalui URL JWKS atau secara manual) untuk memvalidasi tanda tangan.
+
+```json
+{"alg":"ES256", "kid":"2AOACLJmd5dQ8HPrDxwpkS-83yBhrzaLWSny9wmnYcY"}
+```
+
+NQRust-Identity akan memvalidasi permintaan dan aser. Jika semuanya benar, respons akan berisi token akses siap digunakan.
+
+```json
+{
+  "access_token":"eyJhbG[...dibesarkan...].eyJleH[...dibesarkan...].RFnNEv[...dibesarkan...]",
+  "expires_in":300,
+  "refresh_expires_in":0,
+  "token_type":"Bearer",
+  "not-before-policy":0,
+  "scope":"email profile"
+}
+```
+
+<Callout type="info">
+  Mengikuti rekomendasi spesifikasi, Izin Hukum JWT tidak pernah mengeluarkan token pembaruan dan sesi sementara selalu dibuat. Token akses dapat digunakan dengan normal di NQRust-Identity melalui endpoint introspeksi, info pengguna atau lainnya. Itu akan valid sampai kadaluarsa atau secara eksplisit dicabut oleh endpoint pencabutan.
+</Callout>
+
+## Cara untuk mendapatkan token yang valid untuk Izin Hukum JWT
+
+Fitur Izin Hukum JWT memerlukan aser JWT sebelumnya untuk dipertukarkan dengan token akses. Kita dapat menamai Provider OpenID Connect eksternal (OP) `domaina`, yang diwakili di NQRust-Identity melalui Provider Identitas. Dan kita dapat menamai server NQRust-Identity yang menerima izin hukum JWT otorisasi `domainb`. `domaina` seharusnya dengan cara apa pun mengeluarkan JWT yang merupakan aser yang valid untuk `domainb`.
+
+Jika `domaina` adalah server yang berbeda dari NQRust-Identity, kita tidak tahu bagaimana JWT awal itu diperoleh. Tapi perhatikan bahwa spesifikasi menegakkan beberapa pemrosesan aser untuk valid dan mengembalikan token akses. Cara klien mendapatkan atau menghasilkan aser JWT seperti itu di `domaina` sepenuhnya bergantung pada server dan klien `domaina`.
+
+Dalam kasus provider identitas eksternal adalah server NQRust-Identity atau realm lainnya, Pertukaran Token Standar dapat digunakan untuk mendapatkan token seperti itu (lihat [Mengonfigurasi dan menggunakan pertukaran token](/en/guides/securing-apps/token-exchange#_standard-token-exchange) untuk informasi lebih lanjut). Ketika kedua pihak adalah realm NQRust-Identity, ide dapat diRingkas dalam dua poin dasar:
+
+1. Untuk `domaina`, `domainb` adalah audiens yang dapat dibatasi melalui pertukaran token.
+2. Untuk `domainb`, `domaina` adalah Provider Identitas yang digunakan untuk memvalidasi aser. Pengguna di `domainb` juga adalah pengguna yang valid sebelumnya dihubungkan dengan `domaina` melalui provider identitas.
+
+Lihat OAuth Identity and Authorization Chaining Across Domains untuk konfigurasi detail untuk melakukan rantai otorisasi di dua realm NQRust-Identity.
+
+## Kebijakan klien dan Izin Hukum JWT
+
+Kondisi baru dan eksekusi terkait dengan Izin Hukum JWT telah ditambahkan ke kebijakan klien di NQRust-Identity.
+
+- Kondisi **identity-provider-alias**. Kondisi ini memungkinkan untuk memilih permintaan yang melibatkan alias provider identitas tertentu. Daftar alias dapat didefinisikan, dan kondisi dinilai sebagai `true` jika salah satu Provider Identitas dalam daftar hadir. Untuk saat ini kondisi hanya mengelola Izin Hukum JWT tetapi dapat diperluas untuk operasi yang akan datang yang melibatkan Provider Identitas.
+- Eksekutor **downscope-assertion-grant-enforcer**. Eksekutor memaksa cakupan yang diajukan tidak melebihi cakupan yang termasuk dalam token aser (klaim `scope` di JWT). Jika cakupan yang diajukan tidak ada dalam aser, kesalahan akan dikembalikan. Eksekutor ini harus digunakan untuk mencegah mendapatkan lebih banyak hak istemewa (cakupan atau audiens) daripada yang diberikan dalam aser JWT awal (hanya downscoping yang diizinkan).
+
+  Eksekutor dapat digunakan untuk setiap permintaan yang menggunakan parameter aser. Saat ini itu digunakan untuk `assertion` dalam Izin Hukum JWT dan `subject_token` dalam Pertukaran Token Standar.
+- Eksekutor **jwt-claim-enforcer**. Eksekutor memungkinkan untuk mengonfigurasi persyaratan tambahan untuk klaim dalam token aser JWT. Misalnya, jika kita ingin aser untuk berisi klaim `iat` atau klaim kustom dengan nilai tertentu. Konfigurasi memungkinkan kita untuk menetapkan nama klaim dan nilai klaim apapun (menggunakan regex java). Jika klaim dalam aser JWT tidak mencocokkan regex, permintaan tidak akan dilanjutkan dan kesalahan akan dikembalikan.
+
+  Seperti eksekutor sebelumnya, untuk saat ini eksekutor ini dapat digunakan untuk Izin Hukum JWT dan Pertukaran Token Standar.
+
+## Izin Hukum JWT untuk Provider Identitas Google
+
+Provider Identitas Google mendukung Izin Hukum JWT, memungkinkan penggunaan Token ID Google sebagai aser.
+Menurut RFC 7523, aser HARUS berupa JWT. Karena Google hanya mengeluarkan JWT untuk Token ID (dan tidak untuk token akses), hanya Token ID yang dapat digunakan untuk izin hukum ini.
+
+Untuk mengaktifkan fitur ini, switch **Izin Hukum JWT** harus dihidupkan dalam konfigurasi Provider Identitas Google.
+
+```json
+{
+    "iss": "https://accounts.google.com", 
+    "azp": "XXXX.apps.googleusercontent.com",
+    "aud": "XXXX.apps.googleusercontent.com", 
+    "sub": "100209199795938692365", 
+    "at_hash": "AAos4eSIx4b5uQ8N-OAPYg",
+    "iat": 1769503848,
+    "exp": 1769507448 
+}
+```
+
+1. Penyetor Google.
+2. ID Klien yang harus sama dengan yang dikonfigurasi pada Provider Identitas Google.
+3. Subjek yang harus dihubungkan dengan pengguna NQRust-Identity.
+4. Kadaluarsa 1 jam setelah `iat`.
+
+Spesifikasi yang dijelaskan dalam panduan ini juga berlaku untuk Google, dengan pengecualian berikut:
+
+- **Validasi Audiens**: Google tidak mengizinkan menambahkan audiens kustom ke Token ID. Oleh karena itu, Token ID tidak dapat berisi URL Endpoint Token atau URL Penyetor NQRust-Identity. Klaim `aud` (audiens) harus hanya mencocokkan ID Klien yang dikonfigurasi untuk Provider Identitas Google. **Ini adalah satu-satunya deviasi dari RFC 7523.**
+- **Pemeriksaan Pengulangan**: Tidak mungkin untuk melakukan pemeriksaan pengulangan karena klaim `jti` tidak hadir di Token ID Google. Dengan konsekuensinya, Token ID Google yang sama dapat digunakan beberapa kali.
+- **Kadaluarsa Token ID Google**: Durasi Token ID Google tetap pada 1 jam dan tidak dapat diubah. Untuk membatasi jendela validitas, properti khusus dalam konfigurasi memungkinkan Anda untuk menetapkan batas waktu maksimum untuk token. Nilai default adalah 1 jam (mencocokkan umur hidup Token ID Google).
+
+Dalam skenario di mana aplikasi seluler sudah mendukung masuk dengan Google tanpa melibatkan NQRust-Identity, mungkin terdapat masalah saat mengintegrasikan NQRust-Identity nanti. Misalnya, NQRust-Identity mungkin dikonfigurasi dengan Provider Identitas Google yang menggunakan klien Google yang berbeda dari yang digunakan oleh aplikasi seluler.
+
+Dalam hal ini, Token ID Google tidak dapat digunakan dengan Izin Hukum JWT karena klaim `aud` di Token ID tidak mencocokkan id klien yang dikonfigurasi pada Provider Identitas Google.
+
+Untuk menangani masalah ini, Anda dapat menggunakan opsi konfigurasi **Penetapan Audiens Kustom** yang dikomentari dalam bagian konfigurasi klien. Misalnya, jika alias Provider Identitas adalah `google`, audiens sebelumnya dapat dikonfigurasi sebagai valid dengan pemetaan berikut.

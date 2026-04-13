@@ -5,23 +5,25 @@ description: Adapter Node.js untuk NQRust-Identity - Dokumentasi NQRust-Identity
 
 # Adapter Node.js untuk NQRust-Identity
 
-NQRust-Identity menyediakan sebuah adapter Node.js yang dibangun di atas [Connect](https://github.com/senchalabs/connect) untuk melindungi aplikasi JavaScript sisi-server - tujuan utamanya adalah untuk fleksibel mencukupi integrasi dengan framework seperti [Express.js](https://expressjs.com/). Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](https://www.nqrust-identity.org/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
+NQRust-Identity menyediakan adapter Node.js yang dibangun di atas [Connect](https://github.com/senchalabs/connect) untuk melindungi aplikasi JavaScript sisi server - tujuan adalah mencapai fleksibilitas yang memungkinkan integrasi dengan framework seperti [Express.js](https://expressjs.com/).
+Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
 
-Pustaka ini dapat diunduh langsung dari [organisasi NQRust-Identity](https://www.npmjs.com/package/nqrust-identity-connect) dan sumbernya tersedia di [GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
+Pustaka dapat diunduh langsung dari organisasi NQRust-Identity dan sumbernya tersedia di
+[GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
 
-Untuk menggunakan adapter Node.js, pertama-tama Anda harus membuat sebuah klien untuk aplikasi Anda di Konsol Admin NQRust-Identity. Adapter mendukung tipe akses publik, rahasia, dan hanya bearer. Yang mana harus dipilih tergantung pada skenario penggunaan.
+Untuk menggunakan adapter Node.js, pertama-tama buatlah klien untuk aplikasi Anda di Konsol Admin NQRust-Identity. Adapter mendukung tipe akses publik, rahasia, dan hanya bearer. Yang mana harus dipilih tergantung pada skenario penggunaan.
 
-Setelah klien dibuat, klik **Action** di pojok kanan atas dan pilih **Download adapter config**. Untuk **Format, pilih \*NQRust-Identity OIDC JSON** dan klik **Download**. File `nqrust-identity.json` yang diunduh berada di folder root proyek Anda.
+Setelah klien dibuat, klik **Action** di pojok kanan atas dan pilih **Download adapter config**. Untuk **Format, pilih *NQRust-Identity OIDC JSON** dan klik **Download**. File `nqrust-identity.json` yang diunduh berada di folder root proyek Anda.
 
-## [](#_installation)Instalasi
+## Instalasi
 
-Dalam asumsi Anda telah menginstal [Node.js](https://nodejs.org), buat sebuah folder untuk aplikasi Anda:
+Dalam asumsi Anda telah menginstal [Node.js](https://nodejs.org), buat folder untuk aplikasi Anda:
 
 ```
 mkdir myapp && cd myapp
 ```
 
-Gunakan perintah `npm init` untuk membuat sebuah `package.json` untuk aplikasi Anda. Sekarang tambahkan adapter connect NQRust-Identity ke dalam daftar dependencies:
+Gunakan perintah `npm init` untuk membuat `package.json` untuk aplikasi Anda. Sekarang tambahkan adapter connect NQRust-Identity dalam daftar dependencies:
 
 ```json
     "dependencies": {
@@ -29,13 +31,11 @@ Gunakan perintah `npm init` untuk membuat sebuah `package.json` untuk aplikasi A
     }
 ```
 
-## [](#_usage)Penggunaan
+## Penggunaan
 
-Instantiasikan sebuah kelas NQRust-Identity
+Kelas `NQRust-Identity` menyediakan titik pusat untuk konfigurasi dan integrasi dengan aplikasi Anda. Pembuatan termudah tidak memerlukan argumen.
 
-Kelas `NQRust-Identity` menyediakan titik pusat untuk konfigurasi dan integrasi dengan aplikasi Anda. Pembuatan yang paling sederhana tidak memerlukan argumen.
-
-Di direktori root proyek Anda, buat sebuah file yang disebut `server.js` dan tambahkan kode berikut:
+Di direktori root proyek Anda, buat file bernama `server.js` dan tambahkan kode berikut:
 
 ```javascript
     const session = require('express-session');
@@ -45,17 +45,17 @@ Di direktori root proyek Anda, buat sebuah file yang disebut `server.js` dan tam
     const nqrust-identity = new NQRust-Identity({ store: memoryStore });
 ```
 
-Instal dependensi `express-session`:
+Pasang dependensi `express-session`:
 
 ```
     npm install express-session
 ```
 
-Untuk memulai skrip `server.js`, tambahkan perintah berikut di dalam bagian 'scripts' dari `package.json`:
+Untuk memulai skrip `server.js`, tambahkan perintah berikut di bagian 'scripts' dari `package.json`:
 
 ```
     "scripts": {
-        "test": "echo \\"Error: no test specified\\" && exit 1",
+        "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node server.js"
     },
 ```
@@ -66,10 +66,263 @@ Sekarang kita memiliki kemampuan untuk menjalankan server dengan perintah beriku
     npm run start
 ```
 
-Secara default, ini akan menemukan sebuah file bernama `nqrust-identity.json` di samping executable utama aplikasi Anda, dalam hal ini di folder root, untuk menginisialisasi pengaturan spesifik NQRust-Identity seperti kunci publik, nama realm, berbagai URL.
+Secara default, ini akan menemukan file bernama `nqrust-identity.json` di samping executable utama aplikasi Anda, dalam hal ini di folder root, untuk menginisialisasi pengaturan spesifik NQRust-Identity seperti kunci publik, nama realm, berbagai URL.
 
-Dalam hal ini, penyebaran NQRust-Identity diperlukan untuk mengakses Konsol Admin NQRust-Identity.
+Dalam hal ini, diperlukan penyebaran NQRust-Identity untuk mengakses Konsol Admin NQRust-Identity.
 
-Silakan kunjungi tautan tentang cara menyebarkan Konsol Admin NQRust-Identity dengan [Podman](https://www.nqrust-identity.org/getting-started/getting-started-podman) atau [Docker](https://www.nqrust-identity.org/getting-started/getting-started-docker)
+Silakan kunjungi tautan tentang cara menyebarkan Konsol Admin NQRust-Identity dengan
+Podman atau Docker
 
-Sekarang kita siap untuk mendapatkan file `nqrust-identity.json` dengan mengunjungi Konsol Admin NQRust-Identity → klien (sidebar kiri) → pilih klien Anda → Instalasi → Opsi
+Sekarang kita siap untuk mendapatkan file `nqrust-identity.json` dengan mengunjungi Konsol Admin NQRust-Identity → klien (sidebar kiri) → pilih klien Anda → Instalasi → Opsi Format → NQRust-Identity OIDC JSON → Unduh
+
+Tempelkan file yang diunduh di folder root proyek kita.
+
+Instantiasi dengan metode ini menghasilkan semua standar wajar yang digunakan. Sebagai alternatif, juga dimungkinkan untuk memberikan objek konfigurasi, bukan file `nqrust-identity.json`:
+
+```javascript
+    const kcConfig = {
+        clientId: 'myclient',
+        bearerOnly: true,
+        serverUrl: 'http://localhost:8080{kc_base_path}',
+        realm: 'myrealm',
+        realmPublicKey: 'MIIBIjANB...'
+    };
+
+    const nqrust-identity = new NQRust-Identity({ store: memoryStore }, kcConfig);
+```
+
+Aplikasi juga dapat mengarahkan pengguna ke penyedia identitas pilihan mereka dengan menggunakan:
+
+```javascript
+    const nqrust-identity = new NQRust-Identity({ store: memoryStore, idpHint: myIdP }, kcConfig);
+```
+
+Jika Anda ingin menggunakan sesi web untuk mengelola
+state sisi server untuk otentikasi, Anda perlu menginisialisasi
+`NQRust-Identity(…​)` dengan setidaknya parameter `store`, memberikan penyimpan sesi yang sebenarnya yang digunakan oleh `express-session`.
+
+```javascript
+    const session = require('express-session');
+    const memoryStore = new session.MemoryStore();
+
+    // Konfigurasi sesi
+    app.use(
+      session({
+        secret: 'mySecret',
+        resave: false,
+        saveUninitialized: true,
+        store: memoryStore,
+      })
+    );
+
+    const nqrust-identity = new NQRust-Identity({ store: memoryStore });
+```
+
+Secara default, nilai scope `openid` dilewatkan sebagai parameter query ke URL login NQRust-Identity, tetapi Anda dapat menambahkan nilai khusus tambahan:
+
+```javascript
+    const nqrust-identity = new NQRust-Identity({ scope: 'offline_access' });
+```
+
+## Menginstal middleware
+
+Setelah diinstantiasi, pasang middleware ke aplikasi yang mampu connect:
+
+Untuk melakukannya, pertama-tama kita harus pasang Express:
+
+```
+    npm install express
+```
+
+kemudian require Express di proyek kita seperti yang diuraikan di bawah:
+
+```javascript
+    const express = require('express');
+    const app = express();
+```
+
+dan konfigurasikan middleware NQRust-Identity di Express, dengan menambahkan kode di bawah:
+
+```javascript
+    app.use( nqrust-identity.middleware() );
+```
+
+Pertama sekalinya, mari atur server kita untuk mendengarkan permintaan HTTP pada port 3000 dengan menambahkan kode berikut ke `main.js`:
+
+```javascript
+    app.listen(3000, function () {
+        console.log('App listening on port 3000');
+    });
+```
+
+## Konfigurasi untuk proxy
+
+Jika aplikasi berjalan di belakang proxy yang mengakhiri koneksi SSL
+Express harus dikonfigurasi sesuai panduan [express di belakang proxy](https://expressjs.com/en/guide/behind-proxies.html).
+Konfigurasi proxy yang salah dapat menghasilkan URI redirect yang tidak valid
+yang dihasilkan.
+
+Contoh konfigurasi:
+
+```javascript
+    const app = express();
+
+    app.set( 'trust proxy', true );
+
+    app.use( nqrust-identity.middleware() );
+```
+
+## Melindungi sumber daya
+
+Untuk memaksa pengguna harus otentikasi sebelum mengakses sumber daya,
+cukup gunakan versi tanpa argumen dari `nqrust-identity.protect()`:
+
+```javascript
+    app.get( '/complain', nqrust-identity.protect(), complaintHandler );
+```
+
+Untuk mengamankan sumber daya dengan peran aplikasi untuk aplikasi saat ini:
+
+```javascript
+    app.get( '/special', nqrust-identity.protect('special'), specialHandler );
+```
+
+Untuk mengamankan sumber daya dengan peran aplikasi untuk **beberapa** aplikasi:
+
+```javascript
+    app.get( '/extra-special', nqrust-identity.protect('other-app:special'), extraSpecialHandler );
+```
+
+Untuk mengamankan sumber daya dengan peran realm:
+
+```javascript
+    app.get( '/admin', nqrust-identity.protect( 'realm:admin' ), adminHandler );
+```
+
+Resource-Based Authorization memungkinkan Anda untuk melindungi sumber daya, dan metode aksi spesifik mereka, berdasarkan set polisi yang ditetapkan di NQRust-Identity, sehingga otorisasi di luar aplikasi Anda. Hal ini dicapai dengan mengekspos metode `nqrust-identity.enforcer` yang dapat Anda gunakan untuk melindungi sumber daya.*
+
+```javascript
+    app.get('/apis/me', nqrust-identity.enforcer('user:profile'), userProfileHandler);
+```
+
+Metode `nqrust-identity-enforcer` beroperasi dalam dua mode, tergantung pada nilai opsi konfigurasi `response_mode`.
+
+```javascript
+    app.get('/apis/me', nqrust-identity.enforcer('user:profile', {response_mode: 'token'}), userProfileHandler);
+```
+
+Jika `response_mode` diatur ke `token`, izin diperoleh dari server atas nama subjek yang diwakili oleh token bearer yang dikirim ke aplikasi Anda. Dalam hal ini, token akses baru dikeluarkan oleh NQRust-Identity dengan izin yang diberikan oleh server. Jika server tidak merespon dengan token dengan izin yang diharapkan, permintaan ditolak. Ketika menggunakan mode ini, Anda seharusnya dapat memperoleh token dari permintaan sebagai berikut:
+
+```javascript
+    app.get('/apis/me', nqrust-identity.enforcer('user:profile', {response_mode: 'token'}), function (req, res) {
+        const token = req.kauth.grant.access_token.content;
+        const permissions = token.authorization ? token.authorization.permissions : undefined;
+
+        // tampilkan profil pengguna
+    });
+```
+
+Pilihlah mode ini ketika aplikasi Anda menggunakan sesi dan Anda ingin menyimpan keputusan sebelumnya dari server, serta secara otomatis menangani token refresh. Mode ini sangat berguna untuk aplikasi yang berperan sebagai klien dan server sumber daya.
+
+Jika `response_mode` diatur ke `permissions` (mode default), server hanya mengembalikan daftar izin yang diberikan, tanpa mengeluarkan token akses baru. Selain tidak mengeluarkan token baru, metode ini mengekspos izin yang diberikan oleh server melalui `request` sebagai berikut:
+
+```javascript
+    app.get('/apis/me', nqrust-identity.enforcer('user:profile', {response_mode: 'permissions'}), function (req, res) {
+        const permissions = req.permissions;
+
+        // tampilkan profil pengguna
+    });
+```
+
+Terlepas dari `response_mode` yang digunakan, metode `nqrust-identity.enforcer` akan pertama mencoba memeriksa izin dalam token bearer yang dikirim ke aplikasi Anda. Jika token bearer sudah membawa izin yang diharapkan, tidak perlu berinteraksi dengan server untuk mendapatkan keputusan. Hal ini sangat berguna ketika klien Anda mampu memperoleh token akses dari server dengan izin yang diharapkan sebelum mengakses sumber daya terlindungi, sehingga mereka dapat menggunakan beberapa kemampuan yang disediakan oleh Layanan Otorisasi NQRust-Identity seperti otorisasi bertahap dan menghindari permintaan tambahan ke server ketika `nqrust-identity.enforcer` menegakkan akses ke sumber daya.
+
+Secara default, penyahbis adalah akan menggunakan `client_id` yang didefinisikan untuk aplikasi (misalnya, melalui `nqrust-identity.json`) untuk
+ merujuk klien di NQRust-Identity yang mendukung Layanan Otorisasi NQRust-Identity. Dalam hal ini, klien tidak boleh publik karena sebenarnya merupakan server sumber daya.
+
+Jika aplikasi yang Anda lindungi berfungsi sebagai klien publik (frontend) dan server sumber daya (backend), Anda dapat menggunakan konfigurasi berikut untuk merujuk ke klien yang berbeda di NQRust-Identity dengan kebijakan yang ingin Anda egakkan:
+
+```javascript
+      nqrust-identity.enforcer('user:profile', {resource_server_id: 'my-apiserver'})
+```
+
+Direkomendasikan untuk menggunakan klien yang berbeda di NQRust-Identity untuk mewakili frontend dan backend Anda.
+
+Jika aplikasi yang Anda lindungi diaktifkan dengan layanan otorisasi NQRust-Identity dan Anda telah menetapkan kredensial klien
+ di `nqrust-identity.json`, Anda dapat mendorong klaim tambahan ke server dan membuatnya tersedia untuk kebijakan Anda untuk membuat keputusan.
+ Untuk itu, Anda dapat mendefinisikan opsi konfigurasi `claims` yang mengharapkan `function` yang mengembalikan JSON dengan klaim yang ingin Anda dorong:
+
+```javascript
+      app.get('/protected/resource', nqrust-identity.enforcer(['resource:view', 'resource:write'], {
+          claims: function(request) {
+            return {
+              "http.uri": ["/protected/resource"],
+              "user.agent": // dapatkan agen pengguna dari permintaan
+            }
+          }
+        }), function (req, res) {
+          // akses diberikan
+```
+
+Untuk detail lebih lanjut tentang cara mengonfigurasi NQRust-Identity untuk melindungi sumber daya aplikasi Anda, silakan lihat Panduan Layanan Otorisasi.
+
+Untuk melindungi sumber daya berdasarkan bagian dari URL itu sendiri, dengan asumsi peran yang ada
+untuk setiap bagian:
+
+```javascript
+    function protectBySection(token, request) {
+      return token.hasRole( request.params.section );
+    }
+
+    app.get( '/:section/:page', nqrust-identity.protect( protectBySection ), sectionHandler );
+```
+
+Konfigurasi Login Lanjutan:
+
+Secara default, semua permintaan yang tidak sah akan dialihkan ke halaman login NQRust-Identity kecuali klien Anda hanya bearer.
+Namun, klien rahasia atau publik mungkin meng-hosting endpoint yang dapat dijelajahi dan API. Untuk mencegah pengalihan pada permintaan API yang tidak diotentikasi dan sebagai gantinya mengembalikan HTTP 401, Anda dapat menimpa fungsi redirectToLogin.
+
+Sebagai contoh, penggantian ini memeriksa apakah URL berisi /api/ dan menonaktifkan pengalihan login:
+
+```javascript
+    NQRust-Identity.prototype.redirectToLogin = function(req) {
+    const apiReqMatcher = /\/api\//i;
+    return !apiReqMatcher.test(req.originalUrl || req.url);
+    };
+```
+
+## URL Tambahan
+
+Secara default, middleware menangkap panggilan ke `/logout` untuk mengirimkan pengguna melalui
+alur logout yang terpusat NQRust-Identity. Hal ini dapat diubah dengan menentukan parameter konfigurasi `logout` ke panggilan `middleware()`:
+
+```javascript
+    app.use( nqrust-identity.middleware( { logout: '/logoff' } ));
+```
+
+Ketika logout yang diinisiasi oleh pengguna dipicu, parameter query `redirect_url` dapat dilewatkan:
+
+```
+https://example.com/logoff?redirect_url=https%3A%2F%2Fexample.com%3A3000%2Flogged%2Fout
+```
+
+Parameter ini kemudian digunakan sebagai URL redirect endpoint logout OIDC dan pengguna akan dialihkan ke
+`https://example.com/logged/out`.
+
+Juga, middleware mendukung callback dari konsol NQRust-Identity untuk logout sesi tunggal atau semua sesi. Secara default, jenis admin callback ini terjadi relatif ke URL root `/` tetapi dapat diubah dengan menyediakan parameter `admin` ke panggilan `middleware()`:
+
+```javascript
+    app.use( nqrust-identity.middleware( { admin: '/callbacks' } );
+```
+
+## Contoh Lengkap
+
+Contoh lengkap penggunaan adapter Node.js dapat ditemukan di [NQRust-Identity quickstarts untuk Node.js](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/nodejs/resource-server)
+
+## Mengupgrade Adapter `Node.js`
+
+Untuk mengupgrade adapter `Node.js` yang telah disalin ke aplikasi web Anda, lakukan prosedur berikut.
+
+1. Unduh arsip adapter baru.
+2. Hapus direktori adapter `Node.js` yang ada
+3. Extract file yang diperbarui ke tempatnya
+4. Ubah dependensi untuk nqrust-identity-connect di `package.json` aplikasi Anda

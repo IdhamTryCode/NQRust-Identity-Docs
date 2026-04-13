@@ -5,13 +5,16 @@ description: Configuring outgoing HTTP requests - NQRust-Identity Documentation
 
 # Configuring outgoing HTTP requests
 
+import { Callout } from 'nextra/components'
+
 NQRust-Identity often needs to make requests to the applications and services that it secures. NQRust-Identity manages these outgoing connections using an HTTP client. This guide shows how to configure the client, connection pool, proxy environment settings, timeouts, and more.
 
-## [](#_configuring_trusted_certificates_for_tls_connections)Configuring trusted certificates for TLS connections
+## Configuring trusted certificates for TLS connections
 
-See [Configuring trusted certificates](https://www.nqrust-identity.org/server/nqrust-identity-truststore) for how to configure a NQRust-Identity Truststore so that NQRust-Identity is able to perform outgoing requests using TLS.
+See Configuring trusted certificates for how
+to configure a NQRust-Identity Truststore so that NQRust-Identity is able to perform outgoing requests using TLS.
 
-## [](#_client_configuration_command)Client Configuration Command
+## Client Configuration Command
 
 The HTTP client that NQRust-Identity uses for outgoing communication is highly configurable. To configure the NQRust-Identity outgoing HTTP client, enter this command:
 
@@ -21,89 +24,55 @@ bin/kc.[sh|bat] start --spi-connections-http-client--default--<configurationopti
 
 The following are the command options:
 
-**establish-connection-timeout-millis**
-
 Maximum time in milliseconds until establishing a connection times out. Default: Not set.
-
-**connection-request-timeout-millis**
 
 Maximum time in milliseconds to obtain a connection for a request. Default: 5000ms
 
-**socket-timeout-millis**
-
 Maximum time of inactivity between two data packets until a socket connection times out, in milliseconds. Default: 5000ms
-
-**connection-pool-size**
 
 Size of the connection pool for outgoing connections. Default: 128.
 
-**max-pooled-per-route**
-
 How many connections can be pooled per host. Default: 64.
-
-**connection-ttl-millis**
 
 Maximum connection time to live in milliseconds. Default: Not set.
 
-**max-connection-idle-time-millis**
-
 Maximum time an idle connection stays in the connection pool, in milliseconds. Idle connections will be removed from the pool by a background cleaner thread. Set this option to -1 to disable this check. Default: 900000.
-
-**disable-cookies**
 
 Enable or disable caching of cookies. Default: true.
 
-**client-keystore**
-
 File path to a Java keystore file. This keystore contains client certificates for mTLS.
-
-**client-keystore-password**
 
 Password for the client keystore. REQUIRED, when `client-keystore` is set.
 
-**client-key-password**
-
 Password for the private key of the client. REQUIRED, when client-keystore is set.
-
-**proxy-mappings**
 
 Specify proxy configurations for outgoing HTTP requests. For more details, see [Proxy mappings for outgoing HTTP requests](#_proxy_mappings_for_outgoing_http_requests).
 
-**disable-trust-manager**
-
 If an outgoing request requires HTTPS and this configuration option is set to true, you do not have to specify a truststore. This setting should be used only during development and **never in production** because it will disable verification of SSL certificates. Default: false.
 
-## [](#_configuring_retry_behavior_for_outgoing_http_requests)Configuring retry behavior for outgoing HTTP requests
+## Configuring retry behavior for outgoing HTTP requests
 
-Do not let outgoing retry duration exceed the caller’s timeout. Otherwise, the caller may time out and see an error while NQRust-Identity continues retrying in the background.
+<Callout type="warning">
+  Do not let outgoing retry duration exceed the caller’s timeout. Otherwise, the caller may time out and see an error while NQRust-Identity continues retrying in the background.
+</Callout>
 
 NQRust-Identity can automatically retry failed outgoing HTTP requests. This is useful for handling transient network errors or temporary service unavailability. Retry behavior is disabled by default and must be explicitly enabled.
 
 The following are the retry configuration options:
 
-**max-retries**
-
 Maximum number of retry attempts for failed HTTP requests. Set to 0 to disable retries. Default: 0.
 
-Retries for requests that have already been sent (for common methods such as GET and POST) are always enabled. Use `max-retries` to control whether retries are performed.
-
-**initial-backoff-millis**
+<Callout type="info">
+  Retries for requests that have already been sent (for common methods such as GET and POST) are always enabled. Use max-retries to control whether retries are performed.
+</Callout>
 
 Initial backoff time in milliseconds before the first retry attempt. Default: 1000.
 
-**backoff-multiplier**
-
 Multiplier for exponential backoff between retry attempts. For example, with an initial backoff of 1000ms and a multiplier of 2.0, the retry delays would be: 1000ms, 2000ms, 4000ms, etc. Default: 2.0.
-
-**use-jitter**
 
 Whether to apply jitter to backoff times to prevent synchronized retry storms when multiple clients are retrying at the same time. Default: true.
 
-**jitter-factor**
-
 Jitter factor to apply to backoff times. A value of 0.5 means the actual backoff time will be between 50% and 150% of the calculated exponential backoff time. Default: 0.5.
-
-Example of enabling retry behavior
 
 ```bash
 bin/kc.[sh|bat] start --spi-connections-http-client-default-max-retries=3 \
@@ -113,20 +82,18 @@ bin/kc.[sh|bat] start --spi-connections-http-client-default-max-retries=3 \
 
 In this example, NQRust-Identity will retry failed HTTP requests up to 3 times with exponential backoff starting at 1000ms and doubling with each retry attempt.
 
-Retry behavior applies to all outgoing HTTP requests made by NQRust-Identity, including OCSP validation, identity provider communication, and other external service calls.
+<Callout type="info">
+  Retry behavior applies to all outgoing HTTP requests made by NQRust-Identity, including OCSP validation, identity provider communication, and other external service calls.
+</Callout>
 
-## [](#_proxy_mappings_for_outgoing_http_requests)Proxy mappings for outgoing HTTP requests
+## Proxy mappings for outgoing HTTP requests
 
 To configure outgoing requests to use a proxy, you can use the following standard proxy environment variables to configure the proxy mappings: `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY`.
 
-*   The `HTTP_PROXY` and `HTTPS_PROXY` variables represent the proxy server that is used for outgoing HTTP requests. NQRust-Identity does not differentiate between the two variables. If you define both variables, `HTTPS_PROXY` takes precedence regardless of the actual scheme that the proxy server uses.
-    
-*   The `NO_PROXY` variable defines a comma separated list of hostnames that should not use the proxy. For each hostname that you specify, all its subdomains are also excluded from using proxy.
-    
+- The `HTTP_PROXY` and `HTTPS_PROXY` variables represent the proxy server that is used for outgoing HTTP requests. NQRust-Identity does not differentiate between the two variables. If you define both variables, `HTTPS_PROXY` takes precedence regardless of the actual scheme that the proxy server uses.
+- The `NO_PROXY` variable defines a comma separated list of hostnames that should not use the proxy. For each hostname that you specify, all its subdomains are also excluded from using proxy.
 
 The environment variables can be lowercase or uppercase. Lowercase takes precedence. For example, if you define both `HTTP_PROXY` and `http_proxy`, `http_proxy` is used.
-
-Example of proxy mappings and environment variables
 
 ```
 HTTPS_PROXY=https://www-proxy.acme.com:8080
@@ -135,12 +102,10 @@ NO_PROXY=google.com,login.facebook.com
 
 In this example, the following results occur:
 
-*   All outgoing requests use the proxy `[https://www-proxy.acme.com:8080](https://www-proxy.acme.com:8080)` except for requests to google.com or any subdomain of google.com, such as auth.google.com.
-    
-*   login.facebook.com and all its subdomains do not use the defined proxy, but groups.facebook.com uses the proxy because it is not a subdomain of login.facebook.com.
-    
+- All outgoing requests use the proxy `https://www-proxy.acme.com:8080` except for requests to google.com or any subdomain of google.com, such as auth.google.com.
+- login.facebook.com and all its subdomains do not use the defined proxy, but groups.facebook.com uses the proxy because it is not a subdomain of login.facebook.com.
 
-## [](#_proxy_mappings_using_regular_expressions)Proxy mappings using regular expressions
+## Proxy mappings using regular expressions
 
 An alternative to using environment variables for proxy mappings is to configure a comma-delimited list of proxy-mappings for outgoing requests sent by NQRust-Identity. A proxy-mapping consists of a regex-based hostname pattern and a proxy-uri, using the format `hostname-pattern;proxy-uri`.
 
@@ -160,20 +125,15 @@ The backslash character `\` is escaped again because micro-profile config is use
 
 To determine the proxy for the outgoing HTTP request, the following occurs:
 
-*   The target hostname is matched against all configured hostname patterns.
-    
-*   The proxy-uri of the first matching pattern is used.
-    
-*   If no configured pattern matches the hostname, no proxy is used.
-    
+- The target hostname is matched against all configured hostname patterns.
+- The proxy-uri of the first matching pattern is used.
+- If no configured pattern matches the hostname, no proxy is used.
 
 When your proxy server requires authentication, include the credentials of the proxy user in the format `username:password@`. For example:
 
 ```
 .*\.(google|googleapis)\.com;http://proxyuser:password@www-proxy.acme.com:8080
 ```
-
-Example of regular expressions for proxy-mapping:
 
 ```
 # All requests to Google APIs use http://www-proxy.acme.com:8080 as proxy
@@ -188,24 +148,12 @@ Example of regular expressions for proxy-mapping:
 
 In this example, the following occurs:
 
-*   The special value NO\_PROXY for the proxy-uri is used, which means that no proxy is used for hosts matching the associated hostname pattern.
-    
-*   A catch-all pattern ends the proxy-mappings, providing a default proxy for all outgoing requests.
-    
+- The special value NO_PROXY for the proxy-uri is used, which means that no proxy is used for hosts matching the associated hostname pattern.
+- A catch-all pattern ends the proxy-mappings, providing a default proxy for all outgoing requests.
 
-## [](#_relevant_options)Relevant options
+## Relevant options
 
-  
-
-_Type_ or Values
-
-Default
-
-`truststore-paths`
-
-List of pkcs12 (p12, pfx, or pkcs12 file extensions), PEM files, or directories containing those files that will be used as a system truststore.
-
-**CLI:** `--truststore-paths`  
-**Env:** `KC_TRUSTSTORE_PATHS`
-
-_List_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`truststore-kubernetes-enabled`**<br/>If enabled, the server will automatically include the default Kubernetes service account CA certificate from "/var/run/secrets/kubernetes.<br/>io/serviceaccount/ca.crt" and the OpenShift service CA certificate from "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt" when running in a container environment.<br/>**CLI:** `--truststore-kubernetes-enabled`<br/>**Env:** `KC_TRUSTSTORE_KUBERNETES_ENABLED` | `true`, `false` | `true` |
+| **`truststore-paths`**<br/>List of pkcs12 (p12, pfx, or pkcs12 file extensions), PEM files, or directories containing those files that will be used as a system truststore.<br/>**CLI:** `--truststore-paths`<br/>**Env:** `KC_TRUSTSTORE_PATHS` | _List_ |  |

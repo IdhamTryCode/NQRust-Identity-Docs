@@ -7,7 +7,7 @@ description: Gaining insights with metrics - NQRust-Identity Documentation
 
 NQRust-Identity has built in support for metrics. This guide describes how to enable and configure server metrics.
 
-## [](#_enabling_metrics)Enabling Metrics
+## Enabling Metrics
 
 It is possible to enable metrics using the build time option `metrics-enabled`:
 
@@ -15,14 +15,15 @@ It is possible to enable metrics using the build time option `metrics-enabled`:
 bin/kc.[sh|bat] start --metrics-enabled=true
 ```
 
-## [](#_querying_metrics)Querying Metrics
+## Querying Metrics
 
 NQRust-Identity exposes metrics at the following endpoint on the management interface at:
 
-*   `/metrics`
-    
+- `/metrics`
 
-For more information about the management interface, see [Configuring the Management Interface](https://www.nqrust-identity.org/server/management-interface). The response from the endpoint uses a `application/openmetrics-text` content type and it is based on the Prometheus (OpenMetrics) text format. The snippet below is an example of a response:
+For more information about the management interface, see [Configuring the Management Interface](/en/guides/server/management-interface).
+The response from the endpoint uses a `application/openmetrics-text` content type and it is based on the Prometheus (OpenMetrics) text format. The snippet below
+is an example of a response:
 
 ```
 # HELP base_gc_total Displays the total number of collections that have occurred. This attribute lists -1 if the collection count is undefined for this collector.
@@ -50,66 +51,15 @@ system_load_average_1m 4.005859375
 ...
 ```
 
-## [](#_next_steps)Next steps
+## Next steps
 
-Read the guides [Monitoring performance with Service Level Indicators](https://www.nqrust-identity.org/observability/nqrust-identity-service-level-indicators) and [Troubleshooting using metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting) to see how to use the metrics.
+Read the guides Monitoring performance with Service Level Indicators and [Troubleshooting using metrics](/en/guides/observability/metrics-for-troubleshooting) to see how to use the metrics.
 
-## [](#_relevant_options)Relevant options
+## Relevant options
 
-  
-
-_Type_ or Values
-
-Default
-
-`cache-metrics-histograms-enabled`
-
-Enable histograms for metrics for the embedded caches.
-
-**CLI:** `--cache-metrics-histograms-enabled`  
-**Env:** `KC_CACHE_METRICS_HISTOGRAMS_ENABLED`
-
-Available only when metrics are enabled
-
-`true`, `false`
-
-`false`
-
-`http-metrics-histograms-enabled`
-
-Enables a histogram with default buckets for the duration of HTTP server requests.
-
-**CLI:** `--http-metrics-histograms-enabled`  
-**Env:** `KC_HTTP_METRICS_HISTOGRAMS_ENABLED`
-
-Available only when metrics are enabled
-
-`true`, `false`
-
-`false`
-
-`http-metrics-slos`
-
-Service level objectives for HTTP server requests.
-
-Use this instead of the default histogram, or use it in combination to add additional buckets. Specify a list of comma-separated values defined in milliseconds. Example with buckets from 5ms to 10s: 5,10,25,50,250,500,1000,2500,5000,10000
-
-**CLI:** `--http-metrics-slos`  
-**Env:** `KC_HTTP_METRICS_SLOS`
-
-Available only when metrics are enabled
-
-_String_
-
-`metrics-enabled`
-
-If the server should expose metrics.
-
-If enabled, metrics are available at the `/metrics` endpoint.
-
-**CLI:** `--metrics-enabled`  
-**Env:** `KC_METRICS_ENABLED`
-
-`true`, `false`
-
-`false`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`cache-metrics-histograms-enabled`**<br/>Enable histograms for metrics for the embedded caches.<br/>**CLI:** `--cache-metrics-histograms-enabled`<br/>**Env:** `KC_CACHE_METRICS_HISTOGRAMS_ENABLED` | `true`, `false` | `false` |
+| **`http-metrics-histograms-enabled`**<br/>Enables a histogram with default buckets for the duration of HTTP server requests.<br/>**CLI:** `--http-metrics-histograms-enabled`<br/>**Env:** `KC_HTTP_METRICS_HISTOGRAMS_ENABLED` | `true`, `false` | `false` |
+| **`http-metrics-slos`**<br/>Service level objectives for HTTP server requests.<br/>Use this instead of the default histogram, or use it in combination to add additional buckets. Specify a list of comma-separated values defined in milliseconds. Example with buckets from 5ms to 10s: 5,10,25,50,250,500,1000,2500,5000,10000<br/>**CLI:** `--http-metrics-slos`<br/>**Env:** `KC_HTTP_METRICS_SLOS` | _String_ |  |
+| **`metrics-enabled`**<br/>If the server should expose metrics.<br/>If enabled, metrics are available at the `/metrics` endpoint.<br/>**CLI:** `--metrics-enabled`<br/>**Env:** `KC_METRICS_ENABLED` | `true`, `false` | `false` |

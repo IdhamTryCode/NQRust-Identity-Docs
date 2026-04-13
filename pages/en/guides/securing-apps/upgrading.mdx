@@ -5,17 +5,16 @@ description: Upgrading the NQRust-Identity Client Libraries - NQRust-Identity Do
 
 # Upgrading the NQRust-Identity Client Libraries
 
-How to upgrade the NQRust-Identity Client Libraries.
-
 The client libraries are those artifacts:
 
-*   Java admin client - Maven artifact `org.keycloak:keycloak-admin-client`
-*   Java authorization client - Maven artifact `org.keycloak:keycloak-authz-client`
-*   Java policy enforcer - Maven artifact `org.keycloak:keycloak-policy-enforcer`
-*   Java common classes used by other client libraries above - Maven artifact `org.keycloak:keycloak-client-common-synced`
+- Java admin client - Maven artifact `org.nqrust-identity:nqrust-identity-admin-client`
+- Java authorization client - Maven artifact `org.nqrust-identity:nqrust-identity-authz-client`
+- Java policy enforcer - Maven artifact `org.nqrust-identity:nqrust-identity-policy-enforcer`
+- Java common classes used by other client libraries above - Maven artifact `org.nqrust-identity:nqrust-identity-client-common-synced`
 
 The client libraries are supported with the last supported NQRust-Identity server version.
 
 It is possible that client libraries may work even with the older releases of the NQRust-Identity server, but it is not guaranteed and officially supported.
 
-It may be needed to consult the javadoc of the client libraries like Java admin-client to see what endpoints and parameters are supported with which NQRust-Identity server version. For the admin client, see "Compatibility with NQRust-Identity server" in the NQRust-Identity admin client guide for some additional notes.
+It may be needed to consult the javadoc of the client libraries like Java admin-client to see what endpoints and parameters are supported with which NQRust-Identity server version.
+For the admin client, see "Compatibility with NQRust-Identity server" in the [NQRust-Identity admin client](/en/guides/securing-apps/admin-client#_admin_client_compatibility) guide for some additional notes.

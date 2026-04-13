@@ -1,147 +1,364 @@
 ---
-title: Konfigurasi Semua
-description: Konfigurasi Semua - Dokumentasi NQRust-Identity
+title: All configuration
+description: All configuration - NQRust-Identity Documentation
 ---
 
-# Konfigurasi Semua
-
-## [](#category-cache)Cache
-
-  
-
-Jenis atau Nilai
-
-Default
-
-`cache`
-
-Mendefinisikan mekanisme cache untuk ketersediaan tinggi.
-
-Pada mode produksi secara default, cache `ispn` digunakan untuk membuat kluster antara beberapa node server. Pada mode pengembangan secara default, cache `local` menonaktifkan kluster dan ditujukan untuk tujuan pengembangan dan pengujian.
-
-**CLI:** `--cache`  
-**Env:** `KC_CACHE`
-
-`ispn`, `local`
-
-`ispn`
-
-`cache-config-file`
-
-Mendefinisikan file dari mana konfigurasi cache harus diambil.
-
-File konfigurasi relatif terhadap direktori `conf/`.
-
-**CLI:** `--cache-config-file`  
-**Env:** `KC_CACHE_CONFIG_FILE`
-
-_File_
-
-`cache-config-mutate`
-
-Menentukan apakah diizinkan untuk mengubah konfigurasi cache default.
-
-Hanya disarankan untuk kasus penggunaan lanjutan di mana konfigurasi cache default terbukti menjadi masalah. Cara yang didukung untuk mengubah konfigurasi cache default adalah melalui opsi `cache-…​` lainnya.
-
-**CLI:** `--cache-config-mutate`  
-**Env:** `KC_CACHE_CONFIG_MUTATE`
-
-`true`, `false`
-
-`false`
-
-`cache-embedded-authorization-max-count`
-
-Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache otorisasi.
-
-**CLI:** `--cache-embedded-authorization-max-count`  
-**Env:** `KC_CACHE_EMBEDDED_AUTHORIZATION_MAX_COUNT`
-
-_Integer_
-
-`cache-embedded-client-sessions-max-count`
-
-Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache clientSessions.
-
-**CLI:** `--cache-embedded-client-sessions-max-count`  
-**Env:** `KC_CACHE_EMBEDDED_CLIENT_SESSIONS_MAX_COUNT`
-
-Hanya tersedia saat konfigurasi kluster Infinispan embedded
-
-_Integer_
-
-`cache-embedded-crl-max-count`
-
-Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache crl.
-
-**CLI:** `--cache-embedded-crl-max-count`  
-**Env:** `KC_CACHE_EMBEDDED_CRL_MAX_COUNT`
-
-_Integer_
-
-`cache-embedded-keys-max-count`
-
-Jumlah maksimum entri yang dapat disimpan dalam memori oleh cache kunci.
-
-**CLI:** `--cache-embedded-keys-max-count`  
-**Env:** `KC_CACHE_EMBEDDED_KEYS_MAX_COUNT`
-
-_Integer_
-
-`cache-embedded-mtls-enabled`
-
-Mengenkripsi komunikasi jaringan antara server NQRust-Identity.
-
-Jika tidak ada parameter tambahan tentang keystore dan truststore yang diberikan, pasangan kunci sementara dan sertifikat akan dibuat dan diputar secara otomatis, yang disarankan untuk konfigurasi standar.
-
-**CLI:** `--cache-embedded-mtls-enabled`  
-**Env:** `KC_CACHE_EMBEDDED_MTLS_ENABLED`
-
-Hanya tersedia saat stack cache berbasis TCP digunakan
-
-`true`, `false`
-
-`true`
-
-`cache-embedded-mtls-key-store-file`
-
-Jalur file Keystore.
-
-Keystore harus berisi sertifikat yang akan digunakan oleh protokol TLS. Secara default, mencari `cache-mtls-keystore.p12` di bawah direktori conf/.
-
-**CLI:** `--cache-embedded-mtls-key-store-file`  
-**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_FILE`
-
-Hanya tersedia saat properti 'cache-embedded-mtls-enabled' diaktifkan
-
-_String_
-
-`cache-embedded-mtls-key-store-password`
-
-Kata sandi untuk mengakses Keystore.
-
-**CLI:** `--cache-embedded-mtls-key-store-password`  
-**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_PASSWORD`
-
-Hanya tersedia saat properti 'cache-embedded-mtls-enabled' diaktifkan
-
-_String_
-
-`cache-embedded-mtls-rotation-interval-days`
-
-Jangka waktu putaran sertifikat JGroups MTLS otomatis dalam hari.
-
-**CLI:** `--cache-embedded-mtls-rotation-interval-days`  
-**Env:** `KC_CACHE_EMBEDDED_MTLS_ROTATION_INTERVAL_DAYS`
-
-Hanya tersedia saat properti 'cache-embedded-mtls-enabled' diaktifkan
-
-_Integer_
-
-`30`
-
-`cache-embedded-mtls-trust-store-file`
-
-Jalur file Truststore.
-
-Seharusnya berisi sertifikat terpercaya atau Otorit
+# All configuration
+
+## Cache
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`cache`**<br/>Menentukan mekanisme cache untuk ketersediaan tinggi.<br/>Pada mode produksi secara default, cache `ispn` digunakan untuk membuat kluster antara beberapa node server. Pada mode pengembangan secara default, cache `local` menonaktifkan kluster dan ditujukan untuk tujuan pengembangan dan pengujian.<br/>**CLI:** `--cache`<br/>**Env:** `KC_CACHE` | `ispn`, `local` |  |
+| **`cache-config-file`**<br/>Menentukan file dari mana konfigurasi cache harus diambil.<br/>File konfigurasi relatif terhadap direktori `conf/`.<br/>**CLI:** `--cache-config-file`<br/>**Env:** `KC_CACHE_CONFIG_FILE` | _File_ |  |
+| **`cache-config-mutate`**<br/>Menentukan apakah diizinkan perubahan pada konfigurasi cache default.<br/>Hanya disarankan untuk kasus penggunaan lanjutan di mana konfigurasi cache default terbukti menjadi masalah. Cara yang didukung untuk mengubah konfigurasi cache default hanya melalui opsi `cache-…​` lainnya.<br/>**CLI:** `--cache-config-mutate`<br/>**Env:** `KC_CACHE_CONFIG_MUTATE` | `true`, `false` | `false` |
+| **`cache-embedded-authorization-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache otorisasi.<br/>**CLI:** `--cache-embedded-authorization-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_AUTHORIZATION_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-client-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache clientSessions.<br/>**CLI:** `--cache-embedded-client-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_CLIENT_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-crl-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache crl.<br/>**CLI:** `--cache-embedded-crl-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_CRL_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-keys-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache keys.<br/>**CLI:** `--cache-embedded-keys-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_KEYS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-mtls-enabled`**<br/>Mengenkripsi komunikasi jaringan antara server NQRust-Identity.<br/>Jika tidak ada parameter tambahan tentang keystore dan truststore yang diberikan, pasangan kunci sementara dan sertifikat dibuat dan diputar secara otomatis, yang disarankan untuk pengaturan standar.<br/>**CLI:** `--cache-embedded-mtls-enabled`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_ENABLED` | `true`, `false` | `true` |
+| **`cache-embedded-mtls-key-store-file`**<br/>Jalur file Keystore.<br/>Keystore harus berisi sertifikat yang akan digunakan oleh protokol TLS. Secara default, mencari `cache-mtls-keystore.p12` di bawah direktori conf/.<br/>**CLI:** `--cache-embedded-mtls-key-store-file`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_FILE` | _String_ |  |
+| **`cache-embedded-mtls-key-store-password`**<br/>Kata sandi untuk mengakses Keystore.<br/>**CLI:** `--cache-embedded-mtls-key-store-password`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_PASSWORD` | _String_ |  |
+| **`cache-embedded-mtls-rotation-interval-days`**<br/>Jangka waktu putaran sertifikat JGroups MTLS otomatis dalam hari.<br/>**CLI:** `--cache-embedded-mtls-rotation-interval-days`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_ROTATION_INTERVAL_DAYS` | _Integer_ | `30` |
+| **`cache-embedded-mtls-trust-store-file`**<br/>Jalur file Truststore.<br/>Harus berisi sertifikat terpercaya atau Otoritas Sertifikat yang menandatangani sertifikat. Secara default, mencari `cache-mtls-truststore.p12` di bawah direktori conf/.<br/>**CLI:** `--cache-embedded-mtls-trust-store-file`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_TRUST_STORE_FILE` | _String_ |  |
+| **`cache-embedded-mtls-trust-store-password`**<br/>Kata sandi untuk mengakses Truststore.<br/>**CLI:** `--cache-embedded-mtls-trust-store-password`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_TRUST_STORE_PASSWORD` | _String_ |  |
+| **`cache-embedded-network-bind-address`**<br/>Alamat IP yang digunakan oleh transport kluster.<br/>Secara default, digunakan SITE_LOCAL.<br/>**CLI:** `--cache-embedded-network-bind-address`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_BIND_ADDRESS` | _String_ |  |
+| **`cache-embedded-network-bind-port`**<br/>Port yang akan terikat oleh transport kluster.<br/>Secara default, port 7800 digunakan.<br/>**CLI:** `--cache-embedded-network-bind-port`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_BIND_PORT` | _Integer_ |  |
+| **`cache-embedded-network-external-address`**<br/>Alamat IP yang harus digunakan oleh instance lain di kluster untuk menghubungi node ini.<br/>Hanya diatur jika berbeda dengan cache-embedded-network-bind-address, misalnya ketika instance ini di belakang firewall.<br/>**CLI:** `--cache-embedded-network-external-address`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_EXTERNAL_ADDRESS` | _String_ |  |
+| **`cache-embedded-network-external-port`**<br/>Port yang harus digunakan oleh instance lain di kluster untuk menghubungi node ini.<br/>Hanya diatur jika berbeda dengan cache-embedded-network-bind-port, misalnya ketika instance ini di belakang firewall<br/>**CLI:** `--cache-embedded-network-external-port`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_EXTERNAL_PORT` | _Integer_ |  |
+| **`cache-embedded-offline-client-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache offlineClientSessions.<br/>**CLI:** `--cache-embedded-offline-client-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_OFFLINE_CLIENT_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-offline-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache offlineSessions.<br/>**CLI:** `--cache-embedded-offline-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_OFFLINE_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-realms-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache realms.<br/>**CLI:** `--cache-embedded-realms-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_REALMS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache sessions.<br/>**CLI:** `--cache-embedded-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-users-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache users.<br/>**CLI:** `--cache-embedded-users-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_USERS_MAX_COUNT` | _Integer_ |  |
+| **`cache-metrics-histograms-enabled`**<br/>Aktifkan histogram untuk metrik cache yang diembed.<br/>**CLI:** `--cache-metrics-histograms-enabled`<br/>**Env:** `KC_CACHE_METRICS_HISTOGRAMS_ENABLED` | `true`, `false` | `false` |
+| **`cache-remote-backup-sites`**<br/>Mengonfigurasi daftar nama situs cadangan tempat kluster Infinispan eksternal menyandorkan data NQRust-Identity.<br/>**CLI:** `--cache-remote-backup-sites`<br/>**Env:** `KC_CACHE_REMOTE_BACKUP_SITES` | _Daftar_ |  |
+| **`cache-remote-host`**<br/>Nama host dari kluster Infinispan eksternal.<br/>Tersedia hanya ketika fitur `multi-site` atau `clusterless` diatur.<br/>**CLI:** `--cache-remote-host`<br/>**Env:** `KC_CACHE_REMOTE_HOST` | _String_ |  |
+| **`cache-remote-password`**<br/>Kata sandi untuk otentikasi ke kluster Infinispan eksternal.<br/>Opsional jika terhubung ke kluster Infinispan eksternal yang tidak aman. Jika opsi ini ditentukan, `cache-remote-username` juga diperlukan.<br/>**CLI:** `--cache-remote-password`<br/>**Env:** `KC_CACHE_REMOTE_PASSWORD` | _String_ |  |
+| **`cache-remote-port`**<br/>Port dari kluster Infinispan eksternal.<br/>**CLI:** `--cache-remote-port`<br/>**Env:** `KC_CACHE_REMOTE_PORT` | _Integer_ | `11222` |
+| **`cache-remote-tls-enabled`**<br/>Aktifkan dukungan TLS untuk berkomunikasi dengan server Infinispan eksternal yang terjamin.<br/>Disarankan untuk diaktifkan dalam produksi.<br/>**CLI:** `--cache-remote-tls-enabled`<br/>**Env:** `KC_CACHE_REMOTE_TLS_ENABLED` | `true`, `false` | `true` |
+| **`cache-remote-username`**<br/>Nama pengguna untuk otentikasi ke kluster Infinispan eksternal.<br/>Opsional jika terhubung ke kluster Infinispan eksternal yang tidak aman. Jika opsi ini ditentukan, `cache-remote-password` juga diperlukan.<br/>**CLI:** `--cache-remote-username`<br/>**Env:** `KC_CACHE_REMOTE_USERNAME` | _String_ |  |
+| **`cache-stack`**<br/>Menentukan tumpukan default untuk komunikasi kluster dan penemuan node.<br/>Secara default, `jdbc-ping` jika tidak diatur.<br/>**CLI:** `--cache-stack`<br/>**Env:** `KC_CACHE_STACK` | `jdbc-ping`, `kubernetes` (usang), `jdbc-ping-udp` (usang), `tcp` (usang), `udp` (usang), `ec2` (usang), `azure` (usang), `google` (usang), atau apapun |  |
+
+## Konfigurasi
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`config-keystore`**<br/>Menentukan jalur ke Sumber Konfigurasi KeyStore.<br/>**CLI:** `--config-keystore`<br/>**Env:** `KC_CONFIG_KEYSTORE` | _String_ |  |
+| **`config-keystore-password`**<br/>Menentukan kata sandi ke Sumber Konfigurasi KeyStore.<br/>**CLI:** `--config-keystore-password`<br/>**Env:** `KC_CONFIG_KEYSTORE_PASSWORD` | _String_ |  |
+| **`config-keystore-type`**<br/>Menentukan tipe Sumber Konfigurasi KeyStore.<br/>**CLI:** `--config-keystore-type`<br/>**Env:** `KC_CONFIG_KEYSTORE_TYPE` | _String_ | `PKCS12` |
+
+## Database
+
+| Pilihan | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`db`**<br/>Penyedia database.<br/>Dalam mode produksi, nilai default `dev-file` dianggap usang, Anda harus secara eksplisit menentukan db.<br/>**Kunci bernama:** `db-kind-<datasource>`<br/>**CLI:** `--db`<br/>**Env:** `KC_DB` | `dev-file`, `dev-mem`, `mariadb`, `mssql`, `mysql`, `oracle`, `postgres`, `tidb` | `dev-file` |
+| **`db-connect-timeout`**<br/>Mengatur waktu timeout koneksi driver JDBC dan waktu login.<br/>Mungkin merupakan nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--db-connect-timeout`<br/>**Env:** `KC_DB_CONNECT_TIMEOUT` | _String_ | `10s` |
+| **`db-debug-jpql`**<br/>Menambahkan informasi JPQL sebagai komentar pada pernyataan SQL untuk debug generasi pernyataan SQL JPA.<br/>**Kunci bernama:** `db-debug-jpql-<datasource>`<br/>**CLI:** `--db-debug-jpql`<br/>**Env:** `KC_DB_DEBUG_JPQL` | `true`, `false` | `false` |
+| **`db-driver`**<br/>Nama kelas lengkap dari driver JDBC.<br/>Jika tidak diatur, driver default akan ditetapkan sesuai dengan database yang dipilih.<br/>**Kunci bernama:** `db-driver-<datasource>`<br/>**CLI:** `--db-driver`<br/>**Env:** `KC_DB_DRIVER` | _String_ |  |
+| **`db-log-slow-queries-threshold`**<br/>Log pernyataan SQL yang lebih lambat dari ambang batas yang dikonfigurasi dengan logger org.<br/>hibernate.SQL_SLOW dan log-level info.<br/>**Kunci bernama:** `db-log-slow-queries-threshold-<datasource>`<br/>**CLI:** `--db-log-slow-queries-threshold`<br/>**Env:** `KC_DB_LOG_SLOW_QUERIES_THRESHOLD` | _Integer_ | `10000` |
+| **`db-password`**<br/>Kata sandi pengguna database.<br/>**Kunci bernama:** `db-password-<datasource>`<br/>**CLI:** `--db-password`<br/>**Env:** `KC_DB_PASSWORD` | _String_ |  |
+| **`db-pool-initial-size`**<br/>Ukuran awal pool koneksi.<br/>**Kunci bernama:** `db-pool-initial-size-<datasource>`<br/>**CLI:** `--db-pool-initial-size`<br/>**Env:** `KC_DB_POOL_INITIAL_SIZE` | _Integer_ |  |
+| **`db-pool-max-lifetime`**<br/>Waktu maksimum koneksi yang tetap dalam pool, setelah itu akan ditutup saat dikembalikan dan diganti sesuai kebutuhan.<br/>Mungkin merupakan nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--db-pool-max-lifetime`<br/>**Env:** `KC_DB_POOL_MAX_LIFETIME` | _String_ |  |
+| **`db-pool-max-size`**<br/>Ukuran maksimum pool koneksi.<br/>**Kunci bernama:** `db-pool-max-size-<datasource>`<br/>**CLI:** `--db-pool-max-size`<br/>**Env:** `KC_DB_POOL_MAX_SIZE` | _Integer_ | `100` |
+| **`db-pool-min-size`**<br/>Ukuran minimal pool koneksi.<br/>**Kunci bernama:** `db-pool-min-size-<datasource>`<br/>**CLI:** `--db-pool-min-size`<br/>**Env:** `KC_DB_POOL_MIN_SIZE` | _Integer_ |  |
+| **`db-schema`**<br/>Skema database yang akan digunakan.<br/>**Kunci bernama:** `db-schema-<datasource>`<br/>**CLI:** `--db-schema`<br/>**Env:** `KC_DB_SCHEMA` | _String_ |  |
+| **`db-tls-mode`**<br/>Mengatur mode TLS untuk koneksi database.<br/>Jika dinonaktifkan, menggunakan nilai default driver. Ketika diatur ke verify-server, mengaktifkan enkripsi dan verifikasi identitas server. Dibutuhkan sertifikat server database atau sertifikat Otoritas Sertifikat (CA).<br/>**Kunci bernama:** `db-tls-mode-<datasource>`<br/>**CLI:** `--db-tls-mode`<br/>**Env:** `KC_DB_TLS_MODE` | `disabled`, `verify-server` | `disabled` |
+| **`db-tls-trust-store-file`**<br/>Jalur ke file truststore yang berisi sertifikat server database atau sertifikat Otoritas Sertifikat (CA) yang digunakan untuk verifikasi identitas server database.<br/>**Kunci bernama:** `db-tls-trust-store-file-<datasource>`<br/>**CLI:** `--db-tls-trust-store-file`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_FILE` | _File_ |  |
+| **`db-tls-trust-store-password`**<br/>Kata sandi untuk mengakses file truststore yang ditentukan dalam db-tls-trust-store-file (jika diperlukan dan didukung oleh driver JDBC).<br/>**Kunci bernama:** `db-tls-trust-store-password-<datasource>`<br/>**CLI:** `--db-tls-trust-store-password`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD` | _String_ |  |
+| **`db-tls-trust-store-type`**<br/>Jenis file truststore.<br/>Nilai umum meliputi `JKS` (Java KeyStore) dan `PKCS12`. Jika tidak ditentukan, menggunakan nilai default driver.<br/>**Kunci bernama:** `db-tls-trust-store-type-<datasource>`<br/>**CLI:** `--db-tls-trust-store-type`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE` | _String_ |  |
+| **`db-url`**<br/>URL JDBC database lengkap.<br/>Jika tidak diberikan, URL default akan ditetapkan berdasarkan penyedia database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/nqrust-identity`.<br/>**Kunci bernama:** `db-url-full-<datasource>`<br/>**CLI:** `--db-url`<br/>**Env:** `KC_DB_URL` | _String_ |  |
+| **`db-url-database`**<br/>Mengatur nama database dari URL JDBC default penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-database-<datasource>`<br/>**CLI:** `--db-url-database`<br/>**Env:** `KC_DB_URL_DATABASE` | _String_ |  |
+| **`db-url-host`**<br/>Mengatur nama host dari URL JDBC default penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-host-<datasource>`<br/>**CLI:** `--db-url-host`<br/>**Env:** `KC_DB_URL_HOST` | _String_ |  |
+| **`db-url-port`**<br/>Mengatur port dari URL JDBC default penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-port-<datasource>`<br/>**CLI:** `--db-url-port`<br/>**Env:** `KC_DB_URL_PORT` | _Integer_ |  |
+| **`db-url-properties`**<br/>Mengatur properti dari URL JDBC default penyedia yang dipilih.<br/>Pastikan untuk mengatur properti sesuai dengan format yang diharapkan oleh penyedia database, serta menambahkan karakter yang tepat di awal nilai properti ini. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-properties-<datasource>`<br/>**CLI:** `--db-url-properties`<br/>**Env:** `KC_DB_URL_PROPERTIES` | _String_ |  |
+| **`db-username`**<br/>Nama pengguna database.<br/>**Kunci bernama:** `db-username-<datasource>`<br/>**CLI:** `--db-username`<br/>**Env:** `KC_DB_USERNAME` | _String_ |  |
+
+## Database - additional datasources
+
+| Pilihan | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`db-debug-jpql-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Tambahkan informasi JPQL sebagai komentar ke pernyataan SQL untuk debug generasi pernyataan SQL JPA.<br/>**CLI:** `--db-debug-jpql-<datasource>`<br/>**Env:** `KC_DB_DEBUG_JPQL_<DATASOURCE>` | `true`, `false` | `false` |
+| **`db-driver-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Nama kelas lengkap dari driver JDBC. Jika tidak diatur, driver default akan diatur sesuai dengan database yang dipilih.<br/>**CLI:** `--db-driver-<datasource>`<br/>**Env:** `KC_DB_DRIVER_<DATASOURCE>` | _String_ |  |
+| **`db-enabled-<datasource>`**<br/>Apakah datasource bernama &lt;datasource&gt; harus diaktifkan pada runtime.<br/>**CLI:** `--db-enabled-<datasource>`<br/>**Env:** `KC_DB_ENABLED_<DATASOURCE>` | `true`, `false` | `true` |
+| **`db-kind-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Vendor database. Pada mode produksi, nilai default `dev-file` dianggap usang, Anda harus secara eksplisit menentukan database.<br/>**CLI:** `--db-kind-<datasource>`<br/>**Env:** `KC_DB_KIND_<DATASOURCE>` | `dev-file`, `dev-mem`, `mariadb`, `mssql`, `mysql`, `oracle`, `postgres`, `tidb` |  |
+| **`db-log-slow-queries-threshold-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Log pernyataan SQL yang lebih lambat dari ambang batas yang dikonfigurasi dengan logger org.hibernate.SQL_SLOW dan log-level info.<br/>**CLI:** `--db-log-slow-queries-threshold-<datasource>`<br/>**Env:** `KC_DB_LOG_SLOW_QUERIES_THRESHOLD_<DATASOURCE>` | _Integer_ | `10000` |
+| **`db-password-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Kata sandi pengguna database.<br/>**CLI:** `--db-password-<datasource>`<br/>**Env:** `KC_DB_PASSWORD_<DATASOURCE>` | _String_ |  |
+| **`db-pool-initial-size-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Ukuran awal pool koneksi.<br/>**CLI:** `--db-pool-initial-size-<datasource>`<br/>**Env:** `KC_DB_POOL_INITIAL_SIZE_<DATASOURCE>` | _Integer_ |  |
+| **`db-pool-max-size-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Ukuran maksimum pool koneksi.<br/>**CLI:** `--db-pool-max-size-<datasource>`<br/>**Env:** `KC_DB_POOL_MAX_SIZE_<DATASOURCE>` | _Integer_ | `100` |
+| **`db-pool-min-size-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Ukuran minimal pool koneksi.<br/>**CLI:** `--db-pool-min-size-<datasource>`<br/>**Env:** `KC_DB_POOL_MIN_SIZE_<DATASOURCE>` | _Integer_ |  |
+| **`db-schema-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Skema database yang akan digunakan.<br/>**CLI:** `--db-schema-<datasource>`<br/>**Env:** `KC_DB_SCHEMA_<DATASOURCE>` | _String_ |  |
+| **`db-tls-mode-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur mode TLS untuk koneksi database. Jika dimatikan, menggunakan nilai default driver. Ketika diatur ke verify-server, mengaktifkan enkripsi dan verifikasi identitas server. Diperlukan sertifikat server database atau sertifikat Otoritas Pengguna Sertifikat (CA).<br/>**CLI:** `--db-tls-mode-<datasource>`<br/>**Env:** `KC_DB_TLS_MODE_<DATASOURCE>` | `disabled`, `verify-server` | `disabled` |
+| **`db-tls-trust-store-file-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Jalur ke file truststore yang berisi sertifikat server database atau sertifikat Otoritas Pengguna Sertifikat (CA) yang digunakan untuk verifikasi identitas server database.<br/>**CLI:** `--db-tls-trust-store-file-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_FILE_<DATASOURCE>` | _File_ |  |
+| **`db-tls-trust-store-password-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Kata sandi untuk mengakses file truststore yang ditentukan dalam db-tls-trust-store-file (jika diperlukan dan didukung oleh driver JDBC).<br/>**CLI:** `--db-tls-trust-store-password-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD_<DATASOURCE>` | _String_ |  |
+| **`db-tls-trust-store-type-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Jenis file truststore. Nilai umum meliputi `JKS` (Java KeyStore) dan `PKCS12`. Jika tidak ditentukan, menggunakan nilai default driver.<br/>**CLI:** `--db-tls-trust-store-type-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE_<DATASOURCE>` | _String_ |  |
+| **`db-url-database-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur nama database dari URL JDBC default dari vendor yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-database-<datasource>`<br/>**Env:** `KC_DB_URL_DATABASE_<DATASOURCE>` | _String_ |  |
+| **`db-url-full-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>URL JDBC database lengkap. Jika tidak diberikan, URL default akan diatur berdasarkan vendor database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/nqrust-identity`.<br/>**CLI:** `--db-url-full-<datasource>`<br/>**Env:** `KC_DB_URL_FULL_<DATASOURCE>` | _String_ |  |
+| **`db-url-host-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur nama host dari URL JDBC default dari vendor yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-host-<datasource>`<br/>**Env:** `KC_DB_URL_HOST_<DATASOURCE>` | _String_ |  |
+| **`db-url-port-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur port dari URL JDBC default dari vendor yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-port-<datasource>`<br/>**Env:** `KC_DB_URL_PORT_<DATASOURCE>` | _Integer_ |  |
+| **`db-url-properties-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur properti dari URL JDBC default dari vendor yang dipilih. Pastikan untuk mengatur properti sesuai dengan format yang diharapkan oleh vendor database, serta menambahkan karakter yang tepat di awal nilai properti ini. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-properties-<datasource>`<br/>**Env:** `KC_DB_URL_PROPERTIES_<DATASOURCE>` | _String_ |  |
+| **`db-username-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Nama pengguna database.<br/>**CLI:** `--db-username-<datasource>`<br/>**Env:** `KC_DB_USERNAME_<DATASOURCE>` | _String_ |  |
+
+## Transaksi
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`transaction-default-timeout`**<br/>Waktu timeout transaksi default.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--transaction-default-timeout`<br/>**Env:** `KC_TRANSACTION_DEFAULT_TIMEOUT` | _String_ | `5m` |
+| **`transaction-setup-timeout`**<br/>Waktu timeout transaksi untuk migrasi database/impor/ekspor transaksi.<br/>Mungkin berupa nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--transaction-setup-timeout`<br/>**Env:** `KC_TRANSACTION_SETUP_TIMEOUT` | _String_ | `30m` |
+| **`transaction-xa-enabled`**<br/>Jika diatur ke true, sumber daya XA akan digunakan.<br/>Nama kunci ternama: `transaction-xa-enabled-<datasource>`<br/>**CLI:** `--transaction-xa-enabled`<br/>**Env:** `KC_TRANSACTION_XA_ENABLED` | `true`, `false` | `false` |
+| **`transaction-xa-enabled-<datasource>`**<br/>Jika diatur ke true, XA untuk sumber daya &lt;datasource&gt; akan digunakan.<br/>**CLI:** `--transaction-xa-enabled-<datasource>`<br/>**Env:** `KC_TRANSACTION_XA_ENABLED_<DATASOURCE>` | `true`, `false` | `true` |
+
+## Fitur
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`feature-<name>`**<br/>Aktifkan/Matikan fitur tertentu &lt;feature&gt;.<br/>Menguasai opsi `features`, dan `features-disabled`. Nilai yang mungkin adalah: `enabled`, `disabled`, atau versi spesifik (huruf kecil) yang akan diaktifkan (mis. `v2`)<br/>**CLI:** `--feature-<name>`<br/>**Env:** `KC_FEATURE_<NAME>` | _String_ |  |
+| **`features`**<br/>Mengaktifkan satu atau lebih set fitur.<br/>**CLI:** `--features`<br/>**Env:** `KC_FEATURES` | `account-api[:v1]`, `account[:v3]`, `admin-api[:v1]`, `admin-fine-grained-authz[:v1,v2]`, `admin[:v2]`, `authorization[:v1]`, `ciba[:v1]`, `cimd[:v1]`, `client-admin-api[:v2]`, `client-auth-federated[:v1]`, `client-policies[:v1]`, `client-secret-rotation[:v1]`, `client-types[:v1]`, `clusterless[:v1]`, `db-tidb[:v1]`, `declarative-ui[:v1]`, `device-flow[:v1]`, `docker[:v1]`, `dpop[:v1]`, `dynamic-scopes[:v1]`, `fips[:v1]`, `hostname[:v2]`, `http-optimized-serializers[:v1]`, `identity-brokering-api[:v1,v2]`, `impersonation[:v1]`, `instagram-broker[:v1]`, `ipa-tuura-federation[:v1]`, `jwt-authorization-grant[:v1]`, `kerberos[:v1]`, `kubernetes-service-accounts[:v1]`, `log-mdc[:v1]`, `login[:v2,v1]`, `logout-all-sessions[:v1]`, `multi-site[:v1]`, `oid4vc-vci-preauth-code[:v1]`, `oid4vc-vci[:v1]`, `openapi[:v1]`, `opentelemetry-logs[:v1]`, `opentelemetry-metrics[:v1]`, `opentelemetry[:v1]`, `organization[:v1]`, `par[:v1]`, `passkeys-conditional-ui-authenticator[:v1]`, `passkeys[:v1]`, `persistent-user-sessions[:v1]`, `preview`, `quick-theme[:v1]`, `recovery-codes[:v1]`, `resource-indicators[:v1]`, `rolling-updates[:v1,v2]`, `scim-api[:v1]`, `scripts[:v1]`, `spiffe[:v1]`, `step-up-authentication-saml[:v1]`, `step-up-authentication[:v1]`, `token-exchange-external-internal[:v2]`, `token-exchange-standard[:v2]`, `token-exchange[:v1]`, `transient-users[:v1]`, `update-email[:v1]`, `user-event-metrics[:v1]`, `web-authn[:v1]`, `workflows[:v1]` |  |
+| **`features-disabled`**<br/>Menonaktifkan satu atau lebih set fitur.<br/>**CLI:** `--features-disabled`<br/>**Env:** `KC_FEATURES_DISABLED` | `account`, `account-api`, `admin`, `admin-api`, `admin-fine-grained-authz`, `authorization`, `ciba`, `cimd`, `client-admin-api`, `client-auth-federated`, `client-policies`, `client-secret-rotation`, `client-types`, `clusterless`, `db-tidb`, `declarative-ui`, `device-flow`, `docker`, `dpop`, `dynamic-scopes`, `fips`, `http-optimized-serializers`, `identity-brokering-api`, `impersonation`, `instagram-broker`, `ipa-tuura-federation`, `jwt-authorization-grant`, `kerberos`, `kubernetes-service-accounts`, `log-mdc`, `login`, `logout-all-sessions`, `multi-site`, `oid4vc-vci`, `oid4vc-vci-preauth-code`, `openapi`, `opentelemetry`, `opentelemetry-logs`, `opentelemetry-metrics`, `organization`, `par`, `passkeys`, `passkeys-conditional-ui-authenticator`, `persistent-user-sessions`, `preview`, `quick-theme`, `recovery-codes`, `resource-indicators`, `scim-api`, `scripts`, `spiffe`, `step-up-authentication`, `step-up-authentication-saml`, `token-exchange`, `token-exchange-external-internal`, `token-exchange-standard`, `transient-users`, `update-email`, `user-event-metrics`, `web-authn`, `workflows` |  |
+
+## Nama Host v2
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`nama-host`**<br/>Alamat di mana server tersebut terekspos.<br/>Dapat berupa URL lengkap atau hanya nama host. Ketika hanya nama host yang diberikan,skema, port, dan jalur konteks akan diselesaikan dari permintaan.<br/>**CLI:** `--nama-host`<br/>**Env:** `KC_NAMA_HOST` | _String_ |  |
+| **`nama-host-admin`**<br/>Alamat untuk mengakses konsol administrasi.<br/>Gunakan opsi ini jika Anda mengekspos konsol administrasi menggunakan proxy balik pada alamat yang berbeda dengan yang ditentukan dalam opsi `nama-host`.<br/>**CLI:** `--nama-host-admin`<br/>**Env:** `KC_NAMA_HOST_ADMIN` | _String_ |  |
+| **`nama-host-backchannel-dynamic`**<br/>Mengaktifkan penyelesaian dinamis URL backchannel, termasuk nama host, skema, port, dan jalur konteks.<br/>Setel ke true jika aplikasi Anda mengakses NQRust-Identity melalui jaringan pribadi. Jika diatur ke true, opsi `nama-host` perlu ditentukan sebagai URL lengkap.<br/>**CLI:** `--nama-host-backchannel-dynamic`<br/>**Env:** `KC_NAMA_HOST_BACKCHANNEL_DYNAMIC` | `true`, `false` | `false` |
+| **`nama-host-debug`**<br/>Mengaktifkan halaman debug nama host yang dapat diakses di /realms/master/nama-host-debug.<br/>**CLI:** `--nama-host-debug`<br/>**Env:** `KC_NAMA_HOST_DEBUG` | `true`, `false` | `false` |
+| **`nama-host-strict`**<br/>Menonaktifkan penyelesaian dinamis nama host dari header permintaan.<br/>Secara konvensional harus diatur ke true dalam produksi, kecuali jika proxy balik Anda menimpa header Host. Jika diaktifkan, opsi `nama-host` perlu ditentukan.<br/>**CLI:** `--nama-host-strict`<br/>**Env:** `KC_NAMA_HOST_STRICT` | `true`, `false` | `true` |
+
+## HTTP(S)
+
+| Pilihan | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`http-accept-non-normalized-paths`**<br/>Apakah server harus menerima path yang tidak dinormalisasi menurut RFC3986 atau yang berisi double slash (//) atau semicolon (;).<br/>Meskipun menerima permintaan tersebut mungkin relevan untuk aplikasi lagenda, disarankan untuk menonaktifkannya untuk memungkinkan filtering URL yang lebih koncis.<br/>**CLI:** `--http-accept-non-normalized-paths`<br/>**Env:** `KC_HTTP_ACCEPT_NON_NORMALIZED_PATHS` | `true`, `false` | `false` |
+| **`http-enabled`**<br/>Mengaktifkan listener HTTP.<br/>Diaktifkan secara default dalam mode development. Biasanya tidak diaktifkan dalam produksi kecuali server di depan oleh proxy pengakhiran TLS.<br/>**CLI:** `--http-enabled`<br/>**Env:** `KC_HTTP_ENABLED` | `true`, `false` | `false` |
+| **`http-host`**<br/>HTTP Host.<br/>Dalam mode prod atau saat berjalan pada Windows Subsystem For Linux, defaultnya adalah untuk mengikat ke semua alamat jaringan (0.0.0.0), yang berarti server mungkin dapat diakses dari mesin lain di jaringan Anda. Jika tidak, defaultnya adalah localhost.<br/>**CLI:** `--http-host`<br/>**Env:** `KC_HTTP_HOST` | _String_ |  |
+| **`http-max-queued-requests`**<br/>Jumlah maksimum permintaan HTTP yang antri.<br/>Gunakan ini untuk mebantu beban dalam situasi overload. Permintaan berlebih akan mengembalikan respons "503 Server not Available".<br/>**CLI:** `--http-max-queued-requests`<br/>**Env:** `KC_HTTP_MAX_QUEUED_REQUESTS` | _Integer_ |  |
+| **`http-metrics-histograms-enabled`**<br/>Mengaktifkan histogram dengan bucket default untuk durasi permintaan server HTTP.<br/>**CLI:** `--http-metrics-histograms-enabled`<br/>**Env:** `KC_HTTP_METRICS_HISTOGRAMS_ENABLED` | `true`, `false` | `false` |
+| **`http-metrics-slos`**<br/>Service level objectives untuk permintaan server HTTP.<br/>Gunakan ini sebagai gantinya histogram default, atau gunakan secara kombinasi untuk menambahkan bucket tambahan. Tentukan daftar nilai yang dipisahkan koma yang didefinisikan dalam milidetik. Contoh dengan bucket dari 5ms hingga 10s: 5,10,25,50,250,500,1000,2500,5000,10000<br/>**CLI:** `--http-metrics-slos`<br/>**Env:** `KC_HTTP_METRICS_SLOS` | _String_ |  |
+| **`http-pool-max-threads`**<br/>Jumlah maksimum thread.<br/>Jika tidak ditentukan, maka otomatis diukur menjadi yang lebih besar dari 4 * jumlah processor yang tersedia dan 50. Misalnya jika ada 4 processor, thread maksimum akan menjadi 50. Jika ada 48 processor, maka akan menjadi 192.<br/>**CLI:** `--http-pool-max-threads`<br/>**Env:** `KC_HTTP_POOL_MAX_THREADS` | _Integer_ |  |
+| **`http-port`**<br/>Port HTTP yang digunakan.<br/>**CLI:** `--http-port`<br/>**Env:** `KC_HTTP_PORT` | _Integer_ | `8080` |
+| **`http-relative-path`**<br/>Setel path relatif terhadap / untuk melayani sumber daya.<br/>Path harus diawali dengan `/`.<br/>**CLI:** `--http-relative-path`<br/>**Env:** `KC_HTTP_RELATIVE_PATH` | _String_ | `/` |
+| **`https-certificate-file`**<br/>Jalur file ke sertifikat server atau rantai sertifikat dalam format PEM.<br/>**CLI:** `--https-certificate-file`<br/>**Env:** `KC_HTTPS_CERTIFICATE_FILE` | _File_ |  |
+| **`https-certificate-key-file`**<br/>Jalur file ke kunci pribadi dalam format PEM.<br/>**CLI:** `--https-certificate-key-file`<br/>**Env:** `KC_HTTPS_CERTIFICATE_KEY_FILE` | _File_ |  |
+| **`https-certificates-reload-period`**<br/>Interval untuk memuat ulang key store, trust store, dan file sertifikat yang dirujuk oleh opsi https-*.<br/>Mungkin merupakan nilai durasi ISO 8601, jumlah integer detik, atau integer diikuti salah satu [ms, h, m, s, d]. Harus lebih besar dari 30 detik. Gunakan -1 untuk menonaktifkan.<br/>**CLI:** `--https-certificates-reload-period`<br/>**Env:** `KC_HTTPS_CERTIFICATES_RELOAD_PERIOD` | _String_ | `1h` |
+| **`https-cipher-suites`**<br/>Suite cipher yang digunakan.<br/>Jika tidak diberikan, default yangreasonable akan dipilih.<br/>**CLI:** `--https-cipher-suites`<br/>**Env:** `KC_HTTPS_CIPHER_SUITES` | _String_ |  |
+| **`https-client-auth`**<br/>Mengonfigurasi server untuk memerlukan/mengajukan autentikasi klien.<br/>**CLI:** `--https-client-auth`<br/>**Env:** `KC_HTTPS_CLIENT_AUTH` | `none`, `request`, `required` | `none` |
+| **`https-key-store-file`**<br/>Key store yang memegang informasi sertifikat sebagai gantinya dari menentukan file terpisah.<br/>**CLI:** `--https-key-store-file`<br/>**Env:** `KC_HTTPS_KEY_STORE_FILE` | _File_ |  |
+| **`https-key-store-password`**<br/>Kata sandi file key store.<br/>**CLI:** `--https-key-store-password`<br/>**Env:** `KC_HTTPS_KEY_STORE_PASSWORD` | _String_ | `password` |
+| **`https-key-store-type`**<br/>Tipe file key store.<br/>Jika tidak diberikan, tipe akan terdeteksi secara otomatis berdasarkan ekstensi file. Jika `fips-mode` diatur ke `strict` dan tidak ada nilai yang diatur, maka defaultnya menjadi `BCFKS`.<br/>**CLI:** `--https-key-store-type`<br/>**Env:** `KC_HTTPS_KEY_STORE_TYPE` | _String_ |  |
+| **`https-port`**<br/>Port HTTPS yang digunakan.<br/>**CLI:** `--https-port`<br/>**Env:** `KC_HTTPS_PORT` | _Integer_ | `8443` |
+| **`https-protocols`**<br/>Daftar protokol untuk diaktifkan secara eksplisit.<br/>Jika nilai tidak didukung oleh JRE / konfigurasi keamanan, itu akan diam-diam diabaikan.<br/>**CLI:** `--https-protocols`<br/>**Env:** `KC_HTTPS_PROTOCOLS` | `TLSv1.3`, `TLSv1.2`, atau apapun | `TLSv1.3,TLSv1.2` |
+| **`https-trust-store-file`**<br/>Trust store yang memegang informasi sertifikat sertifikat yang dipercayai.<br/>**CLI:** `--https-trust-store-file`<br/>**Env:** `KC_HTTPS_TRUST_STORE_FILE` | _File_ |  |
+| **`https-trust-store-password`**<br/>Kata sandi file trust store.<br/>**CLI:** `--https-trust-store-password`<br/>**Env:** `KC_HTTPS_TRUST_STORE_PASSWORD` | _String_ |  |
+| **`https-trust-store-type`**<br/>Tipe file trust store.<br/>Jika tidak diberikan, tipe akan terdeteksi secara otomatis berdasarkan ekstensi file. Jika `fips-mode` diatur ke `strict` dan tidak ada nilai yang diatur, maka defaultnya menjadi `BCFKS`.<br/>**CLI:** `--https-trust-store-type`<br/>**Env:** `KC_HTTPS_TRUST_STORE_TYPE` | _String_ |  |
+| **`shutdown-delay`**<br/>Durasi fase pra-shutdown di mana server mempersiapkan untuk shutdown.<br/>Mungkin merupakan nilai durasi ISO 8601, jumlah integer detik, atau integer diikuti salah satu [ms, h, m, s, d]. Periode ini memungkinkan untuk konfigurasi ulang loadbalancer dan pengosongan koneksi keepalive TLS/HTTP.<br/>**CLI:** `--shutdown-delay`<br/>**Env:** `KC_SHUTDOWN_DELAY` | _String_ | `1s` |
+| **`shutdown-timeout`**<br/>Periode shutdown menunggu permintaan HTTP yang sedang berjalan untuk selesai.<br/>Mungkin merupakan nilai durasi ISO 8601, jumlah integer detik, atau integer diikuti salah satu [ms, h, m, s, d].<br/>**CLI:** `--shutdown-timeout`<br/>**Env:** `KC_SHUTDOWN_TIMEOUT` | _String_ | `1s` |
+
+## Log Akses HTTP
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`http-access-log-enabled`**<br/>Apakah pencatatan akses HTTP diaktifkan.<br/>Secara default, ini akan mencatat rekord di konsol.<br/>**CLI:** `--http-access-log-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_ENABLED` | `true`, `false` | `false` |
+| **`http-access-log-exclude`**<br/>Ekspresi reguler yang dapat digunakan untuk mengecualikan beberapa path dari pencatatan.<br/>Sebagai contoh, `/realms/my-realm/.*` akan mengecualikan semua endpoint berikutnya untuk realm `my-realm` dari log.<br/>**CLI:** `--http-access-log-exclude`<br/>**Env:** `KC_HTTP_ACCESS_LOG_EXCLUDE` | _String_ |  |
+| **`http-access-log-file-enabled`**<br/>Apakah pencatatan akses HTTP harus dilakukan ke file terpisah.<br/>**CLI:** `--http-access-log-file-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ENABLED` | `true`, `false` | `false` |
+| **`http-access-log-file-name`**<br/>Nama dasar file log akses HTTP, yang akan menciptakan nama file log dengan menggabungkan dasar dan akhiran (cth. `nqrust-identity-http-access.log`). File berada di direktori `/data/log` distribusi.<br/>**CLI:** `--http-access-log-file-name`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_NAME` | _String_ | `nqrust-identity-http-access` |
+| **`http-access-log-file-rotate`**<br/>Apakah file log akses HTTP harus diputar setiap harinya.<br/>**CLI:** `--http-access-log-file-rotate`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ROTATE` | `true`, `false` | `true` |
+| **`http-access-log-file-suffix`**<br/>Akhiranan file log akses HTTP.<br/>Ketika putaran diaktifkan, akhiran berdasarkan tanggal `.{yyyy-MM-dd}` ditambahkan sebelum akhiran yang ditentukan. Jika beberapa putaran terjadi pada hari yang sama, indeks bertambah ditambahkan ke tanggal.<br/>**CLI:** `--http-access-log-file-suffix`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_SUFFIX` | _String_ | `.log` |
+| **`http-access-log-masked-cookies`**<br/>Set dari header HTTP Cookie yang nilainya harus disembunyikan ketika pola panjang atau format %&#123;ALL_REQUEST_HEADERS&#125; diaktifkan dengan opsi http-access-log-pattern.<br/>Cookie sensitif keamanan yang dipilih akan selalu disembunyikan.<br/>**CLI:** `--http-access-log-masked-cookies`<br/>**Env:** `KC_HTTP_ACCESS_LOG_MASKED_COOKIES` | _Daftar_ |  |
+| **`http-access-log-masked-headers`**<br/>Set dari header HTTP yang nilainya harus disembunyikan ketika pola panjang atau format %&#123;ALL_REQUEST_HEADERS&#125; diaktifkan dengan opsi http-access-log-pattern.<br/>Header sensitif keamanan yang dipilih akan selalu disembunyikan.<br/>**CLI:** `--http-access-log-masked-headers`<br/>**Env:** `KC_HTTP_ACCESS_LOG_MASKED_HEADERS` | _Daftar_ |  |
+| **`http-access-log-pattern`**<br/>Pola log akses HTTP.<br/>Anda dapat menggunakan format yang tersedia, atau menggunakan format kustom yang dijelaskan dalam dokumentasi Quarkus.<br/>**CLI:** `--http-access-log-pattern`<br/>**Env:** `KC_HTTP_ACCESS_LOG_PATTERN` | `common`, `combined`, `long`, atau apapun | `common` |
+
+## Kesehatan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`health-enabled`**<br/>Apakah server harus mengekspos endpoint pemeriksaan kesehatan.<br/>Jika diaktifkan, pemeriksaan kesehatan tersedia di endpoint `/health`, `/health/ready`, dan `/health/live`.<br/>**CLI:** `--health-enabled`<br/>**Env:** `KC_HEALTH_ENABLED` | `true`, `false` | `false` |
+
+## Manajemen
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`http-management-health-enabled`**<br/>Apakah endpoint kesehatan harus diekspos di antarmuka manajemen.<br/>Jika false, endpoint kesehatan akan diekspos di antarmuka utama.<br/>**CLI:** `--http-management-health-enabled`<br/>**Env:** `KC_HTTP_MANAGEMENT_HEALTH_ENABLED` | `true`, `false` | `true` |
+| **`http-management-port`**<br/>Port dari antarmuka manajemen.<br/>Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--http-management-port`<br/>**Env:** `KC_HTTP_MANAGEMENT_PORT` | _Integer_ | `9000` |
+| **`http-management-relative-path`**<br/>Setel path relatif terhadap / untuk melayani sumber daya dari antarmuka manajemen.<br/>Path harus diawali dengan `/`. Jika tidak diberikan, nilai akan mewarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--http-management-relative-path`<br/>**Env:** `KC_HTTP_MANAGEMENT_RELATIVE_PATH` | _String_ | `/` |
+| **`http-management-scheme`**<br/>Konfigurasikan skema antarmuka manajemen.<br/>Jika `inherited`, antarmuka manajemen akan mewarisi pengaturan HTTPS dari antarmuka utama. Jika `http`, antarmuka manajemen akan dapat diakses melalui HTTP - tidak akan mewarisi pengaturan HTTPS dan tidak dapat dikonfigurasi untuk HTTPS.<br/>**CLI:** `--http-management-scheme`<br/>**Env:** `KC_HTTP_MANAGEMENT_SCHEME` | `http`, `inherited` | `inherited` |
+| **`https-management-certificate-file`**<br/>Jalur file ke sertifikat server atau rantai sertifikat dalam format PEM untuk server manajemen.<br/>Jika tidak diberikan, nilai akan mewarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificate-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATE_FILE` | _File_ |  |
+| **`https-management-certificate-key-file`**<br/>Jalur file ke kunci privat dalam format PEM untuk server manajemen.<br/>Jika tidak diberikan, nilai akan mewarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificate-key-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATE_KEY_FILE` | _File_ |  |
+| **`https-management-certificates-reload-period`**<br/>Interval untuk memuat ulang key store, trust store, dan file sertifikat yang dirujuk oleh opsi https-management-* untuk server manajemen.<br/>Mungkin merupakan nilai durasi ISO 8601, bilangan bulat detik, atau bilangan bulat diikuti salah satu [ms, h, m, s, d]. Harus lebih besar dari 30 detik. Gunakan -1 untuk menonaktifkan. Jika tidak diberikan, nilai akan mewarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-certificates-reload-period`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CERTIFICATES_RELOAD_PERIOD` | _String_ | `1h` |
+| **`https-management-client-auth`**<br/>Konfigurasikan antarmuka manajemen untuk meminta/mengharuskan autentikasi klien.<br/>Jika tidak diberikan, nilai akan mewarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-client-auth`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CLIENT_AUTH` | `none`, `request`, `required` | `none` |
+| **`https-management-key-store-file`**<br/>Key store yang memegang informasi sertifikat sebagai gantinya untuk menentukan file terpisah untuk server manajemen.<br/>Jika tidak diberikan, nilai akan mewarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-key-store-file`<br/>**Env:** `KC_HTTPS_MANAGEMENT_KEY_STORE_FILE` | _File_ |  |
+| **`https-management-key-store-password`**<br/>Kata sandi file key store untuk server manajemen.<br/>Jika tidak diberikan, nilai akan mewarisi dari opsi HTTP. Hanya relevan ketika ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-key-store-password`<br/>**Env:** `KC_HTTPS_MANAGEMENT_KEY_STORE_PASSWORD` | _String_ | `password` |
+| **`legacy-observability-interface`**<br/>Apakah metriks/endpoint kesehatan harus diekspos di server HTTP utama (tidak disarankan).<br/>Jika diatur ke true, antarmuka manajemen dinonaktifkan.<br/>**CLI:** `--legacy-observability-interface`<br/>**Env:** `KC_LEGACY_OBSERVABILITY_INTERFACE` | `true`, `false` | `false` |
+
+## Metrik
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`metrics-enabled`**<br/>Apakah server harus mengekspos metriks.<br/>Jika diaktifkan, metriks tersedia di endpoint `/metrics`.<br/>**CLI:** `--metrics-enabled`<br/>**Env:** `KC_METRICS_ENABLED` | `true`, `false` | `false` |
+
+## Proxy
+
+| Pilihan | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`proxy-headers`**<br/>Header proxy yang harus diterima oleh server.<br/>Konfigurasi yang salah bisa membuat server ter曝露 terhadap kerentanan keamanan. Mempunyai prioritas lebih tinggi daripada opsi proxy yang usang.<br/>**CLI:** `--proxy-headers`<br/>**Env:** `KC_PROXY_HEADERS` | `forwarded`, `xforwarded` |  |
+| **`proxy-protocol-enabled`**<br/>Apakah server harus menggunakan protokol HA PROXY saat melayani permintaan dari belakang proxy.<br/>Ketika diatur ke true, alamat remote yang dikembalikan akan menjadi yang berasal dari klien yang sebenarnya terhubung. Tidak dapat diaktifkan saat `proxy-headers` digunakan.<br/>**CLI:** `--proxy-protocol-enabled`<br/>**Env:** `KC_PROXY_PROTOCOL_ENABLED` | `true`, `false` | `false` |
+| **`proxy-trusted-addresses`**<br/>Daftar alamat proxy yang dipercaya, dipisahkan koma.<br/>Jika diatur, header proxy dari alamat lain akan diabaikan. Secara default, semua alamat dipercaya. Alamat proxy yang dipercaya ditentukan sebagai alamat IP (IPv4 atau IPv6) atau notasi Routing Tanpa Kelas Inter-Domain (CIDR). Tersedia hanya saat `proxy-headers` diatur.<br/>**CLI:** `--proxy-trusted-addresses`<br/>**Env:** `KC_PROXY_TRUSTED_ADDRESSES` | _Daftar_ |  |
+
+## Vault
+
+| Pilihan | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`vault`**<br/>Mengaktifkan penyedia vault.<br/>**CLI:** `--vault`<br/>**Env:** `KC_VAULT` | `file`, `keystore` |  |
+| **`vault-dir`**<br/>Jika diatur, rahasia dapat diperoleh dengan membaca konten file dalam direktori yang diberikan.<br/>**CLI:** `--vault-dir`<br/>**Env:** `KC_VAULT_DIR` | _Path_ |  |
+| **`vault-file`**<br/>Path ke file keystore.<br/>**CLI:** `--vault-file`<br/>**Env:** `KC_VAULT_FILE` | _Path_ |  |
+| **`vault-pass`**<br/>Kata sandi untuk keystore vault.<br/>**CLI:** `--vault-pass`<br/>**Env:** `KC_VAULT_PASS` | _String_ |  |
+| **`vault-type`**<br/>Menentukan tipe file keystore.<br/>**CLI:** `--vault-type`<br/>**Env:** `KC_VAULT_TYPE` | _String_ | `PKCS12` |
+
+## Logging
+
+| Pilihan | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`log`**<br/>Aktifkan satu atau lebih penangan log dalam daftar yang dipisahkan komma.<br/>**CLI:** `--log`<br/>**Env:** `KC_LOG` | `console`, `file`, `syslog` | `console` |
+| **`log-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke semua penangan.<br/>**CLI:** `--log-async`<br/>**Env:** `KC_LOG_ASYNC` | `true`, `false` | `false` |
+| **`log-console-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke konsol.<br/>Jika tidak diatur, nilai dari properti induk `log-async` yang digunakan.<br/>**CLI:** `--log-console-async`<br/>**Env:** `KC_LOG_CONSOLE_ASYNC` | `true`, `false` | `false` |
+| **`log-console-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke konsol.<br/>**CLI:** `--log-console-async-queue-length`<br/>**Env:** `KC_LOG_CONSOLE_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
+| **`log-console-color`**<br/>Aktifkan atau nonaktifkan warna saat logging ke konsol.<br/>Jika tidak ada, akan dibuat percobaan untuk menebak apakah terminal mendukung warna.<br/>**CLI:** `--log-console-color`<br/>**Env:** `KC_LOG_CONSOLE_COLOR` | `true`, `false` |  |
+| **`log-console-format`**<br/>Format entri log konsol yang tidak terstruktur.<br/>Jika format memiliki spasi, escape nilai menggunakan "&lt;format&gt;".<br/>**CLI:** `--log-console-format`<br/>**Env:** `KC_LOG_CONSOLE_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
+| **`log-console-include-mdc`**<br/>Sertakan informasi mdc dalam log konsol.<br/>Jika opsi `log-console-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-console-include-mdc`<br/>**Env:** `KC_LOG_CONSOLE_INCLUDE_MDC` | `true`, `false` | `true` |
+| **`log-console-include-trace`**<br/>Sertakan informasi pelacakan dalam log konsol.<br/>Jika opsi `log-console-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-console-include-trace`<br/>**Env:** `KC_LOG_CONSOLE_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-console-json-format`**<br/>Atur format JSON yang dihasilkan.<br/>**CLI:** `--log-console-json-format`<br/>**Env:** `KC_LOG_CONSOLE_JSON_FORMAT` | `default`, `ecs` | `default` |
+| **`log-console-level`**<br/>Atur level log untuk penangan konsol.<br/>Ini menentukan level log terbanyak yang akan ditampilkan di output. Ini menghormati level yang ditentukan dalam opsi `log-level`, yang mewakili kebanyakan verbositas untuk seluruh sistem logging. Untuk informasi lebih lanjut, periksa panduan Logging.<br/>**CLI:** `--log-console-level`<br/>**Env:** `KC_LOG_CONSOLE_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`log-console-output`**<br/>Atur output log ke JSON atau default (biasa) tanpa struktur logging.<br/>**CLI:** `--log-console-output`<br/>**Env:** `KC_LOG_CONSOLE_OUTPUT` | `default`, `json` | `default` |
+| **`log-file`**<br/>Atur jalur dan nama file log.<br/>**CLI:** `--log-file`<br/>**Env:** `KC_LOG_FILE` | _File_ | `data/log/nqrust-identity.log` |
+| **`log-file-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke file log.<br/>Jika tidak diatur, nilai dari properti induk `log-async` yang digunakan.<br/>**CLI:** `--log-file-async`<br/>**Env:** `KC_LOG_FILE_ASYNC` | `true`, `false` | `false` |
+| **`log-file-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke file log.<br/>**CLI:** `--log-file-async-queue-length`<br/>**Env:** `KC_LOG_FILE_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
+| **`log-file-format`**<br/>Atur format khusus untuk entri log file.<br/>**CLI:** `--log-file-format`<br/>**Env:** `KC_LOG_FILE_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
+| **`log-file-include-mdc`**<br/>Sertakan informasi MDC dalam file log.<br/>Jika opsi `log-file-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-file-include-mdc`<br/>**Env:** `KC_LOG_FILE_INCLUDE_MDC` | `true`, `false` | `true` |
+| **`log-file-include-trace`**<br/>Sertakan informasi pelacakan dalam file log.<br/>Jika opsi `log-file-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-file-include-trace`<br/>**Env:** `KC_LOG_FILE_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-file-json-format`**<br/>Atur format JSON yang dihasilkan.<br/>**CLI:** `--log-file-json-format`<br/>**Env:** `KC_LOG_FILE_JSON_FORMAT` | `default`, `ecs` | `default` |
+| **`log-file-level`**<br/>Atur level log untuk penangan file.<br/>Ini menentukan level log terbanyak yang akan ditampilkan di output. Ini menghormati level yang ditentukan dalam opsi `log-level`, yang mewakili kebanyakan verbositas untuk seluruh sistem logging. Untuk informasi lebih lanjut, periksa panduan Logging.<br/>**CLI:** `--log-file-level`<br/>**Env:** `KC_LOG_FILE_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`log-file-output`**<br/>Atur output log ke JSON atau default (biasa) tanpa struktur logging.<br/>**CLI:** `--log-file-output`<br/>**Env:** `KC_LOG_FILE_OUTPUT` | `default`, `json` | `default` |
+| **`log-file-rotation-enabled`**<br/>Aktifkan rotasi file log.<br/>**CLI:** `--log-file-rotation-enabled`<br/>**Env:** `KC_LOG_FILE_ROTATION_ENABLED` | `true`, `false` | `true` |
+| **`log-file-rotation-file-suffix`**<br/>Atur akhiran file handler rotasi file log.<br/>Ketika digunakan, file akan diputar berdasarkan akhirannya. Contoh: `.yyyy-MM-dd` untuk putaran harian. Catatan: Jika akhiran berakhir dengan `.zip` atau `.gz`, file putaran juga akan dikompresi.<br/>**CLI:** `--log-file-rotation-file-suffix`<br/>**Env:** `KC_LOG_FILE_ROTATION_FILE_SUFFIX` | _String_ |  |
+| **`log-file-rotation-max-backup-index`**<br/>Jumlah maksimum file log cadangan yang harus dipertahankan.<br/>**CLI:** `--log-file-rotation-max-backup-index`<br/>**Env:** `KC_LOG_FILE_ROTATION_MAX_BACKUP_INDEX` | _Integer_ | `5` |
+| **`log-file-rotation-max-file-size`**<br/>Ukuran file log maksimum, setelah itu rotasi akan dijalankan.<br/>Mendukung akhiran ukuran (mis. 10M, 1G).<br/>**CLI:** `--log-file-rotation-max-file-size`<br/>**Env:** `KC_LOG_FILE_ROTATION_MAX_FILE_SIZE` | _String_ | `10M` |
+| **`log-file-rotation-rotate-on-boot`**<br/>Menunjukkan apakah untuk putar file log saat server start.<br/>**CLI:** `--log-file-rotation-rotate-on-boot`<br/>**Env:** `KC_LOG_FILE_ROTATION_ROTATE_ON_BOOT` | `true`, `false` | `true` |
+| **`log-level`**<br/>Level log dari kategori root atau daftar yang dipisahkan komma dari kategori individual dan level mereka.<br/>Untuk kategori root, Anda tidak perlu menentukan kategori.<br/>**CLI:** `--log-level`<br/>**Env:** `KC_LOG_LEVEL` | _List_ | `info` |
+| **`log-level-<category>`**<br/>Level log dari kategori.<br/>Mengambil alih opsi `log-level`.<br/>**CLI:** `--log-level-<category>`<br/>**Env:** `KC_LOG_LEVEL_<CATEGORY>` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` |  |
+| **`log-mdc-enabled`**<br/>Menunjukkan apakah untuk menambahkan informasi tentang realm dan informasi lainnya ke konteks diagnostik yang dipetakan.<br/>Semua elemen akan diawali dengan `kc.`<br/>**CLI:** `--log-mdc-enabled`<br/>**Env:** `KC_LOG_MDC_ENABLED` | `true`, `false` | `false` |
+| **`log-mdc-keys`**<br/>Menentukan informasi mana yang harus ditambahkan ke konteks diagnostik yang dipetakan sebagai daftar yang dipisahkan komma.<br/>**CLI:** `--log-mdc-keys`<br/>**Env:** `KC_LOG_MDC_KEYS` | `realmName`, `clientId`, `userId`, `ipAddress`, `org`, `sessionId`, `authenticationSessionId`, `authenticationTabId` | `realmName,clientId,org,sessionId,authenticationSessionId,authenticationTabId` |
+| **`log-service-environment`**<br/>Atur bidang `service.<br/>environment` dalam entri log JSON untuk semua penangan log. Dalam format ECS, default ke profil Quarkus jika tidak diatur.<br/>**CLI:** `--log-service-environment`<br/>**Env:** `KC_LOG_SERVICE_ENVIRONMENT` | _String_ |  |
+| **`log-service-name`**<br/>Atur bidang `service.<br/>name` dalam entri log JSON untuk semua penangan log.<br/>**CLI:** `--log-service-name`<br/>**Env:** `KC_LOG_SERVICE_NAME` | _String_ | `nqrust-identity` |
+| **`log-syslog-app-name`**<br/>Atur nama app yang digunakan saat memformat pesan dalam format RFC5424.<br/>**CLI:** `--log-syslog-app-name`<br/>**Env:** `KC_LOG_SYSLOG_APP_NAME` | _String_ | `nqrust-identity` |
+| **`log-syslog-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke Syslog.<br/>Jika tidak diatur, nilai dari properti induk `log-async` yang digunakan.<br/>**CLI:** `--log-syslog-async`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC` | `true`, `false` | `false` |
+| **`log-syslog-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke Syslog.<br/>**CLI:** `--log-syslog-async-queue-length`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
+| **`log-syslog-counting-framing`**<br/>Jika true, pesan yang dikirim akan diawali dengan ukuran pesan.<br/>Jika `protocol-dependent`, nilai default adalah `true` saat `log-syslog-protocol` adalah `tcp` atau `ssl-tcp`, jika tidak `false`.<br/>**CLI:** `--log-syslog-counting-framing`<br/>**Env:** `KC_LOG_SYSLOG_COUNTING_FRAMING` | `true`, `false`, `protocol-dependent` | `protocol-dependent` |
+| **`log-syslog-endpoint`**<br/>Atur alamat IP dan port server Syslog.<br/>**CLI:** `--log-syslog-endpoint`<br/>**Env:** `KC_LOG_SYSLOG_ENDPOINT` | _String_ | `localhost:514` |
+| **`log-syslog-format`**<br/>Atur format khusus untuk entri log Syslog.<br/>**CLI:** `--log-syslog-format`<br/>**Env:** `KC_LOG_SYSLOG_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
+| **`log-syslog-include-mdc`**<br/>Sertakan informasi MDC dalam Syslog.<br/>Jika opsi `log-syslog-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-syslog-include-mdc`<br/>**Env:** `KC_LOG_SYSLOG_INCLUDE_MDC` | `true`, `false` | `true` |
+| **`log-syslog-include-trace`**<br/>Sertakan informasi pelacakan dalam Syslog.<br/>Jika opsi `log-syslog-format` ditentukan, opsi ini tidak berpengaruh.<br/>**CLI:** `--log-syslog-include-trace`<br/>**Env:** `KC_LOG_SYSLOG_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-syslog-json-format`**<br/>Atur format JSON yang dihasilkan.<br/>**CLI:** `--log-syslog-json-format`<br/>**Env:** `KC_LOG_SYSLOG_JSON_FORMAT` | `default`, `ecs` | `default` |
+| **`log-syslog-level`**<br/>Atur level log untuk penangan Syslog.<br/>Ini menentukan level log terbanyak yang akan ditampilkan di output. Ini menghormati level yang ditentukan dalam opsi `log-level`, yang mewakili kebanyakan verbositas untuk seluruh sistem logging. Untuk informasi lebih lanjut, periksa panduan Logging.<br/>**CLI:** `--log-syslog-level`<br/>**Env:** `KC_LOG_SYSLOG_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`log-syslog-max-length`**<br/>Atur panjang maksimum, dalam byte, dari pesan yang diizinkan untuk dikirim.<br/>Panjang ini termasuk header dan pesan. Jika tidak diatur, nilai default adalah 2048 saat `log-syslog-type` adalah rfc5424 (default) dan 1024 saat `log-syslog-type` adalah rfc3164.<br/>**CLI:** `--log-syslog-max-length`<br/>**Env:** `KC_LOG_SYSLOG_MAX_LENGTH` | _String_ |  |
+| **`log-syslog-output`**<br/>Atur output Syslog ke JSON atau default (biasa) tanpa struktur logging.<br/>**CLI:** `--log-syslog-output`<br/>**Env:** `KC_LOG_SYSLOG_OUTPUT` | `default`, `json` | `default` |
+| **`log-syslog-protocol`**<br/>Atur protokol yang digunakan untuk menghubungkan ke server Syslog.<br/>**CLI:** `--log-syslog-protocol`<br/>**Env:** `KC_LOG_SYSLOG_PROTOCOL` | `tcp`, `udp`, `ssl-tcp` | `tcp` |
+| **`log-syslog-type`**<br/>Atur tipe Syslog yang digunakan untuk memformat pesan yang dikirim.<br/>**CLI:** `--log-syslog-type`<br/>**Env:** `KC_LOG_SYSLOG_TYPE` | `rfc5424`, `rfc3164` | `rfc5424` |
+
+## Telemetri (OpenTelemetry)
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`telemetry-endpoint`**<br/>Titik akhir OpenTelemetry untuk terhubung.<br/>**CLI:** `--telemetry-endpoint`<br/>**Env:** `KC_TELEMETRY_ENDPOINT` | _String_ | `http://localhost:4317` |
+| **`telemetry-header-<header>`**<br/>Header OpenTelemetry umum yang akan menjadi bagian dari permintaan ekspor (utama untuk memberikan header Otorisasi).<br/>Periksa dokumentasi untuk mengetahui cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf yang kustom.<br/>**CLI:** `--telemetry-header-<header>`<br/>**Env:** `KC_TELEMETRY_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-logs-enabled`**<br/>Mengaktifkan ekspor log ke tujuan yang menangani log OpenTelemetry.<br/>**CLI:** `--telemetry-logs-enabled`<br/>**Env:** `KC_TELEMETRY_LOGS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-logs-endpoint`**<br/>Titik akhir OpenTelemetry untuk mengekspor log.<br/>Jika tidak diberikan, nilai mewarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--telemetry-logs-endpoint`<br/>**Env:** `KC_TELEMETRY_LOGS_ENDPOINT` | _String_ |  |
+| **`telemetry-logs-header-<header>`**<br/>Header OpenTelemetry yang akan menjadi bagian dari permintaan ekspor log (utama untuk memberikan header Otorisasi).<br/>Periksa dokumentasi untuk mengetahui cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf yang kustom.<br/>**CLI:** `--telemetry-logs-header-<header>`<br/>**Env:** `KC_TELEMETRY_LOGS_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-logs-level`**<br/>Tingkat log terperinci yang diekspor ke titik akhir telemetri.<br/>Untuk informasi lebih lanjut, periksa panduan Telemetri.<br/>**CLI:** `--telemetry-logs-level`<br/>**Env:** `KC_TELEMETRY_LOGS_LEVEL` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` | `all` |
+| **`telemetry-logs-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk mengekspor log.<br/>Jika tidak diberikan, nilai mewarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--telemetry-logs-protocol`<br/>**Env:** `KC_TELEMETRY_LOGS_PROTOCOL` | `grpc`, `http/protobuf` |  |
+| **`telemetry-metrics-enabled`**<br/>Mengaktifkan ekspor metrik ke tujuan yang menangani metrik OpenTelemetry.<br/>**CLI:** `--telemetry-metrics-enabled`<br/>**Env:** `KC_TELEMETRY_METRICS_ENABLED` | `true`, `false` | `false` |
+| **`telemetry-metrics-endpoint`**<br/>Titik akhir OpenTelemetry untuk terhubung ke Metrik.<br/>Jika tidak diberikan, nilai mewarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--telemetry-metrics-endpoint`<br/>**Env:** `KC_TELEMETRY_METRICS_ENDPOINT` | _String_ |  |
+| **`telemetry-metrics-header-<header>`**<br/>Header OpenTelemetry yang akan menjadi bagian dari permintaan ekspor metrik (utama untuk memberikan header Otorisasi).<br/>Periksa dokumentasi untuk mengetahui cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf yang kustom.<br/>**CLI:** `--telemetry-metrics-header-<header>`<br/>**Env:** `KC_TELEMETRY_METRICS_HEADER_<HEADER>` | _String_ |  |
+| **`telemetry-metrics-interval`**<br/>Interval antara awal dua upaya ekspor metrik ke tujuan yang menangani data metrik OpenTelemetry.<br/>Menerima format simplifikasi untuk unit waktu sebagai java.time.Duration (seperti 5000ms, 30s, 5m, 1h). Jika nilai hanya angka, itu mewakili waktu dalam detik.<br/>**CLI:** `--telemetry-metrics-interval`<br/>**Env:** `KC_TELEMETRY_METRICS_INTERVAL` | _String_ | `60s` |
+| **`telemetry-metrics-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk data telemetri metrik.<br/>Jika tidak diberikan, nilai mewarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--telemetry-metrics-protocol`<br/>**Env:** `KC_TELEMETRY_METRICS_PROTOCOL` | `grpc`, `http/protobuf` |  |
+| **`telemetry-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk komunikasi antara server dan kumpulan OpenTelemetry.<br/>**CLI:** `--telemetry-protocol`<br/>**Env:** `KC_TELEMETRY_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
+| **`telemetry-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry karakteristik produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`.<br/>**CLI:** `--telemetry-resource-attributes`<br/>**Env:** `KC_TELEMETRY_RESOURCE_ATTRIBUTES` | _Daftar_ |  |
+| **`telemetry-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengalahkan `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.<br/>**CLI:** `--telemetry-service-name`<br/>**Env:** `KC_TELEMETRY_SERVICE_NAME` | _String_ | `nqrust-identity` |
+
+## Pelacakan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`tracing-compression`**<br/>Metode kompresi OpenTelemetry yang digunakan untuk mengompresi payload.<br/>Jika tidak diatur, kompresi dinonaktifkan.<br/>**CLI:** `--tracing-compression`<br/>**Env:** `KC_TRACING_COMPRESSION` | `gzip`, `none` | `none` |
+| **`tracing-enabled`**<br/>Mengaktifkan pelacakan OpenTelemetry.<br/>**CLI:** `--tracing-enabled`<br/>**Env:** `KC_TRACING_ENABLED` | `true`, `false` | `false` |
+| **`tracing-endpoint`**<br/>Titik akhir OpenTelemetry untuk terhubung dengan jejak.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--tracing-endpoint`<br/>**Env:** `KC_TRACING_ENDPOINT` | _String_ | `http://localhost:4317` |
+| **`tracing-header-<header>`**<br/>Header OpenTelemetry yang akan menjadi bagian dari permintaan ekspor (utama untuk menyediakan header Otorisasi).<br/>Periksa dokumentasi untuk mengetahui cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf yang dicustom.<br/>**CLI:** `--tracing-header-<header>`<br/>**Env:** `KC_TRACING_HEADER_<HEADER>` | _String_ |  |
+| **`tracing-infinispan-enabled`**<br/>Mengaktifkan pelacakan OpenTelemetry untuk Infinispan yang terintegrasi.<br/>**CLI:** `--tracing-infinispan-enabled`<br/>**Env:** `KC_TRACING_INFINISPAN_ENABLED` | `true`, `false` | `true` |
+| **`tracing-jdbc-enabled`**<br/>Mengaktifkan pelacakan JDBC OpenTelemetry.<br/>**CLI:** `--tracing-jdbc-enabled`<br/>**Env:** `KC_TRACING_JDBC_ENABLED` | `true`, `false` | `true` |
+| **`tracing-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk data telemetri.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--tracing-protocol`<br/>**Env:** `KC_TRACING_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
+| **`tracing-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry yang hadir dalam jejak yang diekspor untuk mengkarakterkan produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-resource-attributes`. Untuk informasi lebih lanjut, periksa panduan Pelacakan.<br/>**CLI:** `--tracing-resource-attributes`<br/>**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES` | _Daftar_ |  |
+| **`tracing-sampler-ratio`**<br/>Rasio pengambilan sampel OpenTelemetry.<br/>Probabilitas bahwa span akan disampel. Nilai ganda yang diharapkan dalam interval [0,1].<br/>**CLI:** `--tracing-sampler-ratio`<br/>**Env:** `KC_TRACING_SAMPLER_RATIO` | _Doubel_ | `1.0` |
+| **`tracing-sampler-type`**<br/>Jenis pengambilan sampel OpenTelemetry yang akan digunakan untuk pelacakan.<br/>**CLI:** `--tracing-sampler-type`<br/>**Env:** `KC_TRACING_SAMPLER_TYPE` | `always_on`, `always_off`, `traceidratio`, `parentbased_always_on`, `parentbased_always_off`, `parentbased_traceidratio` | `traceidratio` |
+| **`tracing-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengalahkan `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-service-name`.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `nqrust-identity` |
+
+## Peristiwa
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`event-metrics-user-enabled`**<br/>Membuat metrik berdasarkan peristiwa pengguna.<br/>**CLI:** `--event-metrics-user-enabled`<br/>**Env:** `KC_EVENT_METRICS_USER_ENABLED` | `true`, `false` | `false` |
+| **`event-metrics-user-events`**<br/>Daftar pisah koma dari peristiwa yang akan dikumpulkan untuk metrik peristiwa pengguna.<br/>Opsi ini dapat digunakan untuk mengurangi jumlah metrik yang dibuat karena secara default semua peristiwa pengguna membuat metrik.<br/>**CLI:** `--event-metrics-user-events`<br/>**Env:** `KC_EVENT_METRICS_USER_EVENTS` | `authreqid_to_token`, `client_delete`, `client_info`, `client_initiated_account_linking`, `client_login`, `client_register`, `client_update`, `code_to_token`, `custom_required_action`, `delete_account`, `execute_action_token`, `execute_actions`, `federated_identity_link`, `federated_identity_override_link`, `grant_consent`, `identity_provider_first_login`, `identity_provider_link_account`, `identity_provider_login`, `identity_provider_post_login`, `identity_provider_response`, `identity_provider_retrieve_token`, `impersonate`, `introspect_token`, `invalid_signature`, `invite_org`, `jwt_authorization_grant`, `login`, `logout`, `oauth2_device_auth`, `oauth2_device_code_to_token`, `oauth2_device_verify_user_code`, `oauth2_extension_grant`, `permission_token`, `pushed_authorization_request`, `refresh_token`, `register`, `register_node`, `remove_credential`, `remove_federated_identity`, `remove_totp` (usang), `reset_password`, `restart_authentication`, `revoke_grant`, `send_identity_provider_link`, `send_reset_password`, `send_verify_email`, `token_exchange`, `unregister_node`, `update_consent`, `update_credential`, `update_email`, `update_password` (usang), `update_profile`, `update_totp` (usang), `user_disabled_by_permanent_lockout`, `user_disabled_by_temporary_lockout`, `user_info_request`, `user_session_deleted`, `verifiable_credential_create_offer`, `verifiable_credential_nonce_request`, `verifiable_credential_offer_request`, `verifiable_credential_pre_authorized_grant`, `verifiable_credential_request`, `verify_email`, `verify_profile` |  |
+| **`event-metrics-user-tags`**<br/>Daftar pisah koma dari tag yang akan dikumpulkan untuk metrik peristiwa pengguna.<br/>Secara default hanya `realm` yang diaktifkan untuk menghindari kardinalitas metrik yang tinggi.<br/>**CLI:** `--event-metrics-user-tags`<br/>**Env:** `KC_EVENT_METRICS_USER_TAGS` | `realm`, `idp`, `clientId` | `realm` |
+
+## Truststore
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`tls-hostname-verifier`**<br/>Kebijakan verifikasi nama host TLS untuk permintaan HTTPS dan SMTP keluar.<br/>ANY jangan digunakan dalam produksi.<br/>**CLI:** `--tls-hostname-verifier`<br/>**Env:** `KC_TLS_HOSTNAME_VERIFIER` | `ANY`, `WILDCARD` (usang), `STRICT` (usang), `DEFAULT` | `DEFAULT` |
+| **`truststore-kubernetes-enabled`**<br/>Jika diaktifkan, server akan secara otomatis memasukkan sertifikat CA akun layanan Kubernetes default dari "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" dan sertifikat CA layanan OpenShift dari "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt" saat berjalan di lingkungan kontainer.<br/>**CLI:** `--truststore-kubernetes-enabled`<br/>**Env:** `KC_TRUSTSTORE_KUBERNETES_ENABLED` | `true`, `false` | `true` |
+| **`truststore-paths`**<br/>Daftar pkcs12 (ekstensi p12, pfx, atau pkcs12), berkas PEM, atau direktori yang berisi berkas-berkas tersebut yang akan digunakan sebagai truststore sistem.<br/>**CLI:** `--truststore-paths`<br/>**Env:** `KC_TRUSTSTORE_PATHS` | _Daftar_ |  |
+
+## Security
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`fips-mode`**<br/>Mengatur mode FIPS.<br/>Jika `non-strict` diatur, FIPS diaktifkan tetapi dalam mode tidak disetujui. Untuk penuh kompatibilitas FIPS, atur `strict` untuk berjalan dalam mode disetujui. Opsi ini default ke `disabled` saat fitur `fips` dinonaktifkan, yang merupakan default. Opsi ini default ke `non-strict` saat fitur `fips` diaktifkan.<br/>**CLI:** `--fips-mode`<br/>**Env:** `KC_FIPS_MODE` | `non-strict`, `strict` | `disabled` |
+
+## Export
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`dir`**<br/>Atur jalur ke direktori tempat berkas akan dibuat dengan data yang diekspor.<br/>**CLI:** `--dir`<br/>**Env:** `KC_DIR` | _String_ |  |
+| **`file`**<br/>Atur jalur ke berkas yang akan dibuat dengan data yang diekspor.<br/>Untuk mengekspor lebih dari 50000 pengguna, ekspor ke direktori dengan berkas yang berbeda.<br/>**CLI:** `--file`<br/>**Env:** `KC_FILE` | _String_ |  |
+| **`realm`**<br/>Atur nama realm untuk diekspor.<br/>Jika tidak diatur, semua realm akan diekspor.<br/>**CLI:** `--realm`<br/>**Env:** `KC_REALM` | _String_ |  |
+| **`users`**<br/>Atur bagaimana pengguna harus diekspor.<br/>**CLI:** `--users`<br/>**Env:** `KC_USERS` | `skip`, `realm_file`, `same_file`, `different_files` | `different_files` |
+| **`users-per-file`**<br/>Atur jumlah pengguna per berkas.<br/>Hanya digunakan jika `users` diatur ke `different_files`.<br/>**CLI:** `--users-per-file`<br/>**Env:** `KC_USERS_PER_FILE` | _Integer_ | `50` |
+
+## Import
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`dir`**<br/>Atur jalur ke direktori tempat berkas akan dibaca dari.<br/>**CLI:** `--dir`<br/>**Env:** `KC_DIR` | _String_ |  |
+| **`file`**<br/>Atur jalur ke berkas yang akan dibaca.<br/>**CLI:** `--file`<br/>**Env:** `KC_FILE` | _String_ |  |
+| **`override`**<br/>Atur apakah data yang ada harus ditimpa.<br/>Jika diatur ke false, data akan diabaikan.<br/>**CLI:** `--override`<br/>**Env:** `KC_OVERRIDE` | `true`, `false` | `true` |
+
+## Konfigurasi OpenAPI
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`openapi-enabled`**<br/>Jika server harus mengekspos Endpoint OpenAPI.<br/>Jika diaktifkan, OpenAPI tersedia di `/openapi`.<br/>**CLI:** `--openapi-enabled`<br/>**Env:** `KC_OPENAPI_ENABLED` | `true`, `false` | `false` |
+| **`openapi-ui-enabled`**<br/>Jika server harus mengekspos Endpoint OpenApi-UI.<br/>Jika diaktifkan, OpenAPI UI tersedia di `/openapi/ui`.<br/>**CLI:** `--openapi-ui-enabled`<br/>**Env:** `KC_OPENAPI_UI_ENABLED` | `true`, `false` | `false` |
+
+## Konfigurasi Server
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`server-async-bootstrap`**<br/>Jika true, endpoint dibuka saat bootstrap berjalan di latar belakang.<br/>Jika false, endpoint dibuka setelah bootstrap selesai, memastikan server siap menangani permintaan. Bootstrap asinkron diaktifkan secara default saat endpoint kesehatan juga diaktifkan, kecuali opsi ini secara eksplisit diatur ke false.<br/>**CLI:** `--server-async-bootstrap`<br/>**Env:** `KC_SERVER_ASYNC_BOOTSTRAP` | `true`, `false` |  |
+
+## Bootstrap Admin
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`bootstrap-admin-client-id`**<br/>ID klien untuk akun layanan admin bootstrap sementara.<br/>Hanya digunakan saat realm master dibuat. Tersedia hanya saat secret klien admin bootstrap diatur.<br/>**CLI:** `--bootstrap-admin-client-id`<br/>**Env:** `KC_BOOTSTRAP_ADMIN_CLIENT_ID` | _String_ | `temp-admin` |
+| **`bootstrap-admin-client-secret`**<br/>Secret klien untuk akun layanan admin bootstrap sementara.<br/>Hanya digunakan saat realm master dibuat. Gunakan opsi konfigurasi non-CLI untuk opsi ini jika memungkinkan.<br/>**CLI:** `--bootstrap-admin-client-secret`<br/>**Env:** `KC_BOOTSTRAP_ADMIN_CLIENT_SECRET` | _String_ |  |
+| **`bootstrap-admin-password`**<br/>Sandi admin bootstrap sementara.<br/>Hanya digunakan saat realm master dibuat. Gunakan opsi konfigurasi non-CLI untuk opsi ini jika memungkinkan.<br/>**CLI:** `--bootstrap-admin-password`<br/>**Env:** `KC_BOOTSTRAP_ADMIN_PASSWORD` | _String_ |  |
+| **`bootstrap-admin-username`**<br/>Nama pengguna admin bootstrap sementara.<br/>Hanya digunakan saat realm master dibuat. Tersedia hanya saat sandi admin bootstrap diatur.<br/>**CLI:** `--bootstrap-admin-username`<br/>**Env:** `KC_BOOTSTRAP_ADMIN_USERNAME` | _String_ | `temp-admin` |

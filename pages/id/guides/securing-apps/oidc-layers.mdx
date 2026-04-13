@@ -5,68 +5,365 @@ description: Mengamankan aplikasi dan layanan dengan OpenID Connect - Dokumentas
 
 # Mengamankan aplikasi dan layanan dengan OpenID Connect
 
-## [](#_oidc_available_endpoints)Endpoint yang Tersedia
+import { Callout } from 'nextra/components'
 
-Sebagai implementasi OpenID Connect Provider yang sepenuhnya memenuhi syarat, NQRust-Identity mengekspos sejumlah endpoint yang dapat digunakan oleh aplikasi dan layanan untuk mengautentikasi dan mengotorisasi pengguna mereka.
+## Titik Akhir Tersedia
 
-Bagian ini menjelaskan beberapa endpoint utama yang harus digunakan oleh aplikasi dan layanan Anda saat berinteraksi dengan NQRust-Identity.
+Sebagai implementasi Penyedia Layanan OpenID Connect yang sepenuhnya memenuhi syarat, NQRust-Identity mengekspos sejumlah titik akhir yang dapat digunakan oleh aplikasi dan layanan untuk mengautentikasi dan mengotorisasi pengguna mereka.
 
-### [](#_endpoints)Endpoint
+Bagian ini menjelaskan beberapa titik akhir penting yang harus digunakan oleh aplikasi dan layanan Anda saat berinteraksi dengan NQRust-Identity.
 
-Endpoint yang paling penting untuk dipahami adalah endpoint konfigurasi `well-known`. Ini mencantumkan endpoint dan opsi konfigurasi lainnya yang relevan untuk implementasi OpenID Connect di NQRust-Identity. Endpoint adalah:
+### Titik Akhir
+
+Titik akhir yang paling penting untuk dipahami adalah titik akhir konfigurasi `well-known`. Ini mencantumkan titik akhir dan opsi konfigurasi lainnya yang relevan untuk implementasi OpenID Connect di NQRust-Identity. Titik akhir adalah:
 
 ```
 /realms/{realm-name}/.well-known/openid-configuration
 ```
 
-Untuk mendapatkan URL lengkap, tambahkan URL dasar untuk NQRust-Identity dan ganti `{realm-name}` dengan nama realm Anda. Misalnya:
+Untuk mendapatkan URL penuh, tambahkan URL dasar untuk NQRust-Identity dan ganti `{realm-name}` dengan nama realm Anda. Misalnya:
 
 ```
 http://localhost:8080/realms/{realm-name}/.well-known/openid-configuration
 ```
 
-Beberapa pustaka RP (Relying Party) mengambil semua endpoint yang diperlukan dari endpoint ini, tetapi untuk yang lain Anda mungkin perlu daftar endpoint secara individual.
+Beberapa perpustakaan RP mengambil semua titik akhir yang diperlukan dari titik akhir ini, tetapi untuk yang lain Anda mungkin perlu untuk mencantumkan titik akhir secara individual.
 
-#### [](#_authorization_endpoint)Endpoint Otorisasi
+#### Titik akhir Otorisasi
 
 ```
 /realms/{realm-name}/protocol/openid-connect/auth
 ```
 
-Endpoint otorisasi melakukan autentikasi pengguna akhir. Autentikasi ini dilakukan dengan mengarahkan agen pengguna ke endpoint ini.
+Titik akhir otorisasi melakukan autentikasi pengguna akhir. Autentikasi ini dilakukan dengan mengarahkan agen pengguna ke titik akhir ini.
 
-Untuk detail lebih lanjut lihat bagian [Authorization Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#AuthorizationEndpoint) dalam spesifikasi OpenID Connect.
+Untuk detail lebih lanjut, lihat bagian [Titik Akhir Otorisasi](https://openid.net/specs/openid-connect-core-1_0.html#AuthorizationEndpoint) dalam spesifikasi OpenID Connect.
 
-#### [](#_token_endpoint)Endpoint Token
+#### Titik akhir Token
 
 ```
 /realms/{realm-name}/protocol/openid-connect/token
 ```
 
-Endpoint token digunakan untuk mendapatkan token. Token dapat diperoleh dengan menukar kode otorisasi atau dengan menyediakan kredensial secara langsung tergantung pada alur yang digunakan. Endpoint token juga digunakan untuk mendapatkan token akses baru saat mereka kedaluwarsa.
+Titik akhir token digunakan untuk mendapatkan token. Token bisa didapatkan dengan menukar kode otorisasi atau dengan menyediakan kredensial secara langsung tergantung pada alur yang digunakan.
+Titik akhir token juga digunakan untuk mendapatkan token akses baru saat mereka kedaluwarsa.
 
-Untuk detail lebih lanjut, lihat bagian [Token Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#TokenEndpoint) dalam spesifikasi OpenID Connect.
+Untuk detail lebih lanjut, lihat bagian [Titik Akhir Token](https://openid.net/specs/openid-connect-core-1_0.html#TokenEndpoint) dalam spesifikasi OpenID Connect.
 
-#### [](#_userinfo_endpoint)Endpoint Userinfo
+#### Titik akhir Userinfo
 
 ```
 /realms/{realm-name}/protocol/openid-connect/userinfo
 ```
 
-Endpoint userinfo mengembalikan klaim standar tentang pengguna yang terverifikasi; endpoint ini dilindungi oleh token bearer.
+Titik akhir userinfo mengembalikan klaim standar tentang pengguna yang terverifikasi; titik akhir ini dilindungi oleh token pemegang.
 
-Untuk detail lebih lanjut, lihat bagian [Userinfo Endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo) dalam spesifikasi OpenID Connect.
+Untuk detail lebih lanjut, lihat bagian [Titik Akhir Userinfo](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo) dalam spesifikasi OpenID Connect.
 
-#### [](#_logout_endpoint)Endpoint Logout
+#### Titik akhir Logout
 
 ```
 /realms/{realm-name}/protocol/openid-connect/logout
 ```
 
-Endpoint logout mengeluarkan pengguna yang terverifikasi.
+Titik akhir logout mengeluarkan pengguna yang terverifikasi.
 
-Agen pengguna dapat diarahkan ke endpoint ini, yang menyebabkan sesi pengguna aktif untuk dikeluarkan. Agen pengguna kemudian diarahkan kembali ke aplikasi. Ini dijelaskan lebih detail dalam [RP-Initiated logout section of the Server administration guide](https://www.nqrust-identity.org/docs/latest/server_admin/#rp-initiated-logout).
+Agen pengguna dapat diarahkan ke titik akhir ini, yang menyebabkan sesi pengguna aktif untuk dilog out. Agen pengguna kemudian dialihkan kembali ke aplikasi.
+Ini dijelaskan dengan lebih detail dalam bagian Log Out yang Dimulai Oleh RP dari Panduan Administrasi Server.
 
-Endpoint ini juga dapat dipanggil langsung oleh aplikasi. Untuk memanggil endpoint ini secara langsung, token refresh perlu disertakan bersama kredensial yang diperlukan untuk mengautentikasi klien. Namun ini bukan standar format lama dari pesan logout yang didukung hanya karena adapter OIDC Java lama NQRust-Identity atau [Elytron Wildfly OIDC adapter](https://docs.wildfly.org/37/WildFly_Elytron_Security.html#NQRust-Identity_Integration). Tidak disarankan untuk digunakan langsung dari aplikasi Anda. Untuk pengguna logout, disarankan untuk menggunakan protokol standar logout OIDC/SAML atau [NQRust-Identity Admin console](https://www.nqrust-identity.org/docs/latest/server_admin/#viewing-user-sessions) (atau cara lain dari admin REST API) atau [NQRust-Identity Account console](https://www.nqrust-identity.org/docs/latest/server_admin/#_account-service) (atau cara lain dari akun REST API).
+<Callout type="warning">
+  Titik akhir ini juga dapat dipanggil langsung oleh aplikasi. Untuk memanggil titik akhir ini secara langsung, token refresh perlu ditambahkan bersama kredensial yang diperlukan untuk mengautentikasi klien.
+  Namun ini adalah format lama dari pesan logout yang hanya didukung karena adapter OIDC Java lama NQRust-Identity atau adapter OIDC Elytron Wildfly.
+  Tidak direkomendasikan untuk digunakan langsung dari aplikasi Anda.
+  Untuk pengguna logout, direkomendasikan untuk menggunakan protokol logout standar OIDC/SAML atau konsol admin NQRust-Identity (atau cara lain dari admin REST API)
+  atau konsol akun NQRust-Identity (atau cara lain dari akun REST API).
+</Callout>
 
-#### [](#_certificate_endpoint)Endpoint Certificate
+#### Titik akhir Certificate
+
+```
+/realms/{realm-name}/protocol/openid-connect/certs
+```
+
+Titik akhir sertifikat mengembalikan kunci publik yang diaktifkan oleh realm, dikodekan sebagai Kunci Web JSON (JWK). Tergantung pada pengaturan realm, satu atau lebih kunci dapat diaktifkan untuk memverifikasi token. Untuk informasi lebih lanjut, lihat Panduan Administrasi Server dan [spesifikasi Kunci Web JSON](https://datatracker.ietf.org/doc/html/rfc7517).
+
+Untuk detail lebih lanjut, lihat spesifikasi [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html).
+
+#### Titik akhir Introspection
+
+```
+/realms/{realm-name}/protocol/openid-connect/token/introspect
+```
+
+Titik akhir introspection digunakan untuk mengambil status aktif token. Dengan kata lain, Anda dapat menggunakannya untuk memvalidasi token akses atau refresh token.
+Titik akhir ini hanya dapat dipanggil oleh klien konfiden.
+
+Untuk detail lebih lanjut tentang cara memanggil titik akhir ini, lihat [spesifikasi Introspection Token OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc7662).
+
+##### Titik akhir Introspection yang Dipicu dengan Header application/jwt
+
+Anda dapat memanggil titik akhir introspection dengan header HTTP `Accept: application/jwt` bukan `Accept: application/json`. Dalam hal `application/jwt`, respons
+mungkin berisi klaim tambahan `jwt` dengan token akses JWT penuh, yang bisa berguna terutama jika token yang akan diintrospeksi adalah token akses ringan. Ini memerlukan Anda untuk mengaktifkan `Support JWT claim in Introspection Response`
+pada pengaturan klien lanjutan, yang memicu introspeksi token.
+
+#### Titik akhir Pendaftaran Klien Dinamis
+
+```
+/realms/{realm-name}/clients-registrations/openid-connect
+```
+
+Titik akhir pendaftaran klien dinamis digunakan untuk mendaftar klien secara dinamis.
+
+Untuk detail lebih lanjut, lihat panduan [Menggunakan layanan pendaftaran klien](/en/guides/securing-apps/client-registration) dan spesifikasi [OpenID Connect Dynamic Client Registration](https://openid.net/specs/openid-connect-registration-1_0.html).
+
+#### Titik akhir Pengarahan Token
+
+```
+/realms/{realm-name}/protocol/openid-connect/revoke
+```
+
+Titik akhir pengarahan token digunakan untuk mengarahkan token. Kedua token refresh dan token akses didukung oleh titik akhir ini. Ketika mengarahkan token refresh, persetujuan pengguna untuk klien yang sesuai juga dicabut.
+
+Untuk detail lebih lanjut tentang cara memanggil titik akhir ini, lihat [spesifikasi Pengarahan Token OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc7009).
+
+#### Titik akhir Otorisasi Perangkat
+
+```
+/realms/{realm-name}/protocol/openid-connect/auth/device
+```
+
+Titik akhir otorisasi perangkat digunakan untuk mendapatkan kode perangkat dan kode pengguna. Dapat dipanggil oleh klien konfiden atau publik.
+
+Untuk detail lebih lanjut tentang cara memanggil titik akhir ini, lihat [spesifikasi Otorisasi Perangkat OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8628).
+
+#### Titik akhir Otorisasi Backchannel
+
+```
+/realms/{realm-name}/protocol/openid-connect/ext/ciba/auth
+```
+
+Titik akhir otorisasi backchannel digunakan untuk mendapatkan auth_req_id yang mengidentifikasi permintaan otorisasi yang dilakukan oleh klien. Hanya dapat dipanggil oleh klien konfiden.
+
+Untuk detail lebih lanjut tentang cara memanggil titik akhir ini, lihat [spesifikasi Alur Otorisasi Backchannel Awal Oleh Klien OpenID Connect](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
+
+Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [bagian Otorisasi Backchannel dari panduan ini](#_client_initiated_backchannel_authentication_grant) dan bagian Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
+
+## Tipe Pengarahan yang Didukung
+
+Bagian ini menjelaskan berbagai tipe pengarahan yang tersedia untuk pihak relai.
+
+### Kode Otorisasi
+
+Alur Kode Otorisasi mengarahkan agen pengguna ke NQRust-Identity. Setelah pengguna berhasil mengotentikasi dengan NQRust-Identity, Kode Otorisasi dibuat dan agen pengguna dialihkan kembali ke aplikasi. Aplikasi kemudian menggunakan kode otorisasi bersama kredensialnya untuk mendapatkan Token Akses, Token Refresh, dan Token ID dari NQRust-Identity.
+
+Alur ini ditargetkan untuk aplikasi web, tetapi juga disarankan untuk aplikasi asli, termasuk aplikasi seluler, di mana memungkinkan untuk menanamkan agen pengguna.
+
+Untuk detail lebih lanjut, lihat [Alur Kode Otorisasi](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth) dalam spesifikasi OpenID Connect.
+
+### Implicit
+
+Alur Implicit berfungsi serupa dengan alur Kode Otorisasi, tetapi bukan mengembalikan Kode Otorisasi, Token Akses dan Token ID yang dikembalikan. Pendekatan ini mengurangi kebutuhan untuk invokasi ekstra untuk menukar Kode Otorisasi dengan Token Akses. Namun, itu tidak termasuk Token Refresh. Ini menghasilkan kebutuhan untuk memungkinkan Token Akses dengan masa kedaluwarsa yang lama; namun, pendekatan ini tidak praktis karena sangat sulit untuk membatalkan token ini. Alternatifnya, Anda dapat
+mengharuskan redirect baru untuk mendapatkan Token Akses baru setelah Token Akses awal telah kedaluwarsa. Alur Implicit berguna jika aplikasi hanya ingin mengautentikasi pengguna dan menangani logout sendiri.
+
+Anda dapat menggunakan Alur Hibrid di mana baik Token Akses dan Kode Otorisasi yang dikembalikan.
+
+Satu hal yang perlu diperhatikan adalah bahwa kedua alur Implicit dan Hibrid memiliki risiko keamanan potensial karena Token Akses mungkin bocor melalui log server web dan riwayat browser. Anda dapat mengurangi masalah ini dengan menggunakan masa kedaluwarsa yang singkat untuk Token Akses.
+
+Untuk detail lebih lanjut, lihat [Alur Implicit](https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth) dalam spesifikasi OpenID Connect.
+
+Menurut praktik terbaik saat ini [OAuth 2.0 Security (RFC 9700)](https://datatracker.ietf.org/doc/html/rfc9700#name-implicit-grant), alur ini HARUS TIDAK digunakan.
+Alur ini dihapus dari spesifikasi [OAuth 2.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13) yang akan datang.
+
+### Resource Owner Password Credentials
+
+Resource Owner Password Credentials, yang dikenal sebagai Direct Grant di NQRust-Identity, memungkinkan penggantian kredensial pengguna untuk token.
+Menurut praktik terbaik saat ini [OAuth 2.0 Security (RFC 9700)](https://datatracker.ietf.org/doc/html/rfc9700#name-resource-owner-password-cre),
+alur ini HARUS TIDAK digunakan, lebih memilih metode alternatif seperti [Device Authorization Grant](#_device_authorization_grant) atau [Kode Otorisasi](#_authorization_code).
+
+Keterbatasan dalam menggunakan alur ini termasuk:
+
+- Kredensial pengguna ter曝露 kepada aplikasi
+- Aplikasi memerlukan halaman login
+- Aplikasi perlu mengetahui skema otentikasi
+- Perubahan pada alur otentikasi memerlukan perubahan pada aplikasi
+- Tak ada dukungan untuk broker identitas atau login sosial
+- Alur tidak didukung (pendaftaran pengguna sendiri, tindakan yang diperlukan, dan sebagainya.)
+
+Keamanan yang dikhawatirkan dengan alur ini termasuk:
+
+- Terlibat lebih dari NQRust-Identity dalam penanganan kredensial
+- Luas permukaan rentan di mana bocoran kredensial dapat terjadi
+- Membangun ekosistem di mana pengguna mempercayai aplikasi lain untuk memasukkan kredensial mereka dan bukan NQRust-Identity
+
+Untuk memungkinkan klien untuk menggunakan pengarahan Kredensial Pengguna Sumber Daya, klien harus memiliki opsi `Direct Access Grants Enabled` yang diaktifkan.
+
+Alur ini tidak termasuk dalam OpenID Connect, tetapi adalah bagian dari spesifikasi OAuth 2.0.
+Ini dihapus dari spesifikasi [OAuth 2.1](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13) yang akan datang.
+
+Untuk detail lebih lanjut, lihat bab [Kredensial Pengguna Sumber Daya](https://datatracker.ietf.org/doc/html/rfc6749#section-4.3) dalam spesifikasi OAuth 2.0.
+
+#### Contoh menggunakan CURL
+
+Contoh berikut menunjukkan bagaimana untuk mendapatkan token akses untuk pengguna di realm `master` dengan username `user` dan password `password`. Contoh ini menggunakan
+klien konfiden `myclient`:
+
+```bash
+curl \
+  -d "client_id=myclient" \
+  -d "client_secret=40cc097b-2a57-4c17-b36a-8fdf3fc2d578" \
+  -d "username=user" \
+  -d "password=password" \
+  -d "grant_type=password" \
+  "http://localhost:8080/realms/master/protocol/openid-connect/token"
+```
+
+### Kredensial Klien
+
+Kredensial Klien digunakan ketika klien (aplikasi dan layanan) ingin mendapatkan akses atas nama mereka sendiri bukan atas nama pengguna. Misalnya, kredensial ini bisa
+berguna untuk layanan latar belakang yang menerapkan perubahan pada sistem secara umum bukan untuk pengguna tertentu.
+
+NQRust-Identity mendukung klien untuk mengotentikasi baik dengan rahasia atau dengan kunci publik/pribadi.
+
+Alur ini tidak termasuk dalam OpenID Connect, tetapi adalah bagian dari spesifikasi OAuth 2.0.
+
+Untuk detail lebih lanjut, lihat bab [Kredensial Klien](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4) dalam spesifikasi OAuth 2.0.
+
+### Pengarahan Otorisasi Perangkat
+
+Pengarahan Otorisasi Perangkat digunakan oleh klien yang berjalan pada perangkat terhubung internet yang memiliki kemampuan input terbatas atau kehilangan browser yang sesuai.
+
+1. Aplikasi meminta NQRust-Identity untuk menyediakan kode perangkat dan kode pengguna.
+2. NQRust-Identity membuat kode perangkat dan kode pengguna.
+3. NQRust-Identity mengembalikan respons yang mencakup kode perangkat dan kode pengguna ke aplikasi.
+4. Aplikasi menyediakan kode pengguna dan URI verifikasi kepada pengguna. Pengguna mengakses URI verifikasi untuk diotentikasi dengan menggunakan browser lain.
+5. Aplikasi berulang kali meminta NQRust-Identity sampai NQRust-Identity menyelesaikan otorisasi pengguna.
+6. Jika otentikasi pengguna selesai, aplikasi mendapatkan kode perangkat.
+7. Aplikasi menggunakan kode perangkat bersama kredensialnya untuk mendapatkan Token Akses, Token Refresh, dan Token ID dari NQRust-Identity.
+
+Untuk detail lebih lanjut, lihat [spesifikasi Pengarahan Otorisasi Perangkat OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc8628).
+
+### Pengarahan Otorisasi Backchannel Awal Oleh Klien
+
+Pengarahan Otorisasi Backchannel Awal Oleh Klien digunakan oleh klien yang ingin memulai alur otentikasi dengan berkomunikasi secara langsung dengan OpenID Provider tanpa redirect melalui browser pengguna seperti pengarahan kode otorisasi OAuth 2.0.
+
+Klien meminta dari NQRust-Identity auth_req_id yang mengidentifikasi permintaan otentikasi yang dilakukan oleh klien. NQRust-Identity membuat auth_req_id.
+
+Setelah menerima auth_req_id ini, klien perlu berulang kali meminta NQRust-Identity untuk mendapatkan Token Akses, Token Refresh, dan Token ID dari NQRust-Identity sebagai gantinya untuk auth_req_id sampai pengguna diotentikasi.
+
+Dalam hal klien menggunakan mode `ping`, tidak perlu berulang kali meminta titik akhir token, tetapi dapat menunggu pemberitahuan yang dikirim oleh NQRust-Identity ke Titik Akhir Pemberitahuan Klien yang ditentukan.
+Titik Akhir Pemberitahuan Klien dapat dikonfigurasi di Konsol Admin NQRust-Identity. Detail kontrak untuk Titik Akhir Pemberitahuan Klien dijelaskan dalam spesifikasi CIBA.
+
+Untuk detail lebih lanjut, lihat [spesifikasi Alur Otorisasi Backchannel Awal Oleh Klien OpenID Connect](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
+
+Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [Titik Akhir Otorisasi Backchannel dari panduan ini](#_backchannel_authentication_endpoint) dan bagian Pengarahan Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
+Untuk detail tentang kepatuhan FAPI CIBA, lihat [bagian FAPI dari panduan ini](#_fapi-support).
+
+## Kesalahan Khusus NQRust-Identity
+
+Server NQRust-Identity dapat mengirimkan kesalahan ke aplikasi klien dalam respons autentikasi OIDC dengan parameter `error=temporarily_unavailable` dan `error_description=authentication_expired`.
+NQRust-Identity mengirimkan kesalahan ini saat pengguna diotentikasi dan memiliki sesi SSO, tetapi sesi otentikasi kedaluwarsa di tab browser saat ini sehingga server NQRust-Identity tidak dapat secara otomatis melakukan SSO
+re-autentikasi pengguna dan redirect kembali ke klien dengan respons yang berhasil. Ketika aplikasi klien menerima jenis kesalahan ini, idealnya untuk mencoba otentikasi segera dan mengirimkan permintaan autentikasi OIDC baru ke server NQRust-Identity, yang biasanya harus selalu mengotentikasi pengguna karena sesi SSO dan redirect kembali. Untuk detail lebih lanjut, lihat
+Panduan Administrasi Server.
+
+## Dukungan Financial-grade API (FAPI)
+
+NQRust-Identity membuat lebih mudah bagi administrator untuk memastikan bahwa klien mereka memenuhi spesifikasi ini:
+
+- [Financial-grade API Security Profile 1.0 - Bagian 1: Baseline](https://openid.net/specs/openid-financial-api-part-1-1_0.html)
+- [Financial-grade API Security Profile 1.0 - Bagian 2: Advanced](https://openid.net/specs/openid-financial-api-part-2-1_0.html)
+- [Financial-grade API: Client Initiated Backchannel Authentication Profile](https://openid.net/specs/openid-financial-api-ciba-ID1.html) (FAPI CIBA)
+- [FAPI 2.0 Security Profile (Final)](https://openid.net/specs/fapi-security-profile-2_0-final.html)
+- [FAPI 2.0 Message Signing (Final)](https://openid.net/specs/fapi-message-signing-2_0-final.html)
+
+Kepatuhan ini berarti server NQRust-Identity akan memverifikasi persyaratan
+untuk server otorisasi, yang dijelaskan dalam spesifikasi. Adapter NQRust-Identity tidak memiliki dukungan tertentu untuk FAPI, oleh karena itu validasi yang diperlukan pada sisi klien (aplikasi)
+masih perlu dilakukan secara manual atau melalui beberapa solusi pihak ketiga.
+
+### Profil Klien FAPI
+
+Untuk memastikan bahwa klien Anda memenuhi FAPI, Anda dapat mengonfigurasi Kebijakan Klien di realm Anda seperti yang dijelaskan dalam Panduan Administrasi Server
+dan menautkannya ke profil klien global untuk dukungan FAPI, yang secara otomatis tersedia di setiap realm. Anda dapat menggunakan profil `fapi-1-baseline` atau `fapi-1-advanced` berdasarkan profil FAPI yang diperlukan agar klien Anda mematuhi. Anda juga dapat menggunakan profil `fapi-2-security-profile`, `fapi-2-dpop-security-profile`, `fapi-2-message-signing`, dan `fapi-2-dpop-message-signing` untuk kepatuhan dengan spesifikasi FAPI 2.0.
+
+Bila Anda ingin menggunakan Permintaan Otorisasi Dapat Dijalankan Oleh Pengguna (PAR), disarankan bahwa klien Anda menggunakan
+kedua profil `fapi-1-baseline` dan `fapi-1-advanced` untuk permintaan PAR. Terutama, profil `fapi-1-baseline` berisi `pkce-enforcer` executor, yang memastikan
+klien menggunakan PKCE dengan algoritma S256 yang aman. Ini tidak diperlukan untuk klien FAPI Advanced kecuali mereka menggunakan permintaan PAR.
+
+Bila Anda ingin menggunakan [CIBA](#_backchannel_authentication_endpoint) dengan cara yang memenuhi FAPI, pastikan bahwa klien Anda menggunakan keduanya `fapi-1-advanced` dan `fapi-ciba` profil klien.
+Ada kebutuhan untuk menggunakan profil `fapi-1-advanced`, atau profil klien lain yang berisi executor yang diminta, sebagai profil `fapi-ciba` hanya berisi executor spesifik CIBA.
+Saat menegakkan persyaratan spesifikasi FAPI CIBA, ada kebutuhan untuk lebih banyak persyaratan, seperti penegakan klien konfiden atau token akses terikat sertifikat.
+
+### Profil Keamanan Financial-grade API Brasilia Terbuka
+
+NQRust-Identity mematuhi [Profil Keamanan Financial-grade API Brasilia Terbuka 1.0 Draft Implementers 3](https://openfinancebrasil.atlassian.net/wiki/spaces/OF/pages/245760001/EN+Open+Finance+Brasil+Financial-grade+API+Security+Profile+1.0+Implementers+Draft+3).
+Yang satu ini lebih ketat dalam beberapa persyaratan daripada spesifikasi [FAPI 1 Advanced](#_fapi-support) dan oleh karena itu mungkin diperlukan untuk mengonfigurasi Kebijakan Klien
+dalam cara yang lebih ketat untuk menegakkan beberapa persyaratan. Terutama:
+
+- Jika klien Anda tidak menggunakan PAR, pastikan bahwa ia menggunakan objek permintaan OIDC terenkripsi. Hal ini dapat dicapai dengan menggunakan profil klien dengan `secure-request-object` executor dikonfigurasi dengan `Encryption Required` diaktifkan.
+- Pastikan bahwa untuk JWS, klien menggunakan algoritma `PS256`. Untuk JWE, klien harus menggunakan `RSA-OAEP` dengan `A256GCM`. Hal ini mungkin perlu diatur di semua Pengaturan Klien di mana algoritma ini dapat diterapkan.
+
+### Profil Keamanan Hak Data Konsumen Australia (CDR)
+
+NQRust-Identity mematuhi [Profil Keamanan Hak Data Konsumen Australia](https://consumerdatastandardsaustralia.github.io/standards/#security-profile).
+
+Jika Anda ingin menerapkan profil keamanan CDR Australia, Anda perlu menggunakan profil `fapi-1-advanced` karena profil keamanan CDR Australia didasarkan pada profil keamanan FAPI 1.0 Advanced. Jika klien Anda juga menerapkan PAR, pastikan bahwa klien menerapkan RFC 7637 Proof Key for Code Exchange (PKCE) karena profil keamanan CDR Australia memerlukan Anda untuk menerapkan PKCE saat menerapkan PAR. Hal ini dapat dicapai dengan menggunakan profil klien dengan `pkce-enforcer` executor.
+
+### Pertimbangan TLS
+
+Karena informasi konfidenial sedang dipertukarkan, semua interaksi harus dienkripsi dengan TLS (HTTPS). Selain itu, ada beberapa persyaratan dalam spesifikasi FAPI untuk
+suite sisil dan versi protokol TLS yang digunakan. Untuk mencocokkan persyaratan ini, Anda dapat mempertimbangkan konfigurasi sisil yang diizinkan. Konfigurasi ini dapat dilakukan dengan mengatur
+opsi `https-protocols` dan `https-cipher-suites`. NQRust-Identity menggunakan `TLSv1.3` secara default dan oleh karena itu mungkin tidak perlu mengganti pengaturan default. Namun itu
+mungkin perlu menyesuaikan sisil jika Anda perlu untuk fallback ke versi TLS yang lebih rendah untuk beberapa alasan. Untuk detail lebih lanjut, lihat panduan [Mengonfigurasi TLS](/en/guides/server/enabletls).
+
+## Dukungan OAuth 2.1
+
+NQRust-Identity membuat lebih mudah bagi administrator untuk memastikan bahwa klien mereka memenuhi spesifikasi ini:
+
+- [The OAuth 2.1 Authorization Framework - draft specification](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13)
+
+Kepatuhan ini berarti server NQRust-Identity akan memverifikasi persyaratan
+untuk server otorisasi, yang dijelaskan dalam spesifikasi. Adapter NQRust-Identity tidak memiliki dukungan tertentu untuk OAuth 2.1, oleh karena itu validasi yang diperlukan pada sisi klien (aplikasi)
+masih perlu dilakukan secara manual atau melalui beberapa solusi pihak ketiga.
+
+### Profil Klien OAuth 2.1
+
+Untuk memastikan bahwa klien Anda mematuhi OAuth 2.1, Anda dapat mengonfigurasi Kebijakan Klien di realm Anda seperti yang dijelaskan dalam Panduan Administrasi Server
+dan menautkannya ke profil klien global untuk dukungan OAuth 2.1, yang secara otomatis tersedia di setiap realm. Anda dapat menggunakan profil `oauth-2-1-for-confidential-client` untuk klien konfiden atau profil `oauth-2-1-for-public-client` untuk klien publik.
+
+<Callout type="info">
+  Spesifikasi OAuth 2.1 masih dalam bentuk draft dan mungkin berubah di masa depan. Oleh karena itu profil klien OAuth 2.1 bawaan NQRust-Identity juga bisa berubah.
+</Callout>
+
+<Callout type="info">
+  Saat menggunakan profil OAuth 2.1 untuk klien publik, disarankan untuk menggunakan fitur pratinjau DPoP seperti yang dijelaskan dalam Panduan Administrasi Server karena DPoP mengikat token akses dan token refresh dengan bagian publik dari pasangan kunci klien. Pengikatan ini mencegah seorang penyerang dari menggunakan token yang telah dicuri.
+</Callout>
+
+## Rekomendasi
+
+Bagian ini menjelaskan beberapa rekomendasi saat mengamankan aplikasi Anda dengan NQRust-Identity.
+
+### Memvalidasi Token Akses
+
+Jika Anda perlu secara manual memvalidasi token akses yang diterbitkan oleh NQRust-Identity, Anda dapat memanggil [Titik Akhir Introspection](#_token_introspection_endpoint).
+Kelemahan dari pendekatan ini adalah bahwa Anda harus melakukan invokasi jaringan ke server NQRust-Identity. Hal ini bisa lambat dan mungkin membebani
+server jika Anda memiliki terlalu banyak permintaan validasi berlangsung pada saat bersamaan. Token akses yang diterbitkan oleh NQRust-Identity adalah [JSON Web Tokens (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) yang ditandatangani digital dan dikodekan menggunakan [JSON Web Signature (JWS)](https://datatracker.ietf.org/doc/html/rfc7515).
+Karena mereka dikodekan dengan cara ini, Anda dapat memvalidasi token akses secara lokal menggunakan kunci publik dari realm yang menerbitkannya. Anda dapat mengkodekan kunci publik realm secara keras dalam kode validasi Anda, atau mencari dan menyimpan kunci publik menggunakan [titik akhir sertifikat](#_certificate_endpoint) dengan ID Kunci (KID) yang terkandung dalam
+JWS. Tergantung pada bahasa pemrograman Anda, banyak pustaka pihak ketiga yang ada dan mereka dapat membantu Anda dengan validasi JWS.
+
+### URI Pengalih
+
+Saat menggunakan aliran berbasis pengalih, pastikan untuk menggunakan URI pengalih yang valid untuk klien Anda. URI pengalih sebaiknya spesifik mungkin. Hal ini terutama berlaku untuk aplikasi klien-sisi (klien publik). Gagal melakukan hal ini dapat mengakibatkan:
+
+- Pengalih terbuka - ini dapat memungkinkan penyerang untuk membuat tautan palsu yang terlihat datang dari domain Anda
+- Masuk tidak sah - saat pengguna sudah diotentikasi dengan NQRust-Identity, penyerang dapat menggunakan klien publik di mana URI pengalih tidak dikonfigurasi dengan benar untuk mengakses tanpa pengetahuan pengguna dengan mengarahkan pengguna tanpa diketahui pengguna
+
+Dalam produksi untuk aplikasi web selalu gunakan `https` untuk semua URI pengalih. Jangan biarkan pengalih ke http.
+
+Beberapa URI pengalih khusus juga ada:
+
+URI pengalih ini berguna untuk aplikasi asli dan memungkinkan aplikasi asli untuk membuat server web pada port acak yang dapat digunakan untuk mendapatkan
+kode otorisasi. URI pengalih ini memungkinkan port apapun. Perhatikan bahwa sesuai dengan [OAuth 2.0 untuk Aplikasi Asli](https://datatracker.ietf.org/doc/html/rfc8252#section-8.3), penggunaan `localhost` **tidak** disarankan dan seharusnya menggunakan literal IP `127.0.0.1`.
+
+Jika Anda tidak dapat memulai server web di klien (atau browser tidak tersedia), Anda dapat menggunakan URI pengalih khusus `urn:ietf:wg:oauth:2.0:oob`.
+Ketika URI pengalih ini digunakan, NQRust-Identity menampilkan halaman dengan kode dalam judul dan dalam kotak di halaman.
+Aplikasi dapat mengdeteksi bahwa judul browser telah berubah, atau pengguna dapat menyalin dan mengpaste kode secara manual ke aplikasi.
+Dengan URI pengalih ini, pengguna dapat menggunakan perangkat yang berbeda untuk mendapatkan kode untuk disisipkan kembali ke aplikasi.

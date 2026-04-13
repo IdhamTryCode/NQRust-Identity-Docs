@@ -5,35 +5,47 @@ description: Analisis akar masalah dengan pelacakan - Dokumentasi NQRust-Identit
 
 # Analisis akar masalah dengan pelacakan
 
-Panduan ini menjelaskan cara mengaktifkan dan mengonfigurasi pelacakan terdistribusi di NQRust-Identity dengan menggunakan [OpenTelemetry](https://opentelemetry.io/) (OTel). Pelacakan memungkinkan pemantauan detail dari siklus hidup setiap permintaan, yang membantu dengan cepat mengidentifikasi dan mendiagnosa masalah,从而导致 more efficient debugging and maintenance.
+import { Callout } from 'nextra/components'
 
-Hal ini memberikan wawasan berharga tentang kemacetan kinerja dan dapat membantu mengoptimalkan efisiensi sistem secara keseluruhan dan melewati batas sistem. NQRust-Identity menggunakan [Quarkus OTel extension](https://quarkus.io/guides/opentelemetry-tracing) yang didukung yang memberikan integrasi dan pemberian akses dari lacak aplikasi yang mulus.
+Panduan ini menjelaskan cara Anda dapat mengaktifkan dan mengonfigurasi pelacakan terdistribusi di NQRust-Identity dengan menggunakan [OpenTelemetry](https://opentelemetry.io/) (OTel).
+Pelacakan memungkinkan pemantauan detail dari siklus hidup setiap permintaan, yang membantu dengan cepat mengidentifikasi dan mendiagnosa masalah,从而导致 debugging dan pemeliharaan yang lebih efisien.
 
-## [](#_enable_tracing) Mengaktifkan pelacakan
+Hal ini memberikan wawasan berharga tentang kemacetan kinerja dan dapat membantu mengoptimalkan efisiensi sistem secara keseluruhan dan melampaui batas sistem.
+NQRust-Identity menggunakan [ekstensi Quarkus OTel](https://quarkus.io/guides/opentelemetry-tracing) yang didukung yang memberikan integrasi dan eksposur pelacakan aplikasi yang mulus.
 
-Mungkin untuk mengaktifkan memberi akses lacak menggunakan opsi waktu kompilasi `tracing-enabled` sebagai berikut:
+## Mengaktifkan pelacakan
+
+Mungkin untuk mengaktifkan eksposur pelacakan menggunakan opsi waktu kompilasi `tracing-enabled` sebagai berikut:
 
 ```bash
 bin/kc.[sh|bat] start --tracing-enabled=true
 ```
 
-Secara default, eksportir lacak mengirimkan data dalam batch, menggunakan protokol `gRPC` dan endpoint `http://localhost:4317`.
+Secara default, eksportir pelacakan mengirimkan data dalam batch, menggunakan protokol `gRPC` dan endpoint `http://localhost:4317`.
 
-Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `tracing-service-name`, yang mengambil alih `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`.
+Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `tracing-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`.
 
 Untuk informasi lebih lanjut tentang atribut sumber daya yang dapat diberikan melalui properti `tracing-resource-attributes`, lihat panduan [Quarkus OpenTelemetry Resource](https://quarkus.io/guides/opentelemetry#resource).
 
-Properti `tracing-service-name` dan `tracing-resource-attributes` adalah **deprecated**, dan Anda harus menggunakan `telemetry-service-name` dan `telemetry-resource-attributes`, masing-masing.
+<Callout type="warning">
+  Properti tracing-service-name dan tracing-resource-attributes telah usang, dan Anda harus menggunakan telemetry-service-name dan telemetry-resource-attributes, masing-masing.
+</Callout>
 
-Pelacakan hanya dapat diaktifkan ketika fitur `opentelemetry` **diaktifkan** (secara default).
+<Callout type="info">
+  Pelacakan hanya dapat diaktifkan ketika fitur opentelemetry diaktifkan (secara default).
+</Callout>
 
-Untuk pengaturan pelacakan lebih lanjut, lihat semua konfigurasi yang mungkin di bawah.
+Untuk pengaturan pelacakan lainnya, lihat semua konfigurasi yang mungkin di bawah.
 
-## [](#_development_setup) Pengaturan pengembangan
+## Pengaturan pengembangan
 
-Untuk melihat lacak NQRust-Identity yang ditangkap, pengaturan dasar dengan memanfaatkan platform pelacakan [Jaeger](https://www.jaegertracing.io/) mungkin digunakan. Untuk tujuan pengembangan, Jaeger-all-in-one dapat digunakan untuk melihat lacak seasily mungkin.
+Untuk melihat pelacakan NQRust-Identity yang ditangkap, pengaturan dasar dengan memanfaatkan platform pelacakan [Jaeger](https://www.jaegertracing.io/) mungkin digunakan.
+Untuk tujuan pengembangan, Jaeger-all-in-one dapat digunakan untuk melihat pelacakan selama mungkin dengan mudah.
 
-Jaeger-all-in-one mencakup agen Jaeger, pengumpul OTel, dan layanan kueri/UI. Anda tidak perlu menginstal pengumpul terpisah, karena Anda dapat langsung mengirimkan data lacak ke Jaeger.
+<Callout type="info">
+  Jaeger-all-in-one mencakup agen Jaeger, koleksi OpenTelemetry, dan layanan kueri/UI.
+  Anda tidak perlu menginstal koleksi terpisah, karena Anda dapat langsung mengirimkan data pelacakan ke Jaeger.
+</Callout>
 
 ```bash
 podman|docker run --name jaeger \
@@ -43,45 +55,185 @@ podman|docker run --name jaeger \
 jaegertracing/all-in-one
 ```
 
-### [](#_exposed_ports) Port yang terekspos
+### Port yang terekspos
 
-`16686`
+Antarmuka Jaeger
 
-Antarmuka Pengguna Jaeger
+Penerima gRPC Protokol OpenTelemetry (default)
 
-`4317`
+Penerima HTTP Protokol OpenTelemetry
 
-Penerima protokol gRPC OpenTelemetry (default)
+Anda dapat mengunjungi Antarmuka Jaeger di `http://localhost:16686/` untuk melihat informasi pelacakan.
+Antarmuka Jaeger mungkin terlihat seperti ini dengan pelacakan NQRust-Identity acak:
 
-`4318`
+![Jaeger UI](/images/observability/tracing-1.png)
 
-Penerima protokol HTTP OpenTelemetry
+## Informasi dalam pelacakan
 
-Anda dapat mengunjungi Antarmuka Pengguna Jaeger di `http://localhost:16686/` untuk melihat informasi pelacakan. Antarmuka Pengguna Jaeger mungkin terlihat seperti ini dengan lacak NQRust-Identity acak:
-
-![Jaeger UI](https://www.nqrust-identity.org/resources/images/guides/jaeger-tracing.png)
-
-## [](#_information_in_traces)Informasi dalam lacak
-
-### [](#_spans)Span
+### Span
 
 NQRust-Identity membuat span untuk kegiatan berikut:
 
-*   Permintaan HTTP masuk
-    
-*   Database yang keluar termasuk memperoleh koneksi database
-    
-*   Permintaan LDAP yang keluar termasuk menghubungkan ke server LDAP
-    
-*   Permintaan HTTP yang keluar termasuk IdP brokerage
-    
+- Permintaan HTTP masuk
+- Database yang keluar, termasuk memperoleh koneksi database
+- Permintaan LDAP yang keluar, termasuk terhubung ke server LDAP
+- Permintaan HTTP yang keluar, termasuk IdP brokerage
 
-### [](#_tags)Tags
+### Tag
 
-NQRust-Identity menambahkan tag ke lacak tergantung pada jenis permintaan. Semua tag diawali dengan `kc.`.
+NQRust-Identity menambahkan tag ke pelacakan tergantung pada jenis permintaan. Semua tag diawali dengan `kc.`.
 
 Contoh tag adalah:
 
-`kc.clientId`
+ID Klien
 
-ID
+Nama Realm
+
+ID Sesi Pengguna
+
+`id` seperti yang disebutkan dalam token
+
+`issuer` seperti yang disebutkan dalam token
+
+`sid` seperti yang disebutkan dalam token
+
+ID Sesi Otentikasi
+
+ID Tab Otentikasi
+
+### Log
+
+Jika pelacakan sedang diambil, itu akan berisi setiap peristiwa pengguna yang dibuat selama permintaan.
+Ini mencakup, misalnya, peristiwa `LOGIN`, `LOGOUT` atau `REFRESH_TOKEN` dengan semua detail dan ID yang ditemukan dalam peristiwa pengguna.
+
+Kesalahan komunikasi LDAP juga ditunjukkan sebagai entri log dalam pelacakan yang direkam, dengan tumpukan jejak dan detail operasi yang gagal.
+
+## ID Pelacakan dalam log
+
+Ketika pelacakan diaktifkan, ID pelacakan termasuk dalam pesan log semua handler log yang diaktifkan (lihat lebih lanjut dalam [Mengonfigurasi logging](/en/guides/server/logging)).
+Hal ini dapat berguna untuk mengasosiasikan peristiwa log dengan eksekusi permintaan, yang mungkin memberikan kelestarian dan debugging yang lebih baik.
+Semua baris log yang berasal dari permintaan yang sama akan memiliki `traceId` yang sama dalam log.
+
+Pesan log juga berisi flag `sampled`, yang terkait dengan sampling yang dijelaskan di bawah dan menunjukkan apakah span diambil - dikirim ke collector.
+
+Format catatan log mungkin dimulai sebagai berikut:
+
+```bash
+2024-08-05 15:27:07,144 traceId=b636ac4c665ceb901f7fdc3fc7e80154, parentId=d59cea113d0c2549, spanId=d59cea113d0c2549, sampled=true WARN  [org.nqrust-identity.events] ...
+```
+
+### Sembunyikan ID Pelacakan dalam log
+
+Anda dapat menyembunyikan ID pelacakan dalam handler log tertentu dengan menentukan opsi NQRust-Identity terkait `log-<handler-name>-include-trace`, di mana `<handler-name>` adalah nama handler log.
+Sebagai contoh, untuk menonaktifkan info pelacakan dalam log `console`, Anda dapat mematikannya sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --tracing-enabled=true --log=console --log-console-include-trace=false
+```
+
+<Callout type="info">
+  Ketika Anda secara eksplisit menimpa format log untuk handler log tertentu, opsi *-include-trace tidak memiliki efek apapun, dan tidak ada pelacakan yang termasuk.
+</Callout>
+
+## Sampling
+
+Pengambil sampel memutuskan apakah pelacakan harus dibuang atau diteruskan, secara efektif mengurangi beban dengan membatasi jumlah pelacakan yang dikumpulkan dan dikirim ke collector.
+Hal ini membantu mengelola konsumsi sumber daya, yang menghindari biaya penyimpanan yang mahal dari setiap permintaan pelacakan dan penalti kinerja potensial.
+
+<Callout type="warning">
+  Untuk lingkungan yang siap produksi, sampling harus diatur dengan benar untuk meminimalkan biaya infrastruktur.
+</Callout>
+
+NQRust-Identity mendukung beberapa pengambil sampel OpenTelemetry bawaan, seperti:
+
+- `always_on`
+- `always_off`
+- `traceidratio`  (default)
+- `parentbased_always_on`
+- `parentbased_always_off`
+- `parentbased_traceidratio`
+
+Pengambil sampel yang digunakan dapat diubah melalui properti `tracing-sampler-type`.
+
+### Pengambil sampel default
+
+Pengambil sampel default untuk NQRust-Identity adalah `traceidratio`, yang mengontrol tingkat pengambilan sampel berdasarkan rasio yang dapat dikonfigurasi melalui properti `tracing-sampler-ratio`.
+
+#### Rasio pelacakan
+
+Rasio pelacakan default adalah `1.0`, yang berarti semua pelacakan diambil - dikirim ke collector.
+Rasio adalah angka mengambang di rentang `[0,1]`.
+Misalnya, ketika rasio adalah `0.1`, hanya 10% dari pelacakan yang diambil.
+
+<Callout type="warning">
+  Untuk lingkungan yang siap produksi, rasio pelacakan harus menjadi angka yang lebih kecil untuk mencegah biaya besar infrastruktur penyimpanan pelacakan dan menghindari beban kinerja.
+</Callout>
+
+<Callout type="default">
+  Rasio dapat diatur ke 0.0 untuk menonaktifkan sampling sepenuhnya saat runtime.
+</Callout>
+
+#### Dasar
+
+Pengambil sampel membuat keputusan pengambilan sampelnya berdasarkan rasio span yang diambil saat ini, terlepas dari keputusan yang dibuat pada span induk,
+seperti dengan penggunaan pengambil sampel `parentbased_traceidratio`.
+
+Pengambil sampel `parentbased_traceidratio` bisa menjadi tipe default yang diinginkan karena itu memastikan konsistensi pengambilan sampel antara span induk dan anak.
+Secara spesifik, jika span induk diambil, semua span anaknya juga akan diambil - keputusan pengambilan sampel yang sama untuk semua.
+Hal ini membantu untuk menjaga semua span bersama-sama dan mencegah penyimpanan pelacakan yang tidak lengkap.
+
+Namun, itu mungkin mengenali risiko keamanan tertentu yang mengarah pada serangan DoS.
+Panggilan eksternal dapat memanipulasi header pelacakan, span induk dapat disuntikkan, dan penyimpanan pelacakan dapat dibanjiri.
+Pengfilteran header HTTP yang tepat (terutama `tracestate`) dan ukuran kepercayaan panggilan yang memadai perlu dievaluasi.
+
+Untuk informasi lebih lanjut, lihat dokumen [W3C Trace context](https://www.w3.org/TR/trace-context/#security-considerations).
+
+## Pelacakan di lingkungan Kubernetes
+
+Ketika pelacakan diaktifkan saat menggunakan Operator NQRust-Identity, informasi tertentu tentang deployment dipancarkan ke kontainer mendasar.
+
+### Pengaturan melalui NQRust-Identity CR
+
+Anda dapat mengubah konfigurasi pelacakan melalui NQRust-Identity CR. Untuk informasi lebih lanjut, lihat Konfigurasi Lanjutan.
+
+### Filter pelacakan berdasarkan atribut Kubernetes
+
+Anda dapat menyaring pelacakan yang diperlukan di backend pelacakan Anda berdasarkan tag mereka:
+
+- `service.name` - Nama deployment NQRust-Identity
+- `k8s.namespace.name` - Namespace
+- `host.name` - Nama Pod
+
+Operator NQRust-Identity secara otomatis menetapkan variabel lingkungan `KC_TRACING_SERVICE_NAME` dan `KC_TRACING_RESOURCE_ATTRIBUTES` untuk setiap kontainer NQRust-Identity yang termasuk dalam pod yang dikelolanya.
+
+<Callout type="info">
+  Variabel KC_TRACING_RESOURCE_ATTRIBUTES selalu berisi (jika tidak ditimpa) atribut k8s.namespace.name yang mewakili namespace saat ini.
+</Callout>
+
+## Mengikutsertakan informasi pelacakan dalam template Freemarker
+
+Ketika pelacakan diaktifkan, Anda dapat mengikutsertakan ID pelacakan dalam template Freemarker tema masuk dengan menggunakan variabel `traceId`.
+
+Secara default, tema masuk dasar menyertakan ID pelacakan dalam template `error.ftl`.
+Dengan ID pelacakan termasuk dalam halaman kesalahan, pengguna dapat melaporkannya saat mereka mengalami kesalahan, yang dapat membantu Anda dengan cepat mengidentifikasi dan menyelidiki informasi tercatat tambahan untuk operasi tersebut.
+
+Kemudian Anda akan menemukan ID pelacakan dalam semua pesan log untuk permintaan ini, dan dalam sistem pelacakan Anda jika pelacakan ini diambil.
+
+## Opsi yang relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`log-console-include-trace`**<br/>Sertakan informasi pelacakan dalam log konsol.<br/>Jika opsi `log-console-format` ditentukan, opsi ini tidak memiliki efek.<br/>**CLI:** `--log-console-include-trace`<br/>**Env:** `KC_LOG_CONSOLE_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-file-include-trace`**<br/>Sertakan informasi pelacakan dalam log file.<br/>Jika opsi `log-file-format` ditentukan, opsi ini tidak memiliki efek.<br/>**CLI:** `--log-file-include-trace`<br/>**Env:** `KC_LOG_FILE_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`log-syslog-include-trace`**<br/>Sertakan informasi pelacakan dalam Syslog.<br/>Jika opsi `log-syslog-format` ditentukan, opsi ini tidak memiliki efek.<br/>**CLI:** `--log-syslog-include-trace`<br/>**Env:** `KC_LOG_SYSLOG_INCLUDE_TRACE` | `true`, `false` | `true` |
+| **`tracing-compression`**<br/>Metode kompresi OpenTelemetry yang digunakan untuk mengkompresi payload.<br/>Jika tidak diatur, kompresi dinonaktifkan.<br/>**CLI:** `--tracing-compression`<br/>**Env:** `KC_TRACING_COMPRESSION` | `gzip`, `none` | `none` |
+| **`tracing-enabled`**<br/>Aktifkan pelacakan OpenTelemetry.<br/>**CLI:** `--tracing-enabled`<br/>**Env:** `KC_TRACING_ENABLED` | `true`, `false` | `false` |
+| **`tracing-endpoint`**<br/>Endpoint OpenTelemetry untuk menyambungkan pelacakan.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--tracing-endpoint`<br/>**Env:** `KC_TRACING_ENDPOINT` | _String_ | `http://localhost:4317` |
+| **`tracing-header-<header>`**<br/>Header OpenTelemetry yang akan menjadi bagian dari permintaan ekspor (utama untuk menyediakan header Otorisasi).<br/>Periksa dokumentasi tentang cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf.<br/>**CLI:** `--tracing-header-<header>`<br/>**Env:** `KC_TRACING_HEADER_<HEADER>` | _String_ |  |
+| **`tracing-infinispan-enabled`**<br/>Aktifkan pelacakan OpenTelemetry untuk Infinispan yang terintegrasi.<br/>**CLI:** `--tracing-infinispan-enabled`<br/>**Env:** `KC_TRACING_INFINISPAN_ENABLED` | `true`, `false` | `true` |
+| **`tracing-jdbc-enabled`**<br/>Aktifkan pelacakan JDBC OpenTelemetry.<br/>**CLI:** `--tracing-jdbc-enabled`<br/>**Env:** `KC_TRACING_JDBC_ENABLED` | `true`, `false` | `true` |
+| **`tracing-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk data telemetri.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--tracing-protocol`<br/>**Env:** `KC_TRACING_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
+| **`tracing-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry yang hadir dalam pelacakan yang diekspor untuk karakterisasi produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-resource-attributes`. Untuk informasi lebih lanjut, periksa Panduan Pelacakan.<br/>**CLI:** `--tracing-resource-attributes`<br/>**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES` | _List_ |  |
+| **`tracing-sampler-ratio`**<br/>Rasio pengambil sampel OpenTelemetry.<br/>Probabilitas bahwa span akan diambil. Nilai double yang diharapkan dalam interval [0,1].<br/>**CLI:** `--tracing-sampler-ratio`<br/>**Env:** `KC_TRACING_SAMPLER_RATIO` | _Double_ | `1.0` |
+| **`tracing-sampler-type`**<br/>Pengambil sampel OpenTelemetry untuk digunakan untuk pelacakan.<br/>**CLI:** `--tracing-sampler-type`<br/>**Env:** `KC_TRACING_SAMPLER_TYPE` | `always_on`, `always_off`, `traceidratio`, `parentbased_always_on`, `parentbased_always_off`, `parentbased_traceidratio` | `traceidratio` |
+| **`tracing-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambilprecedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-service-name`.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `nqrust-identity` |

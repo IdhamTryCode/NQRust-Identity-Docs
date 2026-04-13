@@ -5,15 +5,19 @@ description: Paket fitur Galleon SAML NQRust-Identity untuk WildFly dan EAP - Do
 
 # Paket fitur Galleon SAML NQRust-Identity untuk WildFly dan EAP
 
-Adapter SAML didistribusikan sebagai paket fitur Galleon untuk wildfly 29 atau yang lebih baru. Detail lebih lanjut tentang topik ini dapat ditemukan dalam [dokumentasi WildFly](https://docs.wildfly.org/32/WildFly_Elytron_Security.html#NQRust-Identity_SAML_Integration). Opsi yang sama disediakan untuk [NQRust EAP 8 GA](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html-single/using_single_sign-on_with_jboss_eap/index#securing-applications-with-saml_securing-applications-deployed-on-server-with-single-sign-on).
+import { Callout } from 'nextra/components'
 
-Untuk contoh tentang bagaimana mengintegrasikan NQRust-Identity dengan aplikasi JakartaEE yang berjalan pada Wildfly/EAP terbaru, lihat folder `servlet-saml-service-provider` Jakarta di [Repositori Quickstart GitHub NQRust-Identity](https://github.com/nqrust-identity/nqrust-identity-quickstarts).
+Adapter SAML didistribusikan sebagai paket fitur Galleon untuk wildfly 29 atau yang lebih baru. Detail lebih lanjut tentang topik ini
+dapat ditemukan dalam [dokumentasi WildFly](https://docs.wildfly.org/32/WildFly_Elytron_Security.html#NQRust-Identity_SAML_Integration).
+Opsi yang sama disediakan untuk [NQRust EAP 8 GA](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html-single/using_single_sign-on_with_jboss_eap/index#securing-applications-with-saml_securing-applications-deployed-on-server-with-single-sign-on).
 
-## [](#_installation)Instalasi
+Untuk contoh tentang cara mengintegrasikan NQRust-Identity dengan aplikasi JakartaEE yang berjalan pada Wildfly/EAP terbaru, lihat folder `servlet-saml-service-provider` Jakarta di [NQRust-Identity Quickstart GitHub Repository](https://github.com/nqrust-identity/nqrust-identity-quickstarts).
+
+## Instalasi
 
 Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs.wildfly.org/wildfly-maven-plugin), [wildfly-jar-maven-plugin](https://docs.wildfly.org/bootablejar/) atau [eap-maven-plugin](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html/using_jboss_eap_on_openshift_container_platform/assembly_provisioning-a-jboss-eap-server-using-the-maven-plugin_default) masing-masing.
 
-### [](#_example_of_provision_using_wildfly_maven_plugin)Contoh penyediaan menggunakan plugin Maven WildFly
+### Contoh penyediaan menggunakan wildfly maven plugin
 
 ```xml
 <plugin>
@@ -28,7 +32,7 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
             <feature-pack>
                 <groupId>org.nqrust-identity</groupId>
                 <artifactId>nqrust-identity-saml-adapter-galleon-pack</artifactId>
-                <version>26.5.7</version>
+                <version>26.6.0</version>
             </feature-pack>
         </feature-packs>
         <layers>
@@ -52,7 +56,7 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
 </plugin>
 ```
 
-### [](#_example_of_provision_using_wildfly_jar_maven_plugin)Contoh penyediaan menggunakan plugin Maven WildFly JAR
+### Contoh penyediaan menggunakan wildfly jar maven plugin
 
 ```xml
 <plugin>
@@ -67,7 +71,7 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
             <feature-pack>
                 <groupId>org.nqrust-identity</groupId>
                 <artifactId>nqrust-identity-saml-adapter-galleon-pack</artifactId>
-                <version>26.5.7</version>
+                <version>26.6.0</version>
             </feature-pack>
         </feature-packs>
         <layers>
@@ -76,3 +80,569 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
             <layer>jaxrs-server</layer>
             <layer>datasources-web-server</layer>
             <layer>webservices</layer>
+            <layer>nqrust-identity-saml</layer>
+            <layer>nqrust-identity-client-saml</layer>
+            <layer>nqrust-identity-client-saml-ejb</layer>
+        </layers>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>package</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+### Contoh penyediaan menggunakan EAP maven plugin
+
+```xml
+<plugin>
+    <groupId>org.jboss.eap.plugins</groupId>
+    <artifactId>eap-maven-plugin</artifactId>
+    <version>1.0.0.Final-redhat-00014</version>
+    <configuration>
+        <channels>
+            <channel>
+                <manifest>
+                    <groupId>org.jboss.eap.channels</groupId>
+                    <artifactId>eap-8.0</artifactId>
+                </manifest>
+            </channel>
+        </channels>
+        <feature-packs>
+            <feature-pack>
+                <location>org.nqrust-identity:nqrust-identity-saml-adapter-galleon-pack</location>
+            </feature-pack>
+        </feature-packs>
+        <layers>
+            <layer>core-server</layer>
+            <layer>web-server</layer>
+            <layer>jaxrs-server</layer>
+            <layer>datasources-web-server</layer>
+            <layer>webservices</layer>
+            <layer>nqrust-identity-saml</layer>
+            <layer>nqrust-identity-client-saml</layer>
+            <layer>nqrust-identity-client-saml-ejb</layer>
+        </layers>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>package</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+## Konfigurasi
+
+Adapter klien SAML dikonfigurasi oleh file XML `/WEB-INF/nqrust-identity-saml.xml` yang diletakkan di dalam penyebaran WAR. Konfigurasi mungkin terlihat seperti berikut:
+
+```xml
+<nqrust-identity-saml-adapter xmlns="urn:nqrust-identity:saml:adapter"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:schemaLocation="urn:nqrust-identity:saml:adapter {saml_adapter_xsd_urn}">
+    <SP entityID="http://localhost:8081/sales-post-sig/"
+        sslPolicy="EXTERNAL"
+        nameIDPolicyFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+        logoutPage="/logout.jsp"
+        forceAuthentication="false"
+        isPassive="false"
+        turnOffChangeSessionIdOnLogin="false"
+        autodetectBearerOnly="false">
+        <Keys>
+            <Key signing="true" >
+                <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+                    <PrivateKey alias="http://localhost:8080/sales-post-sig/" password="test123"/>
+                    <Certificate alias="http://localhost:8080/sales-post-sig/"/>
+                </KeyStore>
+            </Key>
+        </Keys>
+        <PrincipalNameMapping policy="FROM_NAME_ID"/>
+        <RoleIdentifiers>
+            <Attribute name="Role"/>
+        </RoleIdentifiers>
+        <RoleMappingsProvider id="properties-based-role-mapper">
+            <Property name="properties.resource.location" value="/WEB-INF/role-mappings.properties"/>
+        </RoleMappingsProvider>
+        <IDP entityID="idp"
+             signaturesRequired="true">
+        <SingleSignOnService requestBinding="POST"
+                             bindingUrl="http://localhost:8081/realms/demo/protocol/saml"
+                    />
+
+            <SingleLogoutService
+                    requestBinding="POST"
+                    responseBinding="POST"
+                    postBindingUrl="http://localhost:8081/realms/demo/protocol/saml"
+                    redirectBindingUrl="http://localhost:8081/realms/demo/protocol/saml"
+                    />
+            <Keys>
+                <Key signing="true">
+                    <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+                        <Certificate alias="demo"/>
+                    </KeyStore>
+                </Key>
+            </Keys>
+        </IDP>
+     </SP>
+</nqrust-identity-saml-adapter>
+```
+
+Anda dapat menggunakan pembungkus `${…​}` sebagai pengganti properti sistem. Sebagai contoh `${jboss.server.config.dir}`.
+Untuk informasi detail tentang elemen berbeda dalam file konfigurasi XML lihat Konfigurasi detail paket fitur Galleon SAML NQRust-Identity.
+
+### Mengamankan WAR
+
+Bagian ini menjelaskan cara mengamankan WAR secara langsung dengan menambahkan konfigurasi dan mengedit file dalam paket WAR Anda.
+
+Setelah `nqrust-identity-saml.xml` dibuat dan ada di direktori `WEB-INF` dari WAR Anda, Anda harus menetapkan `auth-method` ke `NQRUST-IDENTITY-SAML` di `web.xml`.
+Anda juga harus menggunakan keamanan servlet standar untuk menentukan batasan berbasis peran pada URL Anda.
+Berikut adalah contoh file _web.xml_:
+
+```xml
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+	<module-name>customer-portal</module-name>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Admins</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Customers</web-resource-name>
+            <url-pattern>/customers/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>user</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>NQRUST-IDENTITY-SAML</auth-method>
+        <realm-name>this is ignored currently</realm-name>
+    </login-config>
+
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
+    <security-role>
+        <role-name>user</role-name>
+    </security-role>
+</web-app>
+```
+
+Semua pengaturan servlet standar kecuali pengaturan `auth-method`.
+
+### Mengamankan WAR menggunakan Subsistem NQRust-Identity SAML
+
+Anda tidak harus membuka WAR untuk mengamankannya dengan NQRust-Identity.
+Alternatifnya, Anda dapat mengamankannya secara eksternal melalui Subsistem Adapter SAML NQRust-Identity.
+Sementara Anda tidak harus menentukan NQRUST-IDENTITY-SAML sebagai `auth-method`, Anda masih harus mendefinisikan `security-constraints` di `web.xml`.
+Anda tidak, bagaimanapun, harus membuat file `WEB-INF/nqrust-identity-saml.xml`.
+Metadata ini didefinisikan dalam XML di bagian konfigurasi subsistem server `domain.xml` atau `standalone.xml` Anda.
+
+```xml
+<extensions>
+  <extension module="org.nqrust-identity.nqrust-identity-saml-adapter-subsystem"/>
+</extensions>
+
+<profile>
+  <subsystem xmlns="urn:jboss:domain:nqrust-identity-saml:1.1">
+    <secure-deployment name="WAR MODULE NAME.war">
+      <SP entityID="URL APLIKASI">
+        ...
+      </SP>
+    </secure-deployment>
+  </subsystem>
+</profile>
+```
+
+Atribut `name` `secure-deployment` mengidentifikasi WAR yang ingin Anda amankan.
+Nilainya adalah `module-name` yang didefinisikan di `web.xml` dengan ditambahkan `.war`.
+Sisa konfigurasi menggunakan sintaks XML yang sama seperti konfigurasi `nqrust-identity-saml.xml` yang didefinisikan di [Konfigurasi Adapter Umum](#_saml-general-config).
+
+Contoh konfigurasi:
+
+```xml
+<subsystem xmlns="urn:jboss:domain:nqrust-identity-saml:1.1">
+  <secure-deployment name="saml-post-encryption.war">
+    <SP entityID="http://localhost:8080/sales-post-enc/"
+        sslPolicy="EXTERNAL"
+        nameIDPolicyFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
+        logoutPage="/logout.jsp"
+        forceAuthentication="false">
+      <Keys>
+        <Key signing="true" encryption="true">
+          <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+            <PrivateKey alias="http://localhost:8080/sales-post-enc/" password="test123"/>
+            <Certificate alias="http://localhost:8080/sales-post-enc/"/>
+          </KeyStore>
+        </Key>
+      </Keys>
+      <PrincipalNameMapping policy="FROM_NAME_ID"/>
+      <RoleIdentifiers>
+        <Attribute name="Role"/>
+      </RoleIdentifiers>
+      <IDP entityID="idp">
+        <SingleSignOnService signRequest="true"
+            validateResponseSignature="true"
+            requestBinding="POST"
+            bindingUrl="http://localhost:8080/realms/saml-demo/protocol/saml"/>
+
+        <SingleLogoutService
+            validateRequestSignature="true"
+            validateResponseSignature="true"
+            signRequest="true"
+            signResponse="true"
+            requestBinding="POST"
+            responseBinding="POST"
+            postBindingUrl="http://localhost:8080/realms/saml-demo/protocol/saml"
+            redirectBindingUrl="http://localhost:8080/realms/saml-demo/protocol/saml"/>
+        <Keys>
+          <Key signing="true" >
+            <KeyStore resource="/WEB-INF/keystore.jks" password="store123">
+              <Certificate alias="saml-demo"/>
+            </KeyStore>
+          </Key>
+        </Keys>
+      </IDP>
+    </SP>
+   </secure-deployment>
+</subsystem>
+```
+
+### Menetapkan nilai SameSite untuk cookie JSESSIONID
+
+Browser berencana untuk menetapkan nilai default untuk atribut `SameSite` untuk cookie menjadi `Lax`. Pengaturan ini berarti
+bahwa cookie akan dikirim ke aplikasi hanya jika permintaan berasal dari domain yang sama. perilaku ini dapat mempengaruhi
+ikatan SAML POST yang mungkin menjadi tidak fungsional. Untuk mempertahankan fungsi penuh adapter SAML, kami menyarankan
+mengatur nilai `SameSite` menjadi `None` untuk cookie `JSESSIONID` yang dibuat oleh kontainer Anda. Tidak melakukan hal ini mungkin akan mengakibatkan
+pengaturan ulang sesi kontainer dengan setiap permintaan ke NQRust-Identity.
+
+<Callout type="info">
+  Untuk menghindari penetapan atribut SameSite menjadi None, pertimbangkan untuk beralih ke ikatan REDIRECT
+  jika diterima, atau ke protokol OIDC di mana penyelesaian ini tidak diperlukan.
+</Callout>
+
+Untuk menetapkan nilai `SameSite` menjadi `None` untuk cookie `JSESSIONID` di Wildfly/EAP, tambahkan file `undertow-handlers.conf`
+dengan konten berikut ke direktori `WEB-INF` aplikasi Anda.
+
+```
+samesite-cookie(mode=None, cookie-pattern=JSESSIONID)
+```
+
+Dukungan untuk konfigurasi ini tersedia di Wildfly dari versi 19.1.0.
+
+## Mendaftar dengan Penyedia Identitas
+
+Untuk setiap adapter berbasis servlet, endpoint yang Anda daftarkan untuk URL layanan konsumen aser dan layanan logout tunggal
+harus menjadi URL dasar aplikasi servlet Anda dengan `/saml` dilampirkan, yaitu, `https://example.com/contextPath/saml`.
+
+## Logout
+
+Ada beberapa cara Anda dapat logout dari aplikasi web.
+Untuk kontainer servlet Jakarta EE, Anda dapat memanggil `HttpServletRequest.logout()`. Untuk aplikasi browser lainnya, Anda dapat menunjuk
+browser ke url aplikasi web Anda yang memiliki batasan keamanan dan masukkan parameter kueri GLO, yaitu `http://myapp?GLO=true`.
+Ini akan log you out jika Anda memiliki sesi SSO dengan browser.
+
+### Logout di lingkungan cluster
+
+Secara internal, adapter SAML menyimpan pemetaan antara indeks sesi SAML, nama prinsipal (ketika dikenal), dan ID sesi HTTP.
+Pemetaan ini dapat dipelihara di keluarga server aplikasi NQRust (WildFly 10/11, EAP 6/7) di cluster untuk aplikasi yang terdistribusikan.
+Sebagai syarat prasyarat, sesi HTTP harus di distribusikan di cluster (yaitu aplikasi ditandai dengan
+tag `<distributable/>` di `web.xml` aplikasi).
+
+Untuk mengaktifkan fungsi ini, tambahkan bagian berikut ke file `/WEB_INF/web.xml` Anda:
+
+```xml
+<context-param>
+    <param-name>nqrust-identity.sessionIdMapperUpdater.classes</param-name>
+    <param-value>org.nqrust-identity.adapters.saml.wildfly.infinispan.InfinispanSessionCacheIdMapperUpdater</param-value>
+</context-param>
+```
+
+Jika cache sesi penyebaran diberi nama `deployment-cache`, cache yang digunakan untuk pemetaan SAML akan diberi nama
+sebagai `deployment-cache.ssoCache`. Nama cache dapat ditimpa oleh parameter konteks
+`nqrust-identity.sessionIdMapperUpdater.infinispan.cacheName`. Wadah cache yang berisi cache SAML akan sama dengan
+yang berisi cache sesi penyebaran, tetapi dapat ditimpa oleh parameter konteks
+`nqrust-identity.sessionIdMapperUpdater.infinispan.containerName`.
+
+Secara default, konfigurasi cache pemetaan SAML akan diambil dari cache sesi. Konfigurasi dapat
+dibatalkan secara manual di bagian konfigurasi cache server seperti cache lainnya.
+
+Saat ini, untuk menyediakan layanan yang handal, sebaiknya menggunakan cache replikasi untuk cache sesi SAML.
+Menggunakan cache terdistribusi mungkin akan menghasilkan hasil di mana permintaan logout SAML akan mendarat di node tanpa akses
+ke pemetaan indeks sesi SAML ke sesi HTTP yang akan mengakibatkan logout yang tidak berhasil.
+
+### Logout di penyebaran multi-cluster
+
+Pengelolaan khusus diperlukan untuk menangani sesi yang meliputi beberapa pusat data. Bayangkan skenario berikut:
+
+1. Permintaan login dihandle dalam cluster di pusat data 1.
+2. Admin mengeluarkan permintaan logout untuk sesi SAML tertentu, permintaan mendarat di pusat data 2.
+
+Pusat data 2 harus logout semua sesi yang ada di pusat data 1 (dan semua pusat data lainnya yang
+berbagi sesi HTTP).
+
+Untuk menangani hal ini, cache sesi SAML yang dijelaskan [di atas](#_saml_logout_in_cluster) perlu direplikasikan
+bukan hanya dalam cluster individu tetapi di semua pusat data, misalnya
+[dengan server Infinispan/JDG standalone](https://docs.redhat.com/en/documentation/red_hat_data_grid/6.6/html/administration_and_configuration_guide/chap-externalize_sessions#Externalize_HTTP_Session_from_NQRust_EAP_6.x_to_NQRust_Data_Grid):
+
+1. Cache harus ditambahkan ke server Infinispan/JDG standalone.
+2. Cache dari item sebelumnya harus ditambahkan sebagai toko remote untuk cache sesi SAML yang sesuai.
+
+Setelah toko remote ditemukan di cache sesi SAML selama penyebaran, itu dipantau untuk perubahan
+dan cache sesi SAML lokal diperbarui sesuai.
+
+## Mendapatkan atribut aser
+
+Setelah login SAML berhasil, kode aplikasi Anda mungkin ingin mendapatkan nilai atribut yang ditransmisikan dengan aser SAML.
+`HttpServletRequest.getUserPrincipal()` mengembalikan objek `Principal` yang dapat diubah tipe ke kelas NQRust-Identity tertentu
+yang disebut `org.nqrust-identity.adapters.saml.SamlPrincipal`.
+Objek ini memungkinkan Anda untuk melihat aser asli dan juga memiliki fungsi kecil untuk mencari nilai atribut.
+
+```java
+package org.nqrust-identity.adapters.saml;
+
+public class SamlPrincipal implements Serializable, Principal {
+    /**
+     * Mendapatkan aser saml lengkap
+     *
+     * @return
+     */
+    public AssertionType getAssertion() {
+       ...
+    }
+
+    /**
+     * Mendapatkan subjek SAML yang dikirim dalam aser
+     *
+     * @return
+     */
+    public String getSamlSubject() {
+        ...
+    }
+
+    /**
+     * Format nameID subjek
+     *
+     * @return
+     */
+    public String getNameIDFormat() {
+        ...
+    }
+
+    @Override
+    public String getName() {
+        ...
+    }
+
+    /**
+     * Fungsi kecil yang mendapatkan nilai Atribut berdasarkan nama atribut
+     *
+     * @param name
+     * @return
+     */
+    public List<String> getAttributes(String name) {
+        ...
+
+    }
+
+    /**
+     * Fungsi kecil yang mendapatkan nilai Atribut berdasarkan nama teman atribut
+     *
+     * @param friendlyName
+     * @return
+     */
+    public List<String> getFriendlyAttributes(String friendlyName) {
+        ...
+    }
+
+    /**
+     * Fungsi kecil yang mendapatkan nilai pertama atribut berdasarkan nama atribut
+     *
+     * @param name
+     * @return
+     */
+    public String getAttribute(String name) {
+        ...
+    }
+
+    /**
+     * Fungsi kecil yang mendapatkan nilai pertama atribut berdasarkan nama teman atribut
+     *
+     *
+     * @param friendlyName
+     * @return
+     */
+    public String getFriendlyAttribute(String friendlyName) {
+        ...
+    }
+
+    /**
+     * Mendapatkan set dari semua nama atribut aser
+     *
+     * @return
+     */
+    public Set<String> getAttributeNames() {
+        ...
+    }
+
+    /**
+     * Mendapatkan set dari semua nama atribut teman aser
+     *
+     * @return
+     */
+    public Set<String> getFriendlyNames() {
+        ...
+    }
+}
+```
+
+## Pengelolaan Kesalahan
+
+NQRust-Identity memiliki beberapa fasilitas pengelolaan kesalahan untuk adapter klien berbasis servlet.
+Ketika kesalahan ditemui dalam otentikasi, adapter klien akan memanggil `HttpServletResponse.sendError()`.
+Anda dapat mengatur `error-page` dalam `web.xml` Anda untuk menangani kesalahan sesuai keinginan Anda.
+Adapter klien dapat melempar 400, 401, 403, dan 500 kesalahan.
+
+```xml
+<error-page>
+    <error-code>403</error-code>
+    <location>/ErrorHandler</location>
+</error-page>
+```
+
+Adapter klien juga menetapkan atribut `HttpServletRequest` yang dapat Anda dapatkan.
+Nama atribut adalah `org.nqrust-identity.adapters.spi.AuthenticationError`.
+Ubah tipe ini ke: `org.nqrust-identity.adapters.saml.SamlAuthenticationError`.
+Kelas ini dapat memberi tahu Anda apa yang terjadi tepat.
+Jika atribut ini tidak diatur, maka adapter tidak bertanggung jawab atas kode kesalahan.
+
+```java
+public class SamlAuthenticationError implements AuthenticationError {
+    public static enum Reason {
+        EXTRACTION_FAILURE,
+        INVALID_SIGNATURE,
+        ERROR_STATUS
+    }
+
+    public Reason getReason() {
+        return reason;
+    }
+    public StatusResponseType getStatus() {
+        return status;
+    }
+}
+```
+
+## Penyelesaian Masalah
+
+Cara terbaik untuk menyelesaikan masalah adalah untuk mengaktifkan debugging untuk SAML di kedua adapter klien dan Server NQRust-Identity. Menggunakan kerangka kerja log Anda, atur level log ke `DEBUG` untuk paket `org.nqrust-identity.saml`. Mengaktifkan ini memungkinkan Anda untuk melihat dokumen permintaan dan respons SAML yang dikirim ke dan dari server.
+
+## Multi Tenancy
+
+SAML menawarkan Multi Tenancy, yang berarti bahwa satu aplikasi target (WAR) dapat diamankan dengan beberapa realm NQRust-Identity. Realm dapat berada pada instance NQRust-Identity yang sama atau pada instance yang berbeda.
+
+Untuk melakukan ini, aplikasi harus memiliki beberapa file konfigurasi adapter `nqrust-identity-saml.xml`.
+
+Meskipun Anda bisa memiliki beberapa instance WAR dengan file konfigurasi adapter yang berbeda di_deploy_ ke path konteks yang berbeda, ini mungkin tidak nyaman dan Anda mungkin juga ingin memilih realm berdasarkan sesuatu selain path konteks.
+
+NQRust-Identity membuatnya mungkin untuk memiliki penyelesai konfigurasi khusus, jadi Anda dapat memilih konfigurasi adapter mana yang digunakan untuk setiap permintaan. Di SAML, konfigurasi hanya menarik dalam pengolahan login; setelah pengguna login, sesi diotentikasi dan tidak masalah jika `nqrust-identity-saml.xml` yang dikembalikan berbeda. Untuk itu, mengembalikan konfigurasi yang sama untuk sesi yang sama adalah cara yang benar untuk pergi.
+
+Untuk mencapai ini, buat implementasi dari `org.nqrust-identity.adapters.saml.SamlConfigResolver`. Contoh berikut menggunakan header `Host` untuk menemukan konfigurasi yang tepat dan memuat itu dan elemen terkait dariclasspath Java aplikasi:
+
+```java
+package example;
+
+import java.io.InputStream;
+import org.nqrust-identity.adapters.saml.SamlConfigResolver;
+import org.nqrust-identity.adapters.saml.SamlDeployment;
+import org.nqrust-identity.adapters.saml.config.parsers.DeploymentBuilder;
+import org.nqrust-identity.adapters.saml.config.parsers.ResourceLoader;
+import org.nqrust-identity.adapters.spi.HttpFacade;
+import org.nqrust-identity.saml.common.exceptions.ParsingException;
+
+public class SamlMultiTenantResolver implements SamlConfigResolver {
+
+    @Override
+    public SamlDeployment resolve(HttpFacade.Request request) {
+        String host = request.getHeader("Host");
+        String realm = null;
+        if (host.contains("tenant1")) {
+            realm = "tenant1";
+        } else if (host.contains("tenant2")) {
+            realm = "tenant2";
+        } else {
+            throw new IllegalStateException("Not able to guess the nqrust-identity-saml.xml to load");
+        }
+
+        InputStream is = getClass().getResourceAsStream("/" + realm + "-nqrust-identity-saml.xml");
+        if (is == null) {
+            throw new IllegalStateException("Not able to find the file /" + realm + "-nqrust-identity-saml.xml");
+        }
+
+        ResourceLoader loader = new ResourceLoader() {
+            @Override
+            public InputStream getResourceAsStream(String path) {
+                return getClass().getResourceAsStream(path);
+            }
+        };
+
+        try {
+            return new DeploymentBuilder().build(is, loader);
+        } catch (ParsingException e) {
+            throw new IllegalStateException("Cannot load SAML deployment", e);
+        }
+    }
+}
+```
+
+Anda juga harus mengonfigurasi implementasi `SamlConfigResolver` mana untuk digunakan dengan `nqrust-identity.config.resolver` context-param di `web.xml` Anda:
+
+```xml
+<web-app>
+    ...
+    <context-param>
+        <param-name>nqrust-identity.config.resolver</param-name>
+        <param-value>example.SamlMultiTenantResolver</param-value>
+    </context-param>
+</web-app>
+```
+
+## Kesalahan spesifik NQRust-Identity
+
+Server NQRust-Identity dapat mengirimkan kesalahan ke aplikasi klien dalam respon SAML, yang mungkin berisi status SAML seperti:
+
+```xml
+<samlp:Status>
+  <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Responder">
+    <samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed"/>
+  </samlp:StatusCode>
+  <samlp:StatusMessage>authentication_expired</samlp:StatusMessage>
+</samlp:Status>
+```
+
+NQRust-Identity mengirim kesalahan ini ketika pengguna diotentikasi dan memiliki sesi SSO, tetapi sesi otentikasi telah kedaluwarsa di tab browser saat ini dan oleh karena itu server NQRust-Identity tidak dapat secara otomatis melakukan SSO
+re-otentikasi pengguna dan mengarahkan kembali ke klien dengan respon berhasil. Ketika aplikasi klien menerima jenis kesalahan ini, idealnya untuk mencoba otentikasi segera dan mengirim permintaan SAML baru ke server NQRust-Identity, yang biasanya selalu akan mengotentikasi pengguna karena sesi SSO dan mengarahkan kembali.
+Adapter SAML melakukan retry itu secara otomatis jika status dikomentari oleh server.
+Detail lebih lanjut dalam Server Administration Guide.

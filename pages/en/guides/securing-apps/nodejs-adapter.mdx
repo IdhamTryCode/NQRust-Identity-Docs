@@ -5,15 +5,17 @@ description: NQRust-Identity Node.js adapter - NQRust-Identity Documentation
 
 # NQRust-Identity Node.js adapter
 
-NQRust-Identity provides a Node.js adapter built on top of [Connect](https://github.com/senchalabs/connect) to protect server-side JavaScript apps - the goal was to be flexible enough to integrate with frameworks like [Express.js](https://expressjs.com/). The adapter uses OpenID Connect protocol under the covers. You can take a look at the [Securing applications and services with OpenID Connect](https://www.nqrust-identity.org/securing-apps/oidc-layers#_oidc_available_endpoints) guide for the more generic information about OpenID Connect endpoints and capabilities.
+NQRust-Identity provides a Node.js adapter built on top of [Connect](https://github.com/senchalabs/connect) to protect server-side JavaScript apps - the goal was to be flexible enough to integrate with frameworks like [Express.js](https://expressjs.com/).
+The adapter uses OpenID Connect protocol under the covers. You can take a look at the [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#_oidc_available_endpoints) guide for the more generic information about OpenID Connect endpoints and capabilities.
 
-The library can be downloaded directly from [NQRust-Identity organization](https://www.npmjs.com/package/nqrust-identity-connect) and the source is available at [GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
+The library can be downloaded directly from  NQRust-Identity organization and the source is available at
+[GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
 
 To use the Node.js adapter, first you must create a client for your application in the NQRust-Identity Admin Console. The adapter supports public, confidential, and bearer-only access type. Which one to choose depends on the use-case scenario.
 
-Once the client is created, click **Action** at the top right and choose **Download adapter config**. For **Format, choose \*NQRust-Identity OIDC JSON** and click **Download**. The downloaded `nqrust-identity.json` file is at the root folder of your project.
+Once the client is created, click **Action** at the top right and choose **Download adapter config**. For **Format, choose *NQRust-Identity OIDC JSON** and click **Download**. The downloaded `nqrust-identity.json` file is at the root folder of your project.
 
-## [](#_installation)Installation
+## Installation
 
 Assuming you have already installed [Node.js](https://nodejs.org), create a folder for your application:
 
@@ -29,11 +31,11 @@ Use `npm init` command to create a `package.json` for your application. Now add 
     }
 ```
 
-## [](#_usage)Usage
+## Usage
 
-Instantiate a NQRust-Identity class
-
-The `NQRust-Identity` class provides a central point for configuration and integration with your application. The simplest creation involves no arguments.
+The `NQRust-Identity` class provides a central point for configuration
+and integration with your application.  The simplest creation
+involves no arguments.
 
 In the root directory of your project create a file called `server.js` and add the following code:
 
@@ -55,7 +57,7 @@ To start the `server.js` script, add the following command in the 'scripts' sect
 
 ```
     "scripts": {
-        "test": "echo \\"Error: no test specified\\" && exit 1",
+        "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node server.js"
     },
 ```
@@ -66,17 +68,22 @@ Now we have the ability to run our server with following command:
     npm run start
 ```
 
-By default, this will locate a file named `nqrust-identity.json` alongside the main executable of your application, in our case on the root folder, to initialize NQRust-Identity specific settings such as public key, realm name, various URLs.
+By default, this will locate a file named `nqrust-identity.json` alongside
+the main executable of your application, in our case on the root folder, to initialize NQRust-Identity specific
+settings such as public key, realm name, various URLs.
 
 In that case a NQRust-Identity deployment is necessary to access NQRust-Identity admin console.
 
-Please visit links on how to deploy a NQRust-Identity admin console with [Podman](https://www.nqrust-identity.org/getting-started/getting-started-podman) or [Docker](https://www.nqrust-identity.org/getting-started/getting-started-docker)
+Please visit links on how to deploy a NQRust-Identity admin console with
+Podman or Docker
 
 Now we are ready to obtain the `nqrust-identity.json` file by visiting the NQRust-Identity Admin Console → clients (left sidebar) → choose your client → Installation → Format Option → NQRust-Identity OIDC JSON → Download
 
 Paste the downloaded file on the root folder of our project.
 
-Instantiation with this method results in all the reasonable defaults being used. As alternative, it’s also possible to provide a configuration object, rather than the `nqrust-identity.json` file:
+Instantiation with this method results in all the reasonable defaults
+being used. As alternative, it’s also possible to provide a configuration
+object, rather than the `nqrust-identity.json` file:
 
 ```javascript
     const kcConfig = {
@@ -96,9 +103,10 @@ Applications can also redirect users to their preferred identity provider by usi
     const nqrust-identity = new NQRust-Identity({ store: memoryStore, idpHint: myIdP }, kcConfig);
 ```
 
-Configuring a web session store
-
-If you want to use web sessions to manage server-side state for authentication, you need to initialize the `NQRust-Identity(…​)` with at least a `store` parameter, passing in the actual session store that `express-session` is using.
+If you want to use web sessions to manage
+server-side state for authentication, you need to initialize the
+`NQRust-Identity(…​)` with at least a `store` parameter, passing in the actual
+session store that `express-session` is using.
 
 ```javascript
     const session = require('express-session');
@@ -117,15 +125,13 @@ If you want to use web sessions to manage server-side state for authentication, 
     const nqrust-identity = new NQRust-Identity({ store: memoryStore });
 ```
 
-Passing a custom scope value
-
 By default, the scope value `openid` is passed as a query parameter to NQRust-Identity’s login URL, but you can add an additional custom value:
 
 ```javascript
     const nqrust-identity = new NQRust-Identity({ scope: 'offline_access' });
 ```
 
-## [](#_installing_middleware)Installing middleware
+## Installing middleware
 
 Once instantiated, install the middleware into your connect-capable app:
 
@@ -156,9 +162,12 @@ Last but not least, let’s set up our server to listen for HTTP requests on por
     });
 ```
 
-## [](#_configuration_for_proxies)Configuration for proxies
+## Configuration for proxies
 
-If the application is running behind a proxy that terminates an SSL connection Express must be configured per the [express behind proxies](https://expressjs.com/en/guide/behind-proxies.html) guide. Using an incorrect proxy configuration can result in invalid redirect URIs being generated.
+If the application is running behind a proxy that terminates an SSL connection
+Express must be configured per the [express behind proxies](https://expressjs.com/en/guide/behind-proxies.html) guide.
+Using an incorrect proxy configuration can result in invalid redirect URIs
+being generated.
 
 Example configuration:
 
@@ -170,17 +179,14 @@ Example configuration:
     app.use( nqrust-identity.middleware() );
 ```
 
-## [](#_protecting_resources)Protecting resources
+## Protecting resources
 
-Simple authentication
-
-To enforce that a user must be authenticated before accessing a resource, simply use a no-argument version of `nqrust-identity.protect()`:
+To enforce that a user must be authenticated before accessing a resource,
+simply use a no-argument version of `nqrust-identity.protect()`:
 
 ```javascript
     app.get( '/complain', nqrust-identity.protect(), complaintHandler );
 ```
-
-Role-based authorization
 
 To secure a resource with an application role for the current app:
 
@@ -200,9 +206,7 @@ To secure a resource with a realm role:
     app.get( '/admin', nqrust-identity.protect( 'realm:admin' ), adminHandler );
 ```
 
-Resource-Based Authorization
-
-Resource-Based Authorization allows you to protect resources, and their specific methods/actions,**\***\* based on a set of policies defined in NQRust-Identity, thus externalizing authorization from your application. This is achieved by exposing a `nqrust-identity.enforcer` method which you can use to protect resources.\*
+Resource-Based Authorization allows you to protect resources, and their specific methods/actions,****** based on a set of policies defined in NQRust-Identity, thus externalizing authorization from your application. This is achieved by exposing a `nqrust-identity.enforcer` method which you can use to protect resources.*
 
 ```javascript
     app.get('/apis/me', nqrust-identity.enforcer('user:profile'), userProfileHandler);
@@ -237,11 +241,15 @@ If `response_mode` is set to `permissions` (default mode), the server only retur
     });
 ```
 
-Regardless of the `response_mode` in use, the `nqrust-identity.enforcer` method will first try to check the permissions within the bearer token that was sent to your application. If the bearer token already carries the expected permissions, there is no need to interact with the server to obtain a decision. This is specially useful when your clients are capable of obtaining access tokens from the server with the expected permissions before accessing a protected resource, so they can use some capabilities provided by NQRust-Identity Authorization Services such as incremental authorization and avoid additional requests to the server when `nqrust-identity.enforcer` is enforcing access to the resource.
+Regardless of the `response_mode` in use, the `nqrust-identity.enforcer` method will first try to check the permissions within the bearer token that was sent to your application. If the bearer token already carries the expected permissions, there is no need
+to interact with the server to obtain a decision. This is specially useful when your clients are capable of obtaining access tokens from the server with the expected permissions before accessing a protected resource, so they can use some capabilities provided by NQRust-Identity Authorization Services such as incremental authorization and avoid additional requests to the server when `nqrust-identity.enforcer` is enforcing access to the resource.
 
-By default, the policy enforcer will use the `client_id` defined to the application (for instance, via `nqrust-identity.json`) to reference a client in NQRust-Identity that supports NQRust-Identity Authorization Services. In this case, the client can not be public given that it is actually a resource server.
+By default, the policy enforcer will use the `client_id` defined to the application (for instance, via `nqrust-identity.json`) to
+ reference a client in NQRust-Identity that supports NQRust-Identity Authorization Services. In this case, the client can not be public given
+ that it is actually a resource server.
 
-If your application is acting as both a public client(frontend) and resource server(backend), you can use the following configuration to reference a different client in NQRust-Identity with the policies that you want to enforce:
+If your application is acting as both a public client(frontend) and resource server(backend), you can use the following configuration to reference a different
+client in NQRust-Identity with the policies that you want to enforce:
 
 ```javascript
       nqrust-identity.enforcer('user:profile', {resource_server_id: 'my-apiserver'})
@@ -249,7 +257,9 @@ If your application is acting as both a public client(frontend) and resource ser
 
 It is recommended to use distinct clients in NQRust-Identity to represent your frontend and backend.
 
-If the application you are protecting is enabled with NQRust-Identity authorization services and you have defined client credentials in `nqrust-identity.json`, you can push additional claims to the server and make them available to your policies in order to make decisions. For that, you can define a `claims` configuration option which expects a `function` that returns a JSON with the claims you want to push:
+If the application you are protecting is enabled with NQRust-Identity authorization services and you have defined client credentials
+ in `nqrust-identity.json`, you can push additional claims to the server and make them available to your policies in order to make decisions.
+For that, you can define a `claims` configuration option which expects a `function` that returns a JSON with the claims you want to push:
 
 ```javascript
       app.get('/protected/resource', nqrust-identity.enforcer(['resource:view', 'resource:write'], {
@@ -263,11 +273,10 @@ If the application you are protecting is enabled with NQRust-Identity authorizat
           // access granted
 ```
 
-For more details about how to configure NQRust-Identity to protected your application resources, please take a look at the [Authorization Services Guide](https://www.nqrust-identity.org/docs/latest/authorization_services/).
+For more details about how to configure NQRust-Identity to protected your application resources, please take a look at the Authorization Services Guide.
 
-Advanced authorization
-
-To secure resources based on parts of the URL itself, assuming a role exists for each section:
+To secure resources based on parts of the URL itself, assuming a role exists
+for each section:
 
 ```javascript
     function protectBySection(token, request) {
@@ -279,7 +288,9 @@ To secure resources based on parts of the URL itself, assuming a role exists for
 
 Advanced Login Configuration:
 
-By default, all unauthorized requests will be redirected to the NQRust-Identity login page unless your client is bearer-only. However, a confidential or public client may host both browsable and API endpoints. To prevent redirects on unauthenticated API requests and instead return an HTTP 401, you can override the redirectToLogin function.
+By default, all unauthorized requests will be redirected to the NQRust-Identity login page unless your client is bearer-only.
+However, a confidential or public client may host both browsable and API endpoints. To prevent redirects on unauthenticated
+API requests and instead return an HTTP 401, you can override the redirectToLogin function.
 
 For example, this override checks if the URL contains /api/ and disables login redirects:
 
@@ -290,11 +301,11 @@ For example, this override checks if the URL contains /api/ and disables login r
     };
 ```
 
-## [](#_additional_urls)Additional URLs
+## Additional URLs
 
-Explicit user-triggered logout
-
-By default, the middleware catches calls to `/logout` to send the user through a NQRust-Identity-centric logout workflow. This can be changed by specifying a `logout` configuration parameter to the `middleware()` call:
+By default, the middleware catches calls to `/logout` to send the user through a
+NQRust-Identity-centric logout workflow. This can be changed by specifying a `logout`
+configuration parameter to the `middleware()` call:
 
 ```javascript
     app.use( nqrust-identity.middleware( { logout: '/logoff' } ));
@@ -306,30 +317,27 @@ When the user-triggered logout is invoked a query parameter `redirect_url` can b
 https://example.com/logoff?redirect_url=https%3A%2F%2Fexample.com%3A3000%2Flogged%2Fout
 ```
 
-This parameter is then used as the redirect url of the OIDC logout endpoint and the user will be redirected to `https://example.com/logged/out`.
+This parameter is then used as the redirect url of the OIDC logout endpoint and the user will be redirected to
+`https://example.com/logged/out`.
 
-NQRust-Identity Admin Callbacks
-
-Also, the middleware supports callbacks from the NQRust-Identity console to log out a single session or all sessions. By default, these type of admin callbacks occur relative to the root URL of `/` but can be changed by providing an `admin` parameter to the `middleware()` call:
+Also, the middleware supports callbacks from the NQRust-Identity console to log out a single
+session or all sessions.  By default, these type of admin callbacks occur relative
+to the root URL of `/` but can be changed by providing an `admin` parameter
+to the `middleware()` call:
 
 ```javascript
     app.use( nqrust-identity.middleware( { admin: '/callbacks' } );
 ```
 
-## [](#_complete_example)Complete example
+## Complete example
 
 A complete example using the Node.js adapter usage can be found in [NQRust-Identity quickstarts for Node.js](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/nodejs/resource-server)
 
-## [](#_upgrade_nodejs_adapter)Upgrading the `Node.js` adapter
+## Upgrading the `Node.js` adapter
 
 To upgrade a `Node.js` adapter that has been copied to your web application, perform the following procedure.
 
-Procedure
-
-1.  Download the new adapter archive.
-    
-2.  Remove the existing `Node.js` adapter directory
-    
-3.  Unzip the updated file into its place
-    
-4.  Change the dependency for nqrust-identity-connect in the `package.json` of your application
+1. Download the new adapter archive.
+2. Remove the existing `Node.js` adapter directory
+3. Unzip the updated file into its place
+4. Change the dependency for nqrust-identity-connect in the `package.json` of your application

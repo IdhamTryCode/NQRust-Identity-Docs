@@ -1,33 +1,35 @@
 ---
-title: Mengaktifkan dan Menonaktifkan Fitur
-description: Mengaktifkan dan menonaktifkan fitur - Dokumentasi NQRust-Identity
+title: Enabling and disabling features
+description: Enabling and disabling features - NQRust-Identity Documentation
 ---
 
-# Mengaktifkan dan Menonaktifkan Fitur
+# Enabling and disabling features
 
-NQRust-Identity menyertakan beberapa fungsionalitas dalam fitur, termasuk beberapa fitur yang dinonaktifkan seperti Technology Preview dan fitur yang usang. Fitur lainnya diaktifkan secara default, tetapi Anda dapat menonaktifkannya jika tidak berlaku untuk penggunaan NQRust-Identity Anda.
+NQRust-Identity menyertakan beberapa fungsi dalam fitur, termasuk beberapa fitur yang dinonaktifkan, seperti Technology Preview dan fitur yang usang. Fitur lainnya diaktifkan secara default, tetapi Anda dapat menonaktifkannya jika tidak berlaku untuk penggunaan NQRust-Identity Anda.
 
-## [](#_mengaktifkan_fitur)Mengaktifkan fitur
+## Mengaktifkan fitur
 
-Beberapa fitur yang didukung, dan semua fitur preview, dinonaktifkan secara default. Anda dapat mengaktifkan fitur melalui opsi tunggal atau dengan memasukkannya ke dalam daftar fitur yang diaktifkan.
+Beberapa fitur yang didukung, dan semua fitur preview, dinonaktifkan secara default.
+Anda dapat mengaktifkan fitur melalui opsi tunggal atau dengan memasukkannya ke dalam daftar fitur yang diaktifkan.
 
-### [](#_opsi_tunggal)Opsi tunggal
+### Opsi tunggal
 
-Anda dapat mengaktifkan fitur spesifik ``&lt;name&gt;`` sebagai berikut:
+Anda dapat mengaktifkan fitur spesifik `<name>` sebagai berikut:
 
 ```bash
 bin/kc.[sh|bat] build --feature-<name>=enabled|disabled|vX
 ```
 
-Nilai yang mungkin adalah `enabled`, `disabled`, atau versi spesifik fitur yang harus diaktifkan. Sebagai contoh, untuk mengaktifkan `rolling-updates:v2` dan `token-exchange`, masukkan perintah ini:
+Nilai yang mungkin adalah `enabled`, `disabled`, atau versi spesifik fitur yang harus diaktifkan.
+Sebagai contoh, untuk mengaktifkan `token-exchange`, masukkan perintah ini:
 
 ```bash
-bin/kc.[sh|bat] build --feature-rolling-updates=v2 --feature-token-exchange=enabled
+bin/kc.[sh|bat] build --feature-token-exchange=enabled
 ```
 
-Mekanisme opsi tunggal berguna saat memperbarui daftar fitur panjang menjadi sulit atau saat Anda ingin memodifikasi fitur tertentu tanpa menimpa seluruh daftar dalam image yang sudah dibangun.
+Mekanisme opsi tunggal berguna saat memperbarui daftar fitur panjang menjadi sulit atau saat Anda ingin memodifikasi fitur tertentu tanpa menimpa seluruh daftar di dalam image yang sudah dibangun.
 
-### [](#_daftar_fitur_diaktifkan)Daftar fitur yang diaktifkan
+### Daftar fitur yang diaktifkan
 
 ```bash
 bin/kc.[sh|bat] build --features="<name>[,<name>]"
@@ -45,28 +47,24 @@ Untuk mengaktifkan semua fitur preview, masukkan perintah ini:
 bin/kc.[sh|bat] build --features="preview"
 ```
 
-### [](#_versi)Pengklasifikasian versi
+### Penggunaan versi
 
-Fitur yang diaktifkan mungkin terklasifikasi berdasarkan versi atau tidak terklasifikasi. Jika Anda menggunakan nama fitur terklasifikasi, misalnya fitur:v1, versi fitur tersebut akan diaktifkan selama masih ada dalam runtime. Jika Anda menggunakan nama tidak terklasifikasi, misalnya hanya fitur, pemilihan versi fitur yang didukung dapat berubah dari rilis ke rilis sesuaiprecedence berikut:
+Fitur yang diaktifkan mungkin memiliki versi, atau tidak memiliki versi.  Jika Anda menggunakan nama fitur yang memiliki versi, misalnya fitur:v1, versi fitur tersebut akan diaktifkan selama masih ada di runtime.  Jika Anda menggunakan nama tanpa versi, misalnya hanya fitur, pemilihan versi fitur yang didukung tertentu mungkin berubah dari rilis ke rilis sesuai prioritas berikut:
 
-1.  Versi dukungan default tertinggi
-    
-2.  Versi dukungan non-default tertinggi
-    
-3.  Versi usang tertinggi
-    
-4.  Versi preview tertinggi
-    
-5.  Versi eksperimental tertinggi
-    
+1. Versi default tertinggi yang didukung
+2. Versi non-default tertinggi yang didukung
+3. Versi usang tertinggi
+4. Versi preview tertinggi
+5. Versi eksperimental tertinggi
 
-## [](#_menonaktifkan_fitur)Menonaktifkan fitur
+## Menonaktifkan fitur
 
-Untuk menonaktifkan fitur yang diaktifkan secara default, Anda dapat menggunakan opsi tunggal atau daftar fitur yang dinonaktifkan. Ketika fitur dinonaktifkan, semua versi dari fitur tersebut dinonaktifkan.
+Untuk menonaktifkan fitur yang diaktifkan secara default, Anda dapat menggunakan opsi tunggal atau daftar fitur yang dinonaktifkan.
+Ketika fitur dinonaktifkan, semua versi dari fitur tersebut dinonaktifkan.
 
-### [](#_opsi_tunggal_2)Opsi tunggal
+### Opsi tunggal
 
-Anda dapat menonaktifkan fitur spesifik ``&lt;name&gt;`` sebagai berikut:
+Anda dapat menonaktifkan fitur spesifik `<name>` sebagai berikut:
 
 ```bash
 bin/kc.[sh|bat] build --feature-<name>=disabled
@@ -78,8 +76,104 @@ Sebagai contoh, untuk menonaktifkan `dpop` dan `recovery-codes`, masukkan perint
 bin/kc.[sh|bat] build --feature-dpop=disabled --feature-recovery-codes=disabled
 ```
 
-Mekanisme opsi tunggal berguna saat memperbarui daftar fitur panjang menjadi sulit atau saat Anda ingin memodifikasi fitur tertentu tanpa menimpa seluruh daftar dalam image yang sudah dibangun.
+Mekanisme opsi tunggal berguna saat memperbarui daftar fitur panjang menjadi sulit atau saat Anda ingin memodifikasi fitur tertentu tanpa menimpa seluruh daftar di dalam image yang sudah dibangun.
 
-### [](#_daftar_fitur_dinonaktifkan)Daftar fitur yang dinonaktifkan
+### Daftar fitur yang dinonaktifkan
 
 ```bash
+bin/kc.[sh|bat] build --features-disabled="<name>[,<name>]"
+```
+
+Sebagai contoh untuk menonaktifkan `impersonation`, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] build --features-disabled="impersonation"
+```
+
+Tidak diizinkan untuk memiliki fitur dalam daftar `features-disabled` dan daftar `features` secara bersamaan.
+
+## Fitur yang didukung
+
+Daftar berikut berisi fitur yang didukung yang diaktifkan secara default, dan dapat dinonaktifkan jika tidak diperlukan.
+
+| Fitur | Deskripsi |
+| --- | --- |
+| `account-api:v1` | Account Management REST API |
+| `account:v3` | Account Console versi 3 |
+| `admin-api:v1` | Admin API |
+| `admin-fine-grained-authz:v2` | Izin Admin yang Halus versi 2 |
+| `admin:v2` | Admin Console baru |
+| `authorization:v1` | Layanan Otorisasi |
+| `ciba:v1` | Otentikasi Backchannel Klien Inisiatif OpenID Connect (CIBA) |
+| `client-auth-federated:v1` | Mengotentikasi klien berdasarkan aseran yang dikeluarkan oleh penyedia identitas |
+| `client-policies:v1` | Kebijakan konfigurasi klien |
+| `device-flow:v1` | Penyetujuan Otorisasi Perangkat OAuth 2.0 |
+| `dpop:v1` | Menunjukkan Bukti-Kepemilikan di Lapisan Aplikasi OAuth 2.0 |
+| `hostname:v2` | Opsi Nama Host V2 |
+| `identity-brokering-api:v1` | Identitas Brokering API V1 |
+| `impersonation:v1` | Kemampuan untuk admin meniru pengguna |
+| `jwt-authorization-grant:v1` | Profil JWT untuk Otorisasi OAuth 2.0 |
+| `kerberos:v1` | Kerberos |
+| `kubernetes-service-accounts:v1` | Penyedia hubungan kepercayaan akun layanan Kubernetes |
+| `log-mdc:v1` | Informasi Konteks Diagnosa yang Dipetakan (MDC) dalam log |
+| `login:v2` | Tema Masuk Baru |
+| `opentelemetry:v1` | Dukungan OpenTelemetry |
+| `organization:v1` | Dukungan organisasi dalam realm |
+| `par:v1` | Permintaan Otorisasi Diturunkan OAuth 2.0 (PAR) |
+| `passkeys:v1` | Passkeys |
+| `persistent-user-sessions:v1` | Sesi pengguna online yang terus-menerus di restart dan upgrade |
+| `recovery-codes:v1` | Kode pemulihan |
+| `rolling-updates:v2` | Pembaruan bergulir untuk rilis patch |
+| `step-up-authentication:v1` | Otentikasi Naik Tingkat |
+| `token-exchange-standard:v2` | Token Exchange Standar versi 2 |
+| `update-email:v1` | Tindakan Pembaruan Email |
+| `user-event-metrics:v1` | Mengumpulkan metrik berdasarkan peristiwa pengguna |
+| `web-authn:v1` | Otentikasi Web W3C (WebAuthn) |
+| `workflows:v1` | Alur kerja |
+
+### Dinonaktifkan secara default
+
+Daftar berikut berisi fitur yang didukung yang dinonaktifkan secara default, dan dapat diaktifkan jika diperlukan.
+
+| Fitur | Deskripsi |
+| --- | --- |
+| `docker:v1` | Protokol Registri Docker |
+| `fips:v1` | Mode FIPS 140-2 |
+| `multi-site:v1` | Dukungan multisite |
+
+## Fitur Pratinjau
+
+Fitur-fitur pratinjau dinonaktifkan secara default dan tidak disarankan untuk digunakan dalam produksi.
+Fitur-fitur ini mungkin berubah atau dihapus dalam rilis yang akan datang.
+
+| Fitur | Deskripsi |
+| --- | --- |
+| `client-secret-rotation:v1` | Rotasi Rahasia Klien |
+| `http-optimized-serializers:v1` | Serializer JSON yang dioptimalkan untuk kinerja HTTP yang lebih baik |
+| `identity-brokering-api:v2` | API Penengkarangan Identitas V2 |
+| `opentelemetry-logs:v1` | Dukungan Log OpenTelemetry |
+| `scripts:v1` | Menulis autentikator khusus menggunakan JavaScript |
+| `spiffe:v1` | Penyedia hubungan kepercayaan SPIFFE |
+| `step-up-authentication-saml:v1` | Otentikasi Tingkat Lanjut SAML |
+| `token-exchange:v1` | Layanan Pertukaran Token |
+
+## Fitur Usang
+
+Daftar berikut berisi fitur yang usang yang akan dihapus dalam rilis yang akan datang. Fitur-fitur ini dinonaktifkan secara default.
+
+| Fitur | Deskripsi |
+| --- | --- |
+| `admin-fine-grained-authz:v1` | Izin Admin Halus |
+| `instagram-broker:v1` | Penengkarangan Identitas Instagram |
+| `login:v1` | Tema Login Lama |
+| `logout-all-sessions:v1` | Keluar dari semua sesi hanya keluar dari sesi reguler |
+| `passkeys-conditional-ui-authenticator:v1` | Autentikator UI kondisional Passkeys |
+| `rolling-updates:v1` | Pembaruan Berulang |
+
+## Opsi Terkait
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`feature-<name>`**<br/>Aktifkan/Matikan fitur spesifik &lt;feature&gt;.<br/>Mengalahkan opsi `features`, dan `features-disabled`. Nilai yang mungkin adalah: `enabled`, `disabled`, atau versi spesifik (huruf kecil) yang akan diaktifkan (mis. `v2`)<br/>**CLI:** `--feature-<name>`<br/>**Env:** `KC_FEATURE_<NAME>` | _String_ |  |
+| **`features`**<br/>Aktifkan satu atau lebih set fitur.<br/>**CLI:** `--features`<br/>**Env:** `KC_FEATURES` | `account-api[:v1]`, `account[:v3]`, `admin-api[:v1]`, `admin-fine-grained-authz[:v1,v2]`, `admin[:v2]`, `authorization[:v1]`, `ciba[:v1]`, `cimd[:v1]`, `client-admin-api[:v2]`, `client-auth-federated[:v1]`, `client-policies[:v1]`, `client-secret-rotation[:v1]`, `client-types[:v1]`, `clusterless[:v1]`, `db-tidb[:v1]`, `declarative-ui[:v1]`, `device-flow[:v1]`, `docker[:v1]`, `dpop[:v1]`, `dynamic-scopes[:v1]`, `fips[:v1]`, `hostname[:v2]`, `http-optimized-serializers[:v1]`, `identity-brokering-api[:v1,v2]`, `impersonation[:v1]`, `instagram-broker[:v1]`, `ipa-tuura-federation[:v1]`, `jwt-authorization-grant[:v1]`, `kerberos[:v1]`, `kubernetes-service-accounts[:v1]`, `log-mdc[:v1]`, `login[:v2,v1]`, `logout-all-sessions[:v1]`, `multi-site[:v1]`, `oid4vc-vci-preauth-code[:v1]`, `oid4vc-vci[:v1]`, `openapi[:v1]`, `opentelemetry-logs[:v1]`, `opentelemetry-metrics[:v1]`, `opentelemetry[:v1]`, `organization[:v1]`, `par[:v1]`, `passkeys-conditional-ui-authenticator[:v1]`, `passkeys[:v1]`, `persistent-user-sessions[:v1]`, `preview`, `quick-theme[:v1]`, `recovery-codes[:v1]`, `resource-indicators[:v1]`, `rolling-updates[:v1,v2]`, `scim-api[:v1]`, `scripts[:v1]`, `spiffe[:v1]`, `step-up-authentication-saml[:v1]`, `step-up-authentication[:v1]`, `token-exchange-external-internal[:v2]`, `token-exchange-standard[:v2]`, `token-exchange[:v1]`, `transient-users[:v1]`, `update-email[:v1]`, `user-event-metrics[:v1]`, `web-authn[:v1]`, `workflows[:v1]` |  |
+| **`features-disabled`**<br/>Matikan satu atau lebih set fitur.<br/>**CLI:** `--features-disabled`<br/>**Env:** `KC_FEATURES_DISABLED` | `account`, `account-api`, `admin`, `admin-api`, `admin-fine-grained-authz`, `authorization`, `ciba`, `cimd`, `client-admin-api`, `client-auth-federated`, `client-policies`, `client-secret-rotation`, `client-types`, `clusterless`, `db-tidb`, `declarative-ui`, `device-flow`, `docker`, `dpop`, `dynamic-scopes`, `fips`, `http-optimized-serializers`, `identity-brokering-api`, `impersonation`, `instagram-broker`, `ipa-tuura-federation`, `jwt-authorization-grant`, `kerberos`, `kubernetes-service-accounts`, `log-mdc`, `login`, `logout-all-sessions`, `multi-site`, `oid4vc-vci`, `oid4vc-vci-preauth-code`, `openapi`, `opentelemetry`, `opentelemetry-logs`, `opentelemetry-metrics`, `organization`, `par`, `passkeys`, `passkeys-conditional-ui-authenticator`, `persistent-user-sessions`, `preview`, `quick-theme`, `recovery-codes`, `resource-indicators`, `scim-api`, `scripts`, `spiffe`, `step-up-authentication`, `step-up-authentication-saml`, `token-exchange`, `token-exchange-external-internal`, `token-exchange-standard`, `transient-users`, `update-email`, `user-event-metrics`, `web-authn`, `workflows` |  |

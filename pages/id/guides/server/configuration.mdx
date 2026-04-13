@@ -1,77 +1,362 @@
 ---
-title: Mengonfigurasi NQRust-Identity
-description: Mengonfigurasi NQRust-Identity - Dokumentasi NQRust-Identity
+title: Configuring NQRust-Identity
+description: Configuring NQRust-Identity - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi NQRust-Identity
+# Configuring NQRust-Identity
 
-Panduan ini menjelaskan metode konfigurasi untuk NQRust-Identity dan bagaimana cara memulai dan menerapkan konfigurasi yang disukai. Panduan ini mencakup pedoman konfigurasi untuk mengoptimalkan NQRust-Identity untuk startup yang lebih cepat dan footprint memori yang lebih rendah.
+import { Callout } from 'nextra/components'
 
-## [](#_mengonfigurasi_sumber_untuk_nqrust-identity)Mengonfigurasi sumber untuk NQRust-Identity
+Panduan ini menjelaskan metode konfigurasi untuk NQRust-Identity dan bagaimana cara memulai dan menerapkan konfigurasi yang diinginkan. Panduan ini mencakup pedoman konfigurasi untuk mengoptimalkan NQRust-Identity untuk startup yang lebih cepat dan footprint memori yang lebih rendah.
+
+## Mengonfigurasi sumber untuk NQRust-Identity
 
 NQRust-Identity memuat konfigurasi dari empat sumber, yang terdaftar di sini sesuai urutan aplikasi.
 
-1.  Parameter baris perintah
-    
-2.  Variabel lingkungan
-    
-3.  Pilihan yang didefinisikan dalam file `conf/nqrust-identity.conf`, atau dalam file konfigurasi yang dibuat pengguna.
-    
-4.  Pilihan sensitif yang didefinisikan dalam file Java KeyStore yang dibuat pengguna.
-    
+1. Parameter baris perintah
+2. Variabel lingkungan
+3. Opsi yang didefinisikan dalam file `conf/nqrust-identity.conf`, atau dalam file konfigurasi yang dibuat pengguna.
+4. Opsi sensitif yang didefinisikan dalam file Java KeyStore yang dibuat pengguna.
 
-Ketika sebuah opsi diatur dalam lebih dari satu sumber, yang pertama dalam daftar menentukan nilai untuk opsi itu. Misalnya, nilai opsi yang diatur oleh parameter baris perintah memiliki prioritas lebih tinggi daripada variabel lingkungan untuk opsi yang sama.
+Ketika sebuah opsi diatur dalam lebih dari satu sumber, yang pertama dalam daftar menentukan nilai untuk opsi tersebut. Sebagai contoh, nilai untuk opsi yang diatur oleh parameter baris perintah memiliki prioritas lebih tinggi daripada variabel lingkungan untuk opsi yang sama.
 
-### [](#_contoh_mengonfigurasi_parameter_db-url-host)Contoh: Mengonfigurasi parameter db-url-host
+### Contoh: Mengonfigurasi parameter db-url-host
 
 Contoh berikut menunjukkan bagaimana nilai `db-url` diatur dalam empat sumber konfigurasi:
 
- 
+| Sumber | Format |
+| --- | --- |
+| Parameter baris perintah | `--db-url=cliValue` |
+| Variabel lingkungan | `KC_DB_URL=envVarValue` |
+| File konfigurasi | `db-url=confFileValue` |
+| File Java KeyStore | `kc.db-url=keystoreValue` |
 
-Sumber
+Berdasarkan prioritas aplikasi, nilai yang digunakan saat startup adalah `cliValue`, karena baris perintah memiliki prioritas tertinggi.
 
-Format
+Jika `--db-url=cliValue` tidak digunakan, nilai yang diterapkan akan menjadi `KC_DB_URL=envVarValue`. Jika nilai tidak diterapkan baik oleh baris perintah atau variabel lingkungan, `db-url=confFileValue` akan digunakan. Jika tidak ada nilai sebelumnya yang diterapkan, nilai `kc.db-url=keystoreValue` akan digunakan karena prioritas terendah di antara sumber konfigurasi yang tersedia.
 
-Parameter baris perintah
+Opsi konfigurasi NQRust-Identity sering kali mencocokkan ke opsi level lebih rendah Quarkus atau spi. Kami menyebut ini sebagai konfigurasi first-class dan second-class secara berurutan.
+Ada peringatan startup untuk menunjukkan jika Anda menggunakan opsi second-class. Sebagai contoh, jika Anda mencoba untuk langsung menggunakan `quarkus.http.port`, Anda akan diperingatkan untuk menggunakan `kc.http-port` sebagai gantinya.
 
-`--db-url=cliValue`
+## Format untuk konfigurasi
 
-Variabel lingkungan
+Konfigurasi menggunakan format _unified-per-source_, yang menyederhanakan translasi pasangan kunci/nilai dari satu sumber konfigurasi ke yang lain. Perlu dicatat bahwa format ini juga berlaku untuk opsi spi.
 
-`KC_DB_URL=envVarValue`
+Nilai untuk baris perintah menggunakan format `--<key-with-dashes>=<value>`. Untuk beberapa nilai, singkatan `-<abbreviation>=<value>` juga tersedia.
 
-File konfigurasi
+Nilai untuk variabel lingkungan menggunakan format huruf besar `KC_<key_with_underscores>=<value>`. Alternatifnya, awalan `KCRAW_` dapat digunakan sebagai gantikan `KC_` untuk mempertahankan nilai yang berisi karakter `$` — lihat [Menyimpan nilai literal dengan awalan KCRAW_](#kcraw-prefix).
 
-`db-url=confFileValue`
+Nilai yang masuk ke file konfigurasi menggunakan format `<key-with-dashes>=<value>`.
 
-File KeyStore Java
+Nilai yang masuk ke file konfigurasi KeyStore menggunakan format `kc.<key-with-dashes>`. `<value>` kemudian merupakan kata sandi yang disimpan di KeyStore.
 
-`kc.db-url=keystoreValue`
+Di akhir panduan konfigurasi setiap, cari tajuk _Opsi yang relevan_, yang menentukan format konfigurasi yang berlaku. Untuk semua opsi konfigurasi, lihat [Semua konfigurasi](/en/guides/server/all-config). Pilih sumber dan format konfigurasi yang berlaku untuk kasus penggunaan Anda.
 
-Berdasarkan prioritas aplikasi, nilai yang digunakan saat startup adalah `cliValue`, karena baris perintah adalah prioritas tertinggi.
+### Contoh - Format alternatif berdasarkan sumber konfigurasi
 
-Jika `--db-url=cliValue` tidak digunakan, nilai yang diterapkan akan menjadi `KC_DB_URL=envVarValue`. Jika nilai tidak diterapkan oleh baris perintah atau variabel lingkungan, `db-url=confFileValue` akan digunakan. Jika tidak ada nilai sebelumnya yang diterapkan, nilai `kc.db-url=keystoreValue` akan digunakan karena prioritas terendah di antara sumber konfigurasi yang tersedia.
+Contoh berikut menunjukkan format konfigurasi untuk `db-url-host` untuk tiga sumber konfigurasi:
 
-## [](#_format_untuk_konfigurasi)Format untuk konfigurasi
+```bash
+bin/kc.[sh|bat] start --db-url-host=mynqrust-identitydb
+```
 
-Konfigurasi menggunakan format _unified-per-source_, yang menyederhanakan terjemahan pasangan kunci/nilai dari satu sumber konfigurasi ke sumber lainnya. Perhatikan bahwa format ini berlaku untuk opsi spi juga.
+```
+export KC_DB_URL_HOST=mynqrust-identitydb
+```
 
-Format parameter baris perintah
+```
+db-url-host=mynqrust-identitydb
+```
 
-Nilai untuk baris perintah menggunakan format `--_`&lt;key-with-dashes&gt;`_=_`&lt;value&gt;`_`. Untuk beberapa nilai, singkatan `-_`&lt;abbreviation&gt;`_=_`&lt;value&gt;`_` juga tersedia.
+### Format untuk parameter baris perintah
 
-Format variabel lingkungan
+NQRust-Identity dilengkapi dengan banyak parameter baris perintah untuk konfigurasi. Untuk melihat format konfigurasi yang tersedia, masukkan perintah berikut:
 
-Nilai untuk variabel lingkungan menggunakan format `KC__`&lt;key_with_underscores&gt;`_=_`&lt;value&gt;`_` format.
+```bash
+bin/kc.[sh|bat] start --help
+```
 
-Format file konfigurasi
+Alternatifnya, lihat [Semua konfigurasi](/en/guides/server/all-config) untuk semua opsi server.
 
-Nilai yang masuk ke file konfigurasi menggunakan format `_`&lt;key-with-dashes&gt;`_=_`&lt;value&gt;`_` format.
+### Format untuk merujuk variabel lingkungan
 
-Format file konfigurasi KeyStore
+Anda dapat menggunakan placeholder untuk menghitung nilai spesifik lingkungan dari variabel lingkungan di dalam file `nqrust-identity.conf` dengan menggunakan sintaks `${ENV_VAR}`:
 
-Nilai yang masuk ke file konfigurasi KeyStore menggunakan format `kc._`&lt;key-with-dashes&gt;`_`. `_`&lt;value&gt;`_` kemudian adalah sandi yang disimpan di KeyStore.
+```
+db-url-host=${MY_DB_HOST}
+```
 
-Pada akhir setiap panduan konfigurasi, cari tajuk _Relevant options_, yang mendefinisikan format konfigurasi yang berlaku. Untuk semua opsi konfigurasi, lihat [All configuration](https://www.nqrust-identity.org/server/all-config). Pilih sumber dan format konfigurasi yang berlaku untuk kasus penggunaan Anda.
+Bila variabel lingkungan tidak dapat diurai, Anda dapat menentukan nilai fallback. Gunakan `:` (titik dua) seperti yang ditunjukkan di sini sebelum `mydb`:
 
-### [](#_contoh_format_alternatif_berdasarkan_sumber_konfigurasi)Contoh - Format alternatif berdasarkan s
+```bash
+db-url-host=${MY_DB_HOST:mydb}
+```
+
+### Format untuk memasukkan file konfigurasi tertentu
+
+Secara default, server selalu mengambil opsi konfigurasi dari file `conf/nqrust-identity.conf`. Untuk instalasi baru, file ini hanya memegang pengaturan komentar sebagai ide tentang apa yang ingin Anda atur saat berjalan dalam produksi.
+
+Anda juga dapat menentukan lokasi file konfigurasi eksplisit menggunakan opsi `[-cf|--config-file]` dengan memasukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] --config-file=/path/to/myconfig.conf start
+```
+
+Mengatur opsi itu membuat NQRust-Identity membaca konfigurasi dari file yang ditentukan bukan dari `conf/nqrust-identity.conf`.
+
+### Mengatur opsi sensitif menggunakan file Java KeyStore
+
+Berterima kasih pada Sumber Konfigurasi Keystore Anda dapat langsung memuat properti dari Java KeyStore menggunakan opsi `[--config-keystore]` dan `[--config-keystore-password]`.
+Pilihannya, Anda dapat menentukan tipe KeyStore menggunakan opsi `[--config-keystore-type]`. Secara default, tipe KeyStore adalah `PKCS12`.
+
+Rahasia di dalam KeyStore perlu disimpan menggunakan algoritma kunci `PBE` (enkripsi berbasis kata sandi), di mana kunci diambil dari kata sandi KeyStore.
+Anda dapat menghasilkan KeyStore seperti itu dengan menggunakan perintah `keytool` berikut:
+
+```bash
+keytool -importpass -alias kc.db-password -keystore keystore.p12 -storepass keystorepass -storetype PKCS12 -v
+```
+
+Setelah menjalankan perintah, Anda akan diminta untuk **Masukkan kata sandi yang akan disimpan**, yang mewakili nilai properti `kc.db-password` di atas.
+
+Ketika KeyStore dibuat, Anda dapat memulai server menggunakan parameter berikut:
+
+```bash
+bin/kc.[sh|bat] start --config-keystore=/path/to/keystore.p12 --config-keystore-password=keystorepass --config-keystore-type=PKCS12
+```
+
+### Format untuk properti Quarkus mentah
+
+Dalam kebanyakan kasus, opsi konfigurasi yang tersedia sudah mencukupi untuk mengkonfigurasi server.
+Namun, untuk perilaku atau kemampuan tertentu yang hilang dalam konfigurasi NQRust-Identity, Anda dapat menggunakan properti dari kerangka kerja Quarkus yang mendasarinya.
+
+Jika memungkinkan, hindari menggunakan properti langsung dari Quarkus, karena mereka tidak didukung oleh NQRust-Identity. Jika kebutuhan Anda esensial, pertimbangkan untuk membuka [permintaan peningkatan](https://github.com/nqrust-identity/nqrust-identity/issues/new?assignees=&labels=kind%2Fenhancement%2Cstatus%2Ftriage&template=enhancement.yml) terlebih dahulu. Pendekatan ini membantu kami meningkatkan konfigurasi NQRust-Identity untuk memenuhi kebutuhan Anda.
+
+Jika permintaan peningkatan tidak memungkinkan, Anda dapat mengonfigurasi server menggunakan properti Quarkus mentah:
+
+1. Buat file `quarkus.properties` di direktori `conf`.
+2. Tentukan properti yang diperlukan di file itu.
+
+  Anda hanya dapat menggunakan [sebagian](https://github.com/nqrust-identity/nqrust-identity/blob/main/quarkus/runtime/pom.xml#L17) dari ekstensi Quarkus yang didefinisikan dalam [Dokumentasi Quarkus](https://quarkus.io/guides/all-config). Juga, perhatikan perbedaan properti Quarkus ini:
+
+  - Ikon kunci untuk properti Quarkus di [Dokumentasi Quarkus](https://quarkus.io/guides/all-config) menunjukkan properti waktu kompilasi. Anda menjalankan perintah `build` untuk menerapkan properti ini. Untuk detail tentang perintah build, lihat bagian berikut tentang mengoptimalkan NQRust-Identity.
+  - Tidak ada ikon kunci untuk properti di panduan Quarkus menunjukkan properti waktu jalannya untuk Quarkus dan NQRust-Identity.
+
+Anda juga dapat menyimpan properti Quarkus di Java KeyStore.
+
+### Menggunakan karakter khusus dalam nilai
+
+NQRust-Identity bergantung pada Quarkus dan MicroProfile untuk memproses nilai konfigurasi. Perlu diingat bahwa ekspresi nilai didukung. Misalnya, `${some_key}` dinilai sebagai nilai `some_key`.
+
+Untuk menonaktifkan evaluasi ekspresi, karakter `\` berfungsi sebagai karakter escape. Terutama, itu harus digunakan untuk menghindari penggunaan karakter `$` saat mereka muncul untuk menentukan ekspresi atau diulang. Misalnya, jika Anda ingin nilai konfigurasi `my$$password`, gunakan `my\$\$password` sebagai gantinya. Perlu dicatat bahwa karakter `\` membutuhkan escape atau kutipan tambahan saat menggunakan mayoritas shell unix, atau saat muncul dalam file properti.
+Misalnya, kutip tunggal bash mempertahankan backslash tunggal `--db-password='my\$\$password'`. Juga, dengan bash double quotes, Anda butuh backslash tambahan `--db-password="my\\$\\$password"`. Serupa dalam file properti, karakter backslash juga harus diescape: `kc.db-password=my\\$\\$password`
+
+Ketika menentukan jalur file Windows dalam nilai konfigurasi, backslash juga harus diescape. Misalnya, jika Anda ingin menentukan jalur `C:\path\to\file`, Anda seharusnya menulisnya sebagai `C:\\path\\to\\file`. Alternatifnya, Anda dapat menggunakan garis miring yang tidak perlu escape: `C:/path/to/file`.
+
+Ketika menggunakan PowerShell dan nilai Anda berisi karakter khusus seperti koma, gunakan kutip tunggal di sekitar kutip ganda:
+
+```bash
+.\kc.bat start --log-level='"INFO,org.hibernate:debug"'
+```
+
+PowerShell menangani kutipan berbeda. Ini menginterpretasikan string yang dikutip sebelum menyerahkannya ke skrip `kc.bat`, menghapus karakter kutip luar. Oleh karena itu, lapisan kutipan ekstra diperlukan untuk mempertahankan struktur nilai. Jika tidak, koma akan diinterpretasikan sebagai pembatas. Di Windows CMD, Anda dapat menggunakan kutip ganda secara langsung.
+
+Ketika pengescape manual tidak memungkinkan (seperti ketika kata sandi disuntikkan oleh manajer rahasia dan Anda tidak dapat mengontrol nilai), gunakan awalan `KCRAW_` yang dijelaskan dalam bagian berikutnya.
+
+### Menyimpan nilai literal dengan awalan KCRAW_
+
+Ketika menetapkan nilai konfigurasi, NQRust-Identity (melalui SmallRye Config) menilai ekspresi seperti `${some_key}` dan mengecilkan `$$` ke `$`. Ini berarti kata sandi atau rahasia yang berisi karakter `$` mungkin secara diam-diam dimodifikasi. Sementara `\` escape di atas bekerja untuk nilai yang Anda kendalikan secara langsung, itu tidak selalu praktis - misalnya, ketika manajer rahasia atau alat orkestrasi menyuntikkan nilai dan Anda tidak dapat menambahkan karakter escape.
+
+Dalam kasus ini, gunakan awalan `KCRAW_` bukan `KC_` untuk setiap variabel lingkungan yang nilainya harus dipertahankan persis seperti yang ditulis. NQRust-Identity secara otomatis mengescape karakter `$` dalam nilai `KCRAW_` sehingga evaluasi ekspresi mempertahankan nilai asli.
+
+```bash
+# Awalan standar — nilai akan dimodifikasi oleh evaluasi ekspresi:
+export KC_DB_PASSWORD='my$$pa$\{vault}word'
+# Hasil: "$$" diecilkan ke "$" dan "$\{vault}" dinilai sebagai
+# ekspresi, menghasilkan "my$paword" atau kesalahan
+
+# Awalan mentah — nilai dipertahankan persis seperti yang ditulis:
+export KCRAW_DB_PASSWORD='my$$pa$\{vault}word'
+# Hasil: kata sandi digunakan sebagai-is: my$$pa$\{vault}word
+```
+
+<Callout type="info">
+  - Awalan `KCRAW_` hanya berlaku untuk variabel lingkungan, di mana aturan kutipan shell membuat escape `$` tidak dapat diandalkan. Sumber konfigurasi lainnya tertuju pada mekanisme escape format mereka sendiri dan nilai mereka tetap diperlakukan sebagai ekspresi.
+  - Anda tidak dapat menetapkan keduanya `KC_<KEY>` dan `KCRAW_<KEY>` untuk kunci konfigurasi yang sama. Jika keduanya hadir, NQRust-Identity akan gagal memulai dan melaporkan kesalahan konfigurasi.
+  - Selain mengescape karakter `$`, variabel `KCRAW_` berperilaku identik dengan `KC_` yang sesuai: aturan pemetaan kunci yang sama dan aturan prioritas berlaku.
+</Callout>
+
+### Format untuk kunci variabel lingkungan dengan karakter khusus
+
+Karakter non-alfanumerik dalam kunci konfigurasi Anda harus diubah menjadi `_` dalam kunci variabel lingkungan yang sesuai.
+
+Variabel lingkungan dikonversi kembali ke kunci opsi normal dengan menurunkan nama dan mengganti `_` dengan `-`. Logging wildcards adalah pengecualian karena `_` dalam kategori diganti dengan `.` sebaliknya. Kategori logging umumnya adalah nama kelas / paket, yang lebih mungkin menggunakan `.` daripada `-`.
+
+<Callout type="warning">
+  Pemetaan otomatis kunci variabel lingkungan ke kunci opsi mungkin tidak mempertahankan kunci yang dimaksudkan
+</Callout>
+
+Misalnya `kc.log-level-package.class_name` akan menjadi kunci variabel lingkungan `KC_LOG_LEVEL_PACKAGE_CLASS_NAME`. Itu akan secara otomatis dipetakan ke `kc.log-level-package.class.name` karena `_` dalam kategori logging diganti oleh `.`. Sayangnya ini tidak sesuai dengan niat `kc.log-level-package.class_name`.
+
+Anda memiliki beberapa opsi dalam hal ini:
+
+- buat entri di file `nqrust-identity.conf` Anda yang merujuk pada variabel lingkungan yang Anda pilih. contohnya `kc.log-level-package.class_name=${CLASS_NAME_LEVEL}`. Lihat lebih lanjut tentang merujuk variabel lingkungan di [Format untuk merujuk variabel lingkungan](#_format_for_referencing_environment_variables).
+- atau dalam situasi di mana mengubah `nqrust-identity.conf` mungkin tidak mudah, Anda dapat menggunakan pasangan variabel lingkungan `KC_UNIQUEIFIER=value` dan `KCKEY_UNIQUEIFIER=key`, misalnya `KC_MYKEY=debug` dan `KCKEY_MYKEY=log-level-package.class_name`, atau `KC_LOG_LEVEL_PACKAGE_CLASS_NAME=debug` dan `KCKEY_LOG_LEVEL_PACKAGE_CLASS_NAME=log-level-package.class_name`
+
+## Memulai NQRust-Identity
+
+Anda dapat memulai NQRust-Identity dalam `mode pengembangan` atau `mode produksi`. Setiap mode menawarkan default yang berbeda untuk lingkungan yang dimaksud.
+
+### Memulai NQRust-Identity dalam mode pengembangan
+
+Gunakan mode pengembangan untuk mencoba NQRust-Identity pertama kali agar dapat dengan cepat dijalankan. Mode ini menawarkan default yang mudah untuk pengembang, seperti dalam mengembangkan tema NQRust-Identity baru.
+
+<Callout type="info">
+   Secara default, ketika Anda memulai NQRust-Identity dalam mode pengembangan pada Windows Subsystem For Linux, server mengikat ke semua alamat jaringan (0.0.0.0). Ini berarti instance Anda dapat diakses dari mesin lain di jaringan Anda.
+</Callout>
+
+Untuk memulai dalam mode pengembangan, masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start-dev
+```
+
+Mode pengembangan menetapkan konfigurasi default berikut:
+
+- HTTP diaktifkan
+- Resolusi nama host ketat dinonaktifkan
+- Cache diatur ke lokal (Tidak digunakan mekanisme cache terdistribusi untuk ketersediaan tinggi)
+- Cache tema dan template dinonaktifkan
+
+### Memulai NQRust-Identity dalam mode produksi
+
+Gunakan mode produksi untuk penyebaran NQRust-Identity di lingkungan produksi. Mode ini mengikuti prinsip _secure by default_.
+
+Untuk memulai dalam mode produksi, masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start
+```
+
+Tanpa konfigurasi lebih lanjut, perintah ini tidak akan memulai NQRust-Identity dan akan menunjukkan kesalahan kepada Anda. Tanggapan ini dilakukan sengaja, karena NQRust-Identity mengikuti prinsip _secure by default_. Mode produksi mengharapkan hostname diatur dan pengaturan HTTPS/TLS tersedia saat dijalankan.
+
+Mode produksi menetapkan default berikut:
+
+- HTTP dinonaktifkan sebagai keamanan lapisan transport (HTTPS) sangat penting
+- Konfigurasi hostname diharapkan
+- Konfigurasi HTTPS/TLS diharapkan
+
+Sebelum menyebarkan NQRust-Identity di lingkungan produksi, pastikan untuk mengikuti langkah yang dijelaskan dalam [Mengonfigurasi NQRust-Identity untuk produksi](/en/guides/server/configuration-production).
+
+Secara default, opsi konfigurasi contoh untuk mode produksi dikomentari dalam file `conf/nqrust-identity.conf` default. Opsi ini memberi Anda gambaran tentang konfigurasi utama yang perlu dipertimbangkan saat menjalankan NQRust-Identity dalam produksi.
+
+## Membuat pengguna admin awal
+
+Anda dapat membuat pengguna admin awal dengan menggunakan antarmuka web, yang dapat Anda akses dengan menggunakan koneksi lokal (localhost). Alternatif lain, Anda dapat membuat pengguna ini dengan menggunakan variabel lingkungan. Atur `KC_BOOTSTRAP_ADMIN_USERNAME=<username>` untuk nama pengguna admin awal dan `KC_BOOTSTRAP_ADMIN_PASSWORD=<password>` untuk password admin awal.
+
+NQRust-Identity mengurai nilai-nilai ini pada startup pertama untuk membuat pengguna awal dengan hak administratif.
+Setelah pengguna pertama dengan hak administratif ada, Anda dapat menggunakan Konsol Admin atau alat baris perintah `kcadm.[sh|bat]` untuk membuat pengguna tambahan.
+
+Jika administrator awal sudah ada dan variabel lingkungan masih ada pada startup, pesan kesalahan tentang gagal menciptakan administrator awal akan ditampilkan dalam log. NQRust-Identity mengabaikan nilai-nilai tersebut dan berhasil dijalankan dengan benar.
+
+## Mengoptimalkan Startup NQRust-Identity
+
+Direkomendasikan untuk mengoptimalkan NQRust-Identity untuk memungkinkan startup yang lebih cepat dan penggunaan memori yang lebih baik sebelum menyebarkan NQRust-Identity di lingkungan produksi. Bagian ini menjelaskan bagaimana menerapkan optimasi NQRust-Identity untuk kinerja terbaik dan perilaku runtime.
+
+### Membuat Build NQRust-Identity yang Dioptimalkan
+
+Secara default, saat Anda menggunakan perintah `start` atau `start-dev`, NQRust-Identity menjalankan perintah `build` di balik layar untuk alasan kenyamanan.
+
+Perintah `build` ini melakukan serangkaian optimasi untuk startup dan perilaku runtime. Proses build dapat memakan waktu beberapa detik. Terutama saat menjalankan NQRust-Identity di lingkungan kontainer seperti Kubernetes atau OpenShift, waktu startup menjadi penting. Untuk menghindari penggunaan waktu tersebut, jalankan `build` secara eksplisit sebelum startup, seperti langkah terpisah dalam pipeline CI/CD.
+
+#### Langkah Pertama: Jalankan Build Secara Eksplisit
+
+Untuk menjalankan `build`, masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] build <build-options>
+```
+
+Perintah ini menunjukkan `build options` yang Anda masukkan. NQRust-Identity membedakan antara **build options**, yang dapat digunakan saat menjalankan perintah `build`, dan **configuration options**, yang dapat digunakan saat memulai server.
+
+Untuk startup NQRust-Identity yang tidak dioptimalkan, perbedaan ini tidak berdampak. Namun, jika Anda menjalankan build sebelum startup, hanya sebagian opsi yang tersedia untuk perintah build. Pembatasan ini karena opsi build disimpan ke dalam image NQRust-Identity yang dioptimalkan. Misalnya, konfigurasi untuk kredensial seperti `db-password` (yang merupakan opsi konfigurasi) tidak boleh disimpan untuk alasan keamanan.
+
+<Callout type="warning">
+  Semua opsi build disimpan dalam teks polos. Jangan menyimpan data sensitif sebagai opsi build. Hal ini berlaku untuk semua sumber konfigurasi yang tersedia, termasuk KeyStore Config Source. Oleh karena itu, kami juga tidak merekomendasikan penyimpanan opsi build dalam Java keystore. Selain itu, saat menyangkutan opsi konfigurasi, kami merekomendasikan penggunaan KeyStore Config Source terutama untuk menyimpan data sensitif. Untuk data non-sensitif, Anda dapat menggunakan sumber konfigurasi lainnya.
+</Callout>
+
+Opsi build ditandai di [All configuration](/en/guides/server/all-config) dengan ikon alat.
+Untuk menemukan opsi build yang tersedia, lihat Halaman Konfigurasi Semua dengan Opsi Build Dipilih atau masukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] build --help
+```
+
+```bash
+bin/kc.[sh|bat] build --db=postgres
+```
+
+#### Langkah Kedua: Mulai NQRust-Identity Menggunakan `--optimized`
+
+Setelah build berhasil, Anda dapat memulai NQRust-Identity dan mematikan perilaku startup default dengan memasukkan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --optimized <configuration-options>
+```
+
+Parameter `--optimized` memberi tahu NQRust-Identity untuk mengasumi bahwa image NQRust-Identity yang sudah dibangun dan dioptimalkan digunakan. Akibatnya, NQRust-Identity menghindari pemeriksaan dan menjalankan build langsung saat startup, yang menghemat waktu.
+
+Anda dapat memasukkan semua opsi konfigurasi saat startup; opsi ini adalah opsi dalam [All configuration](/en/guides/server/all-config) yang **tidak** ditandai dengan ikon alat.
+
+- Jika opsi build ditemukan saat startup dengan nilai yang sama dengan nilai yang digunakan saat memasukkan `build`, opsi tersebut diam-diam diabaikan saat Anda menggunakan parameter `--optimized`.
+- Jika opsi tersebut memiliki nilai yang berbeda dari nilai yang digunakan saat build, terjadi kesalahan. Untuk nilai ini berpengaruh, jalankan `build` baru sebelum memulai.
+
+Contoh berikut menunjukkan pembuatan build yang dioptimalkan diikuti dengan penggunaan parameter `--optimized` saat memulai NQRust-Identity.
+
+1. Atur opsi build untuk vendor basis data PostgreSQL menggunakan perintah build
+
+  ```bash
+  bin/kc.[sh|bat] build --db=postgres
+  ```
+2. Atur opsi konfigurasi runtime untuk postgres di file `conf/nqrust-identity.conf`.
+
+  ```
+  db-url-host=nqrust-identity-postgres
+  db-username=nqrust-identity
+  db-password=change_me
+  hostname=mynqrust-identity.acme.com
+  https-certificate-file
+  ```
+3. Mulai server dengan parameter yang dioptimalkan
+
+  ```bash
+  bin/kc.[sh|bat] start --optimized
+  ```
+
+## Menggunakan Variabel Sistem dalam Konfigurasi Realm
+
+Beberapa kemampuan realm memungkinkan administrator untuk merujuk variabel sistem seperti variabel lingkungan dan properti sistem saat mengonfigurasi realm dan komponennya.
+
+Secara default, NQRust-Identity melarang penggunaan variabel sistem tetapi hanya yang dijelaskan secara eksplisit melalui opsi konfigurasi `spi-admin--allowed-system-variables`. Opsi ini memungkinkan Anda untuk menentukan daftar kunci yang dipisahkan koma yang pada gilirnya akan dipecahkan ke nilai dari variabel sistem dengan kunci yang sama.
+
+1. Mulai server dan eksposkan sekelompok variabel sistem ke runtime server
+
+  ```bash
+  bin/kc.[sh|bat] start --spi-admin--allowed-system-variables=FOO,BAR
+  ```
+
+Pada rilis mendatang, kemampuan ini akan dihapus untuk mencegah penggunaan variabel sistem dalam konfigurasi realm.
+
+## Konsep Dasar
+
+Bagian ini memberikan gambaran tentang konsep-konsep yang digunakan oleh NQRust-Identity, terutama saat mengoptimalkan startup.
+
+NQRust-Identity menggunakan framework Quarkus dan pendekatan re-augmentation/mutable-jar di balik layar. Proses ini dimulai saat perintah `build` dijalankan.
+
+Berikut adalah beberapa optimasi yang dilakukan oleh perintah `build`:
+
+- Asumsi dunia tertutup baru tentang penyedia yang terinstall dibuat, yang berarti tidak ada kebutuhan untuk membuat ulang registry dan menginisialisasi factory pada setiap startup NQRust-Identity.
+- File konfigurasi diuraikan terlebih dahulu untuk mengurangi I/O saat memulai server.
+- Sumber daya spesifik database dikonfigurasi dan disiapkan untuk berjalan melawan penyedia database tertentu.
+- Dengan menyimpan opsi build ke dalam image server, server tidak melakukan langkah tambahan untuk menginterpretasikan opsi konfigurasi dan (re)mengonfigurasi diri sendiri.
+
+Anda dapat membaca lebih lanjut pada panduan spesifik [Quarkus guide](https://quarkus.io/guides/reaugmentation)

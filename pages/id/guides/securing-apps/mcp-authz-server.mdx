@@ -1,133 +1,232 @@
 ---
-title: Integrasi dengan Protokol Konteks Model (MCP)
-description: Integrasi dengan Protokol Konteks Model (MCP) - Dokumentasi NQRust-Identity
+title: Integrasi dengan Model Context Protocol (MCP)
+description: Integrasi dengan Model Context Protocol (MCP) - Dokumentasi NQRust-Identity
 ---
 
-# Integrasi dengan Protokol Konteks Model (MCP)
+# Integrasi dengan Model Context Protocol (MCP)
 
-Saat ini, terdapat empat versi spesifikasi Protokol Konteks Model (MCP):
+import { Callout } from 'nextra/components'
 
-*   2025-11-25 (versi terbaru)
-    
-*   2025-06-18
-    
-*   2025-03-26
-    
-*   2024-11-05 (versi awal)
-    
+Saat ini, terdapat empat versi spesifikasi Model Context Protocol (MCP):
+
+- 2025-11-25 (versi terakhir)
+- 2025-06-18
+- 2025-03-26
+- 2024-11-05 (versi awal)
 
 Versi awal (2024-11-05) tidak mencakup otorisasi, oleh karena itu tidak dicakup dalam panduan ini.
 
-Panduan ini menunjukkan kepada Anda hal berikut:
+Panduan ini menunjukkan kepada Anda hal-hal berikut:
 
-*   Versi MCP yang didukung NQRust-Identity.
-    
-*   Cara mengatur NQRust-Identity sebagai server otorisasi dalam MCP.
-    
+- Versi MCP yang didukung oleh NQRust-Identity.
+- Cara mengatur NQRust-Identity sebagai server otorisasi dalam MCP.
 
 Namun, panduan ini tidak mencakup semua yang perlu Anda ketahui. Oleh karena itu, disarankan untuk membaca juga bagian otorisasi dari versi MCP yang relevan.
 
-## [](#_standards_compliance_mcp_requires)Kesesuaian Standar MCP memerlukan
+## Kepatuhan Standar MCP yang Diperlukan
 
-Menurut [spesifikasi MCP](https://modelcontextprotocol.io/specification/draft/basic/authorization#standards-compliance), terdapat beberapa standar terkait server otorisasi dalam MCP. Tabel berikut menunjukkan:
+Menurut [spesifikasi MCP](https://modelcontextprotocol.io/specification/draft/basic/authorization#standards-compliance), terdapat beberapa standar tentang server otorisasi dalam MCP. Tabel berikut menunjukkan:
 
-*   Versi MCP mana yang memerlukan server otorisasi untuk mendukung standar mana pada tingkat mana (MUST, SHOULD, MAY).
-    
-*   Kesesuaian standar yang diikuti NQRust-Identity.
-    
+- Versi MCP yang meminta server otorisasi untuk mendukung standar mana pada tingkat mana (MUST, SHOULD, MAY).
+- Standar mana yang dipatuhi oleh NQRust-Identity.
 
-    
+| Standar | 2025-11-25 | 2025-06-18 | 2025-03-26 | NQRust-Identity |
+| --- | --- | --- | --- | --- |
+| [The OAuth 2.1 Authorization Framework (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-14) | MUST | MUST | MUST | Didukung |
+| [OAuth 2.0 Authorization Server Metadata (RFC 8414)](https://datatracker.ietf.org/doc/html/rfc8414) | MUST | MUST | MUST | Didukung |
+| [Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707) | MUST | MUST | - | Tidak didukung |
+| [OAuth 2.0 Dynamic Client Registration Protocol (RFC 7591)](https://datatracker.ietf.org/doc/html/rfc7591) | MAY | SHOULD | SHOULD | Didukung |
+| [OAuth Client ID Metadata Document (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00) | SHOULD | - | - | Didukung |
 
-Standar
-
-2025-11-25
-
-2025-06-18
-
-2025-03-26
-
-NQRust-Identity
-
-[The OAuth 2.1 Authorization Framework (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-14)
-
-MUST
-
-MUST
-
-MUST
-
-Didukung
-
-[OAuth 2.0 Authorization Server Metadata (RFC 8414)](https://datatracker.ietf.org/doc/html/rfc8414)
-
-MUST
-
-MUST
-
-MUST
-
-Didukung
-
-[Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707)
-
-MUST
-
-MUST
-
--
-
-Tidak didukung
-
-[OAuth 2.0 Dynamic Client Registration Protocol (RFC 7591)](https://datatracker.ietf.org/doc/html/rfc7591)
-
-MAY
-
-SHOULD
-
-SHOULD
-
-Didukung
-
-[OAuth Client ID Metadata Document (Internet Draft)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-client-id-metadata-document-00)
-
-SHOULD
-
--
-
--
-
-Tidak didukung
+<Callout type="warning">
+  Dukungan OAuth Client ID Metadata Document di NQRust-Identity adalah fitur eksperimental. Fitur ini mungkin mengakibatkan perubahan yang merusak pada versi NQRust-Identity mendatang.
+</Callout>
 
 Spesifikasi MCP mengadopsi [OAuth 2.0 Protected Resource Metadata (RFC 9728)](https://datatracker.ietf.org/doc/html/rfc9728). Standar ini untuk server MCP dan bukan untuk server otorisasi seperti NQRust-Identity. Oleh karena itu, tidak termasuk dalam tabel di atas.
 
-## [](#_mcp_version_compliance)Kesesuaian Versi MCP
+## Kepatuhan Versi MCP
 
-Dalam panduan ini, sebagai kriteria kesesuaian, "NQRust-Identity mendukung MCP" berarti NQRust-Identity memenuhi semua persyaratan MUST dan SHOULD oleh MCP.
+Dalam panduan ini, sebagai kriteria untuk kepatuhan, "NQRust-Identity mendukung MCP" berarti NQRust-Identity memenuhi semua persyaratan MUST dan SHOULD oleh MCP.
 
-Menurut kriteria ini, tabel berikut menunjukkan versi MCP yang didukung NQRust-Identity.
+Menurut kriteria ini, tabel berikut menunjukkan versi MCP yang didukung oleh NQRust-Identity.
 
- 
+| Versi MCP | Konformitas |
+| --- | --- |
+| [2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) | Didukung |
+| [2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization) | Didukung Sebagian tanpa Resource Indicators for OAuth 2.0 |
+| [2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization) | Didukung Sebagian tanpa Resource Indicators for OAuth 2.0 |
 
-Versi MCP
+## Pengaturan
 
-Kesesuaian
-
-[2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)
-
-Didukung
-
-[2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
-
-Partially Supported tanpa Resource Indicators untuk OAuth 2.0
-
-[2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)
-
-Partially Supported tanpa Resource Indicators untuk OAuth 2.0 dan OAuth Client ID Metadata Document
-
-## [](#_setup)Pengaturan
-
-### [](#_for_mcp_2025_03_26)Untuk MCP 2025-03-26
+### Untuk MCP 2025-03-26
 
 Tidak diperlukan pengaturan khusus.
 
-### [](#_for_mcp_2025_06_18_and
+### Untuk MCP 2025-06-18 dan 2025-11-25
+
+#### Pengikatan dan Validasi Audiens Token
+
+Untuk mendapatkan manfaat keamanan, spesifikasi MCP meminta token akses untuk diikat dengan audiensnya. Untuk melakukan hal ini, spesifikasi MCP meminta hal berikut:
+
+- Sebuah klien MCP HARUS memasukkan parameter `resource` yang didefinisikan dalam [Resource Indicators for OAuth 2.0 (RFC 8707)](https://datatracker.ietf.org/doc/html/rfc8707) dalam permintaan otorisasi dan permintaan token. Nilai parameter HARUS mengidentifikasi server MCP yang klien MCP bermaksud untuk menggunakan token dengan.
+- Sebuah server MCP HARUS memvalidasi bahwa token yang diajukan kepada mereka diterbitkan khusus untuk penggunaan mereka.
+
+Spesifikasi MCP tidak menjelaskan bagaimana melakukan pengikatan ini. Salah satu metode untuk pengikatan ini adalah dengan menetapkan nilai parameter `resource` ke klaim `aud` dalam token akses. Namun, NQRust-Identity tidak dapat mengenali parameter `resource`.
+
+Komunitas NQRust-Identity sedang berencana untuk mendukung Resource Indicators for OAuth 2.0 (RFC 8707) untuk NQRust-Identity agar NQRust-Identity dapat mengenali dan memproses parameter `resource` sesuai harapan spesifikasi MCP. Sebelum dukungan ini selesai, Anda dapat menggunakan parameter `scope` OAuth 2.0 sebagai gantinya dari parameter `resource`. Untuk menunjukkan pengikatan, silakan pertimbangkan situasi berikut:
+
+- URL server MCP adalah `https://example.com/mcp`
+- MCP mendukung tiga lingkup berikut: `mcp:tools`, `mcp:prompts`, dan `mcp:resources`.
+- Untuk mendapatkan token akses untuk mengakses server MCP, klien MCP mengirim ke NQRust-Identity permintaan otorisasi yang nilai parameter `resource` adalah `https://example.com/mcp` dan parameter `scope` mencakup kombinasi dari tiga lingkup tersebut.
+- Kami ingin NQRust-Identity untuk mengeluarkan token akses yang nilai klaim `aud` adalah URL server MCP, yaitu `https://example.com/mcp`.
+
+Untuk membuat NQRust-Identity mengeluarkan token akses seperti itu, kita dapat mengonfigurasi NQRust-Identity sebagai berikut:
+
+- Tambah lingkup klien `mcp:tools` dengan tipe `Optional`.
+- Tambah ke lingkup klien pengubah `Audience` baru dengan bidang `Included Custom Audience` adalah `https://example.com/mcp`.
+- Tambah lingkup klien `mcp:prompts` dengan tipe `Optional`.
+- Tambah ke lingkup klien pengubah `Audience` baru dengan bidang `Included Custom Audience` adalah `https://example.com/mcp`.
+- Tambah lingkup klien `mcp:resources` dengan tipe `Optional`.
+- Tambah ke lingkup klien pengubah `Audience` baru dengan bidang `Included Custom Audience` adalah `https://example.com/mcp`.
+
+Harap dicatat bahwa bidang `Included Custom Audience` lingkup klien harus sama dengan nilai parameter `resource` permintaan otorisasi dan URL server MCP.
+
+Dengan konfigurasi ini, jika klien MCP mengirim ke NQRust-Identity permintaan otorisasi yang nilai parameter `resource` adalah `https://example.com/mcp` dan parameter `scope` mencakup `mcp:resources`, `mcp:tools`, dan `mcp:prompts`, NQRust-Identity dapat mengeluarkan token akses berikut:
+
+```json
+{
+  ...
+  "aud": "https://example.com/mcp",
+  "scope": "mcp:resources mcp:tools mcp:prompts"
+  ...
+}
+```
+
+### Integrasi Inspektor MCP
+
+Jika Anda ingin menggunakan [MCP Inspector](https://github.com/modelcontextprotocol/inspector), alat debug resmi untuk server MCP, dengan NQRust-Identity sebagai server otorisasi, Anda perlu melakukan pengaturan yang sesuai tentang CORS pada endpoint pendaftaran klien NQRust-Identity karena MCP Inspector mengeksekusi JavaScript yang diunduh dari server backend MCP Inspector untuk mendaftarkan dinamis klien MCP ke NQRust-Identity.
+
+Anda perlu melakukan pengaturan yang sesuai untuk kebijakan akses anonim Pendaftaran Klien sebagai berikut:
+
+- Lingkup Klien yang Diizinkan: Perlu mencakup lingkup yang didukung oleh server MCP.
+- Asal Web Pendaftaran yang Diizinkan: Perlu mencakup asal web server backend Inspektor MCP.
+- Host Terpercaya: Perlu mencakup nama host atau alamat IP mesin yang mengirim permintaan pendaftaran klien dinamis ke NQRust-Identity, yaitu mesin tempat browser Anda berjalan.
+
+### Untuk MCP 2025-11-25
+
+#### Pendaftaran Klien
+
+Menurut [Client Registration Approaches](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization#client-registration-approaches) bagian dari spesifikasi MCP, berikut tiga mekanisme pendaftaran klien yang didukung dan Anda dapat memilih berdasarkan skenario Anda:
+
+- Dokumen Metadata ID Klien: Ketika klien dan server tidak memiliki hubungan sebelumnya (paling umum)
+- Pendaftaran Awal: Ketika klien dan server memiliki hubungan yang ada
+- Pendaftaran Klien Dinamis: Untuk kompatibilitas mundur atau persyaratan tertentu
+
+NQRust-Identity mendukung Dokumen Metadata ID OAuth Klien. Untuk menggunakan Dokumen Metadata ID Klien, Anda perlu mengaktifkan fitur dan mengatur kebijakan klien sehingga NQRust-Identity memproses parameter `client_id` yang diformat sebagai URL dan mengambil metadata klien dari URL itu.
+
+<Callout type="warning">
+  Dukungan Dokumen Metadata ID OAuth adalah fitur eksperimental di NQRust-Identity. Sebagai hasilnya, itu mungkin mengakibatkan perubahan yang merusak pada versi NQRust-Identity mendatang. Untuk mengaktifkannya, jalankan NQRust-Identity dengan --features=cimd.
+</Callout>
+
+##### Mengatur profil klien untuk Dokumen Metadata ID OAuth
+
+Untuk memproses permintaan otorisasi di mana metadata `client_id` adalah URL yang menunjuk ke Dokumen Metadata ID Klien, Anda perlu membuat profil termasuk `client-id-metadata-document` executor.
+
+Untuk mengonfigurasi executor, buat profil kebijakan klien di Konsol Admin NQRust-Identity:
+
+1. Navigasikan ke **Realm Settings** → **Client Policies** → **Profiles** tab.
+2. Klik **Create client profile**.
+3. Beri profil nama seperti `cimd-profile` dan klik **Save**.
+4. Klik **Add executor** dan pilih `client-id-metadata-document` dari daftar.
+5. Konfigurasikan executor dengan opsi berikut:
+
+  - **Allow http scheme**: Jika `ON`, memungkinkan skema `http` untuk URL ID Klien dan URL Metadata Klien (mis., `client_uri`, `logo_uri`, `tos_uri`, `policy_uri`, `jwks_uri`). Hal ini hanya boleh `ON` di lingkungan pengembangan dan harus `OFF` di lingkungan produksi.
+  - **Trusted domains**: Daftar pola domain (wildcard) yang diterima executor untuk properti URL ID Klien dan URL Metadata Klien. Misalnya, gunakan `*.example.org` untuk menerima setiap subdomain dari `example.org`. Jika kosong, semua domain ditolak.
+  - **Restrict same domain**: Jika `ON`, executor memverifikasi bahwa URL ID Klien dan URI Pengalih dalam permintaan otorisasi, serta properti URL nilai dari metadata klien, semua di bawah domain terpercaya yang sama.
+  - **Required properties**: Daftar properti metadata klien yang harus ada dalam Dokumen Metadata ID Klien. Jika dokumen yang diambil tidak mencakup semua properti yang terdaftar, permintaan ditolak.
+  - **Only Allow Confidential Client**: Jika `ON`, executor hanya menerima Dokumen Metadata ID Klien yang mewakili klien konfidenial. Dalam hal ini, metadata klien harus mencakup salah satu properti `jwks` atau `jwks_uri` dan harus menggunakan `private_key_jwt` atau `tls_client_auth` sebagai metode otentikasi endpoint token.
+6. Klik **Save**.
+
+##### Mengatur kebijakan klien untuk Dokumen Metadata ID OAuth
+
+Untuk memicu profil yang dibuat sebelumnya saat parameter `client_id` dalam permintaan otorisasi adalah URI yang cocok dengan skema yang ditentukan (mis., `https`), Anda perlu membuat kebijakan termasuk `client-id-uri` condition.
+
+Untuk mengonfigurasi condition, buat kebijakan klien di Konsol Admin NQRust-Identity:
+
+1. Navigasikan ke **Realm Settings** → **Client Policies** → **Policies** tab.
+2. Klik **Create client policy**.
+3. Beri kebijakan nama seperti `cimd-policy` dan klik **Save**.
+4. Di bawah **Conditions**, klik **Add condition** dan pilih `client-id-uri` dari daftar.
+5. Konfigurasikan condition dengan opsi berikut:
+
+  - **URI scheme**: Daftar skema URI untuk mencocokkan dengan parameter `client_id` (mis., `https`). Di lingkungan produksi, hanya `https` yang harus digunakan.
+  - **Trusted domains**: Daftar pola domain (wildcard) yang condition terima untuk bagian host dari URI `client_id`. Jika domain diisi, condition dinilai sebagai true hanya ketika bagian host dari `client_id` cocok dengan salah satu domain. Jika tidak diisi, condition dinilai sebagai false tanpa peduli. Misalnya, gunakan `*.example.org` untuk menerima setiap subdomain dari `example.org`.
+6. Klik **Save**.
+7. Di bawah **Associated client profiles**, tambahkan profil `cimd-profile` yang dibuat sebelumnya.
+8. Klik **Save**.
+
+Dengan konfigurasi ini, saat klien MCP mengirim permintaan otorisasi dengan nilai `client_id` yang merupakan URL `https` yang cocok dengan domain terpercaya, NQRust-Identity mengambil Dokumen Metadata ID Klien dari URL itu dan menggunakan metadata untuk memproses permintaan.
+
+##### Pengaturan seluruh sistem untuk executor Dokumen Metadata ID Klien
+
+Executor `client-id-metadata-document` memiliki pengaturan seluruh sistem berikut yang mengontrol pembatasan ukuran metadata dan batas waktu cache. Pengaturan ini tidak dapat dikonfigurasi melalui Konsol Admin. Sebagai gantinya, mereka dikonfigurasi sebagai opsi SPI saat memulai NQRust-Identity.
+
+- **min-cache-time**: Waktu minimum (dalam detik) bahwa Dokumen Metadata ID Klien yang diambil disimpan dalam cache. Default: `300` (5 menit).
+- **max-cache-time**: Waktu maksimum (dalam detik) bahwa Dokumen Metadata ID Klien yang diambil disimpan dalam cache. Default: `259200` (3 hari).
+- **upper-limit-metadata-bytes**: Ukuran maksimum (dalam byte) Dokumen Metadata ID Klien yang NQRust-Identity menerima. Default: `5000` (5 KB).
+
+Untuk mengonfigurasi pengaturan ini, gunakan opsi perintah baris `--spi-client-policy-executor—​client-id-metadata-document--<property>=<value>` saat memulai NQRust-Identity. Misalnya:
+
+```bash
+bin/kc.[sh|bat] start --spi-client-policy-executor--client-id-metadata-document--min-cache-time=600 --spi-client-policy-executor--client-id-metadata-document--max-cache-time=86400 --spi-client-policy-executor--client-id-metadata-document--upper-limit-metadata-bytes=10000
+```
+
+### Integrasi desktop Visual Studio Code
+
+[Microsoft Visual Studio Code](https://code.visualstudio.com/) (VS Code) desktop adalah klien MCP yang mendukung Dokumen Metadata ID OAuth. Ketika VS Code desktop terhubung ke server MCP yang memerlukan otorisasi, ia mengirim permintaan otorisasi dengan parameter `client_id` yang merupakan URL `https` yang dihosting di `vscode.dev` (mis., `https://vscode.dev/mcp-client`). NQRust-Identity mengambil Dokumen Metadata ID Klien dari URL ini dan menggunakan metadata untuk memproses permintaan.
+
+VS Code desktop menggunakan callback localhost untuk pengalihan OAuth. Ia memulai server HTTP lokal dan menggunakan URI pengalihan seperti `http://127.0.0.1:<port>/callback`. Karena URI pengalihan berada pada `127.0.0.1` bukan pada domain `vscode.dev`, opsi **Restrict same domain** pada executor profil klien harus diatur ke `OFF`.
+
+Untuk mengonfigurasi NQRust-Identity untuk klien MCP VS Code desktop, ikuti langkah berikut.
+
+<Callout type="info">
+  VS Code desktop adalah klien publik yang menggunakan PKCE (Proof Key for Code Exchange) untuk OAuth. Ia tidak menggunakan rahasia klien.
+</Callout>
+
+#### Memulai NQRust-Identity dengan fitur CIMD
+
+Mulai NQRust-Identity dengan flag fitur `cimd` yang diaktifkan:
+
+```bash
+bin/kc.[sh|bat] start --features=cimd
+```
+
+#### Mengatur profil klien untuk VS Code desktop
+
+1. Navigasikan ke **Realm Settings** → **Client Policies** → **Profiles** tab.
+2. Klik **Create client profile**.
+3. Beri profil nama seperti `vscode-cimd-profile` dan klik **Save**.
+4. Klik **Add executor** dan pilih `client-id-metadata-document` dari daftar.
+5. Konfigurasikan executor dengan opsi berikut:
+
+  - **Allow http scheme**: `OFF`
+  - **Trusted domains**: `vscode.dev`, `127.0.0.1`
+  - **Restrict same domain**: `OFF` (VS Code desktop menggunakan URI pengalihan localhost seperti `http://127.0.0.1:<port>/callback`, yang tidak berada pada domain yang sama seperti `vscode.dev`)
+  - **Only Allow Confidential Client**: `OFF` (VS Code desktop adalah klien publik)
+6. Klik **Save**.
+
+#### Mengatur kebijakan klien untuk VS Code desktop
+
+1. Navigasikan ke **Realm Settings** → **Client Policies** → **Policies** tab.
+2. Klik **Create client policy**.
+3. Beri kebijakan nama seperti `vscode-cimd-policy` dan klik **Save**.
+4. Di bawah **Conditions**, klik **Add condition** dan pilih `client-id-uri` dari daftar.
+5. Konfigurasikan condition dengan opsi berikut:
+
+  - **URI scheme**: `https`
+  - **Trusted domains**: `vscode.dev`
+6. Klik **Save**.
+7. Di bawah **Associated client profiles**, tambahkan profil `vscode-cimd-profile` yang dibuat sebelumnya.
+8. Klik **Save**.
+
+Dengan konfigurasi ini, saat VS Code desktop mengirim permintaan otorisasi, NQRust-Identity mengenali `client_id` sebagai URL di `vscode.dev`, mengambil Dokumen Metadata ID Klien, dan menggunakan callback localhost untuk menyelesaikan aliran OAuth.

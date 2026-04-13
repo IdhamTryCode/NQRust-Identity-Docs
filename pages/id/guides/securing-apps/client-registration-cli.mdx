@@ -1,48 +1,348 @@
 ---
-title: Otomatisasi Pendaftaran Klien dengan CLI
-description: Otomatisasi Pendaftaran Klien dengan CLI - Dokumentasi NQRust-Identity
+title: Otomatisasi Registrasi Klien dengan CLI
+description: Otomatisasi Registrasi Klien dengan CLI - Dokumentasi NQRust-Identity
 ---
 
-# Otomatisasi Pendaftaran Klien dengan CLI
+# Otomatisasi Registrasi Klien dengan CLI
 
-CLI Pendaftaran Klien adalah alat antarmuka baris perintah (CLI) untuk pengembang aplikasi untuk mengonfigurasi klien baru secara mandiri saat mengintegrasikan dengan NQRust-Identity. Alat ini dirancang khusus untuk berinteraksi dengan endpoint REST Pendaftaran Klien NQRust-Identity.
+import { Callout } from 'nextra/components'
 
-Tidak diperlukan untuk membuat atau memperoleh konfigurasi klien untuk setiap aplikasi agar dapat menggunakan NQRust-Identity. Biasanya Anda mengonfigurasi klien baru untuk setiap aplikasi baru yang dihosting di nama host yang unik. Ketika aplikasi berinteraksi dengan NQRust-Identity, aplikasi mengidentifikasi dirinya dengan ID klien sehingga NQRust-Identity dapat menyediakan halaman masuk, manajemen sesi single sign-on (SSO), dan layanan lainnya.
+CLI Registrasi Klien adalah alat antarmuka baris perintah (CLI) untuk pengembang aplikasi untuk mengonfigurasi klien baru secara mandiri saat mengintegrasikan dengan NQRust-Identity. Alat ini dirancang khusus untuk berinteraksi dengan endpoint Registrasi Klien REST NQRust-Identity.
 
-Anda dapat mengonfigurasi klien aplikasi dari baris perintah dengan CLI Pendaftaran Klien, dan dapat menggunakannya dalam skrip shell.
+Tidak diperlukan untuk membuat atau memperoleh konfigurasi klien untuk setiap aplikasi agar dapat menggunakan NQRust-Identity. Biasanya Anda mengonfigurasi klien baru untuk setiap aplikasi baru yang dihosting di nama host yang unik. Ketika aplikasi berinteraksi dengan NQRust-Identity, aplikasi mengidentifikasi diri dengan ID klien sehingga NQRust-Identity dapat menyediakan halaman masuk, manajemen sesi single sign-on (SSO), dan layanan lainnya.
 
-Untuk mengizinkan pengguna tertentu untuk menggunakan `CLI Pendaftaran Klien`, administrator NQRust-Identity biasanya menggunakan Konsol Admin untuk mengonfigurasi pengguna baru dengan peran yang sesuai atau untuk mengonfigurasi klien baru dan rahasia klien untuk memberikan akses ke API Pendaftaran REST.
+Anda dapat mengonfigurasi klien aplikasi dari baris perintah dengan CLI Registrasi Klien, dan dapat menggunakannya dalam skrip shell.
 
-## [](#_mengonfigurasi_pengguna_baru_untuk_cli_pendaftaran_klien)Mengonfigurasi pengguna reguler baru untuk digunakan dengan CLI Pendaftaran Klien
+Untuk mengizinkan pengguna tertentu untuk menggunakan `CLI Registrasi Klien`, administrator NQRust-Identity biasanya menggunakan Konsol Admin untuk mengonfigurasi pengguna baru dengan peran yang sesuai atau untuk mengonfigurasi klien baru dan rahasia klien untuk memberikan akses ke API Registrasi Klien REST.
 
-Prosedur
+## Mengonfigurasi pengguna reguler baru untuk digunakan dengan CLI Registrasi Klien
 
-1.  Masuk ke Konsol Admin (misalnya, [http://localhost:8080](http://localhost:8080)) sebagai `admin`.
-    
-2.  Pilih realm untuk diadministrasikan.
-    
-3.  Jika Anda ingin menggunakan pengguna yang ada, pilih pengguna itu untuk diedit; jika tidak, buat pengguna baru.
-    
-4.  Pilih **Role Mapping**, **Assign role**. Dari daftar opsi, klik **Filter by clients**. Di kolom pencarian, ketik `manage-clients`. Pilih peran, atau jika Anda berada di realm master, pilih yang memiliki **NAME-realm**, di mana `NAME` adalah nama realm yang ditarget. Anda dapat memberikan akses ke realm lainnya untuk pengguna di realm master.
-    
-5.  Klik **Assign** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
-    
-6.  Pilih **Available Roles**, **manage-client** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
-    
-    Perizinan ini memberi kemampuan kepada pengguna untuk melakukan operasi tanpa menggunakan Token Akses Awal atau Token Akses Registrasi (lihat [Menggunakan layanan pendaftaran klien](https://www.nqrust-identity.org/securing-apps/client-registration#_authentication) untuk informasi lebih lanjut).
+1. Masuk ke Konsol Admin (misalnya, [http://localhost:8080](http://localhost:8080)) sebagai `admin`.
+2. Pilih realm yang ingin dikelola.
+3. Jika Anda ingin menggunakan pengguna yang ada, pilih pengguna itu untuk diedit; jika tidak, buat pengguna baru.
+4. Pilih **Role Mapping**, **Assign role**. Dari daftar opsi, klik **Filter by clients**. Ketik `manage-clients` di kolom pencarian. Pilih peran, atau jika Anda berada di realm master, pilih yang memiliki **NAME-realm**, di mana `NAME` adalah nama realm yang ditarget. Anda dapat memberi akses ke realm lain kepada pengguna di realm master.
+5. Klik **Assign** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
+6. Pilih **Available Roles**, **manage-client** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
 
-Mungkin untuk tidak menetapkan peran `realm-management` apapun kepada pengguna. Dalam hal ini, pengguna masih dapat masuk dengan CLI Pendaftaran Klien tetapi tidak dapat menggunakannya tanpa Token Akses Awal. Mencoba untuk melakukan operasi tanpa token akan menghasilkan kesalahan **403 Forbidden**.
+  __ Izin ini memberikan kemampuan kepada pengguna untuk melakukan operasi tanpa menggunakan Token Akses Awal atau Token Akses Registrasi (lihat [Menggunakan layanan registrasi klien](/en/guides/securing-apps/client-registration#_authentication) untuk informasi lebih lanjut).
+
+Mungkin untuk tidak menetapkan peran `realm-management` kepada pengguna. Dalam hal ini, pengguna tetap dapat masuk dengan CLI Registrasi Klien tetapi tidak dapat menggunakannya tanpa Token Akses Awal. Mencoba melakukan operasi tanpa token akan menghasilkan kesalahan **403 Forbidden**.
 
 Administrator dapat mengeluarkan Token Akses Awal dari Konsol Admin di area Klien di tab **Initial Access Token**.
 
-## [](#_mengonfigurasi_klien_untuk_penggunaan_cli_pendaftaran_klien)Mengonfigurasi klien untuk digunakan dengan CLI Pendaftaran Klien
+## Mengonfigurasi klien untuk digunakan dengan CLI Registrasi Klien
 
-Secara default, server mengenali CLI Pendaftaran Klien sebagai klien `admin-cli`, yang dikonfigurasi secara otomatis untuk setiap realm baru. Tidak diperlukan konfigurasi klien tambahan saat masuk dengan nama pengguna.
+Secara default, server mengenali CLI Registrasi Klien sebagai klien `admin-cli`, yang dikonfigurasi secara otomatis untuk setiap realm baru. Tidak diperlukan konfigurasi klien tambahan saat masuk dengan nama pengguna.
 
-Prosedur
+1. Buat klien (misalnya, `reg-cli`) jika Anda ingin menggunakan konfigurasi klien terpisah untuk CLI Registrasi Klien.
+2. Hapus centang **Standard Flow Enabled**.
+3. Tingkatkan keamanan dengan mengaktifkan **Client authentication** ke **On**.
+4. Pilih jenis akun yang ingin Anda gunakan.
 
-1.  Buat klien (misalnya, `reg-cli`) jika Anda ingin menggunakan konfigurasi klien terpisah untuk CLI Pendaftaran Klien.
-    
-2.  Hilangkan centang **Standard Flow Enabled**.
-    
-3.  Pertahankan keamanan
+  1. Jika Anda ingin menggunakan akun layanan yang terkait dengan klien, centang **Service accounts roles**.
+  2. Jika Anda lebih suka menggunakan akun pengguna reguler, centang **Direct access grants**.
+5. Klik **Next**.
+6. Klik **Save**.
+7. Klik tab **Credentials**.
+
+  Konfigurasikan baik `Client Id and Secret` atau `Signed JWT`.
+8. Jika Anda menggunakan peran akun layanan, klik tab **Service Account Roles**.
+
+  Pilih peran untuk mengonfigurasi akses untuk akun layanan. Untuk detail tentang peran apa yang harus dipilih, lihat [Mengonfigurasi pengguna reguler baru untuk digunakan dengan CLI Registrasi Klien](#_configuring_a_user_for_client_registration_cli).
+9. Klik **Save**.
+
+Ketika Anda menjalankan `kcreg config credentials`, gunakan opsi `--secret` untuk menyediakan rahasia yang dikonfigurasi.
+
+- Tentukan `clientId` mana yang akan digunakan (misalnya, `--client reg-cli`) saat menjalankan `kcreg config credentials`.
+- Dengan akun layanan diaktifkan, Anda dapat mengabaikan penyediaan pengguna saat menjalankan `kcreg config credentials` dan hanya menyediakan informasi rahasia klien atau keystore.
+
+## Menginstal CLI Registrasi Klien
+
+CLI Registrasi Klien dikemas dalam distribusi Server NQRust-Identity. Anda dapat menemukan skrip eksekusi di direktori `bin`. Skrip Linux disebut `kcreg.sh`, dan skrip Windows disebut `kcreg.bat`.
+
+Tambahkan direktori server NQRust-Identity ke `PATH` Anda saat menyiapkan klien untuk digunakan dari setiap lokasi di sistem file.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ export PATH=$PATH:$NQRUST-IDENTITY_HOME/bin
+$ kcreg.sh
+```
+
+- Windows:
+
+```
+c:\> set PATH=%PATH%;%NQRUST-IDENTITY_HOME%\bin
+c:\> kcreg
+```
+
+`NQRUST-IDENTITY_HOME` merujuk ke direktori tempat distribusi Server NQRust-Identity diekstrak.
+
+## Menggunakan CLI Registrasi Klien
+
+1. Mulai sesi yang diotentikasi dengan masuk menggunakan kredensial Anda.
+2. Jalankan perintah pada endpoint `Registrasi Klien REST`.
+
+  Misalnya, pada:
+
+  - Linux:
+
+    ```
+    $ kcreg.sh config credentials --server http://localhost:8080 --realm demo --user user --client reg-cli
+    $ kcreg.sh create -s clientId=my_client -s 'redirectUris=["http://localhost:8980/myapp/*"]'
+    $ kcreg.sh get my_client
+    ```
+  - Windows:
+
+    ```
+    c:\> kcreg config credentials --server http://localhost:8080 --realm demo --user user --client reg-cli
+    c:\> kcreg create -s clientId=my_client -s "redirectUris=[\"http://localhost:8980/myapp/*\"]"
+    c:\> kcreg get my_client
+    ```
+
+    __ Di lingkungan produksi, NQRust-Identity harus diakses dengan `https:` untuk menghindari penampakan token ke penelusur jaringan.
+3. Jika sertifikat server tidak dikeluarkan oleh salah satu otoritas sertifikat terpercaya (CAs) yang termasuk dalam truststore sertifikat default Java, siapkan file `truststore.jks` dan arahkan CLI Registrasi Klien untuk menggunakannya.
+
+  Misalnya, pada:
+
+  - Linux:
+
+    ```
+    $ kcreg.sh config truststore --trustpass $PASSWORD ~/.nqrust-identity/truststore.jks
+    ```
+  - Windows:
+
+    ```
+    c:\> kcreg config truststore --trustpass %PASSWORD% %HOMEPATH%\.nqrust-identity\truststore.jks
+    ```
+
+### Masuk
+
+1. Tentukan URL endpoint server dan realm saat masuk dengan CLI Registrasi Klien.
+2. Tentukan nama pengguna atau id klien, yang menghasilkan penggunaan akun layanan khusus. Ketika menggunakan nama pengguna, Anda harus menggunakan kata sandi untuk pengguna yang ditentukan. Ketika menggunakan ID klien, Anda menggunakan rahasia klien atau `Signed JWT` sebagai gantikan kata sandi.
+
+Terlepas dari metode masuk, akun yang masuk memerlukan izin yang tepat untuk dapat melakukan operasi registrasi klien. Perlu diingat bahwa akun apapun di realm non-master hanya dapat memiliki izin untuk mengelola klien dalam realm yang sama. Jika Anda perlu mengelola realm yang berbeda, Anda dapat mengonfigurasi beberapa pengguna dalam realm yang berbeda, atau dapat membuat satu pengguna di realm `master` dan menambahkan peran untuk mengelola klien dalam realm yang berbeda.
+
+Anda tidak dapat mengonfigurasi pengguna dengan CLI Registrasi Klien. Gunakan antarmuka web Konsol Admin atau CLI Klien Admin untuk mengonfigurasi pengguna. Lihat Panduan Administrasi Server untuk detail lebih lanjut.
+
+Ketika `kcreg` berhasil masuk, itu menerima token otorisasi dan menyimpannya dalam file konfigurasi pribadi sehingga token dapat digunakan untuk invokasi berikutnya. Lihat [Bekerja dengan konfigurasi alternatif](#_working_with_alternative_configurations) untuk informasi lebih lanjut tentang file konfigurasi.
+
+Lihat bantuan built-in untuk informasi lebih lanjut tentang penggunaan CLI Registrasi Klien.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ kcreg.sh help
+```
+
+- Windows:
+
+```
+c:\> kcreg help
+```
+
+Lihat `kcreg config credentials --help` untuk informasi lebih lanjut tentang memulai sesi yang diotentikasi.
+
+### Bekerja dengan konfigurasi alternatif
+
+Secara default, CLI Registrasi Klien secara otomatis menjaga file konfigurasi di lokasi default, `./.nqrust-identity/kcreg.config`, di bawah direktori rumah pengguna. Anda dapat menggunakan opsi `--config` untuk menunjuk ke file atau lokasi yang berbeda untuk menjaga beberapa sesi yang diotentikasi secara paralel. Ini adalah cara paling aman untuk melakukan operasi yang terkait dengan satu file konfigurasi dari satu thread.
+
+<Callout type="warning">
+  Jangan buat file konfigurasi terlihat oleh pengguna lain di sistem. File konfigurasi berisi token akses dan rahasia yang harus dijaga privat.
+</Callout>
+
+Anda mungkin ingin menghindari menyimpan rahasia di dalam file konfigurasi dengan menggunakan opsi `--no-config` dengan semua perintah Anda, meskipun ini kurang nyaman dan memerlukan lebih banyak permintaan token untuk melakukannya. Tentukan semua informasi otentikasi dengan setiap invokasi `kcreg`.
+
+### Token Akses Awal dan Token Akses Registrasi
+
+Pengembang yang tidak memiliki akun yang dikonfigurasi di server NQRust-Identity yang mereka inginkan dapat menggunakan CLI Registrasi Klien. Hal ini mungkin hanya jika administrator realm mengeluarkan Token Akses Awal kepada pengembang. Kapan dan bagaimana mengeluarkan dan mendistribusikan token ini ditentukan oleh administrator realm. Administrator realm dapat membatasi umur maksimal Token Akses Awal dan jumlah total klien yang dapat dibuat dengan itu.
+
+Setelah pengembang memiliki Token Akses Awal, mereka dapat menggunakannya untuk membuat klien baru tanpa mengotentikasi dengan `kcreg config credentials`. Token Akses Awal dapat disimpan dalam file konfigurasi atau ditentukan sebagai bagian dari perintah `kcreg create`.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ kcreg.sh config initial-token $TOKEN
+$ kcreg.sh create -s clientId=myclient
+```
+
+atau
+
+```
+$ kcreg.sh create -s clientId=myclient -t $TOKEN
+```
+
+- Windows:
+
+```
+c:\> kcreg config initial-token %TOKEN%
+c:\> kcreg create -s clientId=myclient
+```
+
+atau
+
+```
+c:\> kcreg create -s clientId=myclient -t %TOKEN%
+```
+
+Ketika menggunakan Token Akses Awal, respons server mencakup Token Akses Registrasi yang baru dikeluarkan. Setiap operasi berikutnya untuk klien tersebut harus dilakukan dengan mengotentikasi dengan token itu, yang hanya valid untuk klien tersebut.
+
+CLI Registrasi Klien secara otomatis menggunakan file konfigurasi pribadi untuk menyimpan dan menggunakan token ini bersama klien yang terkait. Asalkan file konfigurasi yang sama digunakan untuk semua operasi klien, pengembang tidak perlu mengotentikasi untuk membaca, memperbarui, atau menghapus klien yang dibuat dengan cara ini.
+
+Lihat [Menggunakan layanan registrasi klien](/en/guides/securing-apps/client-registration#_authentication) untuk informasi lebih lanjut tentang Token Akses Awal dan Token Akses Registrasi.
+
+Jalankan perintah `kcreg config initial-token --help` dan `kcreg config registration-token --help` untuk informasi lebih lanjut tentang cara mengonfigurasi token dengan CLI Registrasi Klien.
+
+### Membuat Konfigurasi Klien
+
+Tugas pertama setelah mengotentikasi dengan kredensial atau mengonfigurasi Token Akses Awal biasanya untuk membuat klien baru. Seringkali Anda mungkin ingin menggunakan file JSON yang disiapkan sebagai templat dan menetapkan atau menimpa beberapa atribut.
+
+Contoh berikut menunjukkan cara membaca file JSON, menimpa id klien apa pun yang mungkin dimiliki, menetapkan atribut lainnya, dan mencetak konfigurasi ke output standar setelah pembuatan berhasil.
+
+- Linux:
+
+```
+$ kcreg.sh create -f client-template.json -s clientId=myclient -s baseUrl=/myclient -s 'redirectUris=["/myclient/*"]' -o
+```
+
+- Windows:
+
+```
+C:\> kcreg create -f client-template.json -s clientId=myclient -s baseUrl=/myclient -s "redirectUris=[\"/myclient/*\"]" -o
+```
+
+Jalankan `kcreg create --help` untuk informasi lebih lanjut tentang perintah `kcreg create`.
+
+Anda dapat menggunakan `kcreg attrs` untuk mendaftar atribut yang tersedia. Perlu diingat bahwa banyak atribut konfigurasi tidak diperiksa untuk keabsahan atau konsistensi. Tugas Anda untuk menentukan nilai yang tepat. Ingatlah bahwa Anda tidak boleh memiliki bidang id apa pun dalam templat Anda dan tidak boleh menentukan mereka sebagai argumen untuk perintah `kcreg create`.
+
+### Mengambil Konfigurasi Klien
+
+Anda dapat mengambil klien yang ada dengan menggunakan perintah `kcreg get`.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ kcreg.sh get myclient
+```
+
+- Windows:
+
+```
+C:\> kcreg get myclient
+```
+
+Anda juga dapat mengambil konfigurasi klien sebagai file konfigurasi adapter, yang dapat Anda paketkan dengan aplikasi web Anda.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ kcreg.sh get myclient -e install > nqrust-identity.json
+```
+
+- Windows:
+
+```
+C:\> kcreg get myclient -e install > nqrust-identity.json
+```
+
+Jalankan perintah `kcreg get --help` untuk informasi lebih lanjut tentang perintah `kcreg get`.
+
+### Mengubah Konfigurasi Klien
+
+Ada dua metode untuk memperbarui konfigurasi klien.
+
+Salah satu metode adalah untuk mengirimkan state baru lengkap ke server setelah mendapatkan konfigurasi saat ini, menyimpannya ke file, mengeditnya, dan mengirimkannya kembali ke server.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ kcreg.sh get myclient > myclient.json
+$ vi myclient.json
+$ kcreg.sh update myclient -f myclient.json
+```
+
+- Windows:
+
+```
+C:\> kcreg get myclient > myclient.json
+C:\> notepad myclient.json
+C:\> kcreg update myclient -f myclient.json
+```
+
+Metode kedua mengambil klien saat ini, menetapkan atau menghapus bidang pada itu, dan mengirimkannya kembali dalam satu langkah.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ kcreg.sh update myclient -s enabled=false -d redirectUris
+```
+
+- Windows:
+
+```
+C:\> kcreg update myclient -s enabled=false -d redirectUris
+```
+
+Anda juga dapat menggunakan file yang berisi hanya perubahan yang akan diterapkan sehingga Anda tidak harus menentukan terlalu banyak nilai sebagai argumen. Dalam hal ini, tentukan `--merge` untuk memberi tahu CLI Registrasi Klien bahwa bukannya menangani file JSON sebagai konfigurasi baru lengkap, sebaliknya harus menanganinya sebagai set atribut yang akan diterapkan di atas konfigurasi yang ada.
+
+Contohnya, pada:
+
+- Linux:
+
+```
+$ kcreg.sh update myclient --merge -d redirectUris -f mychanges.json
+```
+
+- Windows:
+
+```
+C:\> kcreg update myclient --merge -d redirectUris -f mychanges.json
+```
+
+Jalankan perintah `kcreg update --help` untuk informasi lebih lanjut tentang perintah `kcreg update`.
+
+### Menghapus Konfigurasi Klien
+
+Gunakan contoh berikut untuk menghapus klien.
+
+- Linux:
+
+```
+$ kcreg.sh delete myclient
+```
+
+- Windows:
+
+```
+C:\> kcreg delete myclient
+```
+
+Jalankan perintah `kcreg delete --help` untuk informasi lebih lanjut tentang perintah `kcreg delete`.
+
+### Mengrefresh Token Akses Registrasi Tidak Valid
+
+Ketika melakukan operasi create, read, update, dan delete (CRUD) menggunakan mode `--no-config`, CLI Registrasi Klien tidak dapat menangani Token Akses Registrasi untuk Anda. Dalam hal ini, mungkin untuk kehilangan track Token Akses Registrasi yang dikeluarkan terbaru untuk klien, yang membuatnya mustahil untuk melakukan operasi CRUD lebih lanjut pada klien tersebut tanpa mengotentikasi dengan akun yang memiliki izin **manage-clients**.
+
+Jika Anda memiliki izin, Anda dapat mengeluarkan Token Akses Registrasi baru untuk klien dan memilikinya dicetak ke output standar atau disimpan ke file konfigurasi pilihan Anda. Jika tidak, Anda harus meminta administrator realm untuk mengeluarkan Token Akses Registrasi baru untuk klien Anda dan mengirimkannya kepada Anda. Anda kemudian dapat melewatkan token tersebut ke setiap perintah CRUD melalui opsi `--token`. Anda juga dapat menggunakan perintah `kcreg config registration-token` untuk menyimpan token baru dalam file konfigurasi dan memiliki CLI Registrasi Klien menangani otomatis dari titik ini ke depan.
+
+Jalankan perintah `kcreg update-token --help` untuk informasi lebih lanjut tentang perintah `kcreg update-token`.
+
+## Penyelesaian Masalah
+
+- Q: Ketika masuk, saya mendapatkan kesalahan: **Parameter client_assertion_type is missing [invalid_client]**.
+
+  A: Kesalahan ini berarti klien Anda dikonfigurasi dengan kredensial token `Signed JWT`, yang berarti Anda harus menggunakan parameter `--keystore` saat masuk.

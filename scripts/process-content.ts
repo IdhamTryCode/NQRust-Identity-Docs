@@ -6,12 +6,14 @@ const INPUT_DIR = './scraped-raw'
 const OUTPUT_DIR = './scraped-processed'
 
 const REPLACEMENTS: [RegExp, string][] = [
+  // Internal doc links → relative path. Run BEFORE the brand rename so we
+  // can match `keycloak.org`. Replace with a placeholder that generate-mdx
+  // (or a later step) will rewrite per-locale to /<locale>/guides/<path>.
+  [/https?:\/\/(?:www\.)?keycloak\.org\/([a-z][a-z0-9\-/]*)/g, '/__GUIDES__/$1'],
   // Keycloak branding → NQRust-Identity
   [/Keycloak/g, 'NQRust-Identity'],
   [/keycloak/g, 'nqrust-identity'],
   [/KEYCLOAK/g, 'NQRUST-IDENTITY'],
-  // Domain
-  [/keycloak\.org/g, 'docs-identity.nexusquantum.id'],
   // Org references
   [/Red Hat, Inc\./g, 'NQ Research'],
   [/Red Hat/g, 'NQ Research'],

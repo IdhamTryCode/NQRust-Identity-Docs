@@ -1,135 +1,494 @@
 ---
-title: Mengonfigurasi Cache Terdistribusi
-description: Mengonfigurasi Cache Terdistribusi - Dokumentasi NQRust-Identity
+title: Configuring distributed caches
+description: Configuring distributed caches - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi Cache Terdistribusi
+# Configuring distributed caches
 
-NQRust-Identity dirancang untuk ketersediaan tinggi dan pengaturan klaster multi-node. Implementasi cache terdistribusi saat ini dibangun di atas [Infinispan](https://infinispan.org), sebuah grid data in-memory dengan performa tinggi dan dapat didistribusikan.
+import { Callout } from 'nextra/components'
 
-## [](#_enable_distributed_caching) Mengaktifkan caching terdistribusi
+NQRust-Identity dirancang untuk ketersediaan tinggi dan pengaturan klaster multi-node.
+Implementasi cache terdistribusi saat ini dibangun di atas [Infinispan](https://infinispan.org), grid data in-memory yang dapat didistribusikan dengan performa tinggi.
 
-Ketika anda menjalankan NQRust-Identity dalam mode produksi, dengan menggunakan perintah `start`, caching diaktifkan dan semua node NQRust-Identity dalam jaringan anda terdeteksi.
+## Mengaktifkan caching terdistribusi
 
-Secara default, cache menggunakan stack `jdbc-ping` yang berbasis pada transportasi TCP dan menggunakan database yang dikonfigurasi untuk melacak node yang bergabung dalam klaster. NQRust-Identity memungkinkan anda untuk memilih dari beberapa stack transportasi default yang telah didefinisikan, atau untuk mendefinisikan stack kustom Anda sendiri, seperti yang akan anda lihat nanti dalam panduan ini.
+Ketika Anda memulai NQRust-Identity dalam mode produksi dengan menggunakan perintah `start`, caching diaktifkan dan semua node NQRust-Identity di jaringan Anda ditemukan.
 
-Untuk secara eksplisit mengaktifkan caching Infinispan terdistribusi, masukkan perintah ini:
+Secara default, cache menggunakan stack `jdbc-ping` yang berbasis pada transportasi TCP dan menggunakan database yang dikonfigurasi untuk melacak node yang bergabung dengan klaster.
+NQRust-Identity memungkinkan Anda untuk memilih dari beberapa stack transportasi default yang telah didefinisikan sebelumnya, atau untuk mendefinisikan stack kustom Anda sendiri, seperti yang akan Anda lihat nanti dalam panduan ini.
+
+Untuk secara eksplisit mengaktifkan caching terdistribusi infinispan, masukkan perintah ini:
 
 ```bash
 bin/kc.[sh|bat] start --cache=ispn
 ```
 
-Ketika anda menjalankan NQRust-Identity dalam mode pengembangan, dengan menggunakan perintah `start-dev`, NQRust-Identity hanya menggunakan cache lokal dan caching terdistribusi sepenuhnya dinonaktifkan dengan menetapkan opsi `--cache=local` secara implisit. Mode cache `local` ditujukan hanya untuk tujuan pengembangan dan pengujian.
+Ketika Anda memulai NQRust-Identity dalam mode pengembangan dengan menggunakan perintah `start-dev`, NQRust-Identity hanya menggunakan cache lokal dan caching terdistribusi sepenuhnya dinonaktifkan secara implisit dengan menetapkan opsi `--cache=local`.
+Mode cache `local` hanya dimaksudkan untuk tujuan pengembangan dan pengujian.
 
-## [](#_configuring_caches)Mengonfigurasi cache
+## Mengonfigurasi Cache
 
-NQRust-Identity menyediakan sebuah file konfigurasi [Infinispan](https://infinispan.org/docs/stable/titles/configuring/configuring.html) reguler terletak di `conf/cache-ispn.xml`. File ini berisi konfigurasi default yang digunakan untuk kontainer cache dan transportasi JGroups.
+NQRust-Identity menyediakan [file konfigurasi Infinispan reguler](https://infinispan.org/docs/stable/titles/configuring/configuring.html) yang terletak di `conf/cache-ispn.xml`.
+File ini berisi konfigurasi default yang digunakan untuk cache-container dan transportasi JGroups.
 
-Tabel berikut memberikan gambaran umum tentang cache yang digunakan secara spesifik oleh NQRust-Identity:
+Tabel berikut memberikan gambaran tentang cache yang digunakan secara spesifik oleh NQRust-Identity:
 
-  
+| Nama Cache | Tipe Cache | Deskripsi |
+| --- | --- | --- |
+| realms | Lokal | Cache data realm yang dipersisten |
+| users | Lokal | Cache data pengguna yang dipersisten |
+| authorization | Lokal | Cache data otorisasi yang dipersisten |
+| keys | Lokal | Cache kunci publik eksternal |
+| crl | Lokal | Cache untuk CRL autentikat X.509 |
+| work | Replika | Mengabarkan pesan invalidation di seluruh node |
+| authenticationSessions | Terdistribusi | Cache sesi otentikasi, dibuat/dihapus/kadaluarsa selama proses otentikasi |
+| sessions | Terdistribusi | Cache data sesi pengguna yang dipersisten |
+| clientSessions | Terdistribusi | Cache data sesi klien yang dipersisten |
+| offlineSessions | Terdistribusi | Cache data sesi pengguna offline yang dipersisten |
+| offlineClientSessions | Terdistribusi | Cache data sesi klien offline yang dipersisten |
+| loginFailures | Terdistribusi | Melacak gagal login, deteksi penipuan |
+| actionTokens | Terdistribusi | Cache Token Tindakan |
 
-Nama Cache
+### Jenis Cache dan Default
 
-Jenis Cache
+NQRust-Identity menyimpan data persisten secara lokal untuk menghindari perjalanan ke database yang tidak perlu.
 
-Deskripsi
+Berikut data yang disimpan secara lokal di setiap node di dalam cluster menggunakan cache lokal:
 
-realms
+- **realms** dan data terkait seperti klien, peran, dan grup.
+- **users** dan data terkait seperti peran yang diberikan dan keanggotaan grup.
+- **authorization** dan data terkait seperti sumber daya, izin, dan kebijakan.
+- **keys**
 
-Lokal
+Cache lokal untuk realms, pengguna, dan otorisasi dikonfigurasikan untuk menampung hingga 10.000 entri secara default.
+Cache kunci lokal dapat menampung hingga 1.000 entri secara default dan berakhir setiap satu jam.
+Oleh karena itu, kunci dipaksa untuk diunduh secara periodik dari klien atau penyedia identitas eksternal.
 
-Cache data realm yang dipersisten
+Untuk mencapai waktu runtime optimal dan menghindari perjalanan tambahan ke database, Anda harus mempertimbangkan melihat
+konfigurasi untuk setiap cache untuk memastikan jumlah maksimal entri sesuai dengan ukuran database Anda. Semakin banyak entri
+yang bisa Anda cache, server akan kurang sering mengambil data dari database. Anda harus menilai kompromi antara penggunaan memori dan kinerja.
 
-users
+Pencaching lokal meningkatkan kinerja, tetapi menambahkan tantangan dalam setup multi-node.
 
-Lokal
+Ketika satu node NQRust-Identity memperbarui data di database bersama, semua node lainnya harus menyadari hal itu, sehingga mereka invalidasi data tersebut dari cache mereka.
 
-Cache data pengguna yang dipersisten
+Cache `work` adalah cache yang direplikasi dan digunakan untuk mengirim pesan invalidation ini. Entri/pesan dalam cache ini sangat singkat hidup,
+dan Anda tidak harus mengharapkan cache ini tumbuh dalam ukuran seiring waktu.
 
-authorization
+Sesi otentikasi dibuat setiap kali pengguna mencoba mengotentikasi. Mereka secara otomatis dihancurkan setelah proses otentikasi selesai atau karena mencapai waktu kedaluwarsa mereka.
 
-Lokal
+Cache terdistribusi `authenticationSessions` digunakan untuk menyimpan sesi otentikasi dan data lain yang terkait dengan proses otentikasi.
 
-Cache data otorisasi yang dipersisten
+Dengan bergantung pada cache yang dapat didistribusikan, sesi otentikasi tersedia untuk setiap node di dalam cluster sehingga pengguna dapat dialihkan ke node apa pun tanpa kehilangan status otentikasi mereka. Namun, penyebaran yang siap produksi harus selalu mempertimbangkan afinitas sesi dan lebih suka mengalihkan pengguna ke node di mana sesi mereka dibuat pada awalnya. Dengan melakukan itu, Anda akan menghindari transfer status yang tidak perlu di antara node dan meningkatkan penggunaan CPU, memori, dan jaringan.
 
-keys
+Setelah pengguna otentikasi, sesi pengguna dibuat. Sesi pengguna melacak pengguna aktif dan status mereka sehingga mereka dapat dengan mulus mengotentikasi ke aplikasi mana pun tanpa diminta kredensial mereka lagi. Untuk setiap aplikasi, pengguna mengotentikasi dengan klien sesi, sehingga server dapat melacak aplikasi yang pengguna otentikasi dan status mereka berdasarkan aplikasi.
 
-Lokal
+Sesi pengguna dan klien secara otomatis dihancurkan setiap kali pengguna melakukan logout, klien melakukan revokasi token, atau karena mencapai waktu kedaluwarsa mereka.
 
-Cache kunci publik eksternal
+Data sesi disimpan dalam database secara default dan dimuat pada permintaan ke cache berikut:
 
-crl
+- `sessions`
+- `clientSessions`
 
-Lokal
+Dengan bergantung pada cache yang dapat didistribusikan, sesi pengguna dan klien yang di-cache tersedia untuk setiap node di dalam cluster sehingga pengguna dapat dialihkan ke node apa pun tanpa perlu memuat data sesi dari database. Namun, penyebaran yang siap produksi harus selalu mempertimbangkan afinitas sesi dan lebih suka mengalihkan pengguna ke node di mana sesi mereka dibuat pada awalnya. Dengan melakukan itu, Anda akan menghindari transfer status yang tidak perlu di antara node dan meningkatkan penggunaan CPU, memori, dan jaringan.
 
-Cache untuk CRL autentikat X.509
+Cache in-memory ini untuk sesi pengguna dan klien terbatas pada, secara default, 10000 entri per node yang mengurangi penggunaan memori NQRust-Identity secara keseluruhan untuk instalasi yang lebih besar.
+Cache internal akan berjalan dengan hanya satu pemilik untuk setiap entri cache.
 
-work
+Sebagai OpenID Connect Provider, server mampu mengotentikasi pengguna dan mengeluarkan token offline. Ketika mengeluarkan token offline setelah otentikasi berhasil, server membuat sesi pengguna offline dan sesi klien offline.
 
-Replicated
+Berikut cache yang digunakan untuk menyimpan sesi offline:
 
-Mengabarkan pesan invalidation di seluruh node
+- offlineSessions
+- offlineClientSessions
 
-authenticationSessions
+Seperti cache sesi pengguna dan klien, cache sesi pengguna dan klien offline terbatas pada 10000 entri per node secara default. Item yang diusir dari memori akan dimuat pada permintaan dari database bila diperlukan.
 
-Distribusi
+Cache terdistribusi `loginFailures` digunakan untuk melacak data tentang upaya login yang gagal.
+Cache ini diperlukan agar fitur Perlindungan Brute Force berfungsi dalam setup multi-node NQRust-Identity.
 
-Cache sesi otentikasi, dibuat/dihapus/kadaluarsa selama proses otentikasi
+Token aksi digunakan untuk skenario ketika pengguna perlu mengonfirmasi aksi secara asinkron, misalnya dalam email yang dikirim oleh alur lupa password.
+Cache terdistribusi `actionTokens` digunakan untuk melacak metadata tentang token aksi.
 
-sessions
+<Callout type="default">
+  Anda dapat melihat konfigurasi Infinispan yang diterapkan di log dengan mengonfigurasi --log-level=info,org.nqrust-identity.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug.
+</Callout>
 
-Distribusi
+### Sesi Pengguna Volatile
 
-Cache data sesi pengguna yang dipersisten
+Secara default, sesi pengguna reguler disimpan dalam database dan dimuat pada permintaan ke cache.
+Inilah mungkin untuk mengonfigurasi NQRust-Identity untuk menyimpan sesi pengguna reguler hanya di cache dan meminimalkan panggilan ke database.
 
-clientSessions
+Karena semua sesi dalam setup ini disimpan dalam in-memory, ada dua efek samping yang terkait dengan hal ini:
 
-Distribusi
+- Kehilangan sesi ketika semua node NQRust-Identity restart.
+- Penggunaan memori yang meningkat.
 
-Cache data sesi klien yang dipersisten
+Ketika menggunakan sesi pengguna volatile, cache adalah sumber kebenaran untuk sesi pengguna dan klien.
+NQRust-Identity secara otomatis menyesuaikan jumlah entri yang dapat disimpan dalam memori dan meningkatkan jumlah salinan untuk mencegah kehilangan data.
 
-offlineSessions
+Ikuti langkah-langkah berikut untuk mengaktifkan setup ini:
 
-Distribusi
+1. Nonaktifkan fitur `persistent-user-sessions` menggunakan perintah berikut:
 
-Cache data sesi pengguna offline yang dipersisten
+  ```
+  bin/kc.sh start --features-disabled=persistent-user-sessions ...
+  ```
 
-offlineClientSessions
+<Callout type="info">
+  Nonaktifkan `persistent-user-sessions` tidak mungkin ketika fitur `multi-site` diaktifkan.
+</Callout>
 
-Distribusi
+### Mengonfigurasi Ukuran Maksimum Cache
 
-Cache data sesi klien offline yang dipersisten
+Untuk mengurangi penggunaan memori, mungkin untuk menetapkan batas atas pada jumlah entri yang disimpan dalam cache tertentu.
+Untuk menentukan batas atas pada cache, Anda harus menyediakan argumen baris perintah berikut
+`--cache-embedded-${CACHE_NAME}-max-count=`, dengan `${CACHE_NAME}` diganti dengan nama cache yang ingin Anda terapkan batas atas. Misalnya, untuk menerapkan batas atas `1000` ke cache `offlineSessions` Anda akan mengonfigurasi
+`--cache-embedded-offline-sessions-max-count=1000`. Batas atas tidak dapat didefinisikan pada cache berikut:
+`actionToken`, `authenticationSessions`, `loginFailures`, `work`.
 
-loginFailures
+Mengatur ukuran cache maksimum untuk `sessions`, `clientSessions` tidak didukung ketika sesi volatile diaktifkan.
 
-Distribusi
+### Menentukan File Konfigurasi Cache Anda Sendiri
 
-melacak kegagalan login, deteksi penipuan
+Untuk menentukan file konfigurasi cache Anda sendiri, masukkan perintah ini:
 
-actionTokens
+```bash
+bin/kc.[sh|bat] start --cache-config-file=my-cache-file.xml
+```
 
-Distribusi
+File konfigurasi bisa menjadi jalur absolut atau jalur relatif ke direktori `conf/`.
 
-Cache Token Tindakan
+### Mengubah Default Konfigurasi Cache
 
-### [](#_cache_types_and_defaults)Jenis Cache dan Default
+NQRust-Identity secara otomatis menciptakan semua cache yang diperlukan dengan konfigurasi yang diharapkan. Anda dapat menambahkan cache tambahan atau menimpa konfigurasi cache default di `conf/cache-ispn.xml` atau dalam file Anda sendiri yang disediakan melalui `--cache-config-file`.
 
-Cache Lokal
+Untuk melihat konfigurasi Infinispan yang diterapkan di log, konfigurasikan `--log-level=info,org.nqrust-identity.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug`.
 
-NQRust-Identity menyimpan data persisten secara lokal untuk menghindari perjalanan balik ke database yang tidak perlu.
+<Callout type="warning">
+  Sementara menimpa konfigurasi cache default melalui XML secara teknis mungkin, hal ini tidak didukung.
+  Hanya direkomendasikan untuk kasus penggunaan lanjutan di mana konfigurasi cache default terbukti menjadi masalah.
+  Cara yang didukung untuk mengubah konfigurasi cache default adalah melalui opsi `cache-...`.
+</Callout>
 
-Berikut data yang disimpan secara lokal di setiap node dalam klaster menggunakan cache lokal:
+Untuk mencegah peringatan yang dilog ketika konfigurasi cache default yang diubah terdeteksi, tambahkan opsi berikut:
 
-*   **realms** dan data terkait seperti klien, peran, dan grup.
-    
-*   **pengguna** dan data terkait seperti peran yang diberikan dan keanggotaan grup.
-    
-*   **otorisasi** dan data terkait seperti sumber daya, izin, dan kebijakan.
-    
-*   **kunci**
-    
+```bash
+bin/kc.[sh|bat] start --cache-config-mutate=true
+```
 
-Cache lokal untuk realm, pengguna, dan otorisasi dikonfigurasi untuk menyimpan hingga 10.000 entri per default. Cache lokal kunci dapat menyimpan hingga 1.000 entri per default dan berakhir setiap satu jam. Oleh karena itu, kunci dipaksa untuk secara periodik diunduh dari klien eksternal atau penyedia identitas.
+### Opsi CLI untuk Server Jarak Jauh
 
-Untuk mencapai waktu runtime optimal dan menghindari perjalanan bal
+Untuk konfigurasi server NQRust-Identity untuk ketersediaan tinggi dan setup cluster multi-node telah diperkenalkan CLI berikut `cache-remote-host`, `cache-remote-port`, `cache-remote-username` dan `cache-remote-password` yang menyederhanakan konfigurasi dalam file XML.
+Setelah ada parameter CLI yang dideklarasikan, diharapkan tidak ada konfigurasi terkait penyimpanan jarak jauh yang ada dalam file XML.
+
+#### Menghubungkan ke Server Infinispan Tidak Aman
+
+<Callout type="warning">
+  Menonaktifkan keamanan tidak disarankan dalam produksi!
+</Callout>
+
+Dalam lingkungan pengembangan atau pengujian, lebih mudah untuk memulai server Infinispan yang tidak terlindungi.
+Untuk kasus penggunaan ini, opsi CLI `cache-remote-tls-enabled` menonaktifkan enkripsi (TLS) antara NQRust-Identity dan Infinispan.
+NQRust-Identity akan gagal memulai jika server Infinispan dikonfigurasi untuk menerima koneksi terenkripsi saja.
+
+Opsi CLI `cache-remote-username` dan `cache-remote-password` opsional dan, jika tidak diatur, NQRust-Identity akan terhubung ke server Infinispan tanpa menampilkan kredensial apa pun.
+Jika server Infinispan telah mengaktifkan otentikasi, NQRust-Identity akan gagal memulai.
+
+## Topologi yang Mengenal Data Distribution
+
+Mengonfigurasi NQRust-Identity untuk mengenal topologi jaringan Anda, meningkatkan ketersediaan data dalam kehadiran kegagalan perangkat keras, karena Infinispan dapat memastikan data terdistribusikan dengan benar.
+Sebagai contoh, jika `num_owners=2` dikonfigurasi untuk cache, itu akan memastikan bahwa dua pemilik tidak disimpan pada node yang sama bila memungkinkan.
+
+<Callout type="info">
+  Secara default, sesi pengguna dan klien disimpan dengan aman dalam database, dan mereka tidak terpengaruh oleh pengaturan ini.
+  Cache terdistribusi yang tersisa terpengaruh oleh konfigurasi ini.
+</Callout>
+
+Berikut adalah informasi topologi yang tersedia untuk dikonfigurasi:
+
+Jika klaster NQRust-Identity Anda di_deploy_ di antara datacenter yang berbeda, gunakan opsi ini untuk memastikan replika data disimpan di datacenter yang berbeda.
+Ini mencegah kehilangan data jika datacenter mati atau gagal.
+
+Gunakan opsi SPI `spi-cache-embedded--default--site-name` (atau variabel lingkungan `KC_SPI_CACHE_EMBEDDED__DEFAULT__SITE_NAME`).
+Nilai itu sendiri tidak penting, tetapi setiap datacenter harus memiliki nilai yang unik.
+
+Sebagai contoh: `--spi-cache-embedded--default--site-name=site-1`
+
+Jika klaster NQRust-Identity Anda berjalan di rak yang berbeda di datacenter Anda, atur opsi ini untuk memastikan replika data disimpan di rak fisik yang berbeda.
+Ini mencegah kehilangan data jika rak terputus atau gagal tiba-tiba.
+
+Gunakan opsi SPI `spi-cache-embedded--default--rack-name` (atau variabel lingkungan `KC_SPI_CACHE_EMBEDDED__DEFAULT__RACK_NAME`).
+Nilai itu sendiri tidak penting, tetapi setiap rak harus memiliki nilai yang unik.
+
+Sebagai contoh: `--spi-cache-embedded--default--rack-name=rack-1`
+
+Jika Anda memiliki beberapa instance NQRust-Identity berjalan pada mesin fisik yang sama (menggunakan virtual machine atau kontainer sebagai contoh), gunakan opsi ini untuk memastikan replika data disimpan pada mesin fisik yang berbeda.
+Ini mencegah kehilangan data terhadap kegagalan mesin fisik.
+
+Gunakan opsi SPI `spi-cache-embedded--default--machine-name` (atau variabel lingkungan `KC_SPI_CACHE_EMBEDDED__DEFAULT__MACHINE_NAME`).
+Nilai itu sendiri tidak penting, tetapi setiap mesin harus memiliki nilai yang unik.
+
+Sebagai contoh: `--spi-cache-embedded--default--machine-name=machine-1`
+
+<Callout type="info">
+  Operator NQRust-Identity secara otomatis mengonfigurasi nama mesin berdasarkan node Kubernetes.
+  Hal ini memastikan bahwa jika beberapa pod dijadwalkan pada node yang sama, replika data masih direplikasi di node yang berbeda bila memungkinkan.
+  Kami menyarankan untuk mengatur aturan anti-afinitas dan/atau batasan penyebaran topologi untuk mencegah beberapa Pod dari dijadwalkan pada node yang sama, lebih lanjut mengurangi risiko kegagalan node tunggal yang menyebabkan kehilangan data.
+</Callout>
+
+## Stack Transport
+
+Stack transport memastikan node NQRust-Identity dalam klaster berkomunikasi dengan cara yang dapat diandalkan.
+NQRust-Identity mendukung berbagai macam stack transport:
+
+- `jdbc-ping`
+- `kubernetes`   (usang)
+- `jdbc-ping-udp`   (usang)
+- `tcp`   (usang)
+- `udp`   (usang)
+- `ec2`   (usang)
+- `azure`   (usang)
+- `google`   (usang)
+
+Untuk menerapkan stack cache tertentu, masukkan perintah ini:
+
+```bash
+bin/kc.[sh|bat] start --cache-stack=<stack>
+```
+
+Stack default diatur ke `jdbc-ping` bila cache terdistribusi diaktifkan, yang kompatibel mundur dengan default dalam aliran rilis 26.x NQRust-Identity.
+
+### Stack Transport yang Tersedia
+
+Tabel berikut menunjukkan stack transport yang tersedia tanpa konfigurasi lebih lanjut selain menggunakan opsi `--cache-stack` runtime:
+
+| Nama Stack | Protokol Transport | Penemuan |
+| --- | --- | --- |
+| `jdbc-ping` | TCP | Registrasi database menggunakan protokol JGroups `JDBC_PING2`. |
+| `jdbc-ping-udp` (usang) | UDP | Registrasi database menggunakan protokol JGroups `JDBC_PING2`. |
+
+Tabel berikut menunjukkan stack transport yang tersedia menggunakan opsi `--cache-stack` runtime dan konfigurasi minimum:
+
+| Nama Stack | Protokol Transport | Penemuan |
+| --- | --- | --- |
+| `kubernetes` (usang) | TCP | Resolusi DNS menggunakan protokol JGroups `DNS_PING`. Memerlukan untuk mengatur `jgroups.dns.query` ke FQDN layanan headless. |
+| `tcp` (usang) | TCP | Multicast IP menggunakan protokol JGroups `MPING`. Lihat di bawah bagaimana untuk mengonfigurasi `jgroups.mcast_addr` atau `jgroups.mcast_port` yang unik untuk setiap klaster. |
+| `udp` (usang) | UDP | Multicast IP menggunakan protokol JGroups `PING`. Lihat di bawah bagaimana untuk mengonfigurasi `jgroups.mcast_addr` atau `jgroups.mcast_port` yang unik untuk setiap klaster. |
+
+Ketika menggunakan stack `tcp`, `udp` atau `jdbc-ping-udp`, setiap klaster harus menggunakan alamat multicast dan/atau port yang berbeda sehingga node mereka membentuk klaster yang terdistorsi.
+Secara default, NQRust-Identity menggunakan `239.6.7.8` sebagai alamat multicast untuk `jgroups.mcast_addr` dan `46655` untuk port multicast `jgroups.mcast_port`.
+
+<Callout type="info">
+  Gunakan -D&lt;property&gt;=&lt;value&gt; untuk melewati properti melalui variabel lingkungan JAVA_OPTS_APPEND atau dalam perintah CLI.
+</Callout>
+
+**Stack Tambahan**
+
+Direkomendasikan untuk menggunakan salah satu stack yang tersedia di atas.
+Stack tambahan disediakan oleh Infinispan, tetapi di luar cakupan panduan ini bagaimana untuk mengonfigurasinya.
+Silakan merujuk ke [Mengatur transport klaster Infinispan](https://infinispan.org/docs/stable/titles/embedding/embedding.html#cluster-transport) dan [Menyesuaikan stack JGroups](https://infinispan.org/docs/stable/titles/embedding/embedding.html#customizing-jgroups-stacks_cluster-transport) untuk dokumentasi lebih lanjut.
+
+## Menjaga Keselamatan Stack Pengangkutan
+
+Enkripsi menggunakan TLS diaktifkan secara default untuk stack pengangkutan berbasis TCP, yang juga merupakan konfigurasi default.
+Tidak diperlukan opsi CLI tambahan atau modifikasi XML cache selama Anda menggunakan stack pengangkutan berbasis TCP.
+
+<Callout type="info">
+  Jika Anda menggunakan stack pengangkutan berbasis `UDP` atau `TCP_NIO2`, ikuti langkah berikut untuk mengonfigurasi enkripsi stack pengangkutan:
+
+  1. Atur opsi `cache-embedded-mtls-enabled` ke `false`.
+  2. Ikuti dokumentasi di [JGroups Encryption documentation](http://jgroups.org/manual5/index.html#ENCRYPT) dan [Encrypting cluster transport](https://infinispan.org/docs/stable/titles/embedding/embedding.html#secure-cluster-transport).
+</Callout>
+
+Dengan TLS diaktifkan, NQRust-Identity secara otomatis menghasilkan sertifikat RSA 2048 bit yang ditandatangani sendiri untuk mengamankan koneksi dan menggunakan TLS 1.3 untuk mengamankan komunikasi.
+Kunci dan sertifikat tersebut disimpan dalam database sehingga tersedia untuk semua node.
+Secara default, sertifikat valid selama 60 hari dan diputar setiap 30 hari pada runtime.
+Gunakan opsi `cache-embedded-mtls-rotation-interval-days` untuk mengubahnya.
+
+### Berjalan di dalam service mesh
+
+Saat menggunakan service mesh seperti Istio, Anda mungkin perlu mengizinkan komunikasi mTLS langsung antara Pod NQRust-Identity untuk memungkinkan otentikasi saling mengikat bekerja.
+Jika tidak, Anda mungkin melihat pesan kesalahan seperti `JGRP000006: failed accepting connection from peer SSLSocket` yang menunjukkan bahwa sertifikat yang salah telah dipresentasikan, dan klaster tidak akan terbentuk dengan benar.
+
+Anda kemudian memiliki opsi untuk mengizinkan komunikasi mTLS langsung antara Pod NQRust-Identity, atau mengandalkan keamanan transportasi service mesh untuk mengenkripsi komunikasi dan mengautentikasi peer.
+
+Untuk mengizinkan komunikasi mTLS langsung untuk NQRust-Identity saat menggunakan Istio:
+
+- Terapkan konfigurasi berikut untuk mengizinkan komunikasi langsung.
+
+  ```yaml
+  apiVersion: security.istio.io/v1beta1
+  kind: PeerAuthentication
+  metadata:
+    name: infinispan-allow-nomtls
+  spec:
+    selector:
+      matchLabels:
+        app: nqrust-identity 
+    portLevelMtls:
+      "7800": 
+        mode: PERMISSIVE
+  ```
+
+Sebagai alternatif, untuk menonaktifkan komunikasi mTLS dan mengandalkan service mesh untuk mengenkripsi lalu lintas:
+
+- Atur opsi `cache-embedded-mtls-enabled` ke `false`.
+- Konfigurasikan service mesh Anda untuk mengotorisasi hanya lalu lintas dari Pod NQRust-Identity lainnya untuk port transmisi data (default: 7800).
+
+### Menggunakan Kunci dan Sertifikat Anda Sendiri
+
+Meskipun tidak disarankan untuk pengaturan standar, jika sangat penting dalam pengaturan tertentu, Anda dapat mengonfigurasi keystore dengan sertifikat untuk stack pengangkutan secara manual. `cache-embedded-mtls-key-store-file` menetapkan jalur ke keystore, dan `cache-embedded-mtls-key-store-password` menetapkan sandi untuk mendekripsinya.
+Truststore berisi sertifikat yang valid untuk menerima koneksi dari, dan dapat dikonfigurasi dengan `cache-embedded-mtls-trust-store-file` (jalur ke truststore), dan `cache-embedded-mtls-trust-store-password` (sandi untuk mendekripsinya).
+Untuk membatasi akses tidak sah, selalu gunakan sertifikat yang ditandatangani sendiri untuk setiap penyebaran NQRust-Identity.
+
+## Port Jaringan
+
+Untuk memastikan klaster NQRust-Identity sehat, beberapa port jaringan perlu dibuka.
+Tabel di bawah menunjukkan port TCP yang perlu dibuka untuk stack `jdbc-ping`, dan deskripsi lalu lintas yang melewatiinya.
+
+| Port | Opsi | Properti | Deskripsi |
+| --- | --- | --- | --- |
+| `7800` | `cache-embedded-network-bind-port` | `jgroups.bind.port` | Transmisi data unicast. |
+| `57800` |  | `jgroups.fd.port-offset` | Pengenalan kegagalan dengan protokol `FD_SOCK2`.<br/>Mendeteksi penutupan tiba-tiba socket untuk mengesyaki kegagalan server NQRust-Identity.<br/>Properti `jgroups.fd.port-offset` menetapkan offset dari opsi `cache-embedded-network-bind-port` atau properti `jgroups.bind.port`.<br/>Secara default, offset diatur ke 50000, membuat port pengenalan kegagalan 57800. |
+
+<Callout type="info">
+  Jika opsi tidak tersedia untuk port yang Anda butuhkan, konfigurasikan dengan properti sistem -D&lt;property&gt;=&lt;value&gt;
+  dalam variabel lingkungan JAVA_OPTS_APPEND atau perintah CLI Anda.
+</Callout>
+
+## Alamat Pengikat Jaringan
+
+Untuk memastikan klaster NQRust-Identity sehat, port jaringan harus diikat pada antarmuka yang dapat diakses dari semua node klaster lainnya.
+
+Secara default, ia memilih alamat IP lokal situs (tidak dapat diarahkan), misalnya, dari rentang alamat 192.168.0.0/16 atau 10.0.0.0/8.
+
+Untuk menimpa alamat, atur opsi `cache-embedded-network-bind-address=<IP>`.
+
+Nilai khusus berikut juga dikenali:
+
+| Nilai | Deskripsi |
+| --- | --- |
+| `GLOBAL` | Memilih alamat IP global jika tersedia.<br/>Jika tidak tersedia, kembali ke `SITE_LOCAL`. |
+| `SITE_LOCAL` | Memilih alamat IP lokal situs (tidak dapat diarahkan) (misalnya, dari rentang alamat 192.168.0.0 atau 10.0.0.0).<br/>Ini adalah nilai default. |
+| `LINK_LOCAL` | Memilih alamat IP lokal tautan dari 169.254.1.0 hingga 169.254.254.255. |
+| `NON_LOOPBACK` | Memilih alamat non-balik. |
+| `LOOPBACK` | Memilih alamat balik (misalnya, 127.0.0.1). |
+| `match-interface:<regex>` | Memilih alamat yang sesuai dengan pola terhadap nama antarmuka.<br/>Misalnya, `match-interface:tun0` atau `match-interface:eth.\*`. |
+| `match-address:<regex>` | Memilih alamat yang sesuai dengan pola terhadap alamat host.<br/>Misalnya, `match-address:192.168.\*`. |
+| `match-host:<regex>` | Memilih alamat yang sesuai dengan pola terhadap nama host.<br/>Misalnya, `match-host:linux.\*`. |
+
+Untuk mengatur hanya untuk IPv6 dan memiliki NQRust-Identity memilih alamat pengikat secara otomatis, gunakan pengaturan berikut:
+
+```bash
+export JAVA_OPTS_APPEND="-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true"
+```
+
+Untuk detail lebih lanjut tentang transport JGroups, periksa [halaman dokumentasi JGroups](http://jgroups.org/manual5/index.html#Transport) atau [halaman dokumentasi Infinispan](https://infinispan.org/docs/stable/titles/embedding/embedding.html#cluster-transport).
+
+## Menjalankan Instansi pada Jaringan Berbeda
+
+Jika Anda menjalankan instansi NQRust-Identity pada jaringan berbeda, misalnya di belakang firewall atau di kontainer, instansi yang berbeda tidak akan dapat saling mencapai alamat IP lokal mereka.
+Dalam hal ini, atur aturan penerus port (terkadang disebut "server virtual") ke alamat IP lokal mereka.
+
+Saat menggunakan penerus port, gunakan opsi berikut sehingga setiap node dengan benar mempromosikan alamat eksternalnya ke node lainnya:
+
+| Opsi | Deskripsi |
+| --- | --- |
+| `cache-embedded-network-external-port` | Port yang harus digunakan instansi lain di klaster NQRust-Identity untuk menghubungi node ini. |
+| `cache-embedded-network-external-address` | Alamat IP yang harus digunakan instansi lain di NQRust-Identity untuk menghubungi node ini. |
+
+## Verifikasi Kesehatan Klaster dan Jaringan
+
+Bagian ini menyediakan metode untuk memverifikasi bahwa klaster NQRust-Identity Anda terbentuk dengan benar dan komunikasi jaringan antara instansi berfungsi sesuai harapan.
+Ini sangat penting untuk dilakukan setelah penyebaran untuk memastikan ketersediaan tinggi dan konsistensi data.
+
+Untuk memverifikasi apakah klaster terbentuk dengan benar, periksa salah satu lokasi ini:
+
+- Admin UI
+
+  Mengakses UI Web NQRust-Identity, biasanya tersedia di `https://<your-host>/admin/master/console/#/master/providers`.
+Di bawah bagian **Provider Info**, temukan entri **connectionsInfinispan**.
+Klik **Show more** untuk memperluas detailnya.
+Anda seharusnya menemukan informasi tentang status klaster dan kesehatan cache individu.
+
+  ![Verifikasi kesehatan cluster dan jaringan melalui Admin UI](/images/server/caching-1.png)
+- Log
+
+  Infinispan mencatat tampilan klaster setiap kali instansi baru bergabung atau meninggalkan klaster.
+Cari entri log dengan ID `ISPN000094`.
+
+  Sebuah tampilan klaster sehat akan menampilkan semua node yang diharapkan.
+Misalnya:
+
+  ```text
+  ISPN000094: Received new cluster view for channel ISPN: [node1-26186|1] (2) [node1-26186, node2-37007]
+  ```
+
+  Entri log ini menunjukkan bahwa klaster bernama "ISPN" saat ini memiliki 2 node: `node1-26186` dan `node2-37007`.
+Simbol `(2)` mengkonfirmasi jumlah total node dalam klaster.
+- Metrik
+
+  NQRust-Identity mengekspos metrik Infinispan melalui titik akhir Prometheus, yang dapat dilihat dalam alat seperti Grafana.
+Metrik `vendor_cluster_size` menunjukkan jumlah instansi saat ini dalam klaster.
+Anda harus memverifikasi bahwa metrik ini sesuai dengan jumlah instansi yang dijalankan yang dikonfigurasi dalam klaster Anda.
+
+  Rujuk ke Clustering metrics untuk informasi lebih lanjut.
+
+## Mengekspos Metrik dari Cache
+
+Metrik dari cache secara otomatis diekspos ketika metrik diaktifkan.
+
+Untuk mengaktifkan histogram untuk metrik cache, atur `cache-metrics-histograms-enabled` ke `true`.
+Sementara metrik ini memberikan wawasan lebih dalam tentang distribusi latensi, mengumpulkan mereka mungkin memiliki dampak pada performa, jadi Anda harus hati-hati untuk mengaktifkannya dalam sistem yang sudah terbebani.
+
+```bash
+bin/kc.[sh|bat] start --metrics-enabled=true --cache-metrics-histograms-enabled=true
+```
+
+Untuk detail lebih lanjut tentang cara mengaktifkan metrik, lihat [Gaining insights with metrics](/en/guides/observability/configuration-metrics).
+
+## Opsi Yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`cache`**<br/>Menentukan mekanisme cache untuk ketersediaan tinggi.<br/>Secara default dalam mode produksi, cache `ispn` digunakan untuk membuat kluster antara beberapa node server. Secara default dalam mode pengembangan, cache `local` menonaktifkan kluster dan ditujukan untuk tujuan pengembangan dan pengujian.<br/>**CLI:** `--cache`<br/>**Env:** `KC_CACHE` | `ispn`, `local` |  |
+| **`cache-config-file`**<br/>Menentukan file dari mana konfigurasi cache harus diambil.<br/>File konfigurasi relatif terhadap direktori `conf/`.<br/>**CLI:** `--cache-config-file`<br/>**Env:** `KC_CACHE_CONFIG_FILE` | _File_ |  |
+| **`cache-config-mutate`**<br/>Menentukan apakah diizinkan perubahan pada konfigurasi cache default.<br/>Hanya disarankan untuk kasus penggunaan lanjutan di mana konfigurasi cache default terbukti memiliki masalah. Cara yang didukung untuk mengubah konfigurasi cache default hanya melalui opsi `cache-…​` lainnya.<br/>**CLI:** `--cache-config-mutate`<br/>**Env:** `KC_CACHE_CONFIG_MUTATE` | `true`, `false` | `false` |
+| **`cache-metrics-histograms-enabled`**<br/>Mengaktifkan histogram untuk metrik cache yang terintegrasi.<br/>**CLI:** `--cache-metrics-histograms-enabled`<br/>**Env:** `KC_CACHE_METRICS_HISTOGRAMS_ENABLED` | `true`, `false` | `false` |
+| **`cache-stack`**<br/>Menentukan tumpukan default untuk komunikasi kluster dan penemuan node.<br/>Secara default menggunakan `jdbc-ping` jika tidak diatur.<br/>**CLI:** `--cache-stack`<br/>**Env:** `KC_CACHE_STACK` | `jdbc-ping`, `kubernetes` (usang), `jdbc-ping-udp` (usang), `tcp` (usang), `udp` (usang), `ec2` (usang), `azure` (usang), `google` (usang), atau apapun |  |
+
+### Cache Terintegrasi
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`cache-embedded-authorization-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache otorisasi.<br/>**CLI:** `--cache-embedded-authorization-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_AUTHORIZATION_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-client-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache clientSessions.<br/>**CLI:** `--cache-embedded-client-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_CLIENT_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-crl-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache crl.<br/>**CLI:** `--cache-embedded-crl-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_CRL_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-keys-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache kunci.<br/>**CLI:** `--cache-embedded-keys-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_KEYS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-mtls-enabled`**<br/>Mengenkripsi komunikasi jaringan antara server NQRust-Identity.<br/>Jika tidak ada parameter tambahan tentang keystore dan truststore yang diberikan, pasangan kunci sementara dan sertifikat akan dibuat dan diputar secara otomatis, yang disarankan untuk konfigurasi standar.<br/>**CLI:** `--cache-embedded-mtls-enabled`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_ENABLED` | `true`, `false` | `true` |
+| **`cache-embedded-mtls-key-store-file`**<br/>Jalur file Keystore.<br/>Keystore harus berisi sertifikat yang akan digunakan oleh protokol TLS. Secara default, mencari `cache-mtls-keystore.p12` di bawah direktori conf/.<br/>**CLI:** `--cache-embedded-mtls-key-store-file`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_FILE` | _String_ |  |
+| **`cache-embedded-mtls-key-store-password`**<br/>Kata sandi untuk mengakses Keystore.<br/>**CLI:** `--cache-embedded-mtls-key-store-password`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_KEY_STORE_PASSWORD` | _String_ |  |
+| **`cache-embedded-mtls-rotation-interval-days`**<br/>Jangka waktu putaran sertifikat JGroups MTLS otomatis dalam hari.<br/>**CLI:** `--cache-embedded-mtls-rotation-interval-days`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_ROTATION_INTERVAL_DAYS` | _Integer_ | `30` |
+| **`cache-embedded-mtls-trust-store-file`**<br/>Jalur file Truststore.<br/>Harus berisi sertifikat terpercaya atau Otoritas Sertifikat yang menandatangani sertifikat. Secara default, mencari `cache-mtls-truststore.p12` di bawah direktori conf/.<br/>**CLI:** `--cache-embedded-mtls-trust-store-file`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_TRUST_STORE_FILE` | _String_ |  |
+| **`cache-embedded-mtls-trust-store-password`**<br/>Kata sandi untuk mengakses Truststore.<br/>**CLI:** `--cache-embedded-mtls-trust-store-password`<br/>**Env:** `KC_CACHE_EMBEDDED_MTLS_TRUST_STORE_PASSWORD` | _String_ |  |
+| **`cache-embedded-network-bind-address`**<br/>Alamat IP yang digunakan oleh transport kluster.<br/>Secara default, SITE_LOCAL digunakan.<br/>**CLI:** `--cache-embedded-network-bind-address`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_BIND_ADDRESS` | _String_ |  |
+| **`cache-embedded-network-bind-port`**<br/>Port yang akan digunakan oleh transport kluster.<br/>Secara default, port 7800 digunakan.<br/>**CLI:** `--cache-embedded-network-bind-port`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_BIND_PORT` | _Integer_ |  |
+| **`cache-embedded-network-external-address`**<br/>Alamat IP yang harus digunakan oleh instance lain dalam kluster untuk menghubungi node ini.<br/>Hanya diatur jika berbeda dengan cache-embedded-network-bind-address, misalnya saat instance ini di belakang firewall.<br/>**CLI:** `--cache-embedded-network-external-address`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_EXTERNAL_ADDRESS` | _String_ |  |
+| **`cache-embedded-network-external-port`**<br/>Port yang harus digunakan oleh instance lain dalam kluster untuk menghubungi node ini.<br/>Hanya diatur jika berbeda dengan cache-embedded-network-bind-port, misalnya saat instance ini di belakang firewall<br/>**CLI:** `--cache-embedded-network-external-port`<br/>**Env:** `KC_CACHE_EMBEDDED_NETWORK_EXTERNAL_PORT` | _Integer_ |  |
+| **`cache-embedded-offline-client-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache offlineClientSessions.<br/>**CLI:** `--cache-embedded-offline-client-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_OFFLINE_CLIENT_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-offline-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache offlineSessions.<br/>**CLI:** `--cache-embedded-offline-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_OFFLINE_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-realms-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache realms.<br/>**CLI:** `--cache-embedded-realms-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_REALMS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-sessions-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache sessions.<br/>**CLI:** `--cache-embedded-sessions-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`cache-embedded-users-max-count`**<br/>Jumlah maksimal entri yang dapat disimpan dalam memori oleh cache users.<br/>**CLI:** `--cache-embedded-users-max-count`<br/>**Env:** `KC_CACHE_EMBEDDED_USERS_MAX_COUNT` | _Integer_ |  |
+
+### Cache Remote
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`cache-remote-backup-sites`**<br/>Mengonfigurasi daftar nama situs cadangan tempat kluster Infinispan eksternal menyandikkan data NQRust-Identity.<br/>**CLI:** `--cache-remote-backup-sites`<br/>**Env:** `KC_CACHE_REMOTE_BACKUP_SITES` | _List_ |  |
+| **`cache-remote-host`**<br/>Nama host dari kluster Infinispan eksternal.<br/>Tersedia hanya saat fitur `multi-site` atau `clusterless` diatur.<br/>**CLI:** `--cache-remote-host`<br/>**Env:** `KC_CACHE_REMOTE_HOST` | _String_ |  |
+| **`cache-remote-password`**<br/>Kata sandi untuk otentikasi ke kluster Infinispan eksternal.<br/>Opsional jika terhubung ke kluster Infinispan eksternal yang tidak aman. Jika opsi ini ditentukan, `cache-remote-username` juga diperlukan.<br/>**CLI:** `--cache-remote-password`<br/>**Env:** `KC_CACHE_REMOTE_PASSWORD` | _String_ |  |
+| **`cache-remote-port`**<br/>Port dari kluster Infinispan eksternal.<br/>**CLI:** `--cache-remote-port`<br/>**Env:** `KC_CACHE_REMOTE_PORT` | _Integer_ | `11222` |
+| **`cache-remote-tls-enabled`**<br/>Aktifkan dukungan TLS untuk berkomunikasi dengan server Infinispan eksternal yang aman.<br/>Disarankan untuk diaktifkan dalam produksi.<br/>**CLI:** `--cache-remote-tls-enabled`<br/>**Env:** `KC_CACHE_REMOTE_TLS_ENABLED` | `true`, `false` | `true` |
+| **`cache-remote-username`**<br/>Nama pengguna untuk otentikasi ke kluster Infinispan eksternal.<br/>Opsional jika terhubung ke kluster Infinispan eksternal yang tidak aman. Jika opsi ini ditentukan, `cache-remote-password` juga diperlukan.<br/>**CLI:** `--cache-remote-username`<br/>**Env:** `KC_CACHE_REMOTE_USERNAME` | _String_ |  |

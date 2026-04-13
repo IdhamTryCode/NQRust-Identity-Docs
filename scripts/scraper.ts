@@ -80,11 +80,13 @@ async function scrapeGuides() {
       await page.waitForLoadState('networkidle')
 
       const content = await page.evaluate(() => {
-        // Antora (Keycloak docs) uses article.doc as the main content wrapper
+        // Try Antora structures first, then Keycloak's bootstrap layout (kc-article)
         const article = (
           document.querySelector('article.doc') ||
           document.querySelector('article') ||
-          document.querySelector('.doc')
+          document.querySelector('.doc') ||
+          document.querySelector('.kc-article .col-md-9') ||
+          document.querySelector('.kc-article')
         ) as HTMLElement | null
 
         let html = ''

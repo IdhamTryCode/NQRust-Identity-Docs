@@ -5,54 +5,52 @@ description: Mengatasi Masalah Menggunakan Metrik - Dokumentasi NQRust-Identity
 
 # Mengatasi Masalah Menggunakan Metrik
 
-Untuk penyebaran NQRust-Identity yang sedang berjalan, penting untuk memahami bagaimana sistem berperform dan apakah itu memenuhi tujuan level service (SLOs) Anda. Untuk detail lebih lanjut tentang SLOs, silakan kunjungi panduan [Pengawasan Kinerja dengan Indikator Level Service](https://www.nqrust-identity.org/observability/nqrust-identity-service-level-indicators).
+import { Callout } from 'nextra/components'
+
+Untuk penyebaran NQRust-Identity yang berjalan, penting untuk memahami bagaimana kinerja sistem dan apakah itu memenuhi tujuan level service (SLOs) Anda.
+Untuk detail lebih lanjut tentang SLOs, silakan kunjungi panduan Monitoring performance with Service Level Indicators.
 
 Panduan ini akan memberikan petunjuk untuk menjawab pertanyaan: “Apa yang bisa saya lakukan ketika SLOs saya tidak terpenuhi?”
 
 NQRust-Identity terdiri dari beberapa komponen di mana masalah atau konfigurasi salah satu dari mereka dapat membuat indikator level service Anda menjadi tidak diinginkan.
 
-Petunjuk yang diberikan oleh panduan ini diilustrasikan dalam contoh berikut:
+Panduan yang diberikan oleh panduan ini diilustrasikan dengan contoh berikut:
 
 **Pengamatan:** Tujuan level service latency tidak terpenuhi.
 
 **Metrik yang menunjukkan masalah**:
 
-1.  Koneksi database NQRust-Identity sering terhabiskan, dan ada thread yang antre untuk mengambil koneksi dari pool.
-    
-2.  Rasio hit cache `users` NQRust-Identity sangat rendah, sekitar 5%. Ini berarti hanya 1 dari 20 pencarian user yang dapat memperoleh data user dari cache dan sisanya perlu memuat dari database.
+1. Pool koneksi database NQRust-Identity sering terhabiskan, dan ada thread yang antre untuk mengambil koneksi dari pool tersebut.
+2. Rasio hit cache `users` NQRust-Identity sangat rendah, sekitar 5%. Ini berarti hanya 1 dari 20 pencarian user yang dapat memperoleh data user dari cache dan sisanya perlu memuat dari database.
 
 **Pengurangan yang mungkin disarankan**:
 
-*   Meningkatkan ukuran cache `users` ke jumlah yang lebih tinggi yang akan mengurangi jumlah pembacaan dari database.
-    
-*   Meningkatkan jumlah koneksi dalam pool koneksi. Hal ini perlu diperiksa dengan metrik database Anda dan menyesuaikan untuk beban lebih tinggi, misalnya, dengan meningkatkan jumlah processor yang tersedia.
+- Meningkatkan ukuran cache `users` ke jumlah yang lebih tinggi yang akan mengurangi jumlah pembacaan dari database.
+- Meningkatkan jumlah koneksi dalam pool koneksi. Hal ini perlu diperiksa dengan metrik database Anda dan menyesuaikan untuk beban lebih tinggi, misalnya dengan meningkatkan jumlah processor yang tersedia.
 
-*   Panduan ini berfokus pada metrik NQRust-Identity. Mengatasi masalah database itu sendiri di luar cakupan.
-    
-*   Panduan ini menyediakan petunjuk umum. Anda harus selalu mengkonfirmasi perubahan konfigurasi dengan melakukan pengujian performa membandingkan metrik yang diperhatikan untuk konfigurasi lama dan baru.
+<Callout type="info">
+  - Panduan ini berfokus pada metrik NQRust-Identity.
+  Mengatasi masalah database itu sendiri di luar cakupan.
+  - Panduan ini menyediakan panduan umum.
+  Anda harus selalu mengonfirmasi perubahan konfigurasi dengan melakukan pengujian performa membandingkan metrik yang dipersoalkan untuk konfigurasi lama dan baru.
+</Callout>
 
-Dashboard Grafana untuk metrik di bawah ini dapat ditemukan dalam panduan [Melihat Aktivitas di Dashboard](https://www.nqrust-identity.org/observability/grafana-dashboards).
+<Callout type="info">
+  Dashboard Grafana untuk metrik di bawah ini dapat ditemukan dalam panduan [Visualizing activities in dashboards](/en/guides/observability/grafana-dashboards).
+</Callout>
 
-## [](#_daftar_metrik_utama_nqrust-identity)Daftar Metrik Utama NQRust-Identity
+## Daftar Metrik Utama NQRust-Identity
 
-*   [Metrik yang Disediakan Sendiri](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-nqrust-identity)
-    
-*   [Metrik JVM](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-jvm)
-    
-*   [Metrik Database](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-database)
-    
-*   [Metrik HTTP](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-http)
-    
-*   [Metrik Caching Lokal](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-cache)
-    
-*   [Metrik penyebaran klaster tunggal](https://www.nqrust-identity.org/high-availability/single-cluster/introduction)
-    
-    *   [Metrik Klaster](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-clustering-and-network)
-        
-    *   [Metrik Infinispan yang Disembuhkan untuk penyebaran klaster tunggal](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-embedded-caches)
-        
-*   [Metrik penyebaran klaster ganda](https://www.nqrust-identity.org/high-availability/multi-cluster/introduction)
-    
-    *   [Metrik Infinispan yang Disembuhkan untuk penyebaran klaster ganda](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-embedded-caches-multi-cluster)
-        
-    *   [Metrik Infinispan Eksternal](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-external-infinispan-multi-cluster)
+- Metrik yang Disediakan Sendiri
+- Metrik JVM
+- Metrik Database
+- Metrik HTTP
+- Metrik Caching Lokal
+- Metrik Penyebaran Satu Klaster
+
+  - Metrik Clustering
+  - Metrik Infinispan Embedded untuk penyebaran satu klaster
+- Metrik Penyebaran Multi-Klaster
+
+  - Metrik Infinispan Embedded untuk penyebaran multi-klaster
+  - Metrik Infinispan Eksternal

@@ -5,35 +5,31 @@ description: Struktur Direktori - Dokumentasi NQRust-Identity
 
 # Struktur Direktori
 
-## [](#_lokasi_pemasangan)Lokasi Pemasangan
+import { Callout } from 'nextra/components'
 
-Jika Anda melakukan pemasangan dari file zip, maka secara default akan ada direktori root pemasangan `nqrust-identity-26.5.7`, yang dapat dibuat dimanapun Anda inginkan pada sistem file Anda.
+## Lokasi Instalasi
 
-`/opt/nqrust-identity` adalah lokasi root pemasangan server untuk semua penggunaan kontainer yang ditunjukkan untuk NQRust-Identity, termasuk [Menjalankan NQRust-Identity dalam kontainer](https://www.nqrust-identity.org/server/containers), [Docker](https://www.nqrust-identity.org/getting-started/getting-started-docker), [Podman](https://www.nqrust-identity.org/getting-started/getting-started-podman), [Kubernetes](https://www.nqrust-identity.org/getting-started/getting-started-kube), dan [OpenShift](https://www.nqrust-identity.org/getting-started/getting-started-openshift).
+Jika Anda menginstal dari file zip, maka secara default akan ada direktori root instalasi `nqrust-identity-26.6.0`, yang dapat dibuat dimanapun Anda suka dalam sistem file Anda.
 
-Dalam dokumentasi lainnya, jalur relatif dipahami sebagai relatif terhadap root pemasangan - sebagai contoh, `conf/file.xml` berarti ``&lt;root pemasangan&gt;`/conf/file.xml`
+`/opt/nqrust-identity` adalah lokasi root instalasi untuk server dalam semua penggunaan kontainer yang ditunjukkan untuk NQRust-Identity, termasuk Menjalankan NQRust-Identity dalam kontainer, Docker, Podman, Kubernetes, dan OpenShift.
 
-## [](#_struktur_direktori)Struktur Direktori
+<Callout type="info">
+  Dalam dokumentasi selanjutnya, jalur relatif dipahami sebagai relatif terhadap root instalasi - misalnya, conf/file.xml berarti &lt;install root&gt;/conf/file.xml
+</Callout>
 
-Di bawah root pemasangan NQRust-Identity terdapat beberapa folder:
+## Struktur Direktori
 
-*   **bin/** - berisi semua skrip shell untuk server, termasuk `kc.sh|bat`, `kcadm.sh|bat`, dan `kcreg.sh|bat`
-    
-    *   **client/** - digunakan secara internal
-        
-    
-*   **conf/** - direktori yang digunakan untuk file konfigurasi, termasuk `nqrust-identity.conf` - lihat [Mengonfigurasi NQRust-Identity](https://www.nqrust-identity.org/server/configuration). Banyak opsi untuk menentukan file konfigurasi mengharapkan jalur relatif terhadap direktori ini.
-    
-    *   **truststores/** - jalur default yang digunakan oleh opsi `truststore-paths` - lihat [Mengonfigurasi sertifikat terpercaya](https://www.nqrust-identity.org/server/nqrust-identity-truststore)
-        
-    
-*   **data/** - direktori untuk server menyimpan informasi runtime, seperti log transaksi
-    
-    *   **logs/** - direktori default untuk logging file - lihat [Mengonfigurasi logging](https://www.nqrust-identity.org/server/logging)
-        
-    
-*   **lib/** - digunakan secara internal
-    
-*   **providers/** - direktori untuk dependensi yang disediakan pengguna - lihat [Mengonfigurasi providers](https://www.nqrust-identity.org/server/configuration-provider) untuk memperluas server dan [Mengonfigurasi database](https://www.nqrust-identity.org/server/db) sebagai contoh menambahkan driver JDBC.
-    
-*   **themes/** - direktori untuk penyesuaian pada Konsol Admin - lihat [Mengembangkan Themes](https://www.nqrust-identity.org/docs/latest/server_development/#_themes)
+Di bawah root instalasi NQRust-Identity terdapat beberapa folder:
+
+- **bin/** - berisi semua script shell untuk server, termasuk `kc.sh|bat`, `kcadm.sh|bat`, dan `kcreg.sh|bat`
+
+  - **client/** - digunakan secara internal
+- **conf/** - direktori yang digunakan untuk file konfigurasi, termasuk `nqrust-identity.conf` - lihat [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration). Banyak opsi untuk menentukan file konfigurasi mengharapkan jalur relatif terhadap direktori ini.
+
+  - **truststores/** - jalur default yang digunakan oleh opsi `truststore-paths` - lihat Mengonfigurasi sertifikat terpercaya
+- **data/** - direktori untuk server menyimpan informasi runtime, seperti log transaksi
+
+  - **logs/** - direktori default untuk logging file - lihat [Mengonfigurasi logging](/en/guides/server/logging)
+- **lib/** - digunakan secara internal
+- **providers/** - direktori untuk dependensi yang disediakan pengguna - lihat [Mengonfigurasi providers](/en/guides/server/configuration-provider) untuk memperluas server dan [Mengonfigurasi database](/en/guides/server/db) sebagai contoh menambahkan driver JDBC.
+- **themes/** - direktori untuk penyesuaian pada Konsol Admin - lihat Mengembangkan Themes

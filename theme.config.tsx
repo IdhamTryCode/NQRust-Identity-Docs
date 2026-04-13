@@ -5,10 +5,6 @@ import { Breadcrumb } from './components/Breadcrumb'
 
 const config: DocsThemeConfig = {
   logo: <Logo />,
-  project: {
-    link: 'https://github.com/nexusquantum/nqrust-identity',
-  },
-  docsRepositoryBase: 'https://github.com/nexusquantum/nqrust-identity-docs/blob/main',
   footer: {
     text: `© ${new Date().getFullYear()} NQRust-Identity. All rights reserved.`,
   },
@@ -24,6 +20,9 @@ const config: DocsThemeConfig = {
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta property="og:title" content="NQRust-Identity Documentation" />
       <meta property="og:description" content="Official documentation for NQRust-Identity" />
+      <link rel="icon" type="image/png" href="/logo.png" />
+      <link rel="shortcut icon" type="image/png" href="/logo.png" />
+      <link rel="apple-touch-icon" href="/logo.png" />
     </>
   ),
   sidebar: {
@@ -43,11 +42,10 @@ const config: DocsThemeConfig = {
     </>
   ),
   editLink: {
-    text: 'Edit this page on GitHub →'
+    component: null,
   },
   feedback: {
-    content: 'Question? Give us feedback →',
-    labels: 'feedback',
+    content: null,
   },
   i18n: [
     { locale: 'id', text: 'Bahasa Indonesia' },

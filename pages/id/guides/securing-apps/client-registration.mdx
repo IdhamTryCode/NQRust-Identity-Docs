@@ -5,56 +5,205 @@ description: Menggunakan layanan pendaftaran klien - Dokumentasi NQRust-Identity
 
 # Menggunakan layanan pendaftaran klien
 
-Agar aplikasi atau layanan dapat menggunakan NQRust-Identity, mereka harus mendaftarkan klien di NQRust-Identity. Admin dapat melakukannya melalui konsol admin (atau endpoint REST admin), tetapi klien juga dapat mendaftar sendiri melalui layanan pendaftaran klien NQRust-Identity.
+import { Callout } from 'nextra/components'
 
-Layanan Pendaftaran Klien menawarkan dukungan bawaan untuk Representasi Klien NQRust-Identity, Metadata Klien OpenID Connect, dan Deskripsi Entitas SAML. Endpoint Layanan Pendaftaran Klien adalah `/realms/`&lt;realm&gt;`/clients-registrations/`&lt;provider&gt;``.
+Agar aplikasi atau layanan dapat menggunakan NQRust-Identity, mereka harus mendaftarkan klien di NQRust-Identity.
+Admin dapat melakukannya melalui konsol admin (atau endpoint REST admin), tetapi klien juga dapat mendaftar sendiri melalui layanan pendaftaran klien NQRust-Identity.
+
+Layanan Pendaftaran Klien menyediakan dukungan bawaan untuk Representasi Klien NQRust-Identity, Metadata Klien OpenID Connect, dan Deskripsi Entitas SAML.
+Endpoint Layanan Pendaftaran Klien adalah `/realms/<realm>/clients-registrations/<provider>`.
 
 `Providers` yang didukung secara bawaan adalah:
 
-*   default - Representasi Klien NQRust-Identity (JSON)
-    
-*   install - Konfigurasi Adapter NQRust-Identity (JSON)
-    
-*   openid-connect - Deskripsi Metadata Klien OpenID Connect (JSON)
-    
-*   saml2-entity-descriptor - Deskripsi Entitas SAML (XML)
-    
+- default - Representasi Klien NQRust-Identity (JSON)
+- install - Konfigurasi Adapter NQRust-Identity (JSON)
+- openid-connect - Deskripsi Metadata Klien OpenID Connect (JSON)
+- saml2-entity-descriptor - Deskripsi Entitas SAML (XML)
 
 Bagian berikut akan menjelaskan cara menggunakan provider yang berbeda.
 
-## [](#_autentikasi)Autentikasi
+## Otentikasi
 
-Untuk memanggil Layanan Pendaftaran Klien, Anda biasanya memerlukan token. Token bisa berupa token bearer, token akses awal, atau token akses pendaftaran. Ada alternatif untuk mendaftar klien baru tanpa token sama sekali, tetapi Anda perlu mengonfigurasi Kebijakan Pendaftaran Klien (lihat di bawah).
+Untuk menginvokasi Layanan Pendaftaran Klien, Anda biasanya memerlukan token. Token bisa berupa token bearer, token akses awal, atau token akses pendaftaran.
+Ada alternatif untuk mendaftarkan klien baru tanpa token sama sekali, tetapi Anda perlu mengonfigurasi Kebijakan Pendaftaran Klien (lihat di bawah).
 
-### [](#_token_pemantau)Token Pemantau
+### Token Bearer
 
-Token pemantau dapat diterbitkan atas nama pengguna atau Akun Layanan. Berikut izin yang diperlukan untuk memanggil endpoint (lihat [Panduan Administrasi Server](https://www.nqrust-identity.org/docs/latest/server_admin/) untuk detail lebih lanjut):
+Token bearer dapat dikeluarkan atas nama pengguna atau Akun Layanan. Berikut izin yang diperlukan untuk menginvokasi endpoint (lihat Panduan Administrasi Server untuk detail lebih lanjut):
 
-*   create-client atau manage-client - Untuk membuat klien
-    
-*   view-client atau manage-client - Untuk melihat klien
-    
-*   manage-client - Untuk memperbarui atau menghapus klien
-    
+- create-client atau manage-client - Untuk membuat klien
+- view-client atau manage-client - Untuk melihat klien
+- manage-client - Untuk memperbarui atau menghapus klien
 
-Jika Anda menggunakan token pemantau untuk membuat klien, disarankan untuk menggunakan token dari Akun Layanan dengan peran `create-client` saja (lihat [Panduan Administrasi Server](https://www.nqrust-identity.org/docs/latest/server_admin/) untuk detail lebih lanjut).
+Jika Anda menggunakan token bearer untuk membuat klien, disarankan untuk menggunakan token dari Akun Layanan dengan peran `create-client` saja (lihat Panduan Administrasi Server untuk detail lebih lanjut).
 
-### [](#_token_akses_awal)Token Akses Awal
+### Token Akses Awal
 
-Pendekatan yang disarankan untuk mendaftar klien baru adalah dengan menggunakan token akses awal. Token akses awal hanya dapat digunakan untuk membuat klien dan memiliki masa berlakunya yang dapat dikonfigurasi serta batas konfigurasi tentang berapa banyak klien yang dapat dibuat.
+Pendekatan yang disarankan untuk mendaftarkan klien baru adalah dengan menggunakan token akses awal.
+Token akses awal hanya dapat digunakan untuk membuat klien dan memiliki masa berlakunya yang dapat dikonfigurasi serta batas konfigurasi tentang berapa banyak klien yang dapat dibuat.
 
-Token akses awal dapat dibuat melalui konsol admin. Untuk membuat token akses awal baru, pertama pilih realm di konsol admin, kemudian klik `Client` di menu di kiri, diikuti `Initial access token` di tab yang ditampilkan di halaman.
+Token akses awal dapat dibuat melalui konsol admin.
+Untuk membuat token akses awal baru, pertama pilih realm di konsol admin, kemudian klik `Client` dalam menu di kiri, diikuti oleh
+`Initial access token` dalam tab yang ditampilkan di halaman.
 
-Sekarang Anda dapat melihat token akses awal yang ada. Jika Anda memiliki akses, Anda dapat menghapus token yang tidak lagi diperlukan. Anda hanya dapat mengambil nilai token saat Anda membuatnya. Untuk membuat token baru, klik `Create`. Anda dapat secara opsional menambahkan berapa lama token harus berlakunya, juga berapa banyak klien yang dapat dibuat menggunakan token. Setelah Anda klik `Save`, nilai token akan ditampilkan.
+Sekarang Anda dapat melihat token akses awal yang ada. Jika Anda memiliki akses, Anda dapat menghapus token yang tidak diperlukan lagi. Anda hanya dapat mengambil nilai token saat Anda membuatnya. Untuk membuat token baru, klik `Create`. Anda dapat secara opsional menambahkan berapa lama token harus berlakunya, juga berapa banyak klien yang dapat dibuat menggunakan token. Setelah Anda klik `Save`, nilai token akan ditampilkan.
 
-Penting bahwa Anda menyalin/menempelkan token ini sekarang karena Anda tidak akan dapat mengambilnya nanti. Jika Anda lupa menyalin/menempelkan, hapus token tersebut dan buat yang baru.
+Penting bahwa Anda salin/tempel token ini sekarang karena Anda tidak akan dapat mengambilnya nanti. Jika Anda lupa untuk menyalin/tempelnya, hapus token tersebut dan buat yang baru.
 
-Nilai token digunakan sebagai token pemantau standar saat memanggil Layanan Pendaftaran Klien, dengan menambahkannya ke header Otorisasi dalam permintaan. Sebagai contoh:
+Nilai token digunakan sebagai token bearer standar saat menginvokasi Layanan Pendaftaran Klien, dengan menambahkannya ke header Otorisasi dalam permintaan.
+Sebagai contoh:
 
 ```
 Authorization: bearer eyJhbGciOiJSUz...
 ```
 
-### [](#_token_akses_pendaftaran)Token Akses Pendaftaran
+### Token Akses Pendaftaran
 
-Ketika Anda membuat klien melalui Layanan Pendaftaran Klien, respons akan mencakup token akses pendaftaran. Token akses pendaftaran menyediakan akses untuk mengambil konfigurasi klien nanti, tetapi juga untuk memperbarui atau menghapus kli
+Ketika Anda membuat klien melalui Layanan Pendaftaran Klien, respons akan mencakup token akses pendaftaran.
+Token akses pendaftaran menyediakan akses untuk mengambil konfigurasi klien nanti, tetapi juga untuk memperbarui atau menghapus klien.
+Token akses pendaftaran disertakan dalam permintaan dengan cara yang sama seperti token bearer atau token akses awal.
+
+Secara default, rotasi token akses pendaftaran diaktifkan. Ini berarti token akses pendaftaran hanya valid sekali. Ketika token digunakan, respons akan mencakup token baru. Catatan bahwa rotasi token akses pendaftaran dapat dinonaktifkan dengan menggunakan Kebijakan Klien.
+
+Jika klien dibuat di luar Layanan Pendaftaran Klien, itu tidak akan memiliki token akses pendaftaran yang terkait dengannya.
+Anda dapat membuatnya melalui konsol admin. Hal ini juga dapat berguna jika Anda kehilangan token untuk klien tertentu.
+Untuk membuat token baru, temukan klien di konsol admin dan klik `Credentials`. Kemudian klik `Generate registration access token`.
+
+### Berbagi Sumber Daya Antara Asal (CORS)
+
+Bila klien didaftarkan melalui agen pengguna, diperlukan untuk mengonfigurasi asal web yang diizinkan untuk pendaftaran klien.
+
+Untuk token bearer, asal web yang diizinkan dapat dikonfigurasi di klien tempat token dikeluarkan. Ketika membuat token akses awal, asal web yang diizinkan dapat disediakan langsung.
+
+Untuk akses anonim, atau sebagai konfigurasi realm yang luas, asal web yang diizinkan dapat dikonfigurasi dengan menuju ke klien, kemudian pendaftaran klien dan memperbarui kebijakan `Allowed Registration Web Origins` untuk daftar asal web yang seharusnya diizinkan.
+
+## Representasi NQRust-Identity
+
+Provider pendaftaran klien `default` dapat digunakan untuk membuat, mengambil, memperbarui, dan menghapus klien.
+Itu menggunakan format Representasi Klien NQRust-Identity yang menyediakan dukungan untuk mengonfigurasi klien persis seperti yang dapat dikonfigurasi melalui konsol admin, termasuk misalnya mengonfigurasi mapper protokol.
+
+Untuk membuat klien, buat Representasi Klien (JSON) kemudian lakukan permintaan HTTP POST ke `/realms/<realm>/clients-registrations/default`.
+
+Ini akan mengembalikan Representasi Klien yang juga mencakup token akses pendaftaran.
+Anda harus menyimpan token akses pendaftaran di tempat jika Anda ingin mengambil konfigurasi, memperbarui atau menghapus klien nanti.
+
+Untuk mengambil Representasi Klien, lakukan permintaan HTTP GET ke `/realms/<realm>/clients-registrations/default/<client id>`.
+
+Permintaan GET tidak akan memperbarui token akses pendaftaran, jadi itu akan tetap sama.
+
+Untuk memperbarui Representasi Klien, lakukan permintaan HTTP PUT dengan Representasi Klien yang diperbarui ke:
+`/realms/<realm>/clients-registrations/default/<client id>`.
+
+Itu juga akan mengembalikan token akses pendaftaran baru.
+
+Untuk menghapus Representasi Klien, lakukan permintaan HTTP DELETE ke:
+`/realms/<realm>/clients-registrations/default/<client id>`
+
+## Konfigurasi Adapter NQRust-Identity
+
+Provider pendaftaran klien `installation` dapat digunakan untuk mengambil konfigurasi adapter untuk klien.
+Selain otentikasi token, Anda juga dapat mengotentikasi dengan kredensial klien menggunakan otentikasi dasar HTTP.
+Untuk melakukannya sertakan header berikut dalam permintaan:
+
+```
+Authorization: basic BASE64(client-id + ':' + client-secret)
+```
+
+Untuk mengambil Konfigurasi Adapter, lakukan permintaan HTTP GET ke `/realms/<realm>/clients-registrations/install/<client id>`.
+
+Tidak diperlukan otentikasi untuk klien publik.
+Ini berarti bahwa untuk adapter JavaScript, Anda dapat memuat konfigurasi klien langsung dari NQRust-Identity menggunakan URL di atas.
+
+## Pendaftaran Klien OpenID Connect Dinamis
+
+NQRust-Identity mengimplementasikan [OpenID Connect Dynamic Client Registration](https://openid.net/specs/openid-connect-registration-1_0.html), yang memperluas [OAuth 2.0 Dynamic Client Registration Protocol](https://datatracker.ietf.org/doc/html/rfc7591) dan [OAuth 2.0 Dynamic Client Registration Management Protocol](https://datatracker.ietf.org/doc/html/rfc7592).
+
+Endpoint untuk menggunakan spesifikasi ini untuk mendaftarkan klien di NQRust-Identity adalah `/realms/<realm>/clients-registrations/openid-connect[/<client id>]`.
+
+Endpoint ini juga dapat ditemukan di endpoint Pengenalan OpenID Connect untuk realm, `/realms/<realm>/.well-known/openid-configuration`.
+
+## Deskripsi Entitas SAML
+
+Endpoint Deskripsi Entitas SAML hanya mendukung menggunakan Deskripsi Entitas SAML v2 untuk membuat klien.
+Itu tidak mendukung pengambilan, pembaruan atau penghapusan klien.
+Untuk operasi tersebut, seharusnya digunakan endpoint Representasi NQRust-Identity.
+Ketika membuat klien, Representasi Klien NQRust-Identity dikembalikan dengan detail tentang klien yang dibuat, termasuk token akses pendaftaran.
+
+Untuk membuat klien, lakukan permintaan HTTP POST dengan Deskripsi Entitas SAML ke `/realms/<realm>/clients-registrations/saml2-entity-descriptor`.
+
+## Contoh menggunakan CURL
+
+Contoh berikut menciptakan klien dengan clientId `myclient` menggunakan CURL. Anda harus menggantikan `eyJhbGciOiJSUz…​` dengan token akses awal atau token bearer yang valid.
+
+```bash
+curl -X POST \
+    -d '{ "clientId": "myclient" }' \
+    -H "Content-Type:application/json" \
+    -H "Authorization: bearer eyJhbGciOiJSUz..." \
+    http://localhost:8080/realms/master/clients-registrations/default
+```
+
+## Contoh menggunakan Java Client Registration API
+
+API Pendaftaran Klien Java memudahkan penggunaan Layanan Pendaftaran Klien menggunakan Java.
+Untuk menggunakannya, sertakan dependensi `org.nqrust-identity:nqrust-identity-client-registration-api:>VERSION<` dari Maven.
+
+Untuk instruksi lengkap tentang penggunaan Pendaftaran Klien, lihat JavaDocs.
+Di bawah ini adalah contoh menciptakan klien. Anda harus menggantikan `eyJhbGciOiJSUz…​` dengan token akses awal atau token bearer yang valid.
+
+```java
+String token = "eyJhbGciOiJSUz...";
+
+ClientRepresentation client = new ClientRepresentation();
+client.setClientId(CLIENT_ID);
+
+ClientRegistration reg = ClientRegistration.create()
+    .url("http://localhost:8080", "myrealm")
+    .build();
+
+reg.auth(Auth.token(token));
+
+client = reg.create(client);
+
+String registrationAccessToken = client.getRegistrationAccessToken();
+```
+
+## Kebijakan Pendaftaran Klien
+
+<Callout type="info">
+  Rencananya, Kebijakan Pendaftaran Klien akan dihapus dalam kedepannya untuk mendukung Kebijakan Klien yang dijelaskan dalam Panduan Administrasi Server.
+  Kebijakan Klien lebih fleksibel dan mendukung lebih banyak kasus penggunaan.
+  Misalnya kasus mendorong URI klien seperti JWKS untuk mencegah serangan SSRF dengan hanya mengizinkan pola atau domain terpercaya.
+</Callout>
+
+NQRust-Identity saat ini mendukung dua cara bagaimana klien baru dapat didaftarkan melalui Layanan Pendaftaran Klien.
+
+- Permintaan yang diotentikasi - Permintaan untuk mendaftarkan klien baru harus berisi `Token Akses Awal` atau `Token Bearer` seperti yang dijelaskan di atas.
+- Permintaan anonim - Permintaan untuk mendaftarkan klien baru tidak memerlukan token sama sekali.
+
+Permintaan pendaftaran klien anonim sangat menarik dan powerful, namun biasanya Anda tidak ingin siapa saja dapat mendaftarkan klien baru tanpa batasan apa pun. Oleh karena itu, kami memiliki `Client Registration Policy SPI`, yang menyediakan cara untuk membatasi siapa yang dapat mendaftarkan klien baru dan dalam kondisi apa.
+
+Di konsol admin NQRust-Identity, Anda dapat mengklik tab `Client Registration` dan kemudian sub-tab `Client Registration Policies`. Di sini Anda akan melihat kebijakan apa yang dikonfigurasi secara default untuk permintaan anonim dan kebijakan apa yang dikonfigurasi untuk permintaan yang diotentikasi.
+
+<Callout type="info">
+  Permintaan anonim (permintaan tanpa token) diizinkan hanya untuk menciptakan (pendaftaran) klien baru. Jadi ketika Anda mendaftarkan klien baru melalui permintaan anonim, respons akan berisi Token Akses Pendaftaran, yang harus digunakan untuk permintaan Baca, Perbarui atau Hapus klien tertentu.
+  Namun menggunakan Token Akses Pendaftaran ini dari pendaftaran anonim akan terikat ke Kebijakan Anonim juga! Ini berarti misalnya permintaan untuk memperbarui klien juga harus datang dari Host Terpercaya jika Anda memiliki kebijakan Host Terpercaya. Juga misalnya tidak akan diizinkan untuk menonaktifkan Konsentrac Diperlukan saat memperbarui klien dan kebijakan Konsentrac Diperlukan hadir dll.
+</Callout>
+
+Saat ini kami memiliki implementasi kebijakan berikut:
+
+- Kebijakan Host Terpercaya - Anda dapat mengonfigurasi daftar host dan domain terpercaya. Permintaan ke Layanan Pendaftaran Klien hanya dapat dikirim dari host atau domain tersebut.
+Permintaan yang dikirim dari beberapa IP tidak terpercaya akan ditolak. URL dari klien baru yang terdaftar juga harus hanya menggunakan host atau domain terpercaya. Misalnya tidak akan diizinkan untuk menetapkan `Redirect URI` klien menunjuk ke beberapa host tidak terpercaya. Secara default, tidak ada host yang diizinkan, jadi pendaftaran klien anonim secara de facto dinonaktifkan.
+
+<Callout type="info">
+  NQRust-Identity mengnormalisasi alamat loopback menjadi localhost untuk menghindari perbedaan reverse-DNS yang spesifik platform (misalnya di Windows, pencarian terbalik loopback mungkin mengembalikan IP numerik daripada localhost). Semua domain terpercaya lainnya harus berdasar pada pencarian reverse-DNS utama yang dikembalikan oleh platform.
+</Callout>
+
+- Kebijakan Konsentrac Diperlukan - Klien yang baru terdaftar akan memiliki tombol `Konsentrac Diizinkan` diaktifkan. Jadi setelah otentikasi berhasil, pengguna akan selalu melihat layar konsentrac saat ia perlu untuk menyetujui izin (lingkup klien). Ini berarti bahwa klien tidak akan memiliki akses ke informasi pribadi atau izin pengguna kecuali pengguna menyetujuinya.
+- Kebijakan Mapper Protokol - Mengizinkan untuk mengonfigurasi daftar implementasi mapper protokol yang diizinkan. Klien baru tidak dapat didaftarkan atau diperbarui jika mengandung beberapa mapper protokol yang tidak diizinkan. Catatan bahwa kebijakan ini digunakan untuk permintaan yang diotentikasi juga, jadi bahkan untuk permintaan yang diotentikasi ada beberapa batasan yang mapper protokol yang dapat digunakan.
+- Kebijakan Lingkup Klien - Mengizinkan untuk mengizinkan `Lingkup Klien`, yang dapat digunakan dengan klien baru atau yang diperbarui.
+Tidak ada lingkup yang diizinkan secara default; hanya lingkup klien yang didefinisikan sebagai `Realm Default Client Scopes` yang diizinkan secara default.
+- Kebijakan Lingkup Penuh - Klien yang baru terdaftar akan memiliki tombol `Lingkup Penuh Diizinkan` dinonaktifkan. Ini berarti mereka tidak akan memiliki peran realm atau lingkup klien dari klien lain.
+- Kebijakan Klien Maksimum - Menolak pendaftaran jika jumlah klien saat ini di realm sama atau lebih besar dari batas yang ditentukan. Secara default, itu 200 untuk pendaftaran anonim.
+- Kebijakan Klien Dinonaktifkan - Klien yang baru terdaftar akan dinonaktifkan. Ini berarti admin harus secara manual menyetujui dan mengaktifkan semua klien baru yang terdaftar.
+Kebijakan ini tidak digunakan secara default bahkan untuk pendaftaran anonim.

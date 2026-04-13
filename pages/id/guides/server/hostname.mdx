@@ -1,48 +1,215 @@
 ---
-title: Mengonfigurasi nama host (v2)
-description: Mengonfigurasi nama host (v2) - Dokumentasi NQRust-Identity
+title: Configuring the hostname (v2)
+description: Configuring the hostname (v2) - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi nama host (v2)
+# Configuring the hostname (v2)
 
-## [](#_pengaturan_penting_nama_host)Pengaturan penting nama host
+import { Callout } from 'nextra/components'
 
-Secara default, NQRust-Identity memaksa untuk mengkonfigurasi opsi `hostname` dan tidak secara dinamis mengurai URL. Ini merupakan langkah keamanan.
+## Pentingnya Mengatur Opsi Hostname
 
-NQRust-Identity dengan bebas menyampaikan URL-nya sendiri, misalnya melalui endpoint penemuan OIDC, atau sebagai bagian dari tautan reset kata sandi dalam email. Jika nama host diinterpretasikan secara dinamis dari header hostname, itu bisa memberikan peluang kepada penyerang untuk memanipulasi URL di email, mengarahkan pengguna ke domain palsu penyerang, dan mencuri data sensitif seperti token aksi, kata sandi, dll.
+Secara default, NQRust-Identity mengharuskan konfigurasi opsi `hostname` dan tidak secara dinamis mengurai URL. Ini merupakan langkah keamanan.
 
-Dengan menetapkan secara eksplisit opsi `hostname`, kita menghindari situasi di mana token dikeluarkan oleh penerbit palsu. Server dapat dijalankan dengan nama host yang jelas menggunakan perintah berikut:
+NQRust-Identity dengan bebas membocorkan URL miliknya sendiri, misalnya melalui endpoint penemuan OIDC, atau sebagai bagian dari tautan reset kata sandi dalam email. Jika hostname diinterpretasikan secara dinamis dari header hostname, hal ini bisa memberikan peluang kepada penyerang untuk memanipulasi URL di email, mengalihkan pengguna ke domain palsu penyerang, dan mencuri data sensitif seperti token aksi, kata sandi, dll.
+
+Dengan secara eksplisit mengatur opsi `hostname`, kami menghindari situasi di mana token dikeluarkan oleh penerbit palsu. Server dapat dijalankan dengan hostname yang jelas menggunakan perintah berikut:
 
 ```bash
 bin/kc.[sh|bat] start --hostname my.nqrust-identity.org
 ```
 
-Contoh-contoh ini menjalankan instance NQRust-Identity dalam mode produksi, yang memerlukan sertifikat publik dan kunci pribadi untuk mengamankan komunikasi. Untuk informasi lebih lanjut, lihat [Mengonfigurasi NQRust-Identity untuk produksi](https://www.nqrust-identity.org/server/configuration-production).
+<Callout type="info">
+  Contoh-contoh memulai instance NQRust-Identity dalam mode produksi, yang memerlukan sertifikat publik dan kunci pribadi untuk mengamankan komunikasi. Untuk informasi lebih lanjut, lihat Pengaturan NQRust-Identity untuk produksi.
+</Callout>
 
-## [](#_mengatur_bagian_tertentu_nama_host)Mengatur bagian tertentu opsi nama host
+## Mendefinisikan Bagian Spesifik Opsi Hostname
 
-Seperti yang ditunjukkan dalam contoh sebelumnya, skema dan port tidak secara eksplisit diperlukan. Dalam hal ini, NQRust-Identity secara otomatis menangani aspek-aspek ini. Misalnya, server akan dapat diakses di `[https://my.nqrust-identity.org:8443](https://my.nqrust-identity.org:8443)` dalam contoh yang diberikan. Namun, proxy balik biasanya akan mengekspos NQRust-Identity di port default, misalnya `443`. Dalam hal ini, lebih diinginkan untuk menentukan URL lengkap dalam opsi `hostname` daripada menjaga bagian dari URL dinamis. Server dapat kemudian dijalankan dengan:
+Seperti yang ditunjukkan dalam contoh sebelumnya,skema dan port tidak secara eksplisit diperlukan. Dalam kasus seperti itu, NQRust-Identity secara otomatis menangani aspek-aspek ini. Sebagai contoh, server akan dapat diakses di `https://my.nqrust-identity.org:8443` dalam contoh yang diberikan. Namun, proxy balik biasanya akan mengekspos NQRust-Identity di port default, seperti `443`. Dalam hal ini, lebih diinginkan untuk menentukan URL penuh di opsi `hostname` daripada menjaga bagian-bagian URL dinamis. Server dapat kemudian dijalankan dengan:
 
 ```bash
 bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org
 ```
 
-Demikian pula, proxy balik Anda mungkin mengekspos NQRust-Identity di jalur konteks yang berbeda. Anda dapat mengonfigurasi NQRust-Identity untuk mencerminkan hal ini melalui opsi `hostname` dan `hostname-admin`. Lihat contoh berikut:
+Demikian pula, proxy balik Anda mungkin akan mengekspos NQRust-Identity di jalur konteks yang berbeda. Anda dapat mengkonfigurasi NQRust-Identity untuk mencerminkan hal itu melalui opsi `hostname` dan `hostname-admin`. Lihat contoh berikut:
 
 ```bash
 bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org:123/auth
 ```
 
-## [](#_menggunakan_url_internal_untuk_komunikasi_antara_klien)Menggunakan URL internal untuk komunikasi antara klien
+## Menggunakan URL Internal untuk Komunikasi di antara Klien
 
-NQRust-Identity memiliki kemampuan untuk menawarkan URL terpisah untuk permintaan backchannel, memungkinkan komunikasi internal sambil menjaga penggunaan URL publik untuk permintaan frontchannel. Selain itu, backchannel secara dinamis diuraikan berdasarkan header yang masuk. Pertimbangkan contoh berikut:
+NQRust-Identity memiliki kemampuan untuk menawarkan URL terpisah untuk permintaan backchannel, memungkinkan komunikasi internal sambil menjaga penggunaan URL publik untuk permintaan frontchannel. Selain itu, backchannel dinamis diuraikan berdasarkan header yang masuk. Pertimbangkan contoh berikut:
 
 ```bash
 bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org --hostname-backchannel-dynamic true
 ```
 
-Dengan cara ini, aplikasi Anda, yang disebut sebagai klien, dapat terhubung dengan NQRust-Identity melalui jaringan lokal Anda, sementara server tetap dapat diakses secara publik di `[https://my.nqrust-identity.org](https://my.nqrust-identity.org)`.
+Dengan cara ini, aplikasi Anda, yang disebut sebagai klien, dapat terhubung dengan NQRust-Identity melalui jaringan lokal Anda, sementara server tetap dapat diakses secara publik di `https://my.nqrust-identity.org`.
 
-## [](#_menggunakan_pemutusan_TLS_di_perimeter)Menggunakan pemotongan TLS di perimeter
+## Menggunakan Pengakhiran TLS Edge
 
-Seperti yang dapat Anda amati, protokol HTTPS adalah pilihan default, mengikuti komitmen NQRust-Identity untuk praktik keamanan terbaik. Namun, NQRust-Identity juga menyediakan fleksibilitas bagi pengguna untuk memilih HTTP jika diperlukan. Hal ini dapat dicapai dengan menentukan listener HTTP, lihat [Mengonfig
+Seperti yang dapat Anda amati, protokol HTTPS adalah pilihan default, mengikuti komitmen NQRust-Identity untuk praktik keamanan terbaik. Namun, NQRust-Identity juga menyediakan fleksibilitas bagi pengguna untuk memilih HTTP jika diperlukan. Hal ini dapat dilakukan dengan menentukan pendengar HTTP, lihat [Mengkonfigurasi TLS](/en/guides/server/enabletls) untuk detail. Dengan proxy pengakhiran TLS, Anda dapat memulai server sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org --http-enabled true
+```
+
+Hasil dari konfigurasi ini adalah bahwa Anda dapat terus mengakses NQRust-Identity di `https://my.nqrust-identity.org` melalui HTTPS, sementara proxy berinteraksi dengan instance menggunakan HTTP dan port `8080`.
+
+## Menggunakan Proxy Balik
+
+Ketika proxy meneruskan permintaan http atau TLS yang dienkripsi ulang, opsi `proxy-headers` harus diatur. Tergantung pada pengaturan hostname, beberapa atau semua URL mungkin diuraikan secara dinamis.
+
+<Callout type="warning">
+  Jika forwarded atau xforwarded dipilih, pastikan proxy balik Anda dengan benar mengatur dan menimpa header Forwarded atau X-Forwarded-* masing-masing. Untuk mengatur header ini, lihat dokumentasi proxy balik Anda. Konfigurasi yang salah akan meng-expose NQRust-Identity terhadap kerentanan keamanan.
+</Callout>
+
+### URL Dinamis Penuh
+
+Sebagai contoh, jika proxy balik Anda dengan benar mengatur header Forwarded, dan Anda tidak ingin mengkodekan hostname secara keras, NQRust-Identity dapat mengakomodasi hal ini. Anda hanya perlu memulai server sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname-strict false --proxy-headers forwarded
+```
+
+Dengan konfigurasi ini, server menghormati nilai yang diatur oleh header Forwarded. Ini juga berarti bahwa semua endpoint diuraikan secara dinamis.
+
+### URL Sebagian Dinamis
+
+Opsi `proxy-headers` juga dapat digunakan untuk mengurai URL secara sebagian dinamis ketika opsi `hostname` tidak ditentukan sebagai URL penuh. Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] start --hostname my.nqrust-identity.org --proxy-headers xforwarded
+```
+
+Dalam hal ini, skema, port, dan jalur konteks diuraikan secara dinamis dari header X-Forwarded-*, sementara hostname didefinisikan secara statis sebagai `my.nqrust-identity.org`.
+
+### URL Tetap
+
+`proxy-headers` masih relevan walaupun `hostname` diatur ke URL penuh sebagai header digunakan untuk menentukan asal permintaan. Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org --proxy-headers xforwarded
+```
+
+Dalam hal ini, tidak ada yang diuraikan secara dinamis dari header X-Forwarded-*, header X-Forwarded-* digunakan untuk menentukan asal permintaan yang benar.
+
+## Mengekspos Konsol Administrasi pada hostname terpisah
+
+Jika Anda ingin mengekspos Konsol Admin pada host yang berbeda, Anda dapat melakukannya dengan perintah berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org --hostname-admin https://admin.my.nqrust-identity.org:8443
+```
+
+Hal ini memungkinkan Anda untuk mengakses NQRust-Identity di `https://my.nqrust-identity.org` dan Konsol Admin di `https://admin.my.nqrust-identity.org:8443`, sementara backend tetap menggunakan `https://my.nqrust-identity.org`.
+
+<Callout type="info">
+  Perlu diingat bahwa opsi hostname dan proxy tidak mengubah port di mana server mendengarkan. Sebaliknya, itu hanya mengubah port sumber daya statis seperti tautan JavaScript dan CSS, endpoint terkenal OIDC, URI pengalihan, dll. yang akan digunakan di depan proxy. Anda perlu menggunakan opsi konfigurasi HTTP untuk mengubah port yang sebenarnya server mendengarkan. Lihat detail di semua konfigurasi.
+</Callout>
+
+<Callout type="warning">
+  Menggunakan opsi hostname-admin tidak mencegah akses ke endpoint API Administrasi REST melalui URL frontend yang ditentukan oleh opsi hostname. Jika Anda ingin membatasi akses ke API Administrasi REST, Anda harus melakukannya pada tingkat proxy balik. Konsol Administrasi secara implisit mengakses API menggunakan URL seperti yang ditentukan oleh opsi hostname-admin.
+</Callout>
+
+## Latar Belakang - endpoint server
+
+NQRust-Identity mengekspos beberapa endpoint, masing-masing dengan tujuan yang berbeda. Mereka biasanya digunakan untuk komunikasi di antara aplikasi atau untuk mengelola server. Kami mengenali 3 kelompok utama endpoint:
+
+- Frontend
+- Backend
+- Administrasi
+
+Jika Anda ingin bekerja dengan salah satu endpoint ini, Anda perlu mengatur URL dasar. URL dasar terdiri dari beberapa bagian:
+
+- skema (mis. protokol https)
+- hostname (mis. example.nqrust-identity.org)
+- port (mis. 8443)
+- path (mis. /auth)
+
+URL dasar untuk setiap kelompok memiliki dampak penting pada bagaimana token diterbitkan dan divalidasi, bagaimana tautan dibuat untuk tindakan yang memerlukan pengguna untuk dialihkan ke NQRust-Identity (misalnya, saat mereset kata sandi melalui tautan email), dan, yang paling penting, bagaimana aplikasi akan menemukan endpoint ini saat mengambil Dokumen Pengenalan OpenID Connect dari `realms/{realm-name}/.well-known/openid-configuration`.
+
+### Frontend
+
+Pengguna dan aplikasi menggunakan URL frontend untuk mengakses NQRust-Identity melalui kanal depan. Kanal depan adalah saluran komunikasi yang dapat diakses publik. Misalnya, aliran berbasis browser (mengakses halaman masuk, mengklik tautan untuk mereset kata sandi atau menautkan token) dapat dianggap sebagai permintaan kanal depan.
+
+Untuk membuat NQRust-Identity dapat diakses melalui URL frontend, Anda perlu mengatur opsi `hostname`:
+
+```bash
+bin/kc.[sh|bat] start --hostname my.nqrust-identity.org
+```
+
+### Backend
+
+Endpoint backend adalah yang dapat diakses melalui domain publik atau melalui jaringan pribadi. Mereka terkait dengan komunikasi backend langsung antara NQRust-Identity dan klien (aplikasi yang diamanati oleh NQRust-Identity). Komunikasi seperti ini mungkin melalui jaringan lokal, menghindari proxy balik. Contoh endpoint yang termasuk dalam kelompok ini adalah endpoint otorisasi, token dan endpoint introspeksi token, endpoint userinfo, JWKS URI endpoint, dll.
+
+Nilai default opsi `hostname-backchannel-dynamic` adalah `false`, yang berarti URL backchannel sama dengan URL frontchannel. Resolusi dinamis URL backchannel dari header permintaan masuk dapat diaktifkan dengan mengatur opsi berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org --hostname-backchannel-dynamic true
+```
+
+Catatan bahwa opsi `hostname` harus diatur ke URL. Untuk informasi lebih lanjut, lihat bagian [Validasi](#_validations) di bawah.
+
+<Callout type="info">
+  jika server dikonfigurasi untuk melewati proxy TLS, penggunaan permintaan HTTPS backchannel dinamis tidak akan melewati validasi hostname karena sertifikat server yang diajukan akan untuk hostname publik.
+</Callout>
+
+### Administrasi
+
+Seperti URL frontend dasar, Anda juga dapat mengatur URL dasar untuk sumber daya dan endpoint konsol administrasi. Server mengekspos konsol administrasi dan sumber daya statis menggunakan URL tertentu. URL ini digunakan untuk URL pengalihan, memuat sumber daya (CSS, JS), API Administrasi REST dll. Hal ini dapat dilakukan dengan mengatur opsi `hostname-admin`:
+
+```bash
+bin/kc.[sh|bat] start --hostname https://my.nqrust-identity.org --hostname-admin https://admin.my.nqrust-identity.org:8443
+```
+
+Sekali lagi, opsi `hostname` harus diatur ke URL. Untuk informasi lebih lanjut, lihat bagian [Validasi](#_validations) di bawah.
+
+## Sumber untuk mengurai URL
+
+Seperti yang diindikasikan dalam paragraf sebelumnya, URL dapat diurai dalam beberapa cara: mereka dapat dihasilkan secara dinamis, dikodekan keras, atau kombinasi keduanya:
+
+- Dinamis dari permintaan masuk:
+
+  - Header host, skema, port server, path konteks
+  - Header proxy-set: `Forwarded` dan `X-Forwarded-*`
+- Dikodekan keras:
+
+  - Konfigurasi server secara keseluruhan (mis. `hostname`, `hostname-admin`, dll.)
+  - Konfigurasi realm untuk URL frontend
+
+## Validasi
+
+- URL `hostname` dan `hostname-admin` diverifikasi untuk memastikan penggunaan URL lengkap, termasuk skema dan nama host. Port divalidasi hanya jika ada, jika tidak, port default untuk protokol yang diberikan dianggap (80 atau 443).
+- Dalam profil produksi (`kc.sh|bat start`), baik `--hostname` atau `--hostname-strict false` harus dikonfigurasi secara eksplisit.
+
+  - Hal ini tidak berlaku untuk profil dev (`kc.sh|bat start-dev`) di mana `--hostname-strict false` adalah nilai default.
+- Jika `--hostname` tidak dikonfigurasi:
+
+  - `hostname-backchannel-dynamic` harus diatur ke false.
+  - `hostname-strict` harus diatur ke false.
+- Jika `hostname-admin` dikonfigurasi, `hostname` harus diatur ke URL (bukan hanya nama host). Jika tidak, NQRust-Identity tidak akan tahu URL frontend yang benar (termasuk port dll.) saat mengakses Konsol Admin.
+- Jika `hostname-backchannel-dynamic` diatur ke true, `hostname` harus diatur ke URL (bukan hanya nama host). Jika tidak, NQRust-Identity tidak akan tahu URL frontend yang benar (termasuk port dll.) saat diakses melalui backchannel yang diresolve secara dinamis.
+
+Selain itu, jika nama host dikonfigurasi, maka hostname-strict diabaikan.
+
+## Pemblantikan Masalah
+
+Untuk memblantikan konfigurasi nama host, Anda dapat menggunakan alat debug yang dapat diaktifkan sebagai berikut:
+
+```bash
+bin/kc.[sh|bat] start --hostname=mynqrust-identity --hostname-debug=true
+```
+
+Setelah NQRust-Identity berhasil dijalankan, buka peramban Anda dan arahkan ke: `http://mynqrust-identity:8080/realms/<your-realm>/hostname-debug`
+
+## Opsi yang Relevan
+
+| Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`hostname`**<br/>Alamat di mana server terekspos.<br/>Dapat berupa URL lengkap atau hanya nama host. Ketika hanya nama host yang diberikan, skema, port, dan jalur konteks diresolve dari permintaan.<br/>**CLI:** `--hostname`<br/>**Env:** `KC_HOSTNAME` | _String_ |  |
+| **`hostname-admin`**<br/>Alamat untuk mengakses konsol administrasi.<br/>Gunakan opsi ini jika Anda mengekspos konsol administrasi menggunakan proxy balik pada alamat yang berbeda dari yang ditentukan dalam opsi `hostname`.<br/>**CLI:** `--hostname-admin`<br/>**Env:** `KC_HOSTNAME_ADMIN` | _String_ |  |
+| **`hostname-backchannel-dynamic`**<br/>Mengaktifkan resolve dinamis URL backchannel, termasuk nama host, skema, port, dan jalur konteks.<br/>Setel ke true jika aplikasi Anda mengakses NQRust-Identity melalui jaringan pribadi. Jika diatur ke true, opsi `hostname` perlu ditentukan sebagai URL lengkap.<br/>**CLI:** `--hostname-backchannel-dynamic`<br/>**Env:** `KC_HOSTNAME_BACKCHANNEL_DYNAMIC` | `true`, `false` | `false` |
+| **`hostname-debug`**<br/>Mengaktifkan atau menonaktifkan halaman debug nama host yang dapat diakses di /realms/master/hostname-debug.<br/>**CLI:** `--hostname-debug`<br/>**Env:** `KC_HOSTNAME_DEBUG` | `true`, `false` | `false` |
+| **`hostname-strict`**<br/>Menonaktifkan resolve dinamis nama host dari header permintaan.<br/>Secara konvensional harus diatur ke true dalam produksi, kecuali jika proxy balik Anda menimpa header Host. Jika diaktifkan, opsi `hostname` perlu ditentukan.<br/>**CLI:** `--hostname-strict`<br/>**Env:** `KC_HOSTNAME_STRICT` | `true`, `false` | `true` |

@@ -5,73 +5,236 @@ description: Mengonfigurasi Modul Apache mod_auth_mellon - Dokumentasi NQRust-Id
 
 # Mengonfigurasi Modul Apache mod_auth_mellon
 
-[mod\_auth\_mellon](https://github.com/latchset/mod_auth_mellon) adalah modul autentikasi untuk Apache. Jika bahasa atau lingkungan Anda mendukung penggunaan Apache HTTPD sebagai proxy, Anda dapat menggunakan mod\_auth\_mellon untuk mengamankan aplikasi web Anda dengan SAML. Untuk detail lebih lanjut tentang modul ini, lihat repositori GitHub _mod\_auth\_mellon_.
+import { Callout } from 'nextra/components'
 
-NQRust-Identity tidak menyediakan dukungan resmi untuk mod\_auth\_mellon. Instruksi di bawah ini adalah usaha terbaik dan mungkin tidak terkini. Panduan ini mengasumsikan bahwa server adalah sistem RHEL. Meskipun langkah yang serupa akan diperlukan untuk sistem Linux lainnya. Kami menyarankan Anda untuk mengikuti dokumentasi resmi mod\_auth\_mellon untuk detail lebih lanjut.
+[mod_auth_mellon](https://github.com/latchset/mod_auth_mellon) adalah modul autentikasi untuk Apache. Jika bahasa atau lingkungan Anda mendukung penggunaan Apache HTTPD sebagai proxy, Anda dapat menggunakan mod_auth_mellon untuk mengamankan aplikasi web Anda dengan SAML. Untuk detail lebih lanjut tentang modul ini, lihat repositori GitHub _mod_auth_mellon_.
 
-Untuk mengonfigurasi `mod_auth_mellon` Anda memerlukan berkas-berkas berikut:
+<Callout type="warning">
+  NQRust-Identity tidak menawarkan dukungan resmi untuk mod_auth_mellon. Instruksi di bawah ini adalah usaha terbaik dan mungkin tidak terkini.
+  Panduan mengasumsikan bahwa server adalah sistem RHEL. Meskipun langkah yang serupa akan diperlukan untuk sistem linux lainnya.
+  Kami menyarankan Anda untuk menutupi dokumentasi resmi mod_auth_mellon untuk detail lebih lanjut.
+</Callout>
 
-*   Berkas deskriptor entitas Penyedia Identitas (IdP) dalam format XML, yang menggambarkan koneksi ke NQRust-Identity atau penyedia identitas SAML lainnya (IdP)
-    
-*   Berkas deskriptor entitas Layanan Penyedia (SP) dalam format XML, yang menggambarkan koneksi dan konfigurasi SAML untuk aplikasi yang ingin Anda amankan.
-    
-*   Berkas kunci pribadi PEM, yang merupakan berkas teks dalam format PEM yang mendefinisikan kunci pribadi yang digunakan aplikasi untuk menandatangani dokumen.
-    
-*   Berkas sertifikat PEM, yang merupakan berkas teks yang mendefinisikan sertifikat untuk aplikasi Anda.
-    
-*   Konfigurasi modul Apache HTTPD yang spesifik untuk mod\_auth\_mellon.
-    
+Untuk mengonfigurasi `mod_auth_mellon` Anda memerlukan berkas berikut:
+
+- Berkas deskriptor entitas Penyedia Identitas (IdP) dalam format XML, yang menggambarkan koneksi ke NQRust-Identity atau IdP SAML lainnya
+- Berkas deskriptor entitas Pelayanan (SP) dalam format XML, yang menggambarkan koneksi dan konfigurasi SAML untuk aplikasi yang sedang diamankan.
+- Berkas kunci privat PEM, yang merupakan berkas teks dalam format PEM yang mendefinisikan kunci privat aplikasi digunakan untuk menandatangani dokumen.
+- Berkas sertifikat PEM, yang merupakan berkas teks yang mendefinisikan sertifikat untuk aplikasi Anda.
+- Konfigurasi modul Apache HTTPD khusus mod_auth_mellon.
 
 Jika Anda telah mendefinisikan dan mendaftarkan aplikasi klien dalam realm di server aplikasi NQRust-Identity, NQRust-Identity dapat menghasilkan semua berkas yang diperlukan kecuali konfigurasi modul Apache HTTPD.
 
 Ikuti prosedur berikut untuk menghasilkan konfigurasi modul Apache HTTPD.
 
-Prosedur
+1. Buka halaman Instalasi dari klien SAML Anda.
+2. Pilih opsi berkas **Mod Auth Mellon**.
 
-1.  Buka halaman Instalasi dari klien SAML Anda.
-    
-2.  Pilih opsi berkas **Mod Auth Mellon**.
-    
-    ![Download auth-melon configuration](https://www.nqrust-identity.org/resources/images/guides/mod-auth-mellon-config-download.png)
-    
-    Gambar 1. download konfigurasi mod\_auth\_mellon
-    
-3.  Klik **Download** untuk mengunduh berkas ZIP yang berisi deskriptor XML dan berkas PEM yang Anda butuhkan.
-    
+  Gambar 1. Unduhan konfigurasi mod_auth_mellon
+3. Klik **Download** untuk mengunduh berkas ZIP yang berisi deskriptor XML dan berkas PEM yang Anda butuhkan.
 
-## [](#_mengonfigurasi_mod_auth_mellon_dengan_nqrust-identity)Mengonfigurasi mod\_auth\_mellon dengan NQRust-Identity
+![Mod Auth Mellon config download](/images/securing-apps/mod-auth-mellon-1.png)
+
+## Mengonfigurasi mod_auth_mellon dengan NQRust-Identity
 
 Ada dua host yang terlibat:
 
-*   Host di mana NQRust-Identity berjalan, yang akan disebut sebagai $idp\_host karena NQRust-Identity adalah penyedia identitas SAML (IdP).
-    
-*   Host di mana aplikasi web berjalan, yang akan disebut sebagai $sp\_host. Dalam SAML aplikasi yang menggunakan IdP disebut sebagai penyedia layanan (SP).
-    
+- Host di mana NQRust-Identity berjalan, yang akan disebut sebagai $idp_host karena NQRust-Identity adalah penyedia identitas SAML (IdP).
+- Host di mana aplikasi web berjalan, yang akan disebut sebagai $sp_host. Dalam SAML aplikasi yang menggunakan IdP disebut penyedia layanan (SP).
 
-Semua langkah berikut harus dilakukan di $sp\_host dengan hak akses root.
+Semua langkah berikut harus dilakukan pada $sp_host dengan hak akses root.
 
-### [](#_menginstal_pake)Menginstal paket
+### Menginstal paket
 
-Untuk menginstal paket yang diperlukan, Anda akan memerlukan:
+Untuk menginstal paket yang diperlukan, Anda memerlukan:
 
-*   Apache Web Server (httpd)
-    
-*   Modul add-on SAML SP Mellon untuk Apache
-    
-*   Alat untuk membuat sertifikat X509
-    
+- Server Web Apache (httpd)
+- Modul Pengaya SAML SP Mellon untuk Apache
+- Peralatan untuk membuat sertifikat X509
 
 Untuk menginstal paket yang diperlukan, jalankan perintah ini:
 
 ```
-yum install httpd mod\_auth\_mellon mod\_ssl openssl
+yum install httpd mod_auth_mellon mod_ssl openssl
 ```
 
-### [](#_menbuat_direktori_konfigurasi_untuk_apache_saml)Membuat direktori konfigurasi untuk Apache SAML
+### Mengbuat direktori konfigurasi untuk Apache SAML
 
 Disarankan untuk menyimpan berkas konfigurasi yang terkait dengan penggunaan SAML oleh Apache di satu lokasi.
 
 Buat direktori baru bernama saml2 di bawah root konfigurasi Apache `/etc/httpd`:
 
 ```
-mkdir /etc/http
+mkdir /etc/httpd/saml2
+```
+
+### Mengonfigurasi Pengelola Layanan Mellon
+
+Berkas konfigurasi untuk modul pengayaan Apache terletak di direktori `/etc/httpd/conf.d` dan memiliki ekstensi nama berkas `.conf`. Anda perlu membuat berkas `/etc/httpd/conf.d/mellon.conf` dan menempatkan direktif konfigurasi Mellon di dalamnya.
+
+Direktif konfigurasi Mellon dapat dipecah menjadi dua kelas informasi:
+
+- URL mana yang harus diamankan dengan autentikasi SAML
+- Parameter SAML apa yang akan digunakan saat URL yang diamankan dirujuk.
+
+Direktif konfigurasi Apache umumnya mengikuti struktur pohon hirarkis di ruang URL, yang dikenal sebagai lokasi. Anda perlu menentukan satu atau lebih lokasi URL untuk Mellon untuk diamankan. Anda memiliki fleksibilitas dalam menambahkan parameter konfigurasi yang berlaku untuk setiap lokasi. Anda dapat menambahkan semua parameter yang diperlukan ke blok lokasi atau Anda dapat menambahkan parameter Mellon ke lokasi umum yang tinggi di hirarki lokasi URL sehingga lokasi tertentu yang dilindungi mewarisi (atau beberapa kombinasi keduanya). Karena umumnya SP beroperasi dengan cara yang sama tidak peduli lokasi mana yang memicu aksi SAML, konfigurasi contoh yang digunakan di sini menempatkan direktif konfigurasi umum Mellon di akar hirarki dan kemudian lokasi tertentu yang akan diamankan oleh Mellon dapat didefinisikan dengan direktif sederhana. Strategi ini menghindari duplicasi parameter yang sama untuk setiap lokasi yang dilindungi.
+
+Contoh ini hanya memiliki satu lokasi yang dilindungi: https://$sp_host/private.
+
+Untuk mengonfigurasi Pengelola Layanan Mellon, ikuti prosedur berikut.
+
+1. Buat berkas `/etc/httpd/conf.d/mellon.conf` dengan konten ini:
+
+```xml
+ <Location / >
+    MellonEnable info
+    MellonEndpointPath /mellon/
+    MellonSPMetadataFile /etc/httpd/saml2/mellon_metadata.xml
+    MellonSPPrivateKeyFile /etc/httpd/saml2/mellon.key
+    MellonSPCertFile /etc/httpd/saml2/mellon.crt
+    MellonIdPMetadataFile /etc/httpd/saml2/idp_metadata.xml
+ </Location>
+ <Location /private >
+    AuthType Mellon
+    MellonEnable auth
+    Require valid-user
+ </Location>
+```
+
+<Callout type="info">
+  Beberapa berkas yang dirujuk dalam kode di atas akan dibuat dalam langkah selanjutnya.
+</Callout>
+
+### Mengatur nilai SameSite untuk cookie yang digunakan oleh mod_auth_mellon
+
+Browser rencananya akan menetapkan nilai default untuk atribut `SameSite` untuk cookie menjadi `Lax`. Pengaturan ini berarti cookie akan dikirim ke aplikasi hanya jika permintaan berasal dari domain yang sama. perilaku ini dapat mempengaruhi SAML POST binding yang mungkin menjadi tidak berfungsi. Untuk mempertahankan fungsi penuh modul _mod_auth_mellon_, kami menyarankan untuk menetapkan nilai `SameSite` menjadi `None` untuk cookie yang dibuat oleh _mod_auth_mellon_. Tidak melakukan hal ini mungkin akan mengakibatkan tidak dapat login menggunakan NQRust-Identity.
+
+Untuk menetapkan nilai `SameSite` menjadi `None`, tambahkan konfigurasi berikut ke tag `<Location / >` dalam berkas `mellon.conf` Anda.
+
+```xml
+MellonSecureCookie On
+MellonCookieSameSite none
+```
+
+Dukungan untuk konfigurasi ini tersedia dalam modul _mod_auth_mellon_ dari versi 0.16.0.
+
+### Menghasilkan metadata Pengelola Layanan
+
+Dalam SAML IdP dan SP berbagi metadata SAML, yang dalam format XML. Skema untuk metadata adalah standar, sehingga memastikan entitas SAML yang berpartisipasi dapat mengkonsumsi metadata satu sama lain. Anda memerlukan:
+
+- Metadata untuk IdP yang digunakan SP
+- Metadata yang menggambarkan SP yang disediakan ke IdP
+
+Salah satu komponen metadata SAML adalah sertifikat X509. Sertifikat ini digunakan untuk dua tujuan:
+
+- Menandatangani pesan SAML sehingga pihak penerima dapat membuktikan bahwa pesan berasal dari pihak yang diharapkan.
+- Mengenkripsi pesan selama pengangkutan (jarang digunakan karena pesan SAML biasanya terjadi pada transport yang dilindungi TLS)
+
+Anda dapat menggunakan sertifikat Anda sendiri jika Anda sudah memiliki Otoritas Sertifikat (CA) atau Anda dapat menghasilkan sertifikat yang ditandatangani sendiri. Untuk kesimpulan dalam contoh ini, sertifikat yang ditandatangani sendiri digunakan.
+
+Karena metadata SP Mellon harus mencerminkan kemampuan versi mod_auth_mellon yang terpasang, harus menjadi metadata SP yang valid XML, dan harus berisi sertifikat X509 (pembuatannya bisa sulit untuk dimengerti kecuali Anda sudah familiar dengan pembuatan sertifikat X509) cara yang paling praktis untuk menghasilkan metadata SP adalah dengan menggunakan alat yang disertakan dalam paket mod_auth_mellon (`mellon_create_metadata.sh`). Metadata yang dihasilkan selalu dapat diedit nanti karena merupakan berkas teks. Alat ini juga menciptakan kunci X509 dan sertifikat Anda.
+
+SAML IdP dan SP mengidentifikasi diri mereka dengan nama unik yang dikenal sebagai EntityID. Untuk menggunakan alat pembuatan metadata Mellon Anda memerlukan:
+
+- EntityID, yang biasanya adalah URL dari SP, dan sering kali URL dari SP di mana metadata SP dapat diambil
+- URL tempat pesan SAML untuk SP akan dikonsumsi, yang disebut oleh Mellon sebagai MellonEndPointPath.
+
+Untuk menghasilkan metadata SP, ikuti prosedur berikut.
+
+1. Buat beberapa variabel shell pembantu:
+
+  ```
+  fqdn=`hostname`
+  mellon_endpoint_url="https://${fqdn}/mellon"
+  mellon_entity_id="${mellon_endpoint_url}/metadata"
+  file_prefix="$(echo "$mellon_entity_id" | sed 's/[^A-Za-z.]/_/g' | sed 's/__*/_/g')"
+  ```
+2. Jalankan alat pembuatan metadata Mellon dengan perintah ini:
+
+  ```
+  /usr/libexec/mod_auth_mellon/mellon_create_metadata.sh $mellon_entity_id $mellon_endpoint_url
+  ```
+3. Pindahkan berkas yang dihasilkan ke tujuan (dirujuk dalam berkas `/etc/httpd/conf.d/mellon.conf` yang dibuat sebelumnya):
+
+  ```
+  mv ${file_prefix}.cert /etc/httpd/saml2/mellon.crt
+  mv ${file_prefix}.key /etc/httpd/saml2/mellon.key
+  mv ${file_prefix}.xml /etc/httpd/saml2/mellon_metadata.xml
+  ```
+
+### Menambahkan Pengelola Layanan Mellon ke Penyedia Identitas NQRust-Identity
+
+Assuming: Penyedia Identitas NQRust-Identity IdP telah diinstal di $idp_host.
+
+NQRust-Identity mendukung multi-tenancy di mana semua pengguna, klien, dan sebagainya dikelompokkan dalam apa yang disebut realm. Setiap realm independen dari realm lainnya. Anda dapat menggunakan realm yang telah ada dalam NQRust-Identity Anda, tetapi contoh ini menunjukkan bagaimana untuk membuat realm baru bernama test_realm dan menggunakan realm itu.
+
+Semua operasi ini dilakukan menggunakan Konsol Admin NQRust-Identity. Anda harus memiliki username admin dan password untuk $idp_host untuk melakukan prosedur berikut.
+
+1. Buka Konsol Admin dan masuk dengan memasukkan username admin dan password.
+
+  Setelah masuk ke Konsol Admin, akan ada realm yang telah ada. Ketika NQRust-Identity pertama kali diatur, realm root, master, dibuat secara default. Realm yang telah dibuat sebelumnya terdaftar di sudut kiri atas Konsol Admin dalam daftar tarik-turun.
+2. Dari daftar tarik-turun realm pilih **Add realm**.
+3. Di kolom Nama ketik `test_realm` dan klik **Create**.
+
+#### Menambahkan Pengelola Layanan Mellon sebagai klien realm
+
+Dalam NQRust-Identity SAML SP dikenal sebagai klien. Untuk menambahkan SP kita harus berada di bagian Klien dari realm.
+
+1. Klik item menu Klien di kiri dan klik tombol **Import client**.
+2. Di kolom **Resource file**, berikan berkas metadata SP Mellon yang dibuat sebelumnya (`/etc/httpd/saml2/mellon_metadata.xml`).
+
+  Tergantung pada letak browser Anda, Anda mungkin harus menyalin metadata SP dari $sp_host ke mesin di mana browser Anda berjalan sehingga browser dapat menemukan berkas.
+3. Klik **Save**.
+
+#### Mengedit klien Pengelola Layanan Mellon
+
+Gunakan prosedur ini untuk menetapkan parameter konfigurasi klien yang penting.
+
+1. Pastikan **Force POST Binding** adalah On.
+2. Tambah paosResponse ke daftar **Valid Redirect URIs**:
+3. Salin URL postResponse di **Valid Redirect URIs** dan tempel ke dalam kolom teks kosong hanya di bawah "+".
+4. Ubah `postResponse` menjadi `paosResponse`. (URL paosResponse diperlukan untuk SAML ECP.)
+5. Klik **Save** di bagian bawah.
+
+Banyak SP SAML menentukan otorisasi berdasarkan keanggotaan pengguna dalam grup. Penyedia Identitas NQRust-Identity dapat mengelola informasi grup pengguna tetapi tidak menyediakan grup pengguna kecuali Penyedia Identitas dikonfigurasi untuk menyediakannya sebagai atribut SAML.
+
+Ikuti prosedur berikut untuk mengonfigurasi Penyedia Identitas untuk menyediakan grup pengguna sebagai atribut SAML.
+
+1. Klik tab **Client scopes** dari klien.
+2. Klik lingkup khusus di baris pertama.
+3. Di halaman Mappers, klik tombol **Add mapper** dan pilih **By configuration**.
+4. Dari daftar Mapper Type pilih **Group list**.
+5. Atur Nama menjadi `group list`.
+6. Atur nama atribut SAML menjadi `groups`.
+7. Klik **Save**.
+
+Langkah selanjutnya dilakukan di $sp_host.
+
+#### Mengambil metadata Penyedia Identitas
+
+Sekarang setelah Anda telah membuat realm di Penyedia Identitas Anda perlu mengambil metadata Penyedia Identitas yang terkait dengan itu sehingga Pengelola Layanan Mellon mengenali itu. Dalam berkas `/etc/httpd/conf.d/mellon.conf` yang dibuat sebelumnya, `MellonIdPMetadataFile` ditetapkan sebagai `/etc/httpd/saml2/idp_metadata.xml` tetapi sampai sekarang berkas itu belum pernah ada di $sp_host.
+
+Gunakan prosedur ini untuk mengambil berkas itu dari Penyedia Identitas.
+
+1. Gunakan perintah ini, mengganti dengan nilai yang benar untuk $idp_host:
+
+  ```
+  curl -k -o /etc/httpd/saml2/idp_metadata.xml \
+  https://$idp_host/realms/test_realm/protocol/saml/descriptor
+  ```
+
+  Mellon sekarang telah dikonfigurasi sepenuhnya.
+2. Untuk menjalankan pemeriksaan sintaks untuk berkas konfigurasi Apache, gunakan perintah ini:
+
+  ```
+  apachectl configtest
+  ```
+
+  __ Configtest setara dengan argumen -t untuk apachectl. Jika pemeriksaan konfigurasi menunjukkan kesalahan, perbaiki sebelum melanjutkan.
+3. Restart server Apache:
+
+  ```
+  systemctl restart httpd.service
+  ```
+
+Anda sekarang telah mengatur NQRust-Identity sebagai IdP SAML di realm test_realm dan mod_auth_mellon sebagai SP SAML yang melindungi URL $sp_host/protected (dan segala sesuatu di bawahnya) dengan mengotentikasi terhadap Penyedia Identitas `$idp_host`.

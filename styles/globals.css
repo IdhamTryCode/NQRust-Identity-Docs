@@ -7,6 +7,29 @@
   display: none !important;
 }
 
+/* Inline code (backtick-wrapped text) — orange color */
+.nextra-content :not(pre) > code {
+  color: #f36523 !important;
+}
+
+/* Bump heading sizes & weights */
+article.nextra-content h1 {
+  font-size: 2.5rem !important;
+  font-weight: 800 !important;
+}
+article.nextra-content h2 {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+}
+article.nextra-content h3 {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+}
+article.nextra-content h4 {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+
 @layer base {
   :root {
     --brand: 22 89% 54%;          /* #f36523 in HSL */

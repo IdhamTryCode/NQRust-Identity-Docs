@@ -1,11 +1,11 @@
 {
+  "overview": "Planning for securing applications and services",
   "oidc-layers": "Securing applications and services with OpenID Connect",
   "javascript-adapter": "NQRust-Identity JavaScript adapter",
   "nodejs-adapter": "NQRust-Identity Node.js adapter",
   "mod-auth-openidc": "Configuring the mod_auth_openidc Apache HTTPD Module",
   "saml-galleon-layers": "NQRust-Identity SAML Galleon feature pack for WildFly and EAP",
   "mod-auth-mellon": "Configuring the mod_auth_mellon Apache Module",
-  "docker-registry": "Configuring a Docker registry",
   "client-registration": "Using the client registration service",
   "client-registration-cli": "Automating client registration with the CLI",
   "mcp-authz-server": "Integrating with Model Context Protocol (MCP)",

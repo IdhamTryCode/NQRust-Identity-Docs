@@ -5,27 +5,21 @@ description: JWT Authorization Grant - NQRust-Identity Documentation
 
 # JWT Authorization Grant
 
-JWT Profile for Oauth 2.0 Authorization Grant is **Preview** and is not fully supported. This feature is disabled by default.
+import { Callout } from 'nextra/components'
 
-To enable start the server with `--features=preview` or `--features=jwt-authorization-grant`
-
-This guide defines how a JWT Bearer Token can be used in NQRust-Identity as an authorization grant. This feature allows clients to send a JWT assertion to request an access token when the client wants to use an existing trust relationship without a direct user-approval step at the authorization server. The assertion is validated solely through the semantics of the JWT (its claims and signature). The trust relationship usually refers to another Identity Provider server (another OIDC server), and allows to obtain a cross-domain or cross-realm access token. In this sense, it is similar to the external to internal request in token exchange V1 (see [Configuring and using token exchange](https://www.nqrust-identity.org/securing-apps/token-exchange#_external-token-to-internal-token-exchange) for more information).
+This guide defines how a JWT Bearer Token can be used in NQRust-Identity as an authorization grant. This feature allows clients to send a JWT assertion to request an access token when the client wants to use an existing trust relationship without a direct user-approval step at the authorization server. The assertion is validated solely through the semantics of the JWT (its claims and signature). The trust relationship usually refers to another Identity Provider server (another OIDC server), and allows to obtain a cross-domain or cross-realm access token. In this sense, it is similar to the external to internal request in token exchange V1 (see [Configuring and using token exchange](/en/guides/securing-apps/token-exchange#_external-token-to-internal-token-exchange) for more information).
 
 The JWT Authorization grant is specified by two different RFCs.
 
-*   Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants ([RFC 7521](https://datatracker.ietf.org/doc/html/rfc7521)). General framework for using assertions as grants.
-    
-*   JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants ([RFC 7523](https://datatracker.ietf.org/doc/html/rfc7523)). Specifics for JWT assertions.
-    
+- Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants ([RFC 7521](https://datatracker.ietf.org/doc/html/rfc7521)). General framework for using assertions as grants.
+- JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants ([RFC 7523](https://datatracker.ietf.org/doc/html/rfc7523)). Specifics for JWT assertions.
 
-In short, the JWT Authorization is an OAuth extension grant as defined by OAuth 2.0 [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.5) that is sent to the token endpoint. The **grant\_type** request parameter must be `urn:ietf:params:oauth:grant-type:jwt-bearer`. The **assertion** must be a single JWT with some claims that will be validated by the server. The parameter **scope** is optional and maintains the same meaning described by Oauth 2.0 and managed by NQRust-Identity for other grants. If the assertion token is valid for authorization, an access token is returned to the client without any interaction to the authorization endpoint.
+In short, the JWT Authorization is an OAuth extension grant as defined by OAuth 2.0 [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749#section-4.5) that is sent to the token endpoint. The **grant_type** request parameter must be `urn:ietf:params:oauth:grant-type:jwt-bearer`. The **assertion** must be a single JWT with some claims that will be validated by the server. The parameter **scope** is optional and maintains the same meaning described by Oauth 2.0 and managed by NQRust-Identity for other grants. If the assertion token is valid for authorization, an access token is returned to the client without any interaction to the authorization endpoint.
 
-The trust relationship in NQRust-Identity is defined by an [Identity Provider](https://www.nqrust-identity.org/docs/latest/server_admin/#_identity_broker). Currently two Identity Provider types can manage JWT authorization grants:
+The trust relationship in NQRust-Identity is defined by an Identity Provider. Currently two Identity Provider types can manage JWT authorization grants:
 
-1.  OpenID Connect v1.0 / NQRust-Identity OpenID Connect
-    
-2.  JWT Authorization Grant
-    
+1. OpenID Connect v1.0 / NQRust-Identity OpenID Connect
+2. JWT Authorization Grant
 
 **OpenID Connect v1.0** (also the **NQRust-Identity OpenID Connect** which is just an extension of the previous type) can be used to define a trust relationship with an external OpenID Provider or OP (an OAuth 2.0 Authentication Servers implementing the OpenID Connect specification). This is the common choice. The received assertion will be processed using the provider configuration to validate the JWT token in terms of claims and signature.
 
@@ -35,78 +29,22 @@ NQRust-Identity requires the `sub` claim in the assertion to be the user identif
 
 The exact processing that NQRust-Identity performs over the assertion is the following (check the mentioned RFCs for more details about what requirements are needed in the assertion JWT):
 
-1.  The requester client should be configured to allow JWT authorization grants.
-    
-2.  The claim `iss` (issuer) should identify the the Identity Provider (**issuer** configuration option).
-    
-3.  The Identity Provider should be configured to allow JWT authorization grants and the client should be configured to allow exchanging grants with this IdP.
-    
-4.  The claim `sub` (subject) should identify the user in NQRust-Identity. As commented, the `sub` claim needs to be the ID of the user in the external provider. The user in NQRust-Identity should be linked to the Identity Provider. The linking information will finally locate the user in NQRust-Identity.
-    
-5.  The claim `aud` (audience) should identify the NQRust-Identity server (issuer or token endpoint URL).
-    
-6.  The claim `exp` (expiration) should be present and validated.
-    
-7.  Other claims like `nbf` (not before), `iat` (issued at) and `jti` (JWT ID) can be present and should be validated in that case.
-    
-8.  The JWT should be signed and its signature should be verified with the keys associated to the identity provider in NQRust-Identity.
-    
+1. The requester client should be configured to allow JWT authorization grants.
+2. The claim `iss` (issuer) should identify the the Identity Provider (**issuer** configuration option).
+3. The Identity Provider should be configured to allow JWT authorization grants and the client should be configured to allow exchanging grants with this IdP.
+4. The claim `sub` (subject) should identify the user in NQRust-Identity. As commented, the `sub` claim needs to be the ID of the user in the external provider. The user in NQRust-Identity should be linked to the Identity Provider. The linking information will finally locate the user in NQRust-Identity.
+5. The claim `aud` (audience) should identify the NQRust-Identity server (issuer or token endpoint URL).
+6. The claim `exp` (expiration) should be present and validated.
+7. Other claims like `nbf` (not before), `iat` (issued at) and `jti` (JWT ID) can be present and should be validated in that case.
+8. The JWT should be signed and its signature should be verified with the keys associated to the identity provider in NQRust-Identity.
 
-Brute force protection is not applied to the JWT Authorization Grant for temporarily locked users, since this grant type does not perform user credential-based authentication but relies on an assertion issued by an external identity provider, and therefore cannot be compromised by brute force attacks on credentials of NQRust-Identity user.
+<Callout type="info">
+  Brute force protection is not applied to the JWT Authorization Grant for temporarily locked users, since this grant type does not perform user credential-based authentication but relies on an assertion issued by an external identity provider, and therefore cannot be compromised by brute force attacks on credentials of NQRust-Identity user.
+</Callout>
 
-## [](#_configuration)Configuration
+## Examples
 
-Only confidential clients can request a JWT authorization grant. In order to allow a client to send such a grant, the client should be configured accordingly. Using the admin console, **clients** → select your client → **Settings** tab → **Capability config** section.
-
-1.  Enable the **JWT Authorization Grant** capability.
-    
-2.  In the option **Allowed Identity Providers for JWT Authorization Grant**, select all the Identity Providers that this client can use for authorizing grants.
-    
-
-![Client configuration for JWT Authorization Grant](https://www.nqrust-identity.org/resources/images/guides/jwt-authorization-grant-client-config.png)
-
-Figure 1. Client configuration for JWT Authorization Grant
-
-The Identity Provider (both types commented in the introduction) needs to also be configured to establish the relationship that will validate the assertion. In **Identity providers** → select your OIDC or JWT provider → **Settings** tab → **Authorization Grant Settings** section.
-
-1.  Enable the option **JWT Authorization Grant** switch.
-    
-2.  Configure the rest of options as desired.
-    
-    *   **Allow assertion reuse**: By default NQRust-Identity only allows one-time assertions (re-using is not permitted) and the the `jti` claim should be present in the JWT (unique identifier of the token).
-        
-    *   **Max allowed assertion expiration**: The maximum expiration the server will allow in the assertion. Default 5 minutes.
-        
-    *   **Assertion signature algorithm**: The signature algorithm that is valid for assertions. If not specified any signature is valid.
-        
-    *   **Allowed clock skew**: Clock skew in seconds that is tolerated when validating identity provider tokens. Default value is zero.
-        
-    *   **Limit access token expiration**: If enabled the access token lifespan will be limited to the expiration of the JWT assertion but only if the JWT assertion expiration is less than the calculated access token expiration.
-        
-    
-
-![Identity Provider configuration for JWT Authorization Grant](https://www.nqrust-identity.org/resources/images/guides/jwt-authorization-grant-oidc-provider-config.png)
-
-Figure 2. OIDC Identity Provider configuration for JWT Authorization Grant
-
-Besides the previous specific options, both identity provider types need some basic configuration related to assertion and signature validation.
-
-*   **Issuer**: Issuer for the assertion. Required.
-    
-*   **Use JWKS URL**: Whether a JWKS endpoint URL is used to obtain the keys that will validate the assertion signature. If disabled, the keys should be provider manually by the administrator. The recommended value is On.
-    
-*   **JWKS URL**: The URL for downloading the signing keys. Required if **Use JWKS URL** is enabled.
-    
-*   **Validating public key id**: Fixed `kid` for validating assertion signatures. This option can be left empty to just validate the signature with the configured public key. This option can only be specified if **Use JWKS URL** is disabled and the validating key is defined as a fixed key in PEM format.
-    
-*   **Validating public key**: The public key in PEM or JWKS format that must be used to verify external IdP signatures. Required if **Use JWKS URL** is disabled.
-    
-
-When JWT Authorization Grant is configured with the OIDC Identity provider, the signatures on the JWT tokens sent to the token endpoint are always validated. The OIDC identity provider option **Validate Signatures** is ignored for the JWT Authorization Grant as it is used just for validation of the signatures on the tokens retrieved from the OIDC identity provider during authentication of the users with this OIDC identity provider.
-
-## [](#_examples)Examples
-
-This is an example request for the JWT Authorization grant that is sent to the token endpoint. The client ID is `test-client`, it uses a secret to authenticate, and it is configured to allow JWT Authorization Grant to an Identity Provider whose issuer is `[https://jwt-idp.example.com](https://jwt-idp.example.com)`.
+This is an example request for the JWT Authorization grant that is sent to the token endpoint. The client ID is `test-client`, it uses a secret to authenticate, and it is configured to allow JWT Authorization Grant to an Identity Provider whose issuer is `https://jwt-idp.example.com`.
 
 ```bash
 POST /realms/demo/protocol/openid-connect/token HTTP/1.1
@@ -154,108 +92,68 @@ NQRust-Identity will validate the request and assertion. If everything is correc
 }
 ```
 
-Following the spec recommendation, the JWT Authorization Grant never issues a refresh token and a [transient session](https://www.nqrust-identity.org/docs/latest/server_admin/#_transient-session) is always created. The access token can be used normally in NQRust-Identity through the introspection, user-info or any other endpoint. It will be valid until expired or explicitly revoked by the revocation endpoint.
+<Callout type="info">
+  Following the spec recommendation, the JWT Authorization Grant never issues a refresh token and a transient session is always created. The access token can be used normally in NQRust-Identity through the introspection, user-info or any other endpoint. It will be valid until expired or explicitly revoked by the revocation endpoint.
+</Callout>
 
-## [](#_how_to_get_a_valid_token_for_jwt_authorization_grant)How to get a valid token for JWT Authorization Grant
+## How to get a valid token for JWT Authorization Grant
 
-The JWT Authorization Grant feature needs a previous JWT assertion in order to be exchanged for an access token. We can call the external OpenID Connect Provider (OP) `domaina`, the one that is represented in NQRust-Identity via the Identity Provider. And we can call the NQRust-Identity server that receives the JWT authorization grant `domainb`. The `domaina` should somehow issue a JWT that is a valid assertion for `domainb`.
+The JWT Authorization Grant feature needs a previous JWT assertion in order to be exchanged for an access token. We can name the external OpenID Connect Provider (OP) `domaina`, the one that is represented in NQRust-Identity via the Identity Provider. And we can name the NQRust-Identity server that receives the JWT authorization grant `domainb`. The `domaina` should somehow issue a JWT that is a valid assertion for `domainb`.
 
 If `domaina` is a server different to NQRust-Identity, we don’t know how that initial JWT is obtained. But note that the specification enforces some processing of the assertion to be valid and return the access token. The way the client gets or generates such a JWT assertion in `domaina` depends completely on `domaina` server and client.
 
-In case the external identity provider is another NQRust-Identity server or realm, Standard Token Exchange can be used to obtain such a token (see [Configuring and using token exchange](https://www.nqrust-identity.org/securing-apps/token-exchange#_standard-token-exchange) for more information). When both sides are NQRust-Identity realms, the idea can be summarized in two basic points:
+In case the external identity provider is another NQRust-Identity server or realm, Standard Token Exchange can be used to obtain such a token (see [Configuring and using token exchange](/en/guides/securing-apps/token-exchange#_standard-token-exchange) for more information). When both sides are NQRust-Identity realms, the idea can be summarized in two basic points:
 
-1.  For `domaina`, `domainb` is an audience that can be restricted via token exchange.
-    
-2.  For `domainb`, `domaina` is an Identity Provider that is used to validate the assertion. The user in `domainb` is also a valid user previously linked to `domaina` via the identity provider.
-    
+1. For `domaina`, `domainb` is an audience that can be restricted via token exchange.
+2. For `domainb`, `domaina` is an Identity Provider that is used to validate the assertion. The user in `domainb` is also a valid user previously linked to `domaina` via the identity provider.
 
-For example, if `domaina` is a NQRust-Identity realm, the following configuration is available to use Token Exchange to obtain the JWT assertion:
+See OAuth Identity and Authorization Chaining Across Domains for a detailed configuration to perform authorization chaining across two NQRust-Identity realms.
 
-1.  Create a client that represents `domainb`. This client can be the same client configured in `domainb` for the identity provider access.
-    
-    *   **Client ID**: [http://localhost:8080/realms/domainb](http://localhost:8080/realms/domainb) (issuer for `domainb`).
-        
-    *   **Name**: domainb
-        
-        ![Client that represents domainb in domaina](https://www.nqrust-identity.org/resources/images/guides/jwt-authorization-grant-oidc-client-domaina.png)
-        
-        Figure 3. Client that represents domainb in domaina
-        
-    
-2.  Create a client scope `access-domainb` to include the correct audience for the token when this scope is requested. An audience mapper for `domainb` will be added.
-    
-    *   **Name**: access-domainb
-        
-    *   **Type**: None
-        
-    *   Only enable **Include in token scope**.
-        
-        ![Client scope to include domainb as audience](https://www.nqrust-identity.org/resources/images/guides/jwt-authorization-grant-oidc-client-scope-domaina.png)
-        
-        Figure 4. Client scope to include domainb as audience
-        
-    *   In the client scope add a mapper:
-        
-        *   **Type**: Audience
-            
-        *   **Name**: domainb-audience
-            
-        *   **Included Client Audience**: [http://localhost:8080/realms/domainb](http://localhost:8080/realms/domainb)
-            
-        *   **Add to access token**: On
-            
-            ![Client scope mapper for domainb audience](https://www.nqrust-identity.org/resources/images/guides/jwt-authorization-grant-oidc-client-scope-mapper.png)
-            
-            Figure 5. Client scope mapper for domainb audience
-            
-        
-    
-3.  In the client used to do the token exchange assign the previous `access-domainb` client scope as optional.
-    
+## Client policies and JWT Authorization Grant
 
-This example allows any user to request that client scope. Roles can be used to restrict the scope of the client scope. This way only users with a specific role would be allowed to add the `domainb` audience.
+New conditions and executions related to JWT Authorization Grant have been added to clients policies in NQRust-Identity.
 
-With the previous configuration, the client in `domaina` can request a token exchange including scope `access-domainb` and restricting the audience to `[http://localhost:8080/realms/domainb](http://localhost:8080/realms/domainb)` (issuer of `domainb`).
+- Condition **identity-provider-alias**. This condition allows to select requests that involve a specific identity provider alias. A list of aliases can be defined, and the condition evaluates to `true` if one of the Identity Provider in the list is present. For the moment the condition only manages the JWT Authorization Grant but can be extended for future operations that involve Identity Providers.
+- Executor **downscope-assertion-grant-enforcer**. The executor enforces requested scopes to not exceed the scopes included in the assertion token (claim `scope` in the JWT). If a scope is requested that is not already present in the assertion, an error is returned. This executor should be used to prevent getting more privileges (scopes or audiences) than the ones granted in the initial assertion JWT (only downscoping is permitted).
 
-```bash
-POST /realms/domaina/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Accept: application/json
+  The enforcer can be used for any request that uses an assertion parameter. Currently it is used for `assertion` in the JWT Authorization Grant and `subject_token` in Standard Token Exchange.
+- Executor **jwt-claim-enforcer**. This executor allows to configure extra requirements for claims in the JWT assertion token. For example, if we want the assertion to contain an `iat` claim or a custom claim with a specific value. The configuration allows us to set any claim name and any claim value (using a java regex). If the claim in the JWT assertion does not match the regex, the request does not proceed and an error is returned.
 
-client_id=clienta&
-client_secret=XXXXX&
-grant_type=urn:ietf:params:oauth:grant-type:token-exchange&
-subject_token_type=urn:ietf:params:oauth:token-type:access_token&
-requested_token_type=urn:ietf:params:oauth:token-type:access_token&
-scope=access-domainb&
-audience=http://localhost:8080/realms/domainb&
-subject_token=$SUBJECT_TOKEN
+  As the previous executor, for the moment this enforcer can be used for JWT Authorization Grant and the Standard Token exchange.
+
+## JWT Authorization Grant for Google Identity Provider
+
+Google Identity Provider supports the JWT Authorization Grant, allowing the use of a Google ID Token as an assertion.
+According to RFC 7523, the assertion MUST be a JWT. Since Google issues JWTs only for ID Tokens (and not for access tokens), only the ID Token can be used for this authorization grant.
+
+To enable this feature, the **JWT Authorization Grant** switch must be turned on in the Google Identity Provider configuration.
+
+```json
+{
+    "iss": "https://accounts.google.com", 
+    "azp": "XXXX.apps.googleusercontent.com",
+    "aud": "XXXX.apps.googleusercontent.com", 
+    "sub": "100209199795938692365", 
+    "at_hash": "AAos4eSIx4b5uQ8N-OAPYg",
+    "iat": 1769503848,
+    "exp": 1769507448 
+}
 ```
 
-The resulting token will be a valid token for JWT Authorization Grant in `domainb`. So another client defined for `domainb` can send a JWT Authorization Grant with that assertion.
+1. Google Issuer.
+2. Client ID that must be the same configured on the Google Identity Provider.
+3. Subject that must be linked to the NQRust-Identity user.
+4. Expires 1 hour after `iat`.
 
-```bash
-POST /realms/domainb/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-Accept: application/json
+The specifications described in this guide also apply to Google, with the following exceptions:
 
-client_id=clientb&
-client_secret=YYYYYY&
-grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&
-scope=scope1 scope2
-assertion=$ASSERTION_TOKEN
-```
+- **Audience Validation**: Google does not allow adding custom audiences to the ID Token. Therefore, the ID Token cannot contain the Token Endpoint URL or the NQRust-Identity Issuer URL. The `aud` (audience) claim must simply match the Client ID configured for the Google Identity Provider. **This is the only deviation from RFC 7523.**
+- **Replay Check**: It is not possible to perform a replay check because the `jti` claim is missing from the Google ID Token. Consequently, the same Google ID Token can be used multiple times.
+- **Google ID Token Expiration**: The duration of a Google ID Token is fixed at 1 hour and cannot be modified. To limit the validity window, a dedicated property in the configuration allows you to set a maximum time limit for the token. The default value is 1 hour (matching the Google ID Token lifespan).
 
-## [](#_client_policies_and_jwt_authorization_grant)Client policies and JWT Authorization Grant
+In a scenario where a mobile application already supports login with Google without involving NQRust-Identity, there may be an issue when integrating NQRust-Identity later. For example, NQRust-Identity might be configured with a Google Identity Provider that uses a different Google client than the one used by the mobile app.
 
-New conditions and executions related to JWT Authorization Grant have been added to [clients policies](https://www.nqrust-identity.org/docs/latest/server_admin/#_client_policies) in NQRust-Identity.
+In this case, the Google ID token cannot be used with the JWT Authorization Grant because the `aud` claim in the ID Token does not match the client id configured in the Google Identity Provider.
 
-*   Condition **identity-provider-alias**. This condition allows to select requests that involve a specific identity provider alias. A list of aliases can be defined, and the condition evaluates to `true` if one of the Identity Provider in the list is present. For the moment the condition only manages the JWT Authorization Grant but can be extended for future operations that involve Identity Providers.
-    
-*   Executor **downscope-assertion-grant-enforcer**. The executor enforces requested scopes to not exceed the scopes included in the assertion token (claim `scope` in the JWT). If a scope is requested that is not already present in the assertion, an error is returned. This executor should be used to prevent getting more privileges (scopes or audiences) than the ones granted in the initial assertion JWT (only downscoping is permitted).
-    
-    The enforcer can be used for any request that uses an assertion parameter. Currently it is used for `assertion` in the JWT Authorization Grant and `subject_token` in Standard Token Exchange.
-    
-*   Executor **jwt-claim-enforcer**. This executor allows to configure extra requirements for claims in the JWT assertion token. For example, if we want the assertion to contain an `iat` claim or a custom claim with a specific value. The configuration allows us to set any claim name and any claim value (using a java regex). If the claim in the JWT assertion does not match the regex, the request does not proceed and an error is returned.
-    
-    As the previous executor, for the moment this enforcer can be used for JWT Authorization Grant and the Standard Token exchange.
+To address this issue, you can use the **Custom audience mapping** configuration option commented in the client configuration section. For example, if the Identity Provider alias is `google`, the previous audience can be configured as valid with the following mapping.
+

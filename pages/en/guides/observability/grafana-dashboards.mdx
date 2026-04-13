@@ -5,122 +5,98 @@ description: Visualizing activities in dashboards - NQRust-Identity Documentatio
 
 # Visualizing activities in dashboards
 
-NQRust-Identity provides metrics to observe what is happening inside the deployment. To understand how metrics evolve over time, it is helpful to collect and visualize them in graphs.
+import { Callout } from 'nextra/components'
+
+NQRust-Identity provides metrics to observe what is happening inside the deployment.
+To understand how metrics evolve over time, it is helpful to collect and visualize them in graphs.
 
 This guide provides instructions on how to visualize collected NQRust-Identity metrics in a running Grafana instance.
 
-## [](#_prerequisites)Prerequisites
+## Prerequisites
 
-*   NQRust-Identity metrics are enabled. Follow [Gaining insights with metrics](https://www.nqrust-identity.org/observability/configuration-metrics) guide for more details.
-    
-*   Grafana instance is running and NQRust-Identity metrics are collected into a Prometheus instance.
-    
-*   For the HTTP request latency heatmaps to work, enable histograms for HTTP metrics by setting `http-metrics-histograms-enabled` to `true`.
-    
+- NQRust-Identity metrics are enabled. Follow [Gaining insights with metrics](/en/guides/observability/configuration-metrics) guide for more details.
+- Grafana instance is running and NQRust-Identity metrics are collected into a Prometheus instance.
+- For the HTTP request latency heatmaps to work, enable histograms for HTTP metrics by setting `http-metrics-histograms-enabled` to `true`.
 
-## [](#_nqrust-identity_grafana_dashboards)NQRust-Identity Grafana dashboards
+## NQRust-Identity Grafana dashboards
 
-Grafana dashboards are distributed in the form of a JSON file that is imported into a Grafana instance. JSON definitions of NQRust-Identity Grafana dashboards are available in the [nqrust-identity/nqrust-identity-grafana-dashboard GitHub repository](https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard).
+Grafana dashboards are distributed in the form of a JSON file that is imported into a Grafana instance.
+JSON definitions of NQRust-Identity Grafana dashboards are available in the [nqrust-identity/nqrust-identity-grafana-dashboard GitHub repository](https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard).
 
 Follow these steps to download JSON file definitions.
 
-1.  Identify the branch from `nqrust-identity-grafana-dashboards` to use from the following table.
-    
-     
-    
-    NQRust-Identity version
-    
-    `nqrust-identity-grafana-dashboards` branch/tag
-    
-    26.1 - 26.2
-    
-    `26.2.0`
-    
-    \>= 26.3
-    
-    `main`
-    
-2.  Clone the GitHub repository
-    
-    ```
-    git clone -b BRANCH\_FROM\_STEP\_1 https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard.git
-    ```
-    
-3.  The dashboards are available in the directory `nqrust-identity-grafana-dashboard/dashboards`.
-    
+1. Identify the branch from `nqrust-identity-grafana-dashboards` to use from the following table.
+
+  NQRust-Identity version `nqrust-identity-grafana-dashboards` branch/tag 26.1 - 26.2 `26.2.0` >= 26.3 `main`
+2. Clone the GitHub repository
+
+  ```
+  git clone -b BRANCH_FROM_STEP_1 https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard.git
+  ```
+3. The dashboards are available in the directory `nqrust-identity-grafana-dashboard/dashboards`.
 
 The following sections describe the purpose of each dashboard.
 
-### [](#_nqrust-identity_troubleshooting_dashboard)NQRust-Identity troubleshooting dashboard
+### NQRust-Identity troubleshooting dashboard
 
 This dashboard is available in the JSON file: `nqrust-identity-troubleshooting-dashboard.json`.
 
-On the top of the dashboard, graphs display the service level indicators as defined in [Monitoring performance with Service Level Indicators](https://www.nqrust-identity.org/observability/nqrust-identity-service-level-indicators). This dashboard can be also used while troubleshooting a NQRust-Identity deployment following the [Troubleshooting using metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting) guide, for example, when SLI graphs do not show expected results.
+On the top of the dashboard, graphs display the service level indicators as defined in Monitoring performance with Service Level Indicators.
+This dashboard can be also used while troubleshooting a NQRust-Identity deployment following the [Troubleshooting using metrics](/en/guides/observability/metrics-for-troubleshooting) guide, for example, when SLI graphs do not show expected results.
 
-![Troubleshooting dashboard](https://www.nqrust-identity.org/resources/images/guides/observability/nqrust-identity-troubleshooting-grafana-dashboard.png)
+![NQRust-Identity troubleshooting Grafana dashboard](/images/observability/grafana-dashboard-1.png)
 
-Figure 1. Troubleshooting dashboard
-
-### [](#_nqrust-identity_capacity_planning_dashboard)NQRust-Identity capacity planning dashboard
+### NQRust-Identity capacity planning dashboard
 
 This dashboard is available in the JSON file: `nqrust-identity-capacity-planning-dashboard.json`.
 
-This dashboard shows metrics that are important when estimating the load handled by a NQRust-Identity deployment. For example, it shows the number of password validations or login flows performed by NQRust-Identity. For more detail on these metrics, see the guide [Self-provided metrics](https://www.nqrust-identity.org/observability/metrics-for-troubleshooting-nqrust-identity).
+This dashboard shows metrics that are important when estimating the load handled by a NQRust-Identity deployment.
+For example, it shows the number of password validations or login flows performed by NQRust-Identity.
+For more detail on these metrics, see the guide Self-provided metrics.
 
-NQRust-Identity event metrics must be enabled for this dashboard to work correctly. To enable them, see the guide [Monitoring user activities with event metrics](https://www.nqrust-identity.org/observability/event-metrics).
+![NQRust-Identity capacity planning dashboard](/images/observability/grafana-dashboard-2.png)
 
-![Capacity planning dashboard](https://www.nqrust-identity.org/resources/images/guides/observability/nqrust-identity-capacity-planning-dashboard.png)
+<Callout type="info">
+  NQRust-Identity event metrics must be enabled for this dashboard to work correctly.  To enable them, see the guide Monitoring user activities with event metrics.
+</Callout>
 
-Figure 2. Capacity planning dashboard
+## Import a dashboard
 
-## [](#_import_a_dashboard)Import a dashboard
+1. Open the dashboard page from the left Grafana menu.
+2. Click **New** and **Import**.
+3. Click **Upload dashboard JSON file** and select the JSON file of the dashboard you want to import.
+4. Pick your Prometheus datasource.
+5. Click **Import**.
 
-1.  Open the dashboard page from the left Grafana menu.
-    
-2.  Click **New** and **Import**.
-    
-3.  Click **Upload dashboard JSON file** and select the JSON file of the dashboard you want to import.
-    
-4.  Pick your Prometheus datasource.
-    
-5.  Click **Import**.
-    
+<Callout type="default">
+  The Grafana dashboards have labels inserted by Kubernetes.
+  It is possible to use the dashboards with bare-metal deployments by adding the missing labels in the Prometheus configuration file, as shown below.
 
-The Grafana dashboards have labels inserted by Kubernetes. It is possible to use the dashboards with bare-metal deployments by adding the missing labels in the Prometheus configuration file, as shown below.
+  ```yaml
+  scrape_configs:
+    # The job name is added as a label `job=<job_name>` to any time series scraped from this config.
+    - job_name: "nqrust-identity-service"
+      static_configs:
+        - targets: ["localhost:9000", "localhost:9001", "localhost:9002"]
+          labels:
+            namespace: 'nqrust-identity'
+            container: 'nqrust-identity'
+      relabel_configs:
+        - source_labels: [__address__]
+          target_label: pod
+  ```
+</Callout>
 
-Prometheus Scrape Configuration
-
-```yaml
-scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any time series scraped from this config.
-  - job_name: "nqrust-identity-service"
-    static_configs:
-      - targets: ["localhost:9000", "localhost:9001", "localhost:9002"]
-        labels:
-          namespace: 'nqrust-identity'
-          container: 'nqrust-identity'
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: pod
-```
-
-## [](#_export_a_dashboard)Export a dashboard
+## Export a dashboard
 
 Exporting a dashboard to JSON format may be useful. For example, you may want to suggest a change in our dashboard repository.
 
-.grafana-share-icon img &#123; margin-top: 0; margin-bottom: 0; &#125;
+1. Open a dashboard you would like to export.
+2. Click **share** () in the top left corner next to the dashboard name.
+3. Click the **Export** tab.
+4. Enable **Export for sharing externally**.
+5. Click either **Save to file** or **View JSON** and **Copy to Clipboard** according to where you want to store the resulting JSON.
 
-1.  Open a dashboard you would like to export.
-    
-2.  Click **share** (![Grafana share icon](https://www.nqrust-identity.org/resources/images/guides/observability/grafana-share-icon.svg)) in the top left corner next to the dashboard name.
-    
-3.  Click the **Export** tab.
-    
-4.  Enable **Export for sharing externally**.
-    
-5.  Click either **Save to file** or **View JSON** and **Copy to Clipboard** according to where you want to store the resulting JSON.
-    
+## Further reading
 
-## [](#_further_reading)Further reading
-
-Continue reading on how to connect traces to dashboard in the [Analyzing outliers and errors with exemplars](https://www.nqrust-identity.org/observability/exemplars) guide.
+Continue reading on how to connect traces to dashboard in the [Analyzing outliers and errors with exemplars](/en/guides/observability/exemplars) guide.

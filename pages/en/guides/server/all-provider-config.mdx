@@ -5,2589 +5,569 @@ description: All provider configuration - NQRust-Identity Documentation
 
 # All provider configuration
 
-## [](#_authentication_sessions)authentication-sessions
+## authentication-sessions
+
+### infinispan
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-authentication-sessions--infinispan--auth-sessions-limit`**<br/>The maximum number of concurrent authentication sessions per RootAuthenticationSession.<br/>**CLI:** `--spi-authentication-sessions--infinispan--auth-sessions-limit`<br/>**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__INFINISPAN__AUTH_SESSIONS_LIMIT` | _int_ | `300` |
+
+### remote
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-authentication-sessions--remote--auth-sessions-limit`**<br/>The maximum number of concurrent authentication sessions per RootAuthenticationSession.<br/>**CLI:** `--spi-authentication-sessions--remote--auth-sessions-limit`<br/>**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__AUTH_SESSIONS_LIMIT` | _int_ | `300` |
+| **`spi-authentication-sessions--remote--max-retries`**<br/>The maximum number of retries if an error occurs.<br/>A value of zero or less disable any retries.<br/>**CLI:** `--spi-authentication-sessions--remote--max-retries`<br/>**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__MAX_RETRIES` | _int_ | `10` |
+| **`spi-authentication-sessions--remote--retry-base-time`**<br/>The base back-off time in milliseconds.<br/>**CLI:** `--spi-authentication-sessions--remote--retry-base-time`<br/>**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__RETRY_BASE_TIME` | _int_ | `10` |
+
+## brute-force-protector
+
+### default-brute-force-detector
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-brute-force-protector--default-brute-force-detector--allow-concurrent-requests`**<br/>If concurrent logins are allowed by the brute force protection.<br/>**CLI:** `--spi-brute-force-protector--default-brute-force-detector--allow-concurrent-requests`<br/>**Env:** `KC_SPI_BRUTE_FORCE_PROTECTOR__DEFAULT_BRUTE_FORCE_DETECTOR__ALLOW_CONCURRENT_REQUESTS` | `true`, `false` | `false` |
+
+## cache-embedded
+
+### default
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-cache-embedded--default--action-tokens-owners`**<br/>Sets the number of owners for the actionTokens distributed cache.<br/>It defines the number of copies of your data in the cluster.<br/>**CLI:** `--spi-cache-embedded--default--action-tokens-owners`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__ACTION_TOKENS_OWNERS` | _Integer_ |  |
+| **`spi-cache-embedded--default--authentication-sessions-owners`**<br/>Sets the number of owners for the authenticationSessions distributed cache.<br/>It defines the number of copies of your data in the cluster.<br/>**CLI:** `--spi-cache-embedded--default--authentication-sessions-owners`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__AUTHENTICATION_SESSIONS_OWNERS` | _Integer_ |  |
+| **`spi-cache-embedded--default--authorization-max-count`**<br/>The maximum number of entries that can be stored in-memory by the authorization cache.<br/>**CLI:** `--spi-cache-embedded--default--authorization-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__AUTHORIZATION_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--client-sessions-max-count`**<br/>The maximum number of entries that can be stored in-memory by the clientSessions cache.<br/>**CLI:** `--spi-cache-embedded--default--client-sessions-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CLIENT_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--client-sessions-owners`**<br/>Sets the number of owners for the clientSessions distributed cache.<br/>It defines the number of copies of your data in the cluster.<br/>**CLI:** `--spi-cache-embedded--default--client-sessions-owners`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CLIENT_SESSIONS_OWNERS` | _Integer_ |  |
+| **`spi-cache-embedded--default--config-file`**<br/>Defines the file from which cache configuration should be loaded from.<br/>The configuration file is relative to the `conf/` directory.<br/>**CLI:** `--spi-cache-embedded--default--config-file`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CONFIG_FILE` | _String_ |  |
+| **`spi-cache-embedded--default--crl-max-count`**<br/>The maximum number of entries that can be stored in-memory by the crl cache.<br/>**CLI:** `--spi-cache-embedded--default--crl-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CRL_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--keys-max-count`**<br/>The maximum number of entries that can be stored in-memory by the keys cache.<br/>**CLI:** `--spi-cache-embedded--default--keys-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__KEYS_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--login-failures-owners`**<br/>Sets the number of owners for the loginFailures distributed cache.<br/>It defines the number of copies of your data in the cluster.<br/>**CLI:** `--spi-cache-embedded--default--login-failures-owners`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__LOGIN_FAILURES_OWNERS` | _Integer_ |  |
+| **`spi-cache-embedded--default--machine-name`**<br/>The name of the physical machine where this instance runs.<br/>It can be set if multiple NQRust-Identity instances are running in the same physical machines. Infinispan takes into consideration this value to keep the backup data spread between different machines.<br/>**CLI:** `--spi-cache-embedded--default--machine-name`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__MACHINE_NAME` | _String_ |  |
+| **`spi-cache-embedded--default--metrics-histograms-enabled`**<br/>Enable histograms for metrics for the embedded caches.<br/>**CLI:** `--spi-cache-embedded--default--metrics-histograms-enabled`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__METRICS_HISTOGRAMS_ENABLED` | `true`, `false` | `false` |
+| **`spi-cache-embedded--default--network-bind-address`**<br/>IP address used by clustering transport.<br/>By default, SITE_LOCAL is used.<br/>**CLI:** `--spi-cache-embedded--default--network-bind-address`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_BIND_ADDRESS` | _String_ |  |
+| **`spi-cache-embedded--default--network-bind-port`**<br/>The Port the clustering transport will bind to.<br/>By default, port 7800 is used.<br/>**CLI:** `--spi-cache-embedded--default--network-bind-port`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_BIND_PORT` | _Integer_ |  |
+| **`spi-cache-embedded--default--network-external-address`**<br/>IP address that other instances in the cluster should use to contact this node.<br/>Set only if it is different to cache-embedded-network-bind-address, for example when this instance is behind a firewall.<br/>**CLI:** `--spi-cache-embedded--default--network-external-address`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_EXTERNAL_ADDRESS` | _String_ |  |
+| **`spi-cache-embedded--default--network-external-port`**<br/>Port that other instances in the cluster should use to contact this node.<br/>Set only if it is different to cache-embedded-network-bind-port, for example when this instance is behind a firewall<br/>**CLI:** `--spi-cache-embedded--default--network-external-port`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_EXTERNAL_PORT` | _Integer_ |  |
+| **`spi-cache-embedded--default--node-name`**<br/>Sets the name of the current node.<br/>This is a friendly name to make logs, etc. make more sense.<br/>**CLI:** `--spi-cache-embedded--default--node-name`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NODE_NAME` | _String_ |  |
+| **`spi-cache-embedded--default--offline-client-sessions-max-count`**<br/>The maximum number of entries that can be stored in-memory by the offlineClientSessions cache.<br/>**CLI:** `--spi-cache-embedded--default--offline-client-sessions-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__OFFLINE_CLIENT_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--offline-sessions-max-count`**<br/>The maximum number of entries that can be stored in-memory by the offlineSessions cache.<br/>**CLI:** `--spi-cache-embedded--default--offline-sessions-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__OFFLINE_SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--rack-name`**<br/>The name of the rack where this instance runs.<br/>It can be set if multiple NQRust-Identity instances are running in the same physical rack. Infinispan takes into consideration this value to keep the backup data spread between different racks.<br/>**CLI:** `--spi-cache-embedded--default--rack-name`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__RACK_NAME` | _String_ |  |
+| **`spi-cache-embedded--default--realms-max-count`**<br/>The maximum number of entries that can be stored in-memory by the realms cache.<br/>**CLI:** `--spi-cache-embedded--default--realms-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__REALMS_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--sessions-max-count`**<br/>The maximum number of entries that can be stored in-memory by the sessions cache.<br/>**CLI:** `--spi-cache-embedded--default--sessions-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__SESSIONS_MAX_COUNT` | _Integer_ |  |
+| **`spi-cache-embedded--default--sessions-owners`**<br/>Sets the number of owners for the sessions distributed cache.<br/>It defines the number of copies of your data in the cluster.<br/>**CLI:** `--spi-cache-embedded--default--sessions-owners`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__SESSIONS_OWNERS` | _Integer_ |  |
+| **`spi-cache-embedded--default--site-name`**<br/>The name of the site (availability zone) where this instance runs.<br/>It can be set if running NQRust-Identity in different availability zones. Infinispan takes into consideration this value to keep the backup data spread between different sites.<br/>**CLI:** `--spi-cache-embedded--default--site-name`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__SITE_NAME` | _String_ |  |
+| **`spi-cache-embedded--default--users-max-count`**<br/>The maximum number of entries that can be stored in-memory by the users cache.<br/>**CLI:** `--spi-cache-embedded--default--users-max-count`<br/>**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__USERS_MAX_COUNT` | _Integer_ |  |
+
+## cache-remote
+
+### default
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-cache-remote--default--auth-realm`**<br/>Specifies the Infinispan server realm to be used for authentication.<br/>**CLI:** `--spi-cache-remote--default--auth-realm`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__AUTH_REALM` | _String_ | `default` |
+| **`spi-cache-remote--default--backup-sites`**<br/>Configures a list of backup sites names to where the external Infinispan cluster backups the NQRust-Identity data.<br/>**CLI:** `--spi-cache-remote--default--backup-sites`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__BACKUP_SITES` | _List_ |  |
+| **`spi-cache-remote--default--client-intelligence`**<br/>Specifies the level of intelligence the Hot Rod client should have.<br/>**CLI:** `--spi-cache-remote--default--client-intelligence`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__CLIENT_INTELLIGENCE` | `BASIC`, `TOPOLOGY_AWARE`, `HASH_DISTRIBUTION_AWARE` | `HASH_DISTRIBUTION_AWARE` |
+| **`spi-cache-remote--default--connection-pool-exhausted-action`**<br/>Specifies what happens when asking for a connection from a server’s pool, and that pool is exhausted.<br/>**CLI:** `--spi-cache-remote--default--connection-pool-exhausted-action`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__CONNECTION_POOL_EXHAUSTED_ACTION` | `EXCEPTION`, `WAIT`, `CREATE_NEW` | `CREATE_NEW` |
+| **`spi-cache-remote--default--connection-pool-max-active`**<br/>Sets the maximum number of connections per Infinispan server instance.<br/>**CLI:** `--spi-cache-remote--default--connection-pool-max-active`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__CONNECTION_POOL_MAX_ACTIVE` | _Integer_ | `16` |
+| **`spi-cache-remote--default--hostname`**<br/>The hostname of the external Infinispan cluster.<br/>**CLI:** `--spi-cache-remote--default--hostname`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__HOSTNAME` | _String_ |  |
+| **`spi-cache-remote--default--password`**<br/>The password for the authentication to the external Infinispan cluster.<br/>It is optional if connecting to an unsecure external Infinispan cluster. If the option is specified, `cache-remote-username` is required as well.<br/>**CLI:** `--spi-cache-remote--default--password`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__PASSWORD` | _String_ |  |
+| **`spi-cache-remote--default--port`**<br/>The port of the external Infinispan cluster.<br/>**CLI:** `--spi-cache-remote--default--port`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__PORT` | _Integer_ | `11222` |
+| **`spi-cache-remote--default--properties-file`**<br/>Path to the properties file with the Hot Rod client configuration.<br/>**CLI:** `--spi-cache-remote--default--properties-file`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__PROPERTIES_FILE` | _File_ |  |
+| **`spi-cache-remote--default--sasl-mechanism`**<br/>Selects the SASL mechanism to use for the connection to the Infinispan server.<br/>**CLI:** `--spi-cache-remote--default--sasl-mechanism`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__SASL_MECHANISM` | _String_ | `SCRAM-SHA-512` |
+| **`spi-cache-remote--default--tls-enabled`**<br/>Enable TLS support to communicate with a secured remote Infinispan server.<br/>Recommended to be enabled in production.<br/>**CLI:** `--spi-cache-remote--default--tls-enabled`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__TLS_ENABLED` | `true`, `false` | `true` |
+| **`spi-cache-remote--default--tls-sni-hostname`**<br/>Specifies the TLS SNI hostname for the connection to the Infinispan server.<br/>**CLI:** `--spi-cache-remote--default--tls-sni-hostname`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__TLS_SNI_HOSTNAME` | _String_ |  |
+| **`spi-cache-remote--default--username`**<br/>The username for the authentication to the external Infinispan cluster.<br/>It is optional if connecting to an unsecure external Infinispan cluster. If the option is specified, `cache-remote-password` is required as well.<br/>**CLI:** `--spi-cache-remote--default--username`<br/>**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__USERNAME` | _String_ |  |
+
+## ciba-auth-channel
+
+### ciba-http-auth-channel
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-ciba-auth-channel--ciba-http-auth-channel--http-authentication-channel-uri`**<br/>The HTTP(S) URI of the authentication channel.<br/>**CLI:** `--spi-ciba-auth-channel--ciba-http-auth-channel--http-authentication-channel-uri`<br/>**Env:** `KC_SPI_CIBA_AUTH_CHANNEL__CIBA_HTTP_AUTH_CHANNEL__HTTP_AUTHENTICATION_CHANNEL_URI` | _string_ |  |
+
+## client-policy-executor
+
+### client-id-metadata-document
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-client-policy-executor--client-id-metadata-document--cimd-provider-name`**<br/>Provider to use for the CIMD<br/>**CLI:** `--spi-client-policy-executor--client-id-metadata-document--cimd-provider-name`<br/>**Env:** `KC_SPI_CLIENT_POLICY_EXECUTOR__CLIENT_ID_METADATA_DOCUMENT__CIMD_PROVIDER_NAME` | _string_ | `persistent-cimd` |
+| **`spi-client-policy-executor--client-id-metadata-document--max-cache-time`**<br/>Max cache time of client metadata in seconds for the CIMD.<br/>**CLI:** `--spi-client-policy-executor--client-id-metadata-document--max-cache-time`<br/>**Env:** `KC_SPI_CLIENT_POLICY_EXECUTOR__CLIENT_ID_METADATA_DOCUMENT__MAX_CACHE_TIME` | _int_ | `259200` |
+| **`spi-client-policy-executor--client-id-metadata-document--min-cache-time`**<br/>Min cache time of client metadata in seconds for the CIMD.<br/>**CLI:** `--spi-client-policy-executor--client-id-metadata-document--min-cache-time`<br/>**Env:** `KC_SPI_CLIENT_POLICY_EXECUTOR__CLIENT_ID_METADATA_DOCUMENT__MIN_CACHE_TIME` | _int_ | `300` |
+| **`spi-client-policy-executor--client-id-metadata-document--upper-limit-metadata-bytes`**<br/>Client metadata upper limit in byte for the CIMD.<br/>**CLI:** `--spi-client-policy-executor--client-id-metadata-document--upper-limit-metadata-bytes`<br/>**Env:** `KC_SPI_CLIENT_POLICY_EXECUTOR__CLIENT_ID_METADATA_DOCUMENT__UPPER_LIMIT_METADATA_BYTES` | _int_ | `5000` |
+
+## connections-http-client
+
+### default
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-connections-http-client--default--backoff-multiplier`**<br/>Multiplier for exponential backoff between retry attempts.<br/>For example, with an initial backoff of 1000ms and a multiplier of 2.0, the retry delays would be: 1000ms, 2000ms, 4000ms, etc.<br/>**CLI:** `--spi-connections-http-client--default--backoff-multiplier`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__BACKOFF_MULTIPLIER` | _string_ | `2.0` |
+| **`spi-connections-http-client--default--client-key-password`**<br/>The key password.<br/>**CLI:** `--spi-connections-http-client--default--client-key-password`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CLIENT_KEY_PASSWORD` | _string_ | `-1` |
+| **`spi-connections-http-client--default--client-keystore`**<br/>The file path of the key store from where the key material is going to be read from to set-up TLS connections.<br/>**CLI:** `--spi-connections-http-client--default--client-keystore`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CLIENT_KEYSTORE` | _string_ |  |
+| **`spi-connections-http-client--default--client-keystore-password`**<br/>The key store password.<br/>**CLI:** `--spi-connections-http-client--default--client-keystore-password`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CLIENT_KEYSTORE_PASSWORD` | _string_ |  |
+| **`spi-connections-http-client--default--connection-pool-size`**<br/>Assigns maximum total connection value.<br/>**CLI:** `--spi-connections-http-client--default--connection-pool-size`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CONNECTION_POOL_SIZE` | _int_ |  |
+| **`spi-connections-http-client--default--connection-request-timeout-millis`**<br/>Timeout when trying to obtain any connection, new or pooled.<br/>**CLI:** `--spi-connections-http-client--default--connection-request-timeout-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CONNECTION_REQUEST_TIMEOUT_MILLIS` | _long_ | `5000` |
+| **`spi-connections-http-client--default--connection-ttl-millis`**<br/>Sets maximum time, in milliseconds, to live for persistent connections.<br/>**CLI:** `--spi-connections-http-client--default--connection-ttl-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CONNECTION_TTL_MILLIS` | _long_ | `-1` |
+| **`spi-connections-http-client--default--disable-cookies`**<br/>Disables state (cookie) management.<br/>**CLI:** `--spi-connections-http-client--default--disable-cookies`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__DISABLE_COOKIES` | `true`, `false` | `true` |
+| **`spi-connections-http-client--default--disable-trust-manager`**<br/>Disable trust management and hostname verification.<br/>NOTE this is a security hole, so only set this option if you cannot or do not want to verify the identity of the host you are communicating with.<br/>**CLI:** `--spi-connections-http-client--default--disable-trust-manager`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__DISABLE_TRUST_MANAGER` | `true`, `false` | `false` |
+| **`spi-connections-http-client--default--establish-connection-timeout-millis`**<br/>Timeout when making an initial socket connection.<br/>Only effective if less than the connection-request-timeout-millis.<br/>**CLI:** `--spi-connections-http-client--default--establish-connection-timeout-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__ESTABLISH_CONNECTION_TIMEOUT_MILLIS` | _long_ | `-1` |
+| **`spi-connections-http-client--default--initial-backoff-millis`**<br/>Initial backoff time in milliseconds before the first retry attempt.<br/>**CLI:** `--spi-connections-http-client--default--initial-backoff-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__INITIAL_BACKOFF_MILLIS` | _long_ | `1000` |
+| **`spi-connections-http-client--default--jitter-factor`**<br/>Jitter factor to apply to backoff times.<br/>A value of 0.5 means the actual backoff time will be between 50% and 150% of the calculated exponential backoff time.<br/>**CLI:** `--spi-connections-http-client--default--jitter-factor`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__JITTER_FACTOR` | _string_ | `0.5` |
+| **`spi-connections-http-client--default--max-connection-idle-time-millis`**<br/>Sets the time, in milliseconds, for evicting idle connections from the pool.<br/>**CLI:** `--spi-connections-http-client--default--max-connection-idle-time-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_CONNECTION_IDLE_TIME_MILLIS` | _long_ | `900000` |
+| **`spi-connections-http-client--default--max-consumed-response-size`**<br/>Maximum size of a response consumed by the client (to prevent denial of service)<br/>**CLI:** `--spi-connections-http-client--default--max-consumed-response-size`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_CONSUMED_RESPONSE_SIZE` | _long_ | `10000000` |
+| **`spi-connections-http-client--default--max-pooled-per-route`**<br/>Assigns maximum connection per route value.<br/>**CLI:** `--spi-connections-http-client--default--max-pooled-per-route`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_POOLED_PER_ROUTE` | _int_ | `64` |
+| **`spi-connections-http-client--default--max-retries`**<br/>Maximum number of retry attempts for all outgoing HTTP requests.<br/>Set to 0 to disable retries (default).<br/>**CLI:** `--spi-connections-http-client--default--max-retries`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_RETRIES` | _int_ | `0` |
+| **`spi-connections-http-client--default--proxy-mappings`**<br/>Denotes the combination of a regex based hostname pattern and a proxy-uri in the form of hostnamePattern;proxyUri.<br/>**CLI:** `--spi-connections-http-client--default--proxy-mappings`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__PROXY_MAPPINGS` | _string_ |  |
+| **`spi-connections-http-client--default--reuse-connections`**<br/>If connections should be reused.<br/>**CLI:** `--spi-connections-http-client--default--reuse-connections`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__REUSE_CONNECTIONS` | `true`, `false` | `true` |
+| **`spi-connections-http-client--default--socket-timeout-millis`**<br/>Socket inactivity timeout.<br/>**CLI:** `--spi-connections-http-client--default--socket-timeout-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__SOCKET_TIMEOUT_MILLIS` | _long_ | `5000` |
+| **`spi-connections-http-client--default--use-jitter`**<br/>Whether to apply jitter to backoff times to prevent synchronized retry storms when multiple clients are retrying at the same time.<br/>**CLI:** `--spi-connections-http-client--default--use-jitter`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__USE_JITTER` | `true`, `false` | `true` |
+
+### opentelemetry
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-connections-http-client--opentelemetry--backoff-multiplier`**<br/>Multiplier for exponential backoff between retry attempts.<br/>For example, with an initial backoff of 1000ms and a multiplier of 2.0, the retry delays would be: 1000ms, 2000ms, 4000ms, etc.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--backoff-multiplier`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__BACKOFF_MULTIPLIER` | _string_ | `2.0` |
+| **`spi-connections-http-client--opentelemetry--client-key-password`**<br/>The key password.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--client-key-password`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CLIENT_KEY_PASSWORD` | _string_ | `-1` |
+| **`spi-connections-http-client--opentelemetry--client-keystore`**<br/>The file path of the key store from where the key material is going to be read from to set-up TLS connections.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--client-keystore`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CLIENT_KEYSTORE` | _string_ |  |
+| **`spi-connections-http-client--opentelemetry--client-keystore-password`**<br/>The key store password.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--client-keystore-password`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CLIENT_KEYSTORE_PASSWORD` | _string_ |  |
+| **`spi-connections-http-client--opentelemetry--connection-pool-size`**<br/>Assigns maximum total connection value.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--connection-pool-size`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CONNECTION_POOL_SIZE` | _int_ |  |
+| **`spi-connections-http-client--opentelemetry--connection-request-timeout-millis`**<br/>Timeout when trying to obtain any connection, new or pooled.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--connection-request-timeout-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CONNECTION_REQUEST_TIMEOUT_MILLIS` | _long_ | `5000` |
+| **`spi-connections-http-client--opentelemetry--connection-ttl-millis`**<br/>Sets maximum time, in milliseconds, to live for persistent connections.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--connection-ttl-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CONNECTION_TTL_MILLIS` | _long_ | `-1` |
+| **`spi-connections-http-client--opentelemetry--disable-cookies`**<br/>Disables state (cookie) management.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--disable-cookies`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__DISABLE_COOKIES` | `true`, `false` | `true` |
+| **`spi-connections-http-client--opentelemetry--disable-trust-manager`**<br/>Disable trust management and hostname verification.<br/>NOTE this is a security hole, so only set this option if you cannot or do not want to verify the identity of the host you are communicating with.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--disable-trust-manager`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__DISABLE_TRUST_MANAGER` | `true`, `false` | `false` |
+| **`spi-connections-http-client--opentelemetry--establish-connection-timeout-millis`**<br/>Timeout when making an initial socket connection.<br/>Only effective if less than the connection-request-timeout-millis.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--establish-connection-timeout-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__ESTABLISH_CONNECTION_TIMEOUT_MILLIS` | _long_ | `-1` |
+| **`spi-connections-http-client--opentelemetry--initial-backoff-millis`**<br/>Initial backoff time in milliseconds before the first retry attempt.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--initial-backoff-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__INITIAL_BACKOFF_MILLIS` | _long_ | `1000` |
+| **`spi-connections-http-client--opentelemetry--jitter-factor`**<br/>Jitter factor to apply to backoff times.<br/>A value of 0.5 means the actual backoff time will be between 50% and 150% of the calculated exponential backoff time.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--jitter-factor`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__JITTER_FACTOR` | _string_ | `0.5` |
+| **`spi-connections-http-client--opentelemetry--max-connection-idle-time-millis`**<br/>Sets the time, in milliseconds, for evicting idle connections from the pool.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--max-connection-idle-time-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_CONNECTION_IDLE_TIME_MILLIS` | _long_ | `900000` |
+| **`spi-connections-http-client--opentelemetry--max-consumed-response-size`**<br/>Maximum size of a response consumed by the client (to prevent denial of service)<br/>**CLI:** `--spi-connections-http-client--opentelemetry--max-consumed-response-size`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_CONSUMED_RESPONSE_SIZE` | _long_ | `10000000` |
+| **`spi-connections-http-client--opentelemetry--max-pooled-per-route`**<br/>Assigns maximum connection per route value.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--max-pooled-per-route`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_POOLED_PER_ROUTE` | _int_ | `64` |
+| **`spi-connections-http-client--opentelemetry--max-retries`**<br/>Maximum number of retry attempts for all outgoing HTTP requests.<br/>Set to 0 to disable retries (default).<br/>**CLI:** `--spi-connections-http-client--opentelemetry--max-retries`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_RETRIES` | _int_ | `0` |
+| **`spi-connections-http-client--opentelemetry--proxy-mappings`**<br/>Denotes the combination of a regex based hostname pattern and a proxy-uri in the form of hostnamePattern;proxyUri.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--proxy-mappings`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__PROXY_MAPPINGS` | _string_ |  |
+| **`spi-connections-http-client--opentelemetry--reuse-connections`**<br/>If connections should be reused.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--reuse-connections`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__REUSE_CONNECTIONS` | `true`, `false` | `true` |
+| **`spi-connections-http-client--opentelemetry--socket-timeout-millis`**<br/>Socket inactivity timeout.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--socket-timeout-millis`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__SOCKET_TIMEOUT_MILLIS` | _long_ | `5000` |
+| **`spi-connections-http-client--opentelemetry--use-jitter`**<br/>Whether to apply jitter to backoff times to prevent synchronized retry storms when multiple clients are retrying at the same time.<br/>**CLI:** `--spi-connections-http-client--opentelemetry--use-jitter`<br/>**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__USE_JITTER` | `true`, `false` | `true` |
+
+## connections-jpa
+
+### quarkus
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-connections-jpa--quarkus--initialize-empty`**<br/>Initialize database if empty.<br/>If set to false the database has to be manually initialized. If you want to manually initialize the database set migrationStrategy to manual which will create a file with SQL commands to initialize the database.<br/>**CLI:** `--spi-connections-jpa--quarkus--initialize-empty`<br/>**Env:** `KC_SPI_CONNECTIONS_JPA__QUARKUS__INITIALIZE_EMPTY` | `true`, `false` | `true` |
+| **`spi-connections-jpa--quarkus--migration-export`**<br/>Path for where to write manual database initialization/migration file.<br/>**CLI:** `--spi-connections-jpa--quarkus--migration-export`<br/>**Env:** `KC_SPI_CONNECTIONS_JPA__QUARKUS__MIGRATION_EXPORT` | _string_ |  |
+| **`spi-connections-jpa--quarkus--migration-strategy`**<br/>Strategy to use to migrate database.<br/>Valid values are update, manual and validate. Update will automatically migrate the database schema. Manual will export the required changes to a file with SQL commands that you can manually execute on the database. Validate will simply check if the database is up-to-date.<br/>**CLI:** `--spi-connections-jpa--quarkus--migration-strategy`<br/>**Env:** `KC_SPI_CONNECTIONS_JPA__QUARKUS__MIGRATION_STRATEGY` | `update`, `manual`, `validate` | `update` |
+
+## cors
+
+### default
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-cors--default--allowed-headers`**<br/>A comma-separated list of additional allowed headers for CORS requests<br/>**CLI:** `--spi-cors--default--allowed-headers`<br/>**Env:** `KC_SPI_CORS__DEFAULT__ALLOWED_HEADERS` | _string_ |  |
+
+## credential
+
+### nqrust-identity-password
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-credential--nqrust-identity-password--validations-counter-tags`**<br/>Comma-separated list of tags to be used when publishing password validation counter metric.<br/>**CLI:** `--spi-credential--nqrust-identity-password--validations-counter-tags`<br/>**Env:** `KC_SPI_CREDENTIAL__NQRUST-IDENTITY_PASSWORD__VALIDATIONS_COUNTER_TAGS` | `realm`, `algorithm`, `hashing_strength`, `outcome` | `realm,algorithm,hashing_strength,outcome` |
+
+## crl-storage
+
+### infinispan
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-crl-storage--infinispan--cache-time`**<br/>Interval in seconds that the CRL is cached.<br/>The next update time of the CRL is always a minimum if present.<br/>Zero or a negative value means CRL is cached until the next update time specified in the CRL (or infinite if the<br/>CRL does not contain the next update).<br/>**CLI:** `--spi-crl-storage--infinispan--cache-time`<br/>**Env:** `KC_SPI_CRL_STORAGE__INFINISPAN__CACHE_TIME` | _int_ | `-1` |
+| **`spi-crl-storage--infinispan--min-time-between-requests`**<br/>Minimum interval in seconds between two requests to retrieve the CRL.<br/>The CRL is not updated<br/>from the URL again until this minimum time has passed since the previous refresh. In theory<br/>this option is never used if the CRL is refreshed correctly in the next update time.<br/>The interval should be a positive number. Default 10 seconds.<br/>**CLI:** `--spi-crl-storage--infinispan--min-time-between-requests`<br/>**Env:** `KC_SPI_CRL_STORAGE__INFINISPAN__MIN_TIME_BETWEEN_REQUESTS` | _int_ | `10` |
+
+## datastore
+
+### legacy
 
-### [](#_infinispan)infinispan
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-datastore--legacy--allow-migrate-existing-database-to-snapshot`**<br/>By default, it is not allowed to run the snapshot/development server against the database, which was previously migrated to some officially released server version.<br/>As an attempt of doing this indicates that you are trying to run development server against production database, which can result in a loss or corruption of data, and also does not allow upgrading. If it is really intended, you can use this option, which will allow to use nightly/development server against production database when explicitly switch to true. This option is recommended just in the development environments and should be never used in the production!<br/>**CLI:** `--spi-datastore--legacy--allow-migrate-existing-database-to-snapshot`<br/>**Env:** `KC_SPI_DATASTORE__LEGACY__ALLOW_MIGRATE_EXISTING_DATABASE_TO_SNAPSHOT` | `true`, `false` | `false` |
 
-  
+## device-representation
+
+### device-representation
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-device-representation--device-representation--cache-size`**<br/>Sets the maximum number of parsed user-agent values in the local cache.<br/>**CLI:** `--spi-device-representation--device-representation--cache-size`<br/>**Env:** `KC_SPI_DEVICE_REPRESENTATION__DEVICE_REPRESENTATION__CACHE_SIZE` | _Integer_ | `2048` |
+
+## events-listener
+
+### email
+
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-events-listener--email--exclude-events`**<br/>A comma-separated list of events that should not be sent via email to the user’s account.<br/>**CLI:** `--spi-events-listener--email--exclude-events`<br/>**Env:** `KC_SPI_EVENTS_LISTENER__EMAIL__EXCLUDE_EVENTS` | `authreqid_to_token`, `authreqid_to_token_error`, `client_delete`, `client_delete_error`, `client_info`, `client_info_error`, `client_initiated_account_linking`, `client_initiated_account_linking_error`, `client_login`, `client_login_error`, `client_register`, `client_register_error`, `client_update`, `client_update_error`, `code_to_token`, `code_to_token_error`, `custom_required_action`, `custom_required_action_error`, `delete_account`, `delete_account_error`, `execute_action_token`, `execute_action_token_error`, `execute_actions`, `execute_actions_error`, `federated_identity_link`, `federated_identity_link_error`, `federated_identity_override_link`, `federated_identity_override_link_error`, `grant_consent`, `grant_consent_error`, `identity_provider_first_login`, `identity_provider_first_login_error`, `identity_provider_link_account`, `identity_provider_link_account_error`, `identity_provider_login`, `identity_provider_login_error`, `identity_provider_post_login`, `identity_provider_post_login_error`, `identity_provider_response`, `identity_provider_response_error`, `identity_provider_retrieve_token`, `identity_provider_retrieve_token_error`, `impersonate`, `impersonate_error`, `introspect_token`, `introspect_token_error`, `invalid_signature`, `invalid_signature_error`, `invite_org`, `invite_org_error`, `jwt_authorization_grant`, `jwt_authorization_grant_error`, `login`, `login_error`, `logout`, `logout_error`, `oauth2_device_auth`, `oauth2_device_auth_error`, `oauth2_device_code_to_token`, `oauth2_device_code_to_token_error`, `oauth2_device_verify_user_code`, `oauth2_device_verify_user_code_error`, `oauth2_extension_grant`, `oauth2_extension_grant_error`, `permission_token`, `permission_token_error`, `pushed_authorization_request`, `pushed_authorization_request_error`, `refresh_token`, `refresh_token_error`, `register`, `register_error`, `register_node`, `register_node_error`, `remove_credential`, `remove_credential_error`, `remove_federated_identity`, `remove_federated_identity_error`, `remove_totp`, `remove_totp_error`, `reset_password`, `reset_password_error`, `restart_authentication`, `restart_authentication_error`, `revoke_grant`, `revoke_grant_error`, `send_identity_provider_link`, `send_identity_provider_link_error`, `send_reset_password`, `send_reset_password_error`, `send_verify_email`, `send_verify_email_error`, `token_exchange`, `token_exchange_error`, `unregister_node`, `unregister_node_error`, `update_consent`, `update_consent_error`, `update_credential`, `update_credential_error`, `update_email`, `update_email_error`, `update_password`, `update_password_error`, `update_profile`, `update_profile_error`, `update_totp`, `update_totp_error`, `user_disabled_by_permanent_lockout`, `user_disabled_by_permanent_lockout_error`, `user_disabled_by_temporary_lockout`, `user_disabled_by_temporary_lockout_error`, `user_info_request`, `user_info_request_error`, `user_session_deleted`, `user_session_deleted_error`, `validate_access_token`, `validate_access_token_error`, `verifiable_credential_create_offer`, `verifiable_credential_create_offer_error`, `verifiable_credential_nonce_request`, `verifiable_credential_nonce_request_error`, `verifiable_credential_offer_request`, `verifiable_credential_offer_request_error`, `verifiable_credential_pre_authorized_grant`, `verifiable_credential_pre_authorized_grant_error`, `verifiable_credential_request`, `verifiable_credential_request_error`, `verify_email`, `verify_email_error`, `verify_profile`, `verify_profile_error` |  |
+| **`spi-events-listener--email--include-events`**<br/>A comma-separated list of events that should be sent via email to the user’s account.<br/>**CLI:** `--spi-events-listener--email--include-events`<br/>**Env:** `KC_SPI_EVENTS_LISTENER__EMAIL__INCLUDE_EVENTS` | `authreqid_to_token`, `authreqid_to_token_error`, `client_delete`, `client_delete_error`, `client_info`, `client_info_error`, `client_initiated_account_linking`, `client_initiated_account_linking_error`, `client_login`, `client_login_error`, `client_register`, `client_register_error`, `client_update`, `client_update_error`, `code_to_token`, `code_to_token_error`, `custom_required_action`, `custom_required_action_error`, `delete_account`, `delete_account_error`, `execute_action_token`, `execute_action_token_error`, `execute_actions`, `execute_actions_error`, `federated_identity_link`, `federated_identity_link_error`, `federated_identity_override_link`, `federated_identity_override_link_error`, `grant_consent`, `grant_consent_error`, `identity_provider_first_login`, `identity_provider_first_login_error`, `identity_provider_link_account`, `identity_provider_link_account_error`, `identity_provider_login`, `identity_provider_login_error`, `identity_provider_post_login`, `identity_provider_post_login_error`, `identity_provider_response`, `identity_provider_response_error`, `identity_provider_retrieve_token`, `identity_provider_retrieve_token_error`, `impersonate`, `impersonate_error`, `introspect_token`, `introspect_token_error`, `invalid_signature`, `invalid_signature_error`, `invite_org`, `invite_org_error`, `jwt_authorization_grant`, `jwt_authorization_grant_error`, `login`, `login_error`, `logout`, `logout_error`, `oauth2_device_auth`, `oauth2_device_auth_error`, `oauth2_device_code_to_token`, `oauth2_device_code_to_token_error`, `oauth2_device_verify_user_code`, `oauth2_device_verify_user_code_error`, `oauth2_extension_grant`, `oauth2_extension_grant_error`, `permission_token`, `permission_token_error`, `pushed_authorization_request`, `pushed_authorization_request_error`, `refresh_token`, `refresh_token_error`, `register`, `register_error`, `register_node`, `register_node_error`, `remove_credential`, `remove_credential_error`, `remove_federated_identity`, `remove_federated_identity_error`, `remove_totp`, `remove_totp_error`, `reset_password`, `reset_password_error`, `restart_authentication`, `restart_authentication_error`, `revoke_grant`, `revoke_grant_error`, `send_identity_provider_link`, `send_identity_provider_link_error`, `send_reset_password`, `send_reset_password_error`, `send_verify_email`, `send_verify_email_error`, `token_exchange`, `token_exchange_error`, `unregister_node`, `unregister_node_error`, `update_consent`, `update_consent_error`, `update_credential`, `update_credential_error`, `update_email`, `update_email_error`, `update_password`, `update_password_error`, `update_profile`, `update_profile_error`, `update_totp`, `update_totp_error`, `user_disabled_by_permanent_lockout`, `user_disabled_by_permanent_lockout_error`, `user_disabled_by_temporary_lockout`, `user_disabled_by_temporary_lockout_error`, `user_info_request`, `user_info_request_error`, `user_session_deleted`, `user_session_deleted_error`, `validate_access_token`, `validate_access_token_error`, `verifiable_credential_create_offer`, `verifiable_credential_create_offer_error`, `verifiable_credential_nonce_request`, `verifiable_credential_nonce_request_error`, `verifiable_credential_offer_request`, `verifiable_credential_offer_request_error`, `verifiable_credential_pre_authorized_grant`, `verifiable_credential_pre_authorized_grant_error`, `verifiable_credential_request`, `verifiable_credential_request_error`, `verify_email`, `verify_email_error`, `verify_profile`, `verify_profile_error` | `All events` |
 
-_Type_ or Values
+### jboss-logging
 
-Default
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-events-listener--jboss-logging--error-level`**<br/>The log level for error messages.<br/>**CLI:** `--spi-events-listener--jboss-logging--error-level`<br/>**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__ERROR_LEVEL` | `debug`, `error`, `fatal`, `info`, `trace`, `warn` | `warn` |
+| **`spi-events-listener--jboss-logging--include-representation`**<br/>When "true" the "representation" field with the JSON admin object is also added to the message.<br/>The realm should be also configured to include representation for the admin events.<br/>**CLI:** `--spi-events-listener--jboss-logging--include-representation`<br/>**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__INCLUDE_REPRESENTATION` | `true`, `false` | `false` |
+| **`spi-events-listener--jboss-logging--quotes`**<br/>The quotes to use for values, it should be one character like " or '.<br/>Use "none" if quotes are not needed.<br/>**CLI:** `--spi-events-listener--jboss-logging--quotes`<br/>**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__QUOTES` | _string_ | `"` |
+| **`spi-events-listener--jboss-logging--sanitize`**<br/>If true the log messages are sanitized to avoid line breaks.<br/>If false messages are not sanitized.<br/>**CLI:** `--spi-events-listener--jboss-logging--sanitize`<br/>**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SANITIZE` | `true`, `false` | `true` |
+| **`spi-events-listener--jboss-logging--success-level`**<br/>The log level for success messages.<br/>**CLI:** `--spi-events-listener--jboss-logging--success-level`<br/>**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SUCCESS_LEVEL` | `debug`, `error`, `fatal`, `info`, `trace`, `warn` | `debug` |
 
-`spi-authentication-sessions--infinispan--auth-sessions-limit`
+## export
 
-The maximum number of concurrent authentication sessions per RootAuthenticationSession.
+### dir
 
-**CLI:** `--spi-authentication-sessions--infinispan--auth-sessions-limit`  
-**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__INFINISPAN__AUTH_SESSIONS_LIMIT`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-export--dir--dir`**<br/>Directory to export to<br/>**CLI:** `--spi-export--dir--dir`<br/>**Env:** `KC_SPI_EXPORT__DIR__DIR` | _string_ |  |
+| **`spi-export--dir--realm-name`**<br/>Realm to export<br/>**CLI:** `--spi-export--dir--realm-name`<br/>**Env:** `KC_SPI_EXPORT__DIR__REALM_NAME` | _string_ |  |
+| **`spi-export--dir--users-export-strategy`**<br/>Users export strategy<br/>**CLI:** `--spi-export--dir--users-export-strategy`<br/>**Env:** `KC_SPI_EXPORT__DIR__USERS_EXPORT_STRATEGY` | _string_ | `DIFFERENT_FILES` |
+| **`spi-export--dir--users-per-file`**<br/>Users per exported file<br/>**CLI:** `--spi-export--dir--users-per-file`<br/>**Env:** `KC_SPI_EXPORT__DIR__USERS_PER_FILE` | _int_ | `50` |
 
-_int_
+### single-file
 
-`300`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-export--single-file--file`**<br/>File to export to<br/>**CLI:** `--spi-export--single-file--file`<br/>**Env:** `KC_SPI_EXPORT__SINGLE_FILE__FILE` | _string_ |  |
+| **`spi-export--single-file--realm-name`**<br/>Realm to export<br/>**CLI:** `--spi-export--single-file--realm-name`<br/>**Env:** `KC_SPI_EXPORT__SINGLE_FILE__REALM_NAME` | _string_ |  |
 
-### [](#_remote)remote
+## group
 
-  
+### jpa
 
-_Type_ or Values
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-group--jpa--escape-slashes-in-group-path`**<br/>If true slashes / in group names are escaped with the character ~ when converted to paths.<br/>**CLI:** `--spi-group--jpa--escape-slashes-in-group-path`<br/>**Env:** `KC_SPI_GROUP__JPA__ESCAPE_SLASHES_IN_GROUP_PATH` | `true`, `false` | `false` |
+| **`spi-group--jpa--searchable-attributes`**<br/>The list of attributes separated by comma that are allowed in client attribute searches.<br/>**CLI:** `--spi-group--jpa--searchable-attributes`<br/>**Env:** `KC_SPI_GROUP__JPA__SEARCHABLE_ATTRIBUTES` | _string_ |  |
 
-Default
+## import
 
-`spi-authentication-sessions--remote--auth-sessions-limit`
+### dir
 
-The maximum number of concurrent authentication sessions per RootAuthenticationSession.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-import--dir--dir`**<br/>Directory to import from<br/>**CLI:** `--spi-import--dir--dir`<br/>**Env:** `KC_SPI_IMPORT__DIR__DIR` | _string_ |  |
+| **`spi-import--dir--realm-name`**<br/>Realm to export<br/>**CLI:** `--spi-import--dir--realm-name`<br/>**Env:** `KC_SPI_IMPORT__DIR__REALM_NAME` | _string_ |  |
+| **`spi-import--dir--strategy`**<br/>Strategy for import: IGNORE_EXISTING, OVERWRITE_EXISTING<br/>**CLI:** `--spi-import--dir--strategy`<br/>**Env:** `KC_SPI_IMPORT__DIR__STRATEGY` | _string_ |  |
 
-**CLI:** `--spi-authentication-sessions--remote--auth-sessions-limit`  
-**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__AUTH_SESSIONS_LIMIT`
+### single-file
 
-_int_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-import--single-file--file`**<br/>File to import from<br/>**CLI:** `--spi-import--single-file--file`<br/>**Env:** `KC_SPI_IMPORT__SINGLE_FILE__FILE` | _string_ |  |
+| **`spi-import--single-file--realm-name`**<br/>Realm to export<br/>**CLI:** `--spi-import--single-file--realm-name`<br/>**Env:** `KC_SPI_IMPORT__SINGLE_FILE__REALM_NAME` | _string_ |  |
+| **`spi-import--single-file--strategy`**<br/>Strategy for import: IGNORE_EXISTING, OVERWRITE_EXISTING<br/>**CLI:** `--spi-import--single-file--strategy`<br/>**Env:** `KC_SPI_IMPORT__SINGLE_FILE__STRATEGY` | _string_ |  |
 
-`300`
+## jgroups-mtls
 
-`spi-authentication-sessions--remote--max-retries`
+### default
 
-The maximum number of retries if an error occurs.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-jgroups-mtls--default--enabled`**<br/>Encrypts the network communication between NQRust-Identity servers.<br/>If no additional parameters about a keystore and truststore are provided, ephemeral key pairs and certificates are created and rotated automatically, which is recommended for standard setups.<br/>**CLI:** `--spi-jgroups-mtls--default--enabled`<br/>**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__ENABLED` | `true`, `false` | `true` |
+| **`spi-jgroups-mtls--default--keystore-file`**<br/>The Keystore file path.<br/>The Keystore must contain the certificate to use by the TLS protocol. By default, it looks up `cache-mtls-keystore.p12` under conf/ directory.<br/>**CLI:** `--spi-jgroups-mtls--default--keystore-file`<br/>**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__KEYSTORE_FILE` | _String_ |  |
+| **`spi-jgroups-mtls--default--keystore-password`**<br/>The password to access the Keystore.<br/>**CLI:** `--spi-jgroups-mtls--default--keystore-password`<br/>**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__KEYSTORE_PASSWORD` | _Password_ |  |
+| **`spi-jgroups-mtls--default--rotation`**<br/>Rotation period in days of automatic JGroups MTLS certificates.<br/>**CLI:** `--spi-jgroups-mtls--default--rotation`<br/>**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__ROTATION` | _Integer_ | `30` |
+| **`spi-jgroups-mtls--default--truststore-file`**<br/>The Truststore file path.<br/>It should contain the trusted certificates or the Certificate Authority that signed the certificates. By default, it lookup `cache-mtls-truststore.p12` under conf/ directory.<br/>**CLI:** `--spi-jgroups-mtls--default--truststore-file`<br/>**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__TRUSTSTORE_FILE` | _String_ |  |
+| **`spi-jgroups-mtls--default--truststore-password`**<br/>The password to access the Truststore.<br/>**CLI:** `--spi-jgroups-mtls--default--truststore-password`<br/>**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__TRUSTSTORE_PASSWORD` | _Password_ |  |
 
-A value of zero or less disable any retries.
+## load-balancer-check
 
-**CLI:** `--spi-authentication-sessions--remote--max-retries`  
-**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__MAX_RETRIES`
+### remote
 
-_int_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-load-balancer-check--remote--poll-interval`**<br/>The Remote caches poll interval, in milliseconds, for connection availability<br/>**CLI:** `--spi-load-balancer-check--remote--poll-interval`<br/>**Env:** `KC_SPI_LOAD_BALANCER_CHECK__REMOTE__POLL_INTERVAL` | _int_ | `5000` |
 
-`10`
+## login-protocol
 
-`spi-authentication-sessions--remote--retry-base-time`
+### openid-connect
 
-The base back-off time in milliseconds.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-login-protocol--openid-connect--add-req-params-fail-fast`**<br/>Whether the fail-fast strategy should be enforced in case if the limit for some standard OIDC parameter or additional OIDC parameter is not met for the parameters sent to the OIDC authentication or token endpoints.<br/>If false, then all additional request parameters to not meet the configuration are silently ignored. If true, an exception will be raised and request to the OIDC authentication or token endpoints will not be allowed.<br/>**CLI:** `--spi-login-protocol--openid-connect--add-req-params-fail-fast`<br/>**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_FAIL_FAST` | `true`, `false` | `false` |
+| **`spi-login-protocol--openid-connect--add-req-params-max-number`**<br/>Maximum number of additional request parameters sent to the OIDC authentication or token endpoints.<br/>As 'additional request parameter' is meant some custom parameter not directly treated as standard OIDC/OAuth2 protocol parameter. Additional parameters might be useful for example to add custom claims to the OIDC token (in case that also particular protocol mappers are configured).<br/>**CLI:** `--spi-login-protocol--openid-connect--add-req-params-max-number`<br/>**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_MAX_NUMBER` | _int_ | `5` |
+| **`spi-login-protocol--openid-connect--add-req-params-max-overall-size`**<br/>Maximum size of all additional request parameters values together.<br/>See `add-req-params-max-number` for more details about additional request parameters<br/>**CLI:** `--spi-login-protocol--openid-connect--add-req-params-max-overall-size`<br/>**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_MAX_OVERALL_SIZE` | _int_ | `2147483647` |
+| **`spi-login-protocol--openid-connect--add-req-params-max-size`**<br/>Maximum size of single additional request parameter value See add-req-params-max-number for more details about additional request parameters<br/>**CLI:** `--spi-login-protocol--openid-connect--add-req-params-max-size`<br/>**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_MAX_SIZE` | _int_ | `2000` |
+| **`spi-login-protocol--openid-connect--req-params-default-max-size`**<br/>Maximum default length of the standard OIDC parameter sent to the OIDC authentication or token endpoints.<br/>This applies to most of the standard parameters like for example `state`, `nonce` etc. The exception is `login_hint` parameter, which has maximum length of 255 characters.<br/>**CLI:** `--spi-login-protocol--openid-connect--req-params-default-max-size`<br/>**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__REQ_PARAMS_DEFAULT_MAX_SIZE` | _int_ | `4000` |
+| **`spi-login-protocol--openid-connect--req-params-max-size--login_hint`**<br/>Maximum length of the standard parameter sent to OIDC authentication or token endpoints overriden for the specified parameter.<br/>Useful if some standard OIDC parameter should have different limit than `req-params-default-max-size`. It is needed to add the name of the parameter after this prefix into the configuration. In this example, the `login_hint` parameter is used, but this format is supported for any known standard OIDC/OAuth2 parameter.<br/>**CLI:** `--spi-login-protocol--openid-connect--req-params-max-size--login_hint`<br/>**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__REQ_PARAMS_MAX_SIZE__LOGIN_HINT` | _int_ |  |
 
-**CLI:** `--spi-authentication-sessions--remote--retry-base-time`  
-**Env:** `KC_SPI_AUTHENTICATION_SESSIONS__REMOTE__RETRY_BASE_TIME`
+### saml
 
-_int_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-login-protocol--saml--max-inflating-size`**<br/>The maximum inflating size in bytes for the REDIRECT binding.<br/>**CLI:** `--spi-login-protocol--saml--max-inflating-size`<br/>**Env:** `KC_SPI_LOGIN_PROTOCOL__SAML__MAX_INFLATING_SIZE` | _long_ | `131072` |
 
-`10`
+## login-failure
 
-## [](#_brute_force_protector)brute-force-protector
+### remote
 
-### [](#_default_brute_force_detector)default-brute-force-detector
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-login-failure--remote--max-retries`**<br/>The maximum number of retries if an error occurs.<br/>A value of zero or less disable any retries.<br/>**CLI:** `--spi-login-failure--remote--max-retries`<br/>**Env:** `KC_SPI_LOGIN_FAILURE__REMOTE__MAX_RETRIES` | _int_ | `10` |
+| **`spi-login-failure--remote--retry-base-time`**<br/>The base back-off time in milliseconds.<br/>**CLI:** `--spi-login-failure--remote--retry-base-time`<br/>**Env:** `KC_SPI_LOGIN_FAILURE__REMOTE__RETRY_BASE_TIME` | _int_ | `10` |
 
-  
+## mapped-diagnostic-context
 
-_Type_ or Values
+### default
 
-Default
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-mapped-diagnostic-context--default--mdc-keys`**<br/>Comma-separated list of MDC keys to add to the Mapped Diagnostic Context.<br/>**CLI:** `--spi-mapped-diagnostic-context--default--mdc-keys`<br/>**Env:** `KC_SPI_MAPPED_DIAGNOSTIC_CONTEXT__DEFAULT__MDC_KEYS` | `realmName`, `clientId`, `userId`, `ipAddress`, `org`, `sessionId`, `authenticationSessionId`, `authenticationTabId` |  |
 
-`spi-brute-force-protector--default-brute-force-detector--allow-concurrent-requests`
+## password-hashing
 
-If concurrent logins are allowed by the brute force protection.
+### argon2
 
-**CLI:** `--spi-brute-force-protector--default-brute-force-detector--allow-concurrent-requests`  
-**Env:** `KC_SPI_BRUTE_FORCE_PROTECTOR__DEFAULT_BRUTE_FORCE_DETECTOR__ALLOW_CONCURRENT_REQUESTS`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-password-hashing--argon2--cpu-cores`**<br/>Maximum parallel CPU cores to use for hashing<br/>**CLI:** `--spi-password-hashing--argon2--cpu-cores`<br/>**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__CPU_CORES` | _int_ |  |
+| **`spi-password-hashing--argon2--hash-length`**<br/>Hash length<br/>**CLI:** `--spi-password-hashing--argon2--hash-length`<br/>**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__HASH_LENGTH` | _int_ | `32` |
+| **`spi-password-hashing--argon2--iterations`**<br/>Iterations<br/>**CLI:** `--spi-password-hashing--argon2--iterations`<br/>**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__ITERATIONS` | _int_ | `5` |
+| **`spi-password-hashing--argon2--memory`**<br/>Memory size (KB)<br/>**CLI:** `--spi-password-hashing--argon2--memory`<br/>**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__MEMORY` | _int_ | `7168` |
+| **`spi-password-hashing--argon2--parallelism`**<br/>Parallelism<br/>**CLI:** `--spi-password-hashing--argon2--parallelism`<br/>**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__PARALLELISM` | _int_ | `1` |
+| **`spi-password-hashing--argon2--type`**<br/>Type<br/>**CLI:** `--spi-password-hashing--argon2--type`<br/>**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__TYPE` | `id`, `d`, `i` | `id` |
+| **`spi-password-hashing--argon2--version`**<br/>Version<br/>**CLI:** `--spi-password-hashing--argon2--version`<br/>**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__VERSION` | `1.3`, `1.0` | `1.3` |
 
-`true`, `false`
+## password-policy
 
-`false`
+### password-blacklist
 
-## [](#_cache_embedded)cache-embedded
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-password-policy--password-blacklist--check-interval-seconds`**<br/>Interval in number of seconds when the server should check the password file for changes and reload it.<br/>Set to 0 to disable reloading.<br/>**CLI:** `--spi-password-policy--password-blacklist--check-interval-seconds`<br/>**Env:** `KC_SPI_PASSWORD_POLICY__PASSWORD_BLACKLIST__CHECK_INTERVAL_SECONDS` | _string_ | `60` |
+| **`spi-password-policy--password-blacklist--false-positive-probability`**<br/>False positive probability of the bloom filter to reject a valid password.<br/>**CLI:** `--spi-password-policy--password-blacklist--false-positive-probability`<br/>**Env:** `KC_SPI_PASSWORD_POLICY__PASSWORD_BLACKLIST__FALSE_POSITIVE_PROBABILITY` | _string_ | `0.0001` |
 
-### [](#_default)default
+## public-key-storage
 
-  
+### infinispan
 
-_Type_ or Values
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-public-key-storage--infinispan--max-cache-time`**<br/>Maximum interval in seconds that keys are cached when they are retrieved via all keys methods.<br/>When all keys for the entry are retrieved there is no way to detect if a key is missing (different to the case when the key is retrieved via ID for example). In that situation this option forces a refresh from time to time. This time can be overriden by the protocol (for example using cacheDuration or validUntil in the SAML descriptor). Default 24 hours.<br/>**CLI:** `--spi-public-key-storage--infinispan--max-cache-time`<br/>**Env:** `KC_SPI_PUBLIC_KEY_STORAGE__INFINISPAN__MAX_CACHE_TIME` | _int_ | `86400` |
+| **`spi-public-key-storage--infinispan--min-time-between-requests`**<br/>Minimum interval in seconds between two requests to retrieve the new public keys.<br/>The server will always try to download new public keys when a single key is requested and not found. However it will avoid the download if the previous refresh was done less than 10 seconds ago (by default). This behavior is used to avoid DoS attacks against the external keys endpoint.<br/>**CLI:** `--spi-public-key-storage--infinispan--min-time-between-requests`<br/>**Env:** `KC_SPI_PUBLIC_KEY_STORAGE__INFINISPAN__MIN_TIME_BETWEEN_REQUESTS` | _int_ | `10` |
 
-Default
+## required-action
 
-`spi-cache-embedded--default--action-tokens-owners`
+### CONFIGURE_RECOVERY_AUTHN_CODES
 
-Sets the number of owners for the actionTokens distributed cache.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_RECOVERY_AUTHN_CODES__MAX_AUTH_AGE` | _String_ | `300` |
+| **`spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--warning_threshold`**<br/>When user has smaller amount of remaining recovery codes on his account than the value configured here, account console will show warning to the user, which will recommend him to setup new set of recovery codes.<br/>**CLI:** `--spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--warning_threshold`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_RECOVERY_AUTHN_CODES__WARNING_THRESHOLD` | _Integer_ | `4` |
 
-It defines the number of copies of your data in the cluster.
+### CONFIGURE_TOTP
 
-**CLI:** `--spi-cache-embedded--default--action-tokens-owners`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__ACTION_TOKENS_OWNERS`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--CONFIGURE_TOTP--add-recovery-codes`**<br/>If this option is enabled, the user will be required to configure recovery codes following the OTP configuration.<br/>If the user already has recovery codes configured, NQRust-Identity will not ask for setting them up.<br/>As a prerequisite, enable the recovery codes required action and enable recovery codes in your authentication flow.<br/>**CLI:** `--spi-required-action--CONFIGURE_TOTP--add-recovery-codes`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_TOTP__ADD_RECOVERY_CODES` | `true`, `false` | `false` |
+| **`spi-required-action--CONFIGURE_TOTP--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--CONFIGURE_TOTP--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_TOTP__MAX_AUTH_AGE` | _String_ | `300` |
 
-_Integer_
+### TERMS_AND_CONDITIONS
 
-`spi-cache-embedded--default--authentication-sessions-owners`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--TERMS_AND_CONDITIONS--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--TERMS_AND_CONDITIONS--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__TERMS_AND_CONDITIONS__MAX_AUTH_AGE` | _String_ | `300` |
 
-Sets the number of owners for the authenticationSessions distributed cache.
+### UPDATE_EMAIL
 
-It defines the number of copies of your data in the cluster.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--UPDATE_EMAIL--email-resend-cooldown-seconds`**<br/>Minimum delay in seconds before another email verification email can be sent.<br/>**CLI:** `--spi-required-action--UPDATE_EMAIL--email-resend-cooldown-seconds`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_EMAIL__EMAIL_RESEND_COOLDOWN_SECONDS` | _String_ | `30` |
+| **`spi-required-action--UPDATE_EMAIL--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--UPDATE_EMAIL--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_EMAIL__MAX_AUTH_AGE` | _String_ | `300` |
+| **`spi-required-action--UPDATE_EMAIL--verify-email`**<br/>If enabled, the user will be forced to verify the email regardless if email verification is enabled at the realm level or not.<br/>Otherwise, verification will be based on the realm level setting.<br/>**CLI:** `--spi-required-action--UPDATE_EMAIL--verify-email`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_EMAIL__VERIFY_EMAIL` | `true`, `false` | `false` |
 
-**CLI:** `--spi-cache-embedded--default--authentication-sessions-owners`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__AUTHENTICATION_SESSIONS_OWNERS`
+### UPDATE_PASSWORD
 
-_Integer_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--UPDATE_PASSWORD--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--UPDATE_PASSWORD--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_PASSWORD__MAX_AUTH_AGE` | _String_ | `300` |
 
-`spi-cache-embedded--default--authorization-max-count`
+### UPDATE_PROFILE
 
-The maximum number of entries that can be stored in-memory by the authorization cache.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--UPDATE_PROFILE--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--UPDATE_PROFILE--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_PROFILE__MAX_AUTH_AGE` | _String_ | `300` |
 
-**CLI:** `--spi-cache-embedded--default--authorization-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__AUTHORIZATION_MAX_COUNT`
+### VERIFY_EMAIL
 
-_Integer_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--VERIFY_EMAIL--email-resend-cooldown-seconds`**<br/>Minimum delay in seconds before another email verification email can be sent.<br/>**CLI:** `--spi-required-action--VERIFY_EMAIL--email-resend-cooldown-seconds`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__VERIFY_EMAIL__EMAIL_RESEND_COOLDOWN_SECONDS` | _String_ | `30` |
+| **`spi-required-action--VERIFY_EMAIL--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--VERIFY_EMAIL--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__VERIFY_EMAIL__MAX_AUTH_AGE` | _String_ | `300` |
 
-`spi-cache-embedded--default--client-sessions-max-count`
+### VERIFY_PROFILE
 
-The maximum number of entries that can be stored in-memory by the clientSessions cache.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--VERIFY_PROFILE--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--VERIFY_PROFILE--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__VERIFY_PROFILE__MAX_AUTH_AGE` | _String_ | `300` |
 
-**CLI:** `--spi-cache-embedded--default--client-sessions-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CLIENT_SESSIONS_MAX_COUNT`
+### delete_credential
 
-_Integer_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--delete_credential--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--delete_credential--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__DELETE_CREDENTIAL__MAX_AUTH_AGE` | _String_ | `300` |
 
-`spi-cache-embedded--default--client-sessions-owners`
+### idp_link
 
-Sets the number of owners for the clientSessions distributed cache.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--idp_link--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--idp_link--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__IDP_LINK__MAX_AUTH_AGE` | _String_ | `300` |
 
-It defines the number of copies of your data in the cluster.
+### update_user_locale
 
-**CLI:** `--spi-cache-embedded--default--client-sessions-owners`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CLIENT_SESSIONS_OWNERS`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--update_user_locale--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--update_user_locale--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_USER_LOCALE__MAX_AUTH_AGE` | _String_ | `300` |
 
-_Integer_
+### verifiable_credential_offer
 
-`spi-cache-embedded--default--config-file`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--verifiable_credential_offer--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--verifiable_credential_offer--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__VERIFIABLE_CREDENTIAL_OFFER__MAX_AUTH_AGE` | _String_ | `300` |
 
-Defines the file from which cache configuration should be loaded from.
+### webauthn-register
 
-The configuration file is relative to the `conf/` directory.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--webauthn-register--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--webauthn-register--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__WEBAUTHN_REGISTER__MAX_AUTH_AGE` | _String_ | `300` |
 
-**CLI:** `--spi-cache-embedded--default--config-file`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CONFIG_FILE`
+### webauthn-register-passwordless
 
-_String_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-required-action--webauthn-register-passwordless--max_auth_age`**<br/>Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.<br/>This parameter is used just in the context of AIA when the kc_action parameter is available in the request, which is for instance when user himself updates his password in the account console.<br/>**CLI:** `--spi-required-action--webauthn-register-passwordless--max_auth_age`<br/>**Env:** `KC_SPI_REQUIRED_ACTION__WEBAUTHN_REGISTER_PASSWORDLESS__MAX_AUTH_AGE` | _String_ | `300` |
 
-`spi-cache-embedded--default--crl-max-count`
+## resource-encoding
 
-The maximum number of entries that can be stored in-memory by the crl cache.
+### gzip
 
-**CLI:** `--spi-cache-embedded--default--crl-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__CRL_MAX_COUNT`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-resource-encoding--gzip--excluded-content-types`**<br/>A space separated list of content-types to exclude from encoding.<br/>**CLI:** `--spi-resource-encoding--gzip--excluded-content-types`<br/>**Env:** `KC_SPI_RESOURCE_ENCODING__GZIP__EXCLUDED_CONTENT_TYPES` | _string_ | `image/png image/jpeg` |
 
-_Integer_
+## security-profile
 
-`spi-cache-embedded--default--keys-max-count`
+### default
 
-The maximum number of entries that can be stored in-memory by the keys cache.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-security-profile--default--name`**<br/>Name for the security configuration file to use.<br/>File `name`.json is searched in classapth and `conf` installation folder.<br/>**CLI:** `--spi-security-profile--default--name`<br/>**Env:** `KC_SPI_SECURITY_PROFILE__DEFAULT__NAME` | _string_ |  |
 
-**CLI:** `--spi-cache-embedded--default--keys-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__KEYS_MAX_COUNT`
+## single-use-object
 
-_Integer_
+### infinispan
 
-`spi-cache-embedded--default--login-failures-owners`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-single-use-object--infinispan--persist-revoked-tokens`**<br/>If revoked tokens are stored persistently across restarts<br/>**CLI:** `--spi-single-use-object--infinispan--persist-revoked-tokens`<br/>**Env:** `KC_SPI_SINGLE_USE_OBJECT__INFINISPAN__PERSIST_REVOKED_TOKENS` | `true`, `false` | `true` |
 
-Sets the number of owners for the loginFailures distributed cache.
+### remote
 
-It defines the number of copies of your data in the cluster.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-single-use-object--remote--persist-revoked-tokens`**<br/>If revoked tokens are stored persistently across restarts<br/>**CLI:** `--spi-single-use-object--remote--persist-revoked-tokens`<br/>**Env:** `KC_SPI_SINGLE_USE_OBJECT__REMOTE__PERSIST_REVOKED_TOKENS` | `true`, `false` | `true` |
 
-**CLI:** `--spi-cache-embedded--default--login-failures-owners`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__LOGIN_FAILURES_OWNERS`
+## sticky-session-encoder
 
-_Integer_
+### infinispan
 
-`spi-cache-embedded--default--machine-name`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-sticky-session-encoder--infinispan--should-attach-route`**<br/>If the route should be attached to cookies to reflect the node that owns a particular session.<br/>**CLI:** `--spi-sticky-session-encoder--infinispan--should-attach-route`<br/>**Env:** `KC_SPI_STICKY_SESSION_ENCODER__INFINISPAN__SHOULD_ATTACH_ROUTE` | `true`, `false` | `true` |
 
-The name of the physical machine where this instance runs.
+### remote
 
-It can be set if multiple NQRust-Identity instances are running in the same physical machines. Infinispan takes into consideration this value to keep the backup data spread between different machines.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-sticky-session-encoder--remote--should-attach-route`**<br/>If the route should be attached to cookies to reflect the node that owns a particular session.<br/>**CLI:** `--spi-sticky-session-encoder--remote--should-attach-route`<br/>**Env:** `KC_SPI_STICKY_SESSION_ENCODER__REMOTE__SHOULD_ATTACH_ROUTE` | `true`, `false` | `true` |
 
-**CLI:** `--spi-cache-embedded--default--machine-name`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__MACHINE_NAME`
+## storage
 
-_String_
+### ldap
 
-`spi-cache-embedded--default--metrics-histograms-enabled`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-storage--ldap--secure-referral`**<br/>Allow only secure LDAP referrals (deprecated)<br/>**CLI:** `--spi-storage--ldap--secure-referral`<br/>**Env:** `KC_SPI_STORAGE__LDAP__SECURE_REFERRAL` | `true`, `false` | `true` |
 
-Enable histograms for metrics for the embedded caches.
+## truststore
 
-**CLI:** `--spi-cache-embedded--default--metrics-histograms-enabled`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__METRICS_HISTOGRAMS_ENABLED`
+### file
 
-`true`, `false`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-truststore--file--file`**<br/>DEPRECATED: The file path of the trust store from where the certificates are going to be read from to validate TLS connections.<br/>**CLI:** `--spi-truststore--file--file`<br/>**Env:** `KC_SPI_TRUSTSTORE__FILE__FILE` | _string_ |  |
+| **`spi-truststore--file--hostname-verification-policy`**<br/>DEPRECATED: The hostname verification policy.<br/>**CLI:** `--spi-truststore--file--hostname-verification-policy`<br/>**Env:** `KC_SPI_TRUSTSTORE__FILE__HOSTNAME_VERIFICATION_POLICY` | `ANY`, `WILDCARD`, `STRICT`, `DEFAULT` | `DEFAULT` |
+| **`spi-truststore--file--password`**<br/>DEPRECATED: The trust store password.<br/>**CLI:** `--spi-truststore--file--password`<br/>**Env:** `KC_SPI_TRUSTSTORE__FILE__PASSWORD` | _string_ |  |
+| **`spi-truststore--file--type`**<br/>DEPRECATED: Type of the truststore.<br/>If not provided, the type would be detected based on the truststore file extension or platform default type.<br/>**CLI:** `--spi-truststore--file--type`<br/>**Env:** `KC_SPI_TRUSTSTORE__FILE__TYPE` | _string_ |  |
 
-`false`
+## user-profile
 
-`spi-cache-embedded--default--network-bind-address`
+### declarative-user-profile
 
-IP address used by clustering transport.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-user-profile--declarative-user-profile--admin-read-only-attributes`**<br/>Array of regular expressions to identify fields that should be treated read-only so administrators can’t change them.<br/>**CLI:** `--spi-user-profile--declarative-user-profile--admin-read-only-attributes`<br/>**Env:** `KC_SPI_USER_PROFILE__DECLARATIVE_USER_PROFILE__ADMIN_READ_ONLY_ATTRIBUTES` | _MultivaluedString_ |  |
+| **`spi-user-profile--declarative-user-profile--max-email-local-part-length`**<br/>To set user profile max email local part length<br/>**CLI:** `--spi-user-profile--declarative-user-profile--max-email-local-part-length`<br/>**Env:** `KC_SPI_USER_PROFILE__DECLARATIVE_USER_PROFILE__MAX_EMAIL_LOCAL_PART_LENGTH` | _String_ |  |
+| **`spi-user-profile--declarative-user-profile--read-only-attributes`**<br/>Array of regular expressions to identify fields that should be treated read-only so users can’t change them.<br/>**CLI:** `--spi-user-profile--declarative-user-profile--read-only-attributes`<br/>**Env:** `KC_SPI_USER_PROFILE__DECLARATIVE_USER_PROFILE__READ_ONLY_ATTRIBUTES` | _MultivaluedString_ |  |
 
-By default, SITE\_LOCAL is used.
+## user-session-persister
 
-**CLI:** `--spi-cache-embedded--default--network-bind-address`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_BIND_ADDRESS`
+### jpa
 
-_String_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-user-session-persister--jpa--expiration-batch`**<br/>Sets the size of the expiration batch, i.<br/>e., the number of expired sessions to remove per delete statement.<br/>**CLI:** `--spi-user-session-persister--jpa--expiration-batch`<br/>**Env:** `KC_SPI_USER_SESSION_PERSISTER__JPA__EXPIRATION_BATCH` | _Integer_ | `512` |
 
-`spi-cache-embedded--default--network-bind-port`
+## user-sessions
 
-The Port the clustering transport will bind to.
+### infinispan
 
-By default, port 7800 is used.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-user-sessions--infinispan--max-batch-size`**<br/>Maximum size of a batch (only applicable to persistent sessions<br/>**CLI:** `--spi-user-sessions--infinispan--max-batch-size`<br/>**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__MAX_BATCH_SIZE` | _int_ | `4` |
+| **`spi-user-sessions--infinispan--offline-client-session-cache-entry-lifespan-override`**<br/>Override how long offline client sessions should be kept in memory in seconds (deprecated, to be removed in NQRust-Identity 27)<br/>**CLI:** `--spi-user-sessions--infinispan--offline-client-session-cache-entry-lifespan-override`<br/>**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__OFFLINE_CLIENT_SESSION_CACHE_ENTRY_LIFESPAN_OVERRIDE` | _int_ |  |
+| **`spi-user-sessions--infinispan--offline-session-cache-entry-lifespan-override`**<br/>Override how long offline user sessions should be kept in memory in seconds (deprecated, to be removed in NQRust-Identity 27)<br/>**CLI:** `--spi-user-sessions--infinispan--offline-session-cache-entry-lifespan-override`<br/>**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__OFFLINE_SESSION_CACHE_ENTRY_LIFESPAN_OVERRIDE` | _int_ |  |
+| **`spi-user-sessions--infinispan--session-expiration-period`**<br/>Sets the expiration task run period, to remove the expired session.<br/>**CLI:** `--spi-user-sessions--infinispan--session-expiration-period`<br/>**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__SESSION_EXPIRATION_PERIOD` | _int_ |  |
+| **`spi-user-sessions--infinispan--use-batches`**<br/>Enable or disable batch writes to the database.<br/>Enabled by default with the persistent-user-sessions Feature<br/>**CLI:** `--spi-user-sessions--infinispan--use-batches`<br/>**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__USE_BATCHES` | `true`, `false` | `false` |
+| **`spi-user-sessions--infinispan--use-caches`**<br/>Enable or disable caches.<br/>Enabled by default unless the external feature to use only external remote caches is used<br/>**CLI:** `--spi-user-sessions--infinispan--use-caches`<br/>**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__USE_CACHES` | `true`, `false` |  |
 
-**CLI:** `--spi-cache-embedded--default--network-bind-port`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_BIND_PORT`
+### remote
 
-_Integer_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-user-sessions--remote--batch-size`**<br/>Batch size when streaming session from the remote cache<br/>**CLI:** `--spi-user-sessions--remote--batch-size`<br/>**Env:** `KC_SPI_USER_SESSIONS__REMOTE__BATCH_SIZE` | _int_ | `1024` |
+| **`spi-user-sessions--remote--max-retries`**<br/>The maximum number of retries if an error occurs.<br/>A value of zero or less disable any retries.<br/>**CLI:** `--spi-user-sessions--remote--max-retries`<br/>**Env:** `KC_SPI_USER_SESSIONS__REMOTE__MAX_RETRIES` | _int_ | `10` |
+| **`spi-user-sessions--remote--retry-base-time`**<br/>The base back-off time in milliseconds.<br/>**CLI:** `--spi-user-sessions--remote--retry-base-time`<br/>**Env:** `KC_SPI_USER_SESSIONS__REMOTE__RETRY_BASE_TIME` | _int_ | `10` |
 
-`spi-cache-embedded--default--network-external-address`
+## well-known
 
-IP address that other instances in the cluster should use to contact this node.
+### oauth-authorization-server
 
-Set only if it is different to cache-embedded-network-bind-address, for example when this instance is behind a firewall.
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-well-known--oauth-authorization-server--include-client-scopes`**<br/>If client scopes should be used to calculate the list of supported scopes.<br/>**CLI:** `--spi-well-known--oauth-authorization-server--include-client-scopes`<br/>**Env:** `KC_SPI_WELL_KNOWN__OAUTH_AUTHORIZATION_SERVER__INCLUDE_CLIENT_SCOPES` | `true`, `false` | `true` |
+| **`spi-well-known--oauth-authorization-server--openid-configuration-override`**<br/>The file path from where the metadata should be loaded from.<br/>You can use an absolute file path or, if the file is in the server classpath, use the `classpath:` prefix to load the file from the classpath.<br/>**CLI:** `--spi-well-known--oauth-authorization-server--openid-configuration-override`<br/>**Env:** `KC_SPI_WELL_KNOWN__OAUTH_AUTHORIZATION_SERVER__OPENID_CONFIGURATION_OVERRIDE` | _string_ |  |
 
-**CLI:** `--spi-cache-embedded--default--network-external-address`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_EXTERNAL_ADDRESS`
+### openid-configuration
 
-_String_
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-well-known--openid-configuration--include-client-scopes`**<br/>If client scopes should be used to calculate the list of supported scopes.<br/>**CLI:** `--spi-well-known--openid-configuration--include-client-scopes`<br/>**Env:** `KC_SPI_WELL_KNOWN__OPENID_CONFIGURATION__INCLUDE_CLIENT_SCOPES` | `true`, `false` | `true` |
+| **`spi-well-known--openid-configuration--openid-configuration-override`**<br/>The file path from where the metadata should be loaded from.<br/>You can use an absolute file path or, if the file is in the server classpath, use the `classpath:` prefix to load the file from the classpath.<br/>**CLI:** `--spi-well-known--openid-configuration--openid-configuration-override`<br/>**Env:** `KC_SPI_WELL_KNOWN__OPENID_CONFIGURATION__OPENID_CONFIGURATION_OVERRIDE` | _string_ |  |
 
-`spi-cache-embedded--default--network-external-port`
+## workflow
 
-Port that other instances in the cluster should use to contact this node.
+### default
 
-Set only if it is different to cache-embedded-network-bind-port, for example when this instance is behind a firewall
-
-**CLI:** `--spi-cache-embedded--default--network-external-port`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NETWORK_EXTERNAL_PORT`
-
-_Integer_
-
-`spi-cache-embedded--default--node-name`
-
-Sets the name of the current node.
-
-This is a friendly name to make logs, etc. make more sense.
-
-**CLI:** `--spi-cache-embedded--default--node-name`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__NODE_NAME`
-
-_String_
-
-`spi-cache-embedded--default--offline-client-sessions-max-count`
-
-The maximum number of entries that can be stored in-memory by the offlineClientSessions cache.
-
-**CLI:** `--spi-cache-embedded--default--offline-client-sessions-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__OFFLINE_CLIENT_SESSIONS_MAX_COUNT`
-
-_Integer_
-
-`spi-cache-embedded--default--offline-sessions-max-count`
-
-The maximum number of entries that can be stored in-memory by the offlineSessions cache.
-
-**CLI:** `--spi-cache-embedded--default--offline-sessions-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__OFFLINE_SESSIONS_MAX_COUNT`
-
-_Integer_
-
-`spi-cache-embedded--default--rack-name`
-
-The name of the rack where this instance runs.
-
-It can be set if multiple NQRust-Identity instances are running in the same physical rack. Infinispan takes into consideration this value to keep the backup data spread between different racks.
-
-**CLI:** `--spi-cache-embedded--default--rack-name`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__RACK_NAME`
-
-_String_
-
-`spi-cache-embedded--default--realms-max-count`
-
-The maximum number of entries that can be stored in-memory by the realms cache.
-
-**CLI:** `--spi-cache-embedded--default--realms-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__REALMS_MAX_COUNT`
-
-_Integer_
-
-`spi-cache-embedded--default--sessions-max-count`
-
-The maximum number of entries that can be stored in-memory by the sessions cache.
-
-**CLI:** `--spi-cache-embedded--default--sessions-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__SESSIONS_MAX_COUNT`
-
-_Integer_
-
-`spi-cache-embedded--default--sessions-owners`
-
-Sets the number of owners for the sessions distributed cache.
-
-It defines the number of copies of your data in the cluster.
-
-**CLI:** `--spi-cache-embedded--default--sessions-owners`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__SESSIONS_OWNERS`
-
-_Integer_
-
-`spi-cache-embedded--default--site-name`
-
-The name of the site (availability zone) where this instance runs.
-
-It can be set if running NQRust-Identity in different availability zones. Infinispan takes into consideration this value to keep the backup data spread between different sites.
-
-**CLI:** `--spi-cache-embedded--default--site-name`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__SITE_NAME`
-
-_String_
-
-`spi-cache-embedded--default--users-max-count`
-
-The maximum number of entries that can be stored in-memory by the users cache.
-
-**CLI:** `--spi-cache-embedded--default--users-max-count`  
-**Env:** `KC_SPI_CACHE_EMBEDDED__DEFAULT__USERS_MAX_COUNT`
-
-_Integer_
-
-## [](#_cache_remote)cache-remote
-
-### [](#_default_2)default
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-cache-remote--default--auth-realm`
-
-Specifies the Infinispan server realm to be used for authentication.
-
-**CLI:** `--spi-cache-remote--default--auth-realm`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__AUTH_REALM`
-
-_String_
-
-`default`
-
-`spi-cache-remote--default--backup-sites`
-
-Configures a list of backup sites names to where the external Infinispan cluster backups the NQRust-Identity data.
-
-**CLI:** `--spi-cache-remote--default--backup-sites`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__BACKUP_SITES`
-
-_List_
-
-`spi-cache-remote--default--client-intelligence`
-
-Specifies the level of intelligence the Hot Rod client should have.
-
-**CLI:** `--spi-cache-remote--default--client-intelligence`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__CLIENT_INTELLIGENCE`
-
-`BASIC`, `TOPOLOGY_AWARE`, `HASH_DISTRIBUTION_AWARE`
-
-`HASH_DISTRIBUTION_AWARE`
-
-`spi-cache-remote--default--connection-pool-exhausted-action`
-
-Specifies what happens when asking for a connection from a server’s pool, and that pool is exhausted.
-
-**CLI:** `--spi-cache-remote--default--connection-pool-exhausted-action`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__CONNECTION_POOL_EXHAUSTED_ACTION`
-
-`EXCEPTION`, `WAIT`, `CREATE_NEW`
-
-`CREATE_NEW`
-
-`spi-cache-remote--default--connection-pool-max-active`
-
-Sets the maximum number of connections per Infinispan server instance.
-
-**CLI:** `--spi-cache-remote--default--connection-pool-max-active`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__CONNECTION_POOL_MAX_ACTIVE`
-
-_Integer_
-
-`16`
-
-`spi-cache-remote--default--hostname`
-
-The hostname of the external Infinispan cluster.
-
-**CLI:** `--spi-cache-remote--default--hostname`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__HOSTNAME`
-
-_String_
-
-`spi-cache-remote--default--password`
-
-The password for the authentication to the external Infinispan cluster.
-
-It is optional if connecting to an unsecure external Infinispan cluster. If the option is specified, `cache-remote-username` is required as well.
-
-**CLI:** `--spi-cache-remote--default--password`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__PASSWORD`
-
-_String_
-
-`spi-cache-remote--default--port`
-
-The port of the external Infinispan cluster.
-
-**CLI:** `--spi-cache-remote--default--port`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__PORT`
-
-_Integer_
-
-`11222`
-
-`spi-cache-remote--default--properties-file`
-
-Path to the properties file with the Hot Rod client configuration.
-
-**CLI:** `--spi-cache-remote--default--properties-file`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__PROPERTIES_FILE`
-
-_File_
-
-`spi-cache-remote--default--sasl-mechanism`
-
-Selects the SASL mechanism to use for the connection to the Infinispan server.
-
-**CLI:** `--spi-cache-remote--default--sasl-mechanism`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__SASL_MECHANISM`
-
-_String_
-
-`SCRAM-SHA-512`
-
-`spi-cache-remote--default--tls-enabled`
-
-Enable TLS support to communicate with a secured remote Infinispan server.
-
-Recommended to be enabled in production.
-
-**CLI:** `--spi-cache-remote--default--tls-enabled`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__TLS_ENABLED`
-
-`true`, `false`
-
-`true`
-
-`spi-cache-remote--default--tls-sni-hostname`
-
-Specifies the TLS SNI hostname for the connection to the Infinispan server.
-
-**CLI:** `--spi-cache-remote--default--tls-sni-hostname`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__TLS_SNI_HOSTNAME`
-
-_String_
-
-`spi-cache-remote--default--username`
-
-The username for the authentication to the external Infinispan cluster.
-
-It is optional if connecting to an unsecure external Infinispan cluster. If the option is specified, `cache-remote-password` is required as well.
-
-**CLI:** `--spi-cache-remote--default--username`  
-**Env:** `KC_SPI_CACHE_REMOTE__DEFAULT__USERNAME`
-
-_String_
-
-## [](#_ciba_auth_channel)ciba-auth-channel
-
-### [](#_ciba_http_auth_channel)ciba-http-auth-channel
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-ciba-auth-channel--ciba-http-auth-channel--http-authentication-channel-uri`
-
-The HTTP(S) URI of the authentication channel.
-
-**CLI:** `--spi-ciba-auth-channel--ciba-http-auth-channel--http-authentication-channel-uri`  
-**Env:** `KC_SPI_CIBA_AUTH_CHANNEL__CIBA_HTTP_AUTH_CHANNEL__HTTP_AUTHENTICATION_CHANNEL_URI`
-
-_string_
-
-## [](#_connections_http_client)connections-http-client
-
-### [](#_default_3)default
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-connections-http-client--default--backoff-multiplier`
-
-Multiplier for exponential backoff between retry attempts.
-
-For example, with an initial backoff of 1000ms and a multiplier of 2.0, the retry delays would be: 1000ms, 2000ms, 4000ms, etc.
-
-**CLI:** `--spi-connections-http-client--default--backoff-multiplier`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__BACKOFF_MULTIPLIER`
-
-_string_
-
-`2.0`
-
-`spi-connections-http-client--default--client-key-password`
-
-The key password.
-
-**CLI:** `--spi-connections-http-client--default--client-key-password`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CLIENT_KEY_PASSWORD`
-
-_string_
-
-`-1`
-
-`spi-connections-http-client--default--client-keystore`
-
-The file path of the key store from where the key material is going to be read from to set-up TLS connections.
-
-**CLI:** `--spi-connections-http-client--default--client-keystore`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CLIENT_KEYSTORE`
-
-_string_
-
-`spi-connections-http-client--default--client-keystore-password`
-
-The key store password.
-
-**CLI:** `--spi-connections-http-client--default--client-keystore-password`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CLIENT_KEYSTORE_PASSWORD`
-
-_string_
-
-`spi-connections-http-client--default--connection-pool-size`
-
-Assigns maximum total connection value.
-
-**CLI:** `--spi-connections-http-client--default--connection-pool-size`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CONNECTION_POOL_SIZE`
-
-_int_
-
-`spi-connections-http-client--default--connection-request-timeout-millis`
-
-Timeout when trying to obtain any connection, new or pooled.
-
-**CLI:** `--spi-connections-http-client--default--connection-request-timeout-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CONNECTION_REQUEST_TIMEOUT_MILLIS`
-
-_long_
-
-`5000`
-
-`spi-connections-http-client--default--connection-ttl-millis`
-
-Sets maximum time, in milliseconds, to live for persistent connections.
-
-**CLI:** `--spi-connections-http-client--default--connection-ttl-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__CONNECTION_TTL_MILLIS`
-
-_long_
-
-`-1`
-
-`spi-connections-http-client--default--disable-cookies`
-
-Disables state (cookie) management.
-
-**CLI:** `--spi-connections-http-client--default--disable-cookies`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__DISABLE_COOKIES`
-
-`true`, `false`
-
-`true`
-
-`spi-connections-http-client--default--disable-trust-manager`
-
-Disable trust management and hostname verification.
-
-NOTE this is a security hole, so only set this option if you cannot or do not want to verify the identity of the host you are communicating with.
-
-**CLI:** `--spi-connections-http-client--default--disable-trust-manager`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__DISABLE_TRUST_MANAGER`
-
-`true`, `false`
-
-`false`
-
-`spi-connections-http-client--default--establish-connection-timeout-millis`
-
-Timeout when making an initial socket connection.
-
-Only effective if less than the connection-request-timeout-millis.
-
-**CLI:** `--spi-connections-http-client--default--establish-connection-timeout-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__ESTABLISH_CONNECTION_TIMEOUT_MILLIS`
-
-_long_
-
-`-1`
-
-`spi-connections-http-client--default--initial-backoff-millis`
-
-Initial backoff time in milliseconds before the first retry attempt.
-
-**CLI:** `--spi-connections-http-client--default--initial-backoff-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__INITIAL_BACKOFF_MILLIS`
-
-_long_
-
-`1000`
-
-`spi-connections-http-client--default--jitter-factor`
-
-Jitter factor to apply to backoff times.
-
-A value of 0.5 means the actual backoff time will be between 50% and 150% of the calculated exponential backoff time.
-
-**CLI:** `--spi-connections-http-client--default--jitter-factor`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__JITTER_FACTOR`
-
-_string_
-
-`0.5`
-
-`spi-connections-http-client--default--max-connection-idle-time-millis`
-
-Sets the time, in milliseconds, for evicting idle connections from the pool.
-
-**CLI:** `--spi-connections-http-client--default--max-connection-idle-time-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_CONNECTION_IDLE_TIME_MILLIS`
-
-_long_
-
-`900000`
-
-`spi-connections-http-client--default--max-consumed-response-size`
-
-Maximum size of a response consumed by the client (to prevent denial of service)
-
-**CLI:** `--spi-connections-http-client--default--max-consumed-response-size`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_CONSUMED_RESPONSE_SIZE`
-
-_long_
-
-`10000000`
-
-`spi-connections-http-client--default--max-pooled-per-route`
-
-Assigns maximum connection per route value.
-
-**CLI:** `--spi-connections-http-client--default--max-pooled-per-route`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_POOLED_PER_ROUTE`
-
-_int_
-
-`64`
-
-`spi-connections-http-client--default--max-retries`
-
-Maximum number of retry attempts for all outgoing HTTP requests.
-
-Set to 0 to disable retries (default).
-
-**CLI:** `--spi-connections-http-client--default--max-retries`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__MAX_RETRIES`
-
-_int_
-
-`0`
-
-`spi-connections-http-client--default--proxy-mappings`
-
-Denotes the combination of a regex based hostname pattern and a proxy-uri in the form of hostnamePattern;proxyUri.
-
-**CLI:** `--spi-connections-http-client--default--proxy-mappings`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__PROXY_MAPPINGS`
-
-_string_
-
-`spi-connections-http-client--default--reuse-connections`
-
-If connections should be reused.
-
-**CLI:** `--spi-connections-http-client--default--reuse-connections`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__REUSE_CONNECTIONS`
-
-`true`, `false`
-
-`true`
-
-`spi-connections-http-client--default--socket-timeout-millis`
-
-Socket inactivity timeout.
-
-**CLI:** `--spi-connections-http-client--default--socket-timeout-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__SOCKET_TIMEOUT_MILLIS`
-
-_long_
-
-`5000`
-
-`spi-connections-http-client--default--use-jitter`
-
-Whether to apply jitter to backoff times to prevent synchronized retry storms when multiple clients are retrying at the same time.
-
-**CLI:** `--spi-connections-http-client--default--use-jitter`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__DEFAULT__USE_JITTER`
-
-`true`, `false`
-
-`true`
-
-### [](#_opentelemetry)opentelemetry
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-connections-http-client--opentelemetry--backoff-multiplier`
-
-Multiplier for exponential backoff between retry attempts.
-
-For example, with an initial backoff of 1000ms and a multiplier of 2.0, the retry delays would be: 1000ms, 2000ms, 4000ms, etc.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--backoff-multiplier`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__BACKOFF_MULTIPLIER`
-
-_string_
-
-`2.0`
-
-`spi-connections-http-client--opentelemetry--client-key-password`
-
-The key password.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--client-key-password`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CLIENT_KEY_PASSWORD`
-
-_string_
-
-`-1`
-
-`spi-connections-http-client--opentelemetry--client-keystore`
-
-The file path of the key store from where the key material is going to be read from to set-up TLS connections.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--client-keystore`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CLIENT_KEYSTORE`
-
-_string_
-
-`spi-connections-http-client--opentelemetry--client-keystore-password`
-
-The key store password.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--client-keystore-password`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CLIENT_KEYSTORE_PASSWORD`
-
-_string_
-
-`spi-connections-http-client--opentelemetry--connection-pool-size`
-
-Assigns maximum total connection value.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--connection-pool-size`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CONNECTION_POOL_SIZE`
-
-_int_
-
-`spi-connections-http-client--opentelemetry--connection-request-timeout-millis`
-
-Timeout when trying to obtain any connection, new or pooled.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--connection-request-timeout-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CONNECTION_REQUEST_TIMEOUT_MILLIS`
-
-_long_
-
-`5000`
-
-`spi-connections-http-client--opentelemetry--connection-ttl-millis`
-
-Sets maximum time, in milliseconds, to live for persistent connections.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--connection-ttl-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__CONNECTION_TTL_MILLIS`
-
-_long_
-
-`-1`
-
-`spi-connections-http-client--opentelemetry--disable-cookies`
-
-Disables state (cookie) management.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--disable-cookies`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__DISABLE_COOKIES`
-
-`true`, `false`
-
-`true`
-
-`spi-connections-http-client--opentelemetry--disable-trust-manager`
-
-Disable trust management and hostname verification.
-
-NOTE this is a security hole, so only set this option if you cannot or do not want to verify the identity of the host you are communicating with.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--disable-trust-manager`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__DISABLE_TRUST_MANAGER`
-
-`true`, `false`
-
-`false`
-
-`spi-connections-http-client--opentelemetry--establish-connection-timeout-millis`
-
-Timeout when making an initial socket connection.
-
-Only effective if less than the connection-request-timeout-millis.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--establish-connection-timeout-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__ESTABLISH_CONNECTION_TIMEOUT_MILLIS`
-
-_long_
-
-`-1`
-
-`spi-connections-http-client--opentelemetry--initial-backoff-millis`
-
-Initial backoff time in milliseconds before the first retry attempt.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--initial-backoff-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__INITIAL_BACKOFF_MILLIS`
-
-_long_
-
-`1000`
-
-`spi-connections-http-client--opentelemetry--jitter-factor`
-
-Jitter factor to apply to backoff times.
-
-A value of 0.5 means the actual backoff time will be between 50% and 150% of the calculated exponential backoff time.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--jitter-factor`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__JITTER_FACTOR`
-
-_string_
-
-`0.5`
-
-`spi-connections-http-client--opentelemetry--max-connection-idle-time-millis`
-
-Sets the time, in milliseconds, for evicting idle connections from the pool.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--max-connection-idle-time-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_CONNECTION_IDLE_TIME_MILLIS`
-
-_long_
-
-`900000`
-
-`spi-connections-http-client--opentelemetry--max-consumed-response-size`
-
-Maximum size of a response consumed by the client (to prevent denial of service)
-
-**CLI:** `--spi-connections-http-client--opentelemetry--max-consumed-response-size`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_CONSUMED_RESPONSE_SIZE`
-
-_long_
-
-`10000000`
-
-`spi-connections-http-client--opentelemetry--max-pooled-per-route`
-
-Assigns maximum connection per route value.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--max-pooled-per-route`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_POOLED_PER_ROUTE`
-
-_int_
-
-`64`
-
-`spi-connections-http-client--opentelemetry--max-retries`
-
-Maximum number of retry attempts for all outgoing HTTP requests.
-
-Set to 0 to disable retries (default).
-
-**CLI:** `--spi-connections-http-client--opentelemetry--max-retries`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__MAX_RETRIES`
-
-_int_
-
-`0`
-
-`spi-connections-http-client--opentelemetry--proxy-mappings`
-
-Denotes the combination of a regex based hostname pattern and a proxy-uri in the form of hostnamePattern;proxyUri.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--proxy-mappings`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__PROXY_MAPPINGS`
-
-_string_
-
-`spi-connections-http-client--opentelemetry--reuse-connections`
-
-If connections should be reused.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--reuse-connections`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__REUSE_CONNECTIONS`
-
-`true`, `false`
-
-`true`
-
-`spi-connections-http-client--opentelemetry--socket-timeout-millis`
-
-Socket inactivity timeout.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--socket-timeout-millis`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__SOCKET_TIMEOUT_MILLIS`
-
-_long_
-
-`5000`
-
-`spi-connections-http-client--opentelemetry--use-jitter`
-
-Whether to apply jitter to backoff times to prevent synchronized retry storms when multiple clients are retrying at the same time.
-
-**CLI:** `--spi-connections-http-client--opentelemetry--use-jitter`  
-**Env:** `KC_SPI_CONNECTIONS_HTTP_CLIENT__OPENTELEMETRY__USE_JITTER`
-
-`true`, `false`
-
-`true`
-
-## [](#_connections_jpa)connections-jpa
-
-### [](#_quarkus)quarkus
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-connections-jpa--quarkus--initialize-empty`
-
-Initialize database if empty.
-
-If set to false the database has to be manually initialized. If you want to manually initialize the database set migrationStrategy to manual which will create a file with SQL commands to initialize the database.
-
-**CLI:** `--spi-connections-jpa--quarkus--initialize-empty`  
-**Env:** `KC_SPI_CONNECTIONS_JPA__QUARKUS__INITIALIZE_EMPTY`
-
-`true`, `false`
-
-`true`
-
-`spi-connections-jpa--quarkus--migration-export`
-
-Path for where to write manual database initialization/migration file.
-
-**CLI:** `--spi-connections-jpa--quarkus--migration-export`  
-**Env:** `KC_SPI_CONNECTIONS_JPA__QUARKUS__MIGRATION_EXPORT`
-
-_string_
-
-`spi-connections-jpa--quarkus--migration-strategy`
-
-Strategy to use to migrate database.
-
-Valid values are update, manual and validate. Update will automatically migrate the database schema. Manual will export the required changes to a file with SQL commands that you can manually execute on the database. Validate will simply check if the database is up-to-date.
-
-**CLI:** `--spi-connections-jpa--quarkus--migration-strategy`  
-**Env:** `KC_SPI_CONNECTIONS_JPA__QUARKUS__MIGRATION_STRATEGY`
-
-`update`, `manual`, `validate`
-
-`update`
-
-## [](#_cors)cors
-
-### [](#_default_4)default
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-cors--default--allowed-headers`
-
-A comma-separated list of additional allowed headers for CORS requests
-
-**CLI:** `--spi-cors--default--allowed-headers`  
-**Env:** `KC_SPI_CORS__DEFAULT__ALLOWED_HEADERS`
-
-_string_
-
-## [](#_credential)credential
-
-### [](#_nqrust-identity_password)nqrust-identity-password
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-credential--nqrust-identity-password--validations-counter-tags`
-
-Comma-separated list of tags to be used when publishing password validation counter metric.
-
-**CLI:** `--spi-credential--nqrust-identity-password--validations-counter-tags`  
-**Env:** `KC_SPI_CREDENTIAL__NQRUST-IDENTITY_PASSWORD__VALIDATIONS_COUNTER_TAGS`
-
-`realm`, `algorithm`, `hashing_strength`, `outcome`
-
-`realm,algorithm,hashing_strength,outcome`
-
-## [](#_crl_storage)crl-storage
-
-### [](#_infinispan_2)infinispan
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-crl-storage--infinispan--cache-time`
-
-Interval in seconds that the CRL is cached.
-
-The next update time of the CRL is always a minimum if present. Zero or a negative value means CRL is cached until the next update time specified in the CRL (or infinite if the CRL does not contain the next update).
-
-**CLI:** `--spi-crl-storage--infinispan--cache-time`  
-**Env:** `KC_SPI_CRL_STORAGE__INFINISPAN__CACHE_TIME`
-
-_int_
-
-`-1`
-
-`spi-crl-storage--infinispan--min-time-between-requests`
-
-Minimum interval in seconds between two requests to retrieve the CRL.
-
-The CRL is not updated from the URL again until this minimum time has passed since the previous refresh. In theory this option is never used if the CRL is refreshed correctly in the next update time. The interval should be a positive number. Default 10 seconds.
-
-**CLI:** `--spi-crl-storage--infinispan--min-time-between-requests`  
-**Env:** `KC_SPI_CRL_STORAGE__INFINISPAN__MIN_TIME_BETWEEN_REQUESTS`
-
-_int_
-
-`10`
-
-## [](#_datastore)datastore
-
-### [](#_legacy)legacy
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-datastore--legacy--allow-migrate-existing-database-to-snapshot`
-
-By default, it is not allowed to run the snapshot/development server against the database, which was previously migrated to some officially released server version.
-
-As an attempt of doing this indicates that you are trying to run development server against production database, which can result in a loss or corruption of data, and also does not allow upgrading. If it is really intended, you can use this option, which will allow to use nightly/development server against production database when explicitly switch to true. This option is recommended just in the development environments and should be never used in the production!
-
-**CLI:** `--spi-datastore--legacy--allow-migrate-existing-database-to-snapshot`  
-**Env:** `KC_SPI_DATASTORE__LEGACY__ALLOW_MIGRATE_EXISTING_DATABASE_TO_SNAPSHOT`
-
-`true`, `false`
-
-`false`
-
-## [](#_dblock)dblock
-
-### [](#_jpa)jpa
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-dblock--jpa--lock-wait-timeout`
-
-The maximum time to wait when waiting to release a database lock.
-
-**CLI:** `--spi-dblock--jpa--lock-wait-timeout`  
-**Env:** `KC_SPI_DBLOCK__JPA__LOCK_WAIT_TIMEOUT`
-
-_int_
-
-## [](#_device_representation)device-representation
-
-### [](#_device_representation_2)device-representation
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-device-representation--device-representation--cache-size`
-
-Sets the maximum number of parsed user-agent values in the local cache.
-
-**CLI:** `--spi-device-representation--device-representation--cache-size`  
-**Env:** `KC_SPI_DEVICE_REPRESENTATION__DEVICE_REPRESENTATION__CACHE_SIZE`
-
-_Integer_
-
-`2048`
-
-## [](#_events_listener)events-listener
-
-### [](#_email)email
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-events-listener--email--exclude-events`
-
-A comma-separated list of events that should not be sent via email to the user’s account.
-
-**CLI:** `--spi-events-listener--email--exclude-events`  
-**Env:** `KC_SPI_EVENTS_LISTENER__EMAIL__EXCLUDE_EVENTS`
-
-`authreqid_to_token`, `authreqid_to_token_error`, `client_delete`, `client_delete_error`, `client_info`, `client_info_error`, `client_initiated_account_linking`, `client_initiated_account_linking_error`, `client_login`, `client_login_error`, `client_register`, `client_register_error`, `client_update`, `client_update_error`, `code_to_token`, `code_to_token_error`, `custom_required_action`, `custom_required_action_error`, `delete_account`, `delete_account_error`, `execute_action_token`, `execute_action_token_error`, `execute_actions`, `execute_actions_error`, `federated_identity_link`, `federated_identity_link_error`, `federated_identity_override_link`, `federated_identity_override_link_error`, `grant_consent`, `grant_consent_error`, `identity_provider_first_login`, `identity_provider_first_login_error`, `identity_provider_link_account`, `identity_provider_link_account_error`, `identity_provider_login`, `identity_provider_login_error`, `identity_provider_post_login`, `identity_provider_post_login_error`, `identity_provider_response`, `identity_provider_response_error`, `identity_provider_retrieve_token`, `identity_provider_retrieve_token_error`, `impersonate`, `impersonate_error`, `introspect_token`, `introspect_token_error`, `invalid_signature`, `invalid_signature_error`, `invite_org`, `invite_org_error`, `login`, `login_error`, `logout`, `logout_error`, `oauth2_device_auth`, `oauth2_device_auth_error`, `oauth2_device_code_to_token`, `oauth2_device_code_to_token_error`, `oauth2_device_verify_user_code`, `oauth2_device_verify_user_code_error`, `oauth2_extension_grant`, `oauth2_extension_grant_error`, `permission_token`, `permission_token_error`, `pushed_authorization_request`, `pushed_authorization_request_error`, `refresh_token`, `refresh_token_error`, `register`, `register_error`, `register_node`, `register_node_error`, `remove_credential`, `remove_credential_error`, `remove_federated_identity`, `remove_federated_identity_error`, `remove_totp`, `remove_totp_error`, `reset_password`, `reset_password_error`, `restart_authentication`, `restart_authentication_error`, `revoke_grant`, `revoke_grant_error`, `send_identity_provider_link`, `send_identity_provider_link_error`, `send_reset_password`, `send_reset_password_error`, `send_verify_email`, `send_verify_email_error`, `token_exchange`, `token_exchange_error`, `unregister_node`, `unregister_node_error`, `update_consent`, `update_consent_error`, `update_credential`, `update_credential_error`, `update_email`, `update_email_error`, `update_password`, `update_password_error`, `update_profile`, `update_profile_error`, `update_totp`, `update_totp_error`, `user_disabled_by_permanent_lockout`, `user_disabled_by_permanent_lockout_error`, `user_disabled_by_temporary_lockout`, `user_disabled_by_temporary_lockout_error`, `user_info_request`, `user_info_request_error`, `user_session_deleted`, `user_session_deleted_error`, `validate_access_token`, `validate_access_token_error`, `verify_email`, `verify_email_error`, `verify_profile`, `verify_profile_error`
-
-`spi-events-listener--email--include-events`
-
-A comma-separated list of events that should be sent via email to the user’s account.
-
-**CLI:** `--spi-events-listener--email--include-events`  
-**Env:** `KC_SPI_EVENTS_LISTENER__EMAIL__INCLUDE_EVENTS`
-
-`authreqid_to_token`, `authreqid_to_token_error`, `client_delete`, `client_delete_error`, `client_info`, `client_info_error`, `client_initiated_account_linking`, `client_initiated_account_linking_error`, `client_login`, `client_login_error`, `client_register`, `client_register_error`, `client_update`, `client_update_error`, `code_to_token`, `code_to_token_error`, `custom_required_action`, `custom_required_action_error`, `delete_account`, `delete_account_error`, `execute_action_token`, `execute_action_token_error`, `execute_actions`, `execute_actions_error`, `federated_identity_link`, `federated_identity_link_error`, `federated_identity_override_link`, `federated_identity_override_link_error`, `grant_consent`, `grant_consent_error`, `identity_provider_first_login`, `identity_provider_first_login_error`, `identity_provider_link_account`, `identity_provider_link_account_error`, `identity_provider_login`, `identity_provider_login_error`, `identity_provider_post_login`, `identity_provider_post_login_error`, `identity_provider_response`, `identity_provider_response_error`, `identity_provider_retrieve_token`, `identity_provider_retrieve_token_error`, `impersonate`, `impersonate_error`, `introspect_token`, `introspect_token_error`, `invalid_signature`, `invalid_signature_error`, `invite_org`, `invite_org_error`, `login`, `login_error`, `logout`, `logout_error`, `oauth2_device_auth`, `oauth2_device_auth_error`, `oauth2_device_code_to_token`, `oauth2_device_code_to_token_error`, `oauth2_device_verify_user_code`, `oauth2_device_verify_user_code_error`, `oauth2_extension_grant`, `oauth2_extension_grant_error`, `permission_token`, `permission_token_error`, `pushed_authorization_request`, `pushed_authorization_request_error`, `refresh_token`, `refresh_token_error`, `register`, `register_error`, `register_node`, `register_node_error`, `remove_credential`, `remove_credential_error`, `remove_federated_identity`, `remove_federated_identity_error`, `remove_totp`, `remove_totp_error`, `reset_password`, `reset_password_error`, `restart_authentication`, `restart_authentication_error`, `revoke_grant`, `revoke_grant_error`, `send_identity_provider_link`, `send_identity_provider_link_error`, `send_reset_password`, `send_reset_password_error`, `send_verify_email`, `send_verify_email_error`, `token_exchange`, `token_exchange_error`, `unregister_node`, `unregister_node_error`, `update_consent`, `update_consent_error`, `update_credential`, `update_credential_error`, `update_email`, `update_email_error`, `update_password`, `update_password_error`, `update_profile`, `update_profile_error`, `update_totp`, `update_totp_error`, `user_disabled_by_permanent_lockout`, `user_disabled_by_permanent_lockout_error`, `user_disabled_by_temporary_lockout`, `user_disabled_by_temporary_lockout_error`, `user_info_request`, `user_info_request_error`, `user_session_deleted`, `user_session_deleted_error`, `validate_access_token`, `validate_access_token_error`, `verify_email`, `verify_email_error`, `verify_profile`, `verify_profile_error`
-
-`All events`
-
-### [](#_jboss_logging)jboss-logging
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-events-listener--jboss-logging--error-level`
-
-The log level for error messages.
-
-**CLI:** `--spi-events-listener--jboss-logging--error-level`  
-**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__ERROR_LEVEL`
-
-`debug`, `error`, `fatal`, `info`, `trace`, `warn`
-
-`warn`
-
-`spi-events-listener--jboss-logging--include-representation`
-
-When "true" the "representation" field with the JSON admin object is also added to the message.
-
-The realm should be also configured to include representation for the admin events.
-
-**CLI:** `--spi-events-listener--jboss-logging--include-representation`  
-**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__INCLUDE_REPRESENTATION`
-
-`true`, `false`
-
-`false`
-
-`spi-events-listener--jboss-logging--quotes`
-
-The quotes to use for values, it should be one character like " or '.
-
-Use "none" if quotes are not needed.
-
-**CLI:** `--spi-events-listener--jboss-logging--quotes`  
-**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__QUOTES`
-
-_string_
-
-`"`
-
-`spi-events-listener--jboss-logging--sanitize`
-
-If true the log messages are sanitized to avoid line breaks.
-
-If false messages are not sanitized.
-
-**CLI:** `--spi-events-listener--jboss-logging--sanitize`  
-**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SANITIZE`
-
-`true`, `false`
-
-`true`
-
-`spi-events-listener--jboss-logging--success-level`
-
-The log level for success messages.
-
-**CLI:** `--spi-events-listener--jboss-logging--success-level`  
-**Env:** `KC_SPI_EVENTS_LISTENER__JBOSS_LOGGING__SUCCESS_LEVEL`
-
-`debug`, `error`, `fatal`, `info`, `trace`, `warn`
-
-`debug`
-
-## [](#_export)export
-
-### [](#_dir)dir
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-export--dir--dir`
-
-Directory to export to
-
-**CLI:** `--spi-export--dir--dir`  
-**Env:** `KC_SPI_EXPORT__DIR__DIR`
-
-_string_
-
-`spi-export--dir--realm-name`
-
-Realm to export
-
-**CLI:** `--spi-export--dir--realm-name`  
-**Env:** `KC_SPI_EXPORT__DIR__REALM_NAME`
-
-_string_
-
-`spi-export--dir--users-export-strategy`
-
-Users export strategy
-
-**CLI:** `--spi-export--dir--users-export-strategy`  
-**Env:** `KC_SPI_EXPORT__DIR__USERS_EXPORT_STRATEGY`
-
-_string_
-
-`DIFFERENT_FILES`
-
-`spi-export--dir--users-per-file`
-
-Users per exported file
-
-**CLI:** `--spi-export--dir--users-per-file`  
-**Env:** `KC_SPI_EXPORT__DIR__USERS_PER_FILE`
-
-_int_
-
-`50`
-
-### [](#_single_file)single-file
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-export--single-file--file`
-
-File to export to
-
-**CLI:** `--spi-export--single-file--file`  
-**Env:** `KC_SPI_EXPORT__SINGLE_FILE__FILE`
-
-_string_
-
-`spi-export--single-file--realm-name`
-
-Realm to export
-
-**CLI:** `--spi-export--single-file--realm-name`  
-**Env:** `KC_SPI_EXPORT__SINGLE_FILE__REALM_NAME`
-
-_string_
-
-## [](#_group)group
-
-### [](#_jpa_2)jpa
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-group--jpa--escape-slashes-in-group-path`
-
-If true slashes `/` in group names are escaped with the character `~` when converted to paths.
-
-**CLI:** `--spi-group--jpa--escape-slashes-in-group-path`  
-**Env:** `KC_SPI_GROUP__JPA__ESCAPE_SLASHES_IN_GROUP_PATH`
-
-`true`, `false`
-
-`false`
-
-`spi-group--jpa--searchable-attributes`
-
-The list of attributes separated by comma that are allowed in client attribute searches.
-
-**CLI:** `--spi-group--jpa--searchable-attributes`  
-**Env:** `KC_SPI_GROUP__JPA__SEARCHABLE_ATTRIBUTES`
-
-_string_
-
-## [](#_import)import
-
-### [](#_dir_2)dir
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-import--dir--dir`
-
-Directory to import from
-
-**CLI:** `--spi-import--dir--dir`  
-**Env:** `KC_SPI_IMPORT__DIR__DIR`
-
-_string_
-
-`spi-import--dir--realm-name`
-
-Realm to export
-
-**CLI:** `--spi-import--dir--realm-name`  
-**Env:** `KC_SPI_IMPORT__DIR__REALM_NAME`
-
-_string_
-
-`spi-import--dir--strategy`
-
-Strategy for import: IGNORE\_EXISTING, OVERWRITE\_EXISTING
-
-**CLI:** `--spi-import--dir--strategy`  
-**Env:** `KC_SPI_IMPORT__DIR__STRATEGY`
-
-_string_
-
-### [](#_single_file_2)single-file
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-import--single-file--file`
-
-File to import from
-
-**CLI:** `--spi-import--single-file--file`  
-**Env:** `KC_SPI_IMPORT__SINGLE_FILE__FILE`
-
-_string_
-
-`spi-import--single-file--realm-name`
-
-Realm to export
-
-**CLI:** `--spi-import--single-file--realm-name`  
-**Env:** `KC_SPI_IMPORT__SINGLE_FILE__REALM_NAME`
-
-_string_
-
-`spi-import--single-file--strategy`
-
-Strategy for import: IGNORE\_EXISTING, OVERWRITE\_EXISTING
-
-**CLI:** `--spi-import--single-file--strategy`  
-**Env:** `KC_SPI_IMPORT__SINGLE_FILE__STRATEGY`
-
-_string_
-
-## [](#_jgroups_mtls)jgroups-mtls
-
-### [](#_default_5)default
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-jgroups-mtls--default--enabled`
-
-Encrypts the network communication between NQRust-Identity servers.
-
-If no additional parameters about a keystore and truststore are provided, ephemeral key pairs and certificates are created and rotated automatically, which is recommended for standard setups.
-
-**CLI:** `--spi-jgroups-mtls--default--enabled`  
-**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__ENABLED`
-
-`true`, `false`
-
-`true`
-
-`spi-jgroups-mtls--default--keystore-file`
-
-The Keystore file path.
-
-The Keystore must contain the certificate to use by the TLS protocol. By default, it looks up `cache-mtls-keystore.p12` under conf/ directory.
-
-**CLI:** `--spi-jgroups-mtls--default--keystore-file`  
-**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__KEYSTORE_FILE`
-
-_String_
-
-`spi-jgroups-mtls--default--keystore-password`
-
-The password to access the Keystore.
-
-**CLI:** `--spi-jgroups-mtls--default--keystore-password`  
-**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__KEYSTORE_PASSWORD`
-
-_Password_
-
-`spi-jgroups-mtls--default--rotation`
-
-Rotation period in days of automatic JGroups MTLS certificates.
-
-**CLI:** `--spi-jgroups-mtls--default--rotation`  
-**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__ROTATION`
-
-_Integer_
-
-`30`
-
-`spi-jgroups-mtls--default--truststore-file`
-
-The Truststore file path.
-
-It should contain the trusted certificates or the Certificate Authority that signed the certificates. By default, it lookup `cache-mtls-truststore.p12` under conf/ directory.
-
-**CLI:** `--spi-jgroups-mtls--default--truststore-file`  
-**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__TRUSTSTORE_FILE`
-
-_String_
-
-`spi-jgroups-mtls--default--truststore-password`
-
-The password to access the Truststore.
-
-**CLI:** `--spi-jgroups-mtls--default--truststore-password`  
-**Env:** `KC_SPI_JGROUPS_MTLS__DEFAULT__TRUSTSTORE_PASSWORD`
-
-_Password_
-
-## [](#_load_balancer_check)load-balancer-check
-
-### [](#_remote_2)remote
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-load-balancer-check--remote--poll-interval`
-
-The Remote caches poll interval, in milliseconds, for connection availability
-
-**CLI:** `--spi-load-balancer-check--remote--poll-interval`  
-**Env:** `KC_SPI_LOAD_BALANCER_CHECK__REMOTE__POLL_INTERVAL`
-
-_int_
-
-`5000`
-
-## [](#_login_protocol)login-protocol
-
-### [](#_openid_connect)openid-connect
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-login-protocol--openid-connect--add-req-params-fail-fast`
-
-Whether the fail-fast strategy should be enforced in case if the limit for some standard OIDC parameter or additional OIDC parameter is not met for the parameters sent to the OIDC authentication or token endpoints.
-
-If false, then all additional request parameters to not meet the configuration are silently ignored. If true, an exception will be raised and request to the OIDC authentication or token endpoints will not be allowed.
-
-**CLI:** `--spi-login-protocol--openid-connect--add-req-params-fail-fast`  
-**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_FAIL_FAST`
-
-`true`, `false`
-
-`false`
-
-`spi-login-protocol--openid-connect--add-req-params-max-number`
-
-Maximum number of additional request parameters sent to the OIDC authentication or token endpoints.
-
-As 'additional request parameter' is meant some custom parameter not directly treated as standard OIDC/OAuth2 protocol parameter. Additional parameters might be useful for example to add custom claims to the OIDC token (in case that also particular protocol mappers are configured).
-
-**CLI:** `--spi-login-protocol--openid-connect--add-req-params-max-number`  
-**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_MAX_NUMBER`
-
-_int_
-
-`5`
-
-`spi-login-protocol--openid-connect--add-req-params-max-overall-size`
-
-Maximum size of all additional request parameters values together.
-
-See `add-req-params-max-number` for more details about additional request parameters
-
-**CLI:** `--spi-login-protocol--openid-connect--add-req-params-max-overall-size`  
-**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_MAX_OVERALL_SIZE`
-
-_int_
-
-`2147483647`
-
-`spi-login-protocol--openid-connect--add-req-params-max-size`
-
-Maximum size of single additional request parameter value See `add-req-params-max-number` for more details about additional request parameters
-
-**CLI:** `--spi-login-protocol--openid-connect--add-req-params-max-size`  
-**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__ADD_REQ_PARAMS_MAX_SIZE`
-
-_int_
-
-`2000`
-
-`spi-login-protocol--openid-connect--req-params-default-max-size`
-
-Maximum default length of the standard OIDC parameter sent to the OIDC authentication or token endpoints.
-
-This applies to most of the standard parameters like for example `state`, `nonce` etc. The exception is `login_hint` parameter, which has maximum length of 255 characters.
-
-**CLI:** `--spi-login-protocol--openid-connect--req-params-default-max-size`  
-**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__REQ_PARAMS_DEFAULT_MAX_SIZE`
-
-_int_
-
-`4000`
-
-`spi-login-protocol--openid-connect--req-params-max-size--login_hint`
-
-Maximum length of the standard parameter sent to OIDC authentication or token endpoints overriden for the specified parameter.
-
-Useful if some standard OIDC parameter should have different limit than `req-params-default-max-size`. It is needed to add the name of the parameter after this prefix into the configuration. In this example, the `login_hint` parameter is used, but this format is supported for any known standard OIDC/OAuth2 parameter.
-
-**CLI:** `--spi-login-protocol--openid-connect--req-params-max-size--login_hint`  
-**Env:** `KC_SPI_LOGIN_PROTOCOL__OPENID_CONNECT__REQ_PARAMS_MAX_SIZE__LOGIN_HINT`
-
-_int_
-
-### [](#_saml)saml
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-login-protocol--saml--max-inflating-size`
-
-The maximum inflating size in bytes for the REDIRECT binding.
-
-**CLI:** `--spi-login-protocol--saml--max-inflating-size`  
-**Env:** `KC_SPI_LOGIN_PROTOCOL__SAML__MAX_INFLATING_SIZE`
-
-_long_
-
-`131072`
-
-## [](#_login_failure)login-failure
-
-### [](#_remote_3)remote
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-login-failure--remote--max-retries`
-
-The maximum number of retries if an error occurs.
-
-A value of zero or less disable any retries.
-
-**CLI:** `--spi-login-failure--remote--max-retries`  
-**Env:** `KC_SPI_LOGIN_FAILURE__REMOTE__MAX_RETRIES`
-
-_int_
-
-`10`
-
-`spi-login-failure--remote--retry-base-time`
-
-The base back-off time in milliseconds.
-
-**CLI:** `--spi-login-failure--remote--retry-base-time`  
-**Env:** `KC_SPI_LOGIN_FAILURE__REMOTE__RETRY_BASE_TIME`
-
-_int_
-
-`10`
-
-## [](#_mapped_diagnostic_context)mapped-diagnostic-context
-
-### [](#_default_6)default
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-mapped-diagnostic-context--default--mdc-keys`
-
-Comma-separated list of MDC keys to add to the Mapped Diagnostic Context.
-
-**CLI:** `--spi-mapped-diagnostic-context--default--mdc-keys`  
-**Env:** `KC_SPI_MAPPED_DIAGNOSTIC_CONTEXT__DEFAULT__MDC_KEYS`
-
-`realmName`, `clientId`, `userId`, `ipAddress`, `org`, `sessionId`, `authenticationSessionId`, `authenticationTabId`
-
-## [](#_password_hashing)password-hashing
-
-### [](#_argon2)argon2
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-password-hashing--argon2--cpu-cores`
-
-Maximum parallel CPU cores to use for hashing
-
-**CLI:** `--spi-password-hashing--argon2--cpu-cores`  
-**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__CPU_CORES`
-
-_int_
-
-`spi-password-hashing--argon2--hash-length`
-
-Hash length
-
-**CLI:** `--spi-password-hashing--argon2--hash-length`  
-**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__HASH_LENGTH`
-
-_int_
-
-`32`
-
-`spi-password-hashing--argon2--iterations`
-
-Iterations
-
-**CLI:** `--spi-password-hashing--argon2--iterations`  
-**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__ITERATIONS`
-
-_int_
-
-`5`
-
-`spi-password-hashing--argon2--memory`
-
-Memory size (KB)
-
-**CLI:** `--spi-password-hashing--argon2--memory`  
-**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__MEMORY`
-
-_int_
-
-`7168`
-
-`spi-password-hashing--argon2--parallelism`
-
-Parallelism
-
-**CLI:** `--spi-password-hashing--argon2--parallelism`  
-**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__PARALLELISM`
-
-_int_
-
-`1`
-
-`spi-password-hashing--argon2--type`
-
-Type
-
-**CLI:** `--spi-password-hashing--argon2--type`  
-**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__TYPE`
-
-`id`, `d`, `i`
-
-`id`
-
-`spi-password-hashing--argon2--version`
-
-Version
-
-**CLI:** `--spi-password-hashing--argon2--version`  
-**Env:** `KC_SPI_PASSWORD_HASHING__ARGON2__VERSION`
-
-`1.3`, `1.0`
-
-`1.3`
-
-## [](#_public_key_storage)public-key-storage
-
-### [](#_infinispan_3)infinispan
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-public-key-storage--infinispan--max-cache-time`
-
-Maximum interval in seconds that keys are cached when they are retrieved via all keys methods.
-
-When all keys for the entry are retrieved there is no way to detect if a key is missing (different to the case when the key is retrieved via ID for example). In that situation this option forces a refresh from time to time. This time can be overriden by the protocol (for example using cacheDuration or validUntil in the SAML descriptor). Default 24 hours.
-
-**CLI:** `--spi-public-key-storage--infinispan--max-cache-time`  
-**Env:** `KC_SPI_PUBLIC_KEY_STORAGE__INFINISPAN__MAX_CACHE_TIME`
-
-_int_
-
-`86400`
-
-`spi-public-key-storage--infinispan--min-time-between-requests`
-
-Minimum interval in seconds between two requests to retrieve the new public keys.
-
-The server will always try to download new public keys when a single key is requested and not found. However it will avoid the download if the previous refresh was done less than 10 seconds ago (by default). This behavior is used to avoid DoS attacks against the external keys endpoint.
-
-**CLI:** `--spi-public-key-storage--infinispan--min-time-between-requests`  
-**Env:** `KC_SPI_PUBLIC_KEY_STORAGE__INFINISPAN__MIN_TIME_BETWEEN_REQUESTS`
-
-_int_
-
-`10`
-
-## [](#_required_action)required-action
-
-### [](#_configure_recovery_authn_codes)CONFIGURE\_RECOVERY\_AUTHN\_CODES
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_RECOVERY_AUTHN_CODES__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-`spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--warning_threshold`
-
-When user has smaller amount of remaining recovery codes on his account than the value configured here, account console will show warning to the user, which will recommend him to setup new set of recovery codes.
-
-**CLI:** `--spi-required-action--CONFIGURE_RECOVERY_AUTHN_CODES--warning_threshold`  
-**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_RECOVERY_AUTHN_CODES__WARNING_THRESHOLD`
-
-_Integer_
-
-`4`
-
-### [](#_configure_totp)CONFIGURE\_TOTP
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--CONFIGURE_TOTP--add-recovery-codes`
-
-If this option is enabled, the user will be required to configure recovery codes following the OTP configuration.
-
-If the user already has recovery codes configured, NQRust-Identity will not ask for setting them up. As a prerequisite, enable the recovery codes required action and enable recovery codes in your authentication flow.
-
-**CLI:** `--spi-required-action--CONFIGURE_TOTP--add-recovery-codes`  
-**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_TOTP__ADD_RECOVERY_CODES`
-
-`true`, `false`
-
-`false`
-
-`spi-required-action--CONFIGURE_TOTP--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--CONFIGURE_TOTP--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__CONFIGURE_TOTP__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_terms_and_conditions)TERMS\_AND\_CONDITIONS
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--TERMS_AND_CONDITIONS--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--TERMS_AND_CONDITIONS--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__TERMS_AND_CONDITIONS__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_update_email)UPDATE\_EMAIL
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--UPDATE_EMAIL--email-resend-cooldown-seconds`
-
-Minimum delay in seconds before another email verification email can be sent.
-
-**CLI:** `--spi-required-action--UPDATE_EMAIL--email-resend-cooldown-seconds`  
-**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_EMAIL__EMAIL_RESEND_COOLDOWN_SECONDS`
-
-_String_
-
-`30`
-
-`spi-required-action--UPDATE_EMAIL--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--UPDATE_EMAIL--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_EMAIL__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-`spi-required-action--UPDATE_EMAIL--verify-email`
-
-If enabled, the user will be forced to verify the email regardless if email verification is enabled at the realm level or not.
-
-Otherwise, verification will be based on the realm level setting.
-
-**CLI:** `--spi-required-action--UPDATE_EMAIL--verify-email`  
-**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_EMAIL__VERIFY_EMAIL`
-
-`true`, `false`
-
-`false`
-
-### [](#_update_password)UPDATE\_PASSWORD
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--UPDATE_PASSWORD--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--UPDATE_PASSWORD--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_PASSWORD__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_update_profile)UPDATE\_PROFILE
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--UPDATE_PROFILE--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--UPDATE_PROFILE--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_PROFILE__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_verify_email)VERIFY\_EMAIL
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--VERIFY_EMAIL--email-resend-cooldown-seconds`
-
-Minimum delay in seconds before another email verification email can be sent.
-
-**CLI:** `--spi-required-action--VERIFY_EMAIL--email-resend-cooldown-seconds`  
-**Env:** `KC_SPI_REQUIRED_ACTION__VERIFY_EMAIL__EMAIL_RESEND_COOLDOWN_SECONDS`
-
-_String_
-
-`30`
-
-`spi-required-action--VERIFY_EMAIL--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--VERIFY_EMAIL--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__VERIFY_EMAIL__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_verify_profile)VERIFY\_PROFILE
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--VERIFY_PROFILE--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--VERIFY_PROFILE--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__VERIFY_PROFILE__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_delete_credential)delete\_credential
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--delete_credential--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--delete_credential--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__DELETE_CREDENTIAL__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_idp_link)idp\_link
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--idp_link--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--idp_link--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__IDP_LINK__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_update_user_locale)update\_user\_locale
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--update_user_locale--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--update_user_locale--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__UPDATE_USER_LOCALE__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_webauthn_register)webauthn-register
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--webauthn-register--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--webauthn-register--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__WEBAUTHN_REGISTER__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-### [](#_webauthn_register_passwordless)webauthn-register-passwordless
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-required-action--webauthn-register-passwordless--max_auth_age`
-
-Configures the duration in seconds this action can be used after the last authentication before the user is required to re-authenticate.
-
-This parameter is used just in the context of AIA when the kc\_action parameter is available in the request, which is for instance when user himself updates his password in the account console.
-
-**CLI:** `--spi-required-action--webauthn-register-passwordless--max_auth_age`  
-**Env:** `KC_SPI_REQUIRED_ACTION__WEBAUTHN_REGISTER_PASSWORDLESS__MAX_AUTH_AGE`
-
-_String_
-
-`300`
-
-## [](#_resource_encoding)resource-encoding
-
-### [](#_gzip)gzip
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-resource-encoding--gzip--excluded-content-types`
-
-A space separated list of content-types to exclude from encoding.
-
-**CLI:** `--spi-resource-encoding--gzip--excluded-content-types`  
-**Env:** `KC_SPI_RESOURCE_ENCODING__GZIP__EXCLUDED_CONTENT_TYPES`
-
-_string_
-
-`image/png image/jpeg`
-
-## [](#_security_profile)security-profile
-
-### [](#_default_7)default
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-security-profile--default--name`
-
-Name for the security configuration file to use.
-
-File `name`.json is searched in classapth and `conf` installation folder.
-
-**CLI:** `--spi-security-profile--default--name`  
-**Env:** `KC_SPI_SECURITY_PROFILE__DEFAULT__NAME`
-
-_string_
-
-## [](#_single_use_object)single-use-object
-
-### [](#_infinispan_4)infinispan
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-single-use-object--infinispan--persist-revoked-tokens`
-
-If revoked tokens are stored persistently across restarts
-
-**CLI:** `--spi-single-use-object--infinispan--persist-revoked-tokens`  
-**Env:** `KC_SPI_SINGLE_USE_OBJECT__INFINISPAN__PERSIST_REVOKED_TOKENS`
-
-`true`, `false`
-
-`true`
-
-### [](#_remote_4)remote
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-single-use-object--remote--persist-revoked-tokens`
-
-If revoked tokens are stored persistently across restarts
-
-**CLI:** `--spi-single-use-object--remote--persist-revoked-tokens`  
-**Env:** `KC_SPI_SINGLE_USE_OBJECT__REMOTE__PERSIST_REVOKED_TOKENS`
-
-`true`, `false`
-
-`true`
-
-## [](#_sticky_session_encoder)sticky-session-encoder
-
-### [](#_infinispan_5)infinispan
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-sticky-session-encoder--infinispan--should-attach-route`
-
-If the route should be attached to cookies to reflect the node that owns a particular session.
-
-**CLI:** `--spi-sticky-session-encoder--infinispan--should-attach-route`  
-**Env:** `KC_SPI_STICKY_SESSION_ENCODER__INFINISPAN__SHOULD_ATTACH_ROUTE`
-
-`true`, `false`
-
-`true`
-
-### [](#_remote_5)remote
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-sticky-session-encoder--remote--should-attach-route`
-
-If the route should be attached to cookies to reflect the node that owns a particular session.
-
-**CLI:** `--spi-sticky-session-encoder--remote--should-attach-route`  
-**Env:** `KC_SPI_STICKY_SESSION_ENCODER__REMOTE__SHOULD_ATTACH_ROUTE`
-
-`true`, `false`
-
-`true`
-
-## [](#_storage)storage
-
-### [](#_ldap)ldap
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-storage--ldap--secure-referral`
-
-Allow only secure LDAP referrals (deprecated)
-
-**CLI:** `--spi-storage--ldap--secure-referral`  
-**Env:** `KC_SPI_STORAGE__LDAP__SECURE_REFERRAL`
-
-`true`, `false`
-
-`true`
-
-## [](#_truststore)truststore
-
-### [](#_file)file
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-truststore--file--file`
-
-DEPRECATED: The file path of the trust store from where the certificates are going to be read from to validate TLS connections.
-
-**CLI:** `--spi-truststore--file--file`  
-**Env:** `KC_SPI_TRUSTSTORE__FILE__FILE`
-
-_string_
-
-`spi-truststore--file--hostname-verification-policy`
-
-DEPRECATED: The hostname verification policy.
-
-**CLI:** `--spi-truststore--file--hostname-verification-policy`  
-**Env:** `KC_SPI_TRUSTSTORE__FILE__HOSTNAME_VERIFICATION_POLICY`
-
-`ANY`, `WILDCARD`, `STRICT`, `DEFAULT`
-
-`DEFAULT`
-
-`spi-truststore--file--password`
-
-DEPRECATED: The trust store password.
-
-**CLI:** `--spi-truststore--file--password`  
-**Env:** `KC_SPI_TRUSTSTORE__FILE__PASSWORD`
-
-_string_
-
-`spi-truststore--file--type`
-
-DEPRECATED: Type of the truststore.
-
-If not provided, the type would be detected based on the truststore file extension or platform default type.
-
-**CLI:** `--spi-truststore--file--type`  
-**Env:** `KC_SPI_TRUSTSTORE__FILE__TYPE`
-
-_string_
-
-## [](#_user_profile)user-profile
-
-### [](#_declarative_user_profile)declarative-user-profile
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-user-profile--declarative-user-profile--admin-read-only-attributes`
-
-Array of regular expressions to identify fields that should be treated read-only so administrators can’t change them.
-
-**CLI:** `--spi-user-profile--declarative-user-profile--admin-read-only-attributes`  
-**Env:** `KC_SPI_USER_PROFILE__DECLARATIVE_USER_PROFILE__ADMIN_READ_ONLY_ATTRIBUTES`
-
-_MultivaluedString_
-
-`spi-user-profile--declarative-user-profile--max-email-local-part-length`
-
-To set user profile max email local part length
-
-**CLI:** `--spi-user-profile--declarative-user-profile--max-email-local-part-length`  
-**Env:** `KC_SPI_USER_PROFILE__DECLARATIVE_USER_PROFILE__MAX_EMAIL_LOCAL_PART_LENGTH`
-
-_String_
-
-`spi-user-profile--declarative-user-profile--read-only-attributes`
-
-Array of regular expressions to identify fields that should be treated read-only so users can’t change them.
-
-**CLI:** `--spi-user-profile--declarative-user-profile--read-only-attributes`  
-**Env:** `KC_SPI_USER_PROFILE__DECLARATIVE_USER_PROFILE__READ_ONLY_ATTRIBUTES`
-
-_MultivaluedString_
-
-## [](#_user_session_persister)user-session-persister
-
-### [](#_jpa_3)jpa
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-user-session-persister--jpa--expiration-batch`
-
-Sets the size of the expiration batch, i.
-
-e., the number of expired sessions to remove per delete statement.
-
-**CLI:** `--spi-user-session-persister--jpa--expiration-batch`  
-**Env:** `KC_SPI_USER_SESSION_PERSISTER__JPA__EXPIRATION_BATCH`
-
-_Integer_
-
-`512`
-
-## [](#_user_sessions)user-sessions
-
-### [](#_infinispan_6)infinispan
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-user-sessions--infinispan--max-batch-size`
-
-Maximum size of a batch (only applicable to persistent sessions
-
-**CLI:** `--spi-user-sessions--infinispan--max-batch-size`  
-**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__MAX_BATCH_SIZE`
-
-_int_
-
-`4`
-
-`spi-user-sessions--infinispan--offline-client-session-cache-entry-lifespan-override`
-
-Override how long offline client sessions should be kept in memory in seconds (deprecated, to be removed in NQRust-Identity 27)
-
-**CLI:** `--spi-user-sessions--infinispan--offline-client-session-cache-entry-lifespan-override`  
-**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__OFFLINE_CLIENT_SESSION_CACHE_ENTRY_LIFESPAN_OVERRIDE`
-
-_int_
-
-`spi-user-sessions--infinispan--offline-session-cache-entry-lifespan-override`
-
-Override how long offline user sessions should be kept in memory in seconds (deprecated, to be removed in NQRust-Identity 27)
-
-**CLI:** `--spi-user-sessions--infinispan--offline-session-cache-entry-lifespan-override`  
-**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__OFFLINE_SESSION_CACHE_ENTRY_LIFESPAN_OVERRIDE`
-
-_int_
-
-`spi-user-sessions--infinispan--session-expiration-period`
-
-Sets the expiration task run period, to remove the expired session.
-
-**CLI:** `--spi-user-sessions--infinispan--session-expiration-period`  
-**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__SESSION_EXPIRATION_PERIOD`
-
-_int_
-
-`spi-user-sessions--infinispan--use-batches`
-
-Enable or disable batch writes to the database.
-
-Enabled by default with the persistent-user-sessions Feature
-
-**CLI:** `--spi-user-sessions--infinispan--use-batches`  
-**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__USE_BATCHES`
-
-`true`, `false`
-
-`false`
-
-`spi-user-sessions--infinispan--use-caches`
-
-Enable or disable caches.
-
-Enabled by default unless the external feature to use only external remote caches is used
-
-**CLI:** `--spi-user-sessions--infinispan--use-caches`  
-**Env:** `KC_SPI_USER_SESSIONS__INFINISPAN__USE_CACHES`
-
-`true`, `false`
-
-### [](#_remote_6)remote
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-user-sessions--remote--batch-size`
-
-Batch size when streaming session from the remote cache
-
-**CLI:** `--spi-user-sessions--remote--batch-size`  
-**Env:** `KC_SPI_USER_SESSIONS__REMOTE__BATCH_SIZE`
-
-_int_
-
-`1024`
-
-`spi-user-sessions--remote--max-retries`
-
-The maximum number of retries if an error occurs.
-
-A value of zero or less disable any retries.
-
-**CLI:** `--spi-user-sessions--remote--max-retries`  
-**Env:** `KC_SPI_USER_SESSIONS__REMOTE__MAX_RETRIES`
-
-_int_
-
-`10`
-
-`spi-user-sessions--remote--retry-base-time`
-
-The base back-off time in milliseconds.
-
-**CLI:** `--spi-user-sessions--remote--retry-base-time`  
-**Env:** `KC_SPI_USER_SESSIONS__REMOTE__RETRY_BASE_TIME`
-
-_int_
-
-`10`
-
-## [](#_well_known)well-known
-
-### [](#_oauth_authorization_server)oauth-authorization-server
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-well-known--oauth-authorization-server--include-client-scopes`
-
-If client scopes should be used to calculate the list of supported scopes.
-
-**CLI:** `--spi-well-known--oauth-authorization-server--include-client-scopes`  
-**Env:** `KC_SPI_WELL_KNOWN__OAUTH_AUTHORIZATION_SERVER__INCLUDE_CLIENT_SCOPES`
-
-`true`, `false`
-
-`true`
-
-`spi-well-known--oauth-authorization-server--openid-configuration-override`
-
-The file path from where the metadata should be loaded from.
-
-You can use an absolute file path or, if the file is in the server classpath, use the `classpath:` prefix to load the file from the classpath.
-
-**CLI:** `--spi-well-known--oauth-authorization-server--openid-configuration-override`  
-**Env:** `KC_SPI_WELL_KNOWN__OAUTH_AUTHORIZATION_SERVER__OPENID_CONFIGURATION_OVERRIDE`
-
-_string_
-
-### [](#_openid_configuration)openid-configuration
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-well-known--openid-configuration--include-client-scopes`
-
-If client scopes should be used to calculate the list of supported scopes.
-
-**CLI:** `--spi-well-known--openid-configuration--include-client-scopes`  
-**Env:** `KC_SPI_WELL_KNOWN__OPENID_CONFIGURATION__INCLUDE_CLIENT_SCOPES`
-
-`true`, `false`
-
-`true`
-
-`spi-well-known--openid-configuration--openid-configuration-override`
-
-The file path from where the metadata should be loaded from.
-
-You can use an absolute file path or, if the file is in the server classpath, use the `classpath:` prefix to load the file from the classpath.
-
-**CLI:** `--spi-well-known--openid-configuration--openid-configuration-override`  
-**Env:** `KC_SPI_WELL_KNOWN__OPENID_CONFIGURATION__OPENID_CONFIGURATION_OVERRIDE`
-
-_string_
-
-## [](#_workflow)workflow
-
-### [](#_default_8)default
-
-  
-
-_Type_ or Values
-
-Default
-
-`spi-workflow--default--executor-task-timeout`
-
-The time in milliseconds before a workflow task is marked as timed out .
-
-**CLI:** `--spi-workflow--default--executor-task-timeout`  
-**Env:** `KC_SPI_WORKFLOW__DEFAULT__EXECUTOR_TASK_TIMEOUT`
-
-_long_
-
-`1000`
+| Option | _Type_ or Values | Default |
+| --- | --- | --- |
+| **`spi-workflow--default--executor-task-timeout`**<br/>The time in milliseconds before a workflow task is marked as timed out .<br/>**CLI:** `--spi-workflow--default--executor-task-timeout`<br/>**Env:** `KC_SPI_WORKFLOW__DEFAULT__EXECUTOR_TASK_TIMEOUT` | _long_ | `5000` |
