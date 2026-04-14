@@ -2,6 +2,14 @@ import Link from 'next/link'
 
 const categories = [
   {
+    title: 'Installation',
+    cards: [
+      { title: 'Installation Overview', desc: 'Prerequisites and airgapped installer setup.', href: '/en/guides/installation' },
+      { title: 'Phase 1: Install Identity', desc: 'Configure hostname, ports, and deploy Identity + Portal containers.', href: '/en/guides/installation/phase-1-identity' },
+      { title: 'Phase 2: Configure Portal', desc: 'Create OAuth client, realm role, user, and link the Portal.', href: '/en/guides/installation/phase-2-portal' },
+    ]
+  },
+  {
     title: 'Server',
     cards: [
       { title: 'Configuring NQRust-Identity', desc: 'Configure and start NQRust-Identity.', href: '/en/guides/server/configuration' },
