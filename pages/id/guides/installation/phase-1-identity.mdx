@@ -1,0 +1,96 @@
+---
+title: "Fase 1: Instalasi Identity"
+description: Instalasi dan konfigurasi NQRust-Identity - Dokumentasi NQRust-Identity
+---
+
+# Fase 1: Instalasi Identity
+
+import { Callout } from 'nextra/components'
+
+Pada fase ini, Anda akan mengkonfigurasi hostname, port, dan men-deploy service Identity dan Portal.
+
+## Jalankan installer
+
+Jika belum, jalankan installer dari direktori tempat Anda ingin menyimpan file konfigurasi:
+
+```bash
+./nqrust-portal-airgapped
+```
+
+Installer mendeteksi mode airgapped dan memuat Docker image yang tergabung ke Docker:
+
+```
+Installer running in offline mode...
+Loading bundled images, please wait...
+```
+
+Setelah image dimuat, menu **Home** akan muncul.
+
+## Pilih "Install Identity"
+
+Gunakan tombol panah untuk navigasi dan tekan **Enter** untuk memilih **Install Identity**.
+
+![Menu home dengan Install Identity terpilih](/images/installation/phase-1-1.png)
+
+## Isi form Identity
+
+Form Identity meminta tiga nilai:
+
+| Field | Deskripsi | Contoh |
+| --- | --- | --- |
+| **Hostname / IP** | Alamat server tempat Identity dan Portal akan dapat dijangkau | `192.168.1.100` atau `identity.example.com` |
+| **Identity Port** | Port HTTPS eksternal untuk Identity Admin Console | `8082` (default) |
+| **Portal Port** | Port HTTPS eksternal untuk Portal | `8083` (default) |
+
+### Navigasi form
+
+- **Tab** atau **panah Atas/Bawah** — Pindah antar field
+- **Enter** — Edit field yang terpilih
+- **Esc** — Berhenti mengedit field saat ini
+- **Ctrl+S** — Simpan dan mulai instalasi
+
+![Form Identity terisi](/images/installation/phase-1-2.png)
+
+<Callout type="info">
+  Kedua port harus berupa angka antara `1024` dan `65535`, dan harus berbeda satu sama lain. Pastikan tidak ada service lain di server Anda yang menggunakan port-port ini.
+</Callout>
+
+Setelah semua field valid, tekan **Ctrl+S** atau klik tombol **Save** untuk melanjutkan.
+
+## Instalasi sedang berjalan
+
+Installer akan men-generate file konfigurasi `.env`, menyiapkan bundle Docker Compose, dan menjalankan service:
+
+- Identity Database (PostgreSQL, internal)
+- Reverse proxy (internal)
+- Identity (OIDC provider)
+- Portal (aplikasi web)
+
+Anda akan melihat progress bar dan output log real-time saat setiap service dimulai.
+
+![Progress instalasi](/images/installation/phase-1-3.png)
+
+<Callout type="default">
+  Startup pertama mungkin membutuhkan 1-3 menit karena service menginisialisasi database mereka dan melakukan health check.
+</Callout>
+
+## Instalasi selesai
+
+Setelah semua service berjalan, layar sukses muncul dengan URL akses:
+
+```
+Identity Admin: https://<hostname>:<identity_port>/admin
+Portal:         https://<hostname>:<portal_port>
+```
+
+![Sukses instalasi Identity](/images/installation/phase-1-4.png)
+
+<Callout type="warning">
+  Portal belum berfungsi sepenuhnya. Anda perlu menyelesaikan **[Fase 2: Konfigurasi Portal](/id/guides/installation/phase-2-portal)** untuk menghubungkannya ke OAuth client di Identity.
+</Callout>
+
+## Langkah berikutnya
+
+Tekan **i** pada layar sukses untuk melanjutkan ke Fase 2. Atau, Anda dapat menekan **q** untuk keluar dari installer sekarang dan melanjutkan nanti dengan menjalankan ulang.
+
+Lanjut ke [Fase 2: Konfigurasi Portal →](/id/guides/installation/phase-2-portal)

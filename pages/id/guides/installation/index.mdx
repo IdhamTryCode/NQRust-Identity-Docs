@@ -1,0 +1,99 @@
+---
+title: Ikhtisar Instalasi
+description: Ikhtisar Instalasi NQRust-Identity Portal - Dokumentasi NQRust-Identity
+---
+
+# Ikhtisar Instalasi
+
+import { Callout } from 'nextra/components'
+
+NQRust-Identity Portal Installer adalah tool berbasis terminal interaktif yang men-deploy stack NQRust-Identity lengkap di server Anda. Installer memandu Anda melalui setup dua fase dengan TUI (Terminal User Interface) yang mudah digunakan.
+
+## Yang akan terinstal
+
+Installer men-deploy dua service utama:
+
+- **Identity** — OIDC/OAuth2 provider untuk autentikasi dan otorisasi
+- **Portal** — Aplikasi web dengan license gate dan kemampuan admin
+
+Kedua service berjalan sebagai container Docker, dikonfigurasi dengan HTTPS dan default production-ready.
+
+## Prasyarat
+
+Sebelum menjalankan installer, pastikan Anda memiliki:
+
+### Persyaratan sistem
+
+- Server Linux (Ubuntu 24.04 LTS direkomendasikan)
+- Akses `sudo`
+- Ruang disk minimal **15-40 GB**
+- Hostname atau IP statis yang dapat dijangkau oleh pengguna Anda
+
+### Persyaratan software
+
+- **Docker Engine** terinstal dan berjalan
+- **Docker Compose v2** (command `docker compose`, bukan `docker-compose` yang legacy)
+
+<Callout type="info">
+  Lihat [dokumentasi resmi Docker](https://docs.docker.com/engine/install/) untuk menginstal Docker Engine dan Docker Compose di sistem Anda.
+</Callout>
+
+### File installer
+
+Installer berjalan dalam **mode airgapped** — semua Docker image yang dibutuhkan sudah tergabung dalam satu binary self-extracting. Tidak perlu akses internet selama instalasi.
+
+Anda memerlukan dua file untuk melanjutkan:
+
+| File | Deskripsi |
+| --- | --- |
+| `nqrust-portal-airgapped` | Binary installer (~534 MB) |
+| `nqrust-portal-airgapped.sha256` | Checksum SHA256 untuk verifikasi |
+
+<Callout type="warning">
+  File-file ini **tidak tersedia publik**. Hubungi tim NQRust untuk mendapatkan paket installer airgapped untuk deployment Anda.
+</Callout>
+
+## Verifikasi installer
+
+Setelah Anda memiliki kedua file, letakkan di direktori yang sama di server Anda dan verifikasi checksum-nya:
+
+```bash
+sha256sum -c nqrust-portal-airgapped.sha256
+```
+
+Output yang diharapkan:
+
+```
+nqrust-portal-airgapped: OK
+```
+
+<Callout type="warning">
+  Jika checksum tidak cocok, **jangan** lanjutkan instalasi. Hubungi tim NQRust untuk mengunduh ulang file-nya.
+</Callout>
+
+## Jadikan binary dapat dieksekusi
+
+```bash
+chmod +x nqrust-portal-airgapped
+```
+
+## Jalankan installer
+
+Jalankan installer dari direktori tempat Anda ingin file konfigurasi (`.env`, `docker-compose.yaml`, dll) dibuat:
+
+```bash
+./nqrust-portal-airgapped
+```
+
+Pada peluncuran pertama, installer akan mendeteksi mode airgapped dan otomatis memuat Docker image yang tergabung ke dalam Docker daemon lokal Anda. Ini mungkin membutuhkan beberapa menit.
+
+![Menu home installer](/images/installation/overview-1.png)
+
+## Alur instalasi
+
+Instalasi dibagi menjadi **dua fase**:
+
+1. **[Fase 1: Instalasi Identity](/id/guides/installation/phase-1-identity)** — Konfigurasi hostname, port, dan deploy container Identity + Portal.
+2. **[Fase 2: Konfigurasi Portal](/id/guides/installation/phase-2-portal)** — Buat OAuth client di Identity, lalu link Portal ke client tersebut.
+
+Ikuti setiap fase secara berurutan untuk menyelesaikan instalasi.

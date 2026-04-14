@@ -1,0 +1,99 @@
+---
+title: Installation Overview
+description: NQRust-Identity Portal Installation Overview - NQRust-Identity Documentation
+---
+
+# Installation Overview
+
+import { Callout } from 'nextra/components'
+
+NQRust-Identity Portal Installer is an interactive terminal-based tool that deploys the complete NQRust-Identity stack on your server. The installer guides you through a two-phase setup with a friendly TUI (Terminal User Interface).
+
+## What gets installed
+
+The installer deploys two main services:
+
+- **Identity** — OIDC/OAuth2 provider for authentication and authorization
+- **Portal** — Web application with license gate and admin capabilities
+
+Both services run as Docker containers, configured with HTTPS and production-ready defaults.
+
+## Prerequisites
+
+Before running the installer, ensure you have:
+
+### System requirements
+
+- Linux server (Ubuntu 24.04 LTS recommended)
+- `sudo` access
+- At least **15-40 GB** of free disk space
+- A hostname or static IP reachable by your users
+
+### Software requirements
+
+- **Docker Engine** installed and running
+- **Docker Compose v2** (the `docker compose` command, not the legacy `docker-compose`)
+
+<Callout type="info">
+  Refer to the [official Docker documentation](https://docs.docker.com/engine/install/) to install Docker Engine and Docker Compose on your system.
+</Callout>
+
+### Installer files
+
+The installer runs in **airgapped mode** — all required Docker images are bundled into a single self-extracting binary. No internet access is needed during installation.
+
+You need two files to proceed:
+
+| File | Description |
+| --- | --- |
+| `nqrust-portal-airgapped` | The installer binary (~534 MB) |
+| `nqrust-portal-airgapped.sha256` | SHA256 checksum for verification |
+
+<Callout type="warning">
+  These files are **not publicly available**. Contact the NQRust team to obtain the airgapped installer package for your deployment.
+</Callout>
+
+## Verify the installer
+
+Once you have both files, place them in the same directory on your server and verify the checksum:
+
+```bash
+sha256sum -c nqrust-portal-airgapped.sha256
+```
+
+Expected output:
+
+```
+nqrust-portal-airgapped: OK
+```
+
+<Callout type="warning">
+  If the checksum does not match, do **not** proceed with installation. Contact the NQRust team to re-download the files.
+</Callout>
+
+## Make the binary executable
+
+```bash
+chmod +x nqrust-portal-airgapped
+```
+
+## Launch the installer
+
+Run the installer from the directory where you want the configuration files (`.env`, `docker-compose.yaml`, etc.) to be created:
+
+```bash
+./nqrust-portal-airgapped
+```
+
+On first launch, the installer detects airgapped mode and automatically loads the bundled Docker images into your local Docker daemon. This may take a few minutes.
+
+![Installer home menu](/images/installation/overview-1.png)
+
+## Installation flow
+
+The installation is divided into **two phases**:
+
+1. **[Phase 1: Install Identity](/en/guides/installation/phase-1-identity)** — Configure hostname, ports, and deploy the Identity + Portal containers.
+2. **[Phase 2: Configure Portal](/en/guides/installation/phase-2-portal)** — Create an OAuth client in Identity, then link the Portal to it.
+
+Follow each phase in order to complete the installation.

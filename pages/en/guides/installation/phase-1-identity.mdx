@@ -1,0 +1,96 @@
+---
+title: "Phase 1: Install Identity"
+description: Install and configure NQRust-Identity - NQRust-Identity Documentation
+---
+
+# Phase 1: Install Identity
+
+import { Callout } from 'nextra/components'
+
+In this phase, you will configure the hostname, ports, and deploy the Identity and Portal services.
+
+## Launch the installer
+
+If you haven't already, run the installer from the directory where you want configuration files to be stored:
+
+```bash
+./nqrust-portal-airgapped
+```
+
+The installer detects airgapped mode and loads the bundled Docker images into Docker:
+
+```
+Installer running in offline mode...
+Loading bundled images, please wait...
+```
+
+Once images are loaded, the **Home** menu appears.
+
+## Select "Install Identity"
+
+Use the arrow keys to navigate and press **Enter** to select **Install Identity**.
+
+![Home menu with Install Identity selected](/images/installation/phase-1-1.png)
+
+## Fill the Identity form
+
+The Identity form asks for three values:
+
+| Field | Description | Example |
+| --- | --- | --- |
+| **Hostname / IP** | The server address where Identity and Portal will be reachable | `192.168.1.100` or `identity.example.com` |
+| **Identity Port** | External HTTPS port for Identity Admin Console | `8082` (default) |
+| **Portal Port** | External HTTPS port for Portal | `8083` (default) |
+
+### Form navigation
+
+- **Tab** or **Up/Down arrows** — Move between fields
+- **Enter** — Edit the selected field
+- **Esc** — Stop editing the current field
+- **Ctrl+S** — Save and start installation
+
+![Identity form filled in](/images/installation/phase-1-2.png)
+
+<Callout type="info">
+  Both ports must be numbers between `1024` and `65535`, and they must be different from each other. Make sure no other service on your server is using these ports.
+</Callout>
+
+Once all fields are valid, press **Ctrl+S** or click the **Save** button to continue.
+
+## Installation in progress
+
+The installer generates the `.env` configuration file, sets up the Docker Compose bundle, and starts the services:
+
+- Identity Database (PostgreSQL, internal)
+- Reverse proxy (internal)
+- Identity (OIDC provider)
+- Portal (web application)
+
+You will see a progress bar and real-time log output as each service starts.
+
+![Installation progress](/images/installation/phase-1-3.png)
+
+<Callout type="default">
+  The first startup may take 1-3 minutes as the services initialize their databases and perform health checks.
+</Callout>
+
+## Installation complete
+
+Once all services are running, the success screen appears with the access URLs:
+
+```
+Identity Admin: https://<hostname>:<identity_port>/admin
+Portal:         https://<hostname>:<portal_port>
+```
+
+![Identity installation success](/images/installation/phase-1-4.png)
+
+<Callout type="warning">
+  The Portal is not fully functional yet. You need to complete **[Phase 2: Configure Portal](/en/guides/installation/phase-2-portal)** to link it to an OAuth client in Identity.
+</Callout>
+
+## Next step
+
+Press **i** on the success screen to proceed to Phase 2. Alternatively, you can press **q** to exit the installer now and continue later by re-launching it.
+
+Continue with [Phase 2: Configure Portal →](/en/guides/installation/phase-2-portal)
