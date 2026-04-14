@@ -47,7 +47,6 @@ Form Identity meminta tiga nilai:
 - **Tab** atau **panah Atas/Bawah** — Pindah antar field
 - **Enter** — Edit field yang terpilih
 - **Esc** — Berhenti mengedit field saat ini
-- **Ctrl+S** — Simpan dan mulai instalasi
 
 ![Form Identity terisi](/images/installation/phase-1-2.png)
 
@@ -55,18 +54,11 @@ Form Identity meminta tiga nilai:
   Kedua port harus berupa angka antara `1024` dan `65535`, dan harus berbeda satu sama lain. Pastikan tidak ada service lain di server Anda yang menggunakan port-port ini.
 </Callout>
 
-Setelah semua field valid, tekan **Ctrl+S** atau klik tombol **Save** untuk melanjutkan.
+Setelah semua field valid, arahkan ke tombol **Install** lalu tekan **Enter** untuk memulai instalasi.
 
 ## Instalasi sedang berjalan
 
-Installer akan men-generate file konfigurasi `.env`, menyiapkan bundle Docker Compose, dan menjalankan service:
-
-- Identity Database (PostgreSQL, internal)
-- Reverse proxy (internal)
-- Identity (OIDC provider)
-- Portal (aplikasi web)
-
-Anda akan melihat progress bar dan output log real-time saat setiap service dimulai.
+Installer akan men-generate file konfigurasi, menyiapkan bundle Docker Compose, dan menjalankan service yang diperlukan. Anda akan melihat progress bar dan output log real-time saat setiap service dimulai.
 
 ![Progress instalasi](/images/installation/phase-1-3.png)
 
