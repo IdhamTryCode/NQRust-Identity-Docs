@@ -10,7 +10,7 @@ import { Callout } from 'nextra/components'
 Pencatatan adalah mekanisme penting untuk memahami dan mengoperasikan NQRust-Identity.
 Hal ini seharusnya membantu Anda untuk memantau kesehatan NQRust-Identity, mendebug masalah, dan memelihara jejak audit dari peristiwa penting.
 
-Anda dapat mengonfigurasi pencatatan untuk tingkat log akar atau untuk kategori yang lebih spesifik seperti `org.hibernate` atau `org.nqrust-identity`.
+Anda dapat mengonfigurasi pencatatan untuk tingkat log akar atau untuk kategori yang lebih spesifik seperti `org.hibernate` atau `org.keycloak`.
 Juga dimungkinkan untuk menyesuaikan tingkat log untuk setiap penangan log tertentu.
 
 Di NQRust-Identity, pencatatan melampaui pengaturan tingkat log — Anda dapat mengarahkan output ke penangan yang berbeda, menggunakan pencatatan asinkron untuk performa, menangkap log akses HTTP, dan lainnya.
@@ -29,12 +29,6 @@ Untuk mengaktifkan penangan log, masukkan perintah berikut:
 ```bash
 bin/kc.[sh|bat] start --log="<handler1>,<handler2>"
 ```
-
-Untuk detail lebih lanjut tentang cara mengonfigurasi penangan log tertentu, lihat:
-
-- Pencatatan Konsol
-- Pencatatan File
-- Pencatatan Syslog
 
 ## Tipe Log
 
@@ -98,7 +92,7 @@ Jika Anda memulai server sebagai:
 bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug"
 ```
 
-kemudian Anda dapat menetapkan variabel lingkungan `KC_LOG_LEVEL_ORG_NQRUST-IDENTITY=trace` untuk mengubah tingkat log untuk kategori `org.nqrust-identity`.
+kemudian Anda dapat menetapkan variabel lingkungan `KC_LOG_LEVEL_ORG_KEYCLOAK=trace` untuk mengubah tingkat log untuk kategori `org.keycloak`.
 
 Opsi `log-level-<category>` memiliki prioritas lebih tinggi dari `log-level`. Ini memungkinkan Anda untuk menimpa apa yang telah diatur dalam opsi `log-level`.
 Misalnya jika Anda menetapkan `KC_LOG_LEVEL_ORG_HIBERNATE=trace` untuk contoh CLI di atas, kategori `org.hibernate` akan menggunakan tingkat `trace` bukan `debug`.
@@ -107,7 +101,7 @@ Perhatikan bahwa saat menggunakan variabel lingkungan, nama kategori harus dalam
 Saat menggunakan sumber konfigurasi lainnya, nama kategori harus ditentukan "sebagai adanya", misalnya:
 
 ```bash
-bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug" --log-level-org.nqrust-identity=trace
+bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug" --log-level-org.keycloak=trace
 ```
 
 ### Menentukan Tipe Log untuk Setiap Penangan
@@ -128,7 +122,7 @@ Ini berarti properti untuk pengaturan tingkat log terlihat seperti ini:
   Informasi lebih lanjut dalam pengaturan penangan log di bawah ini.
 </Callout>
 
-Hanya tingkat log yang ditentukan dalam bagian [Tipe Log](#_tipe_log) yang diterima, dan **harus dalam huruf kecil**.
+Hanya tingkat log yang ditentukan dalam bagian [Tipe Log](#tipe-log) yang diterima, dan **harus dalam huruf kecil**.
 Tidak ada dukungan untuk menentukan kategori tertentu untuk penangan log saat ini.
 
 #### Prinsip Umum
@@ -157,10 +151,10 @@ bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug --log-console-
 Tingkat root harus diatur ke tingkat yang paling verbose yang diperlukan (`debug` dalam hal ini), dan penangan log lainnya harus diubah sesuai.
 
 ```bash
-bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug,org.nqrust-identity.events:trace, --log-syslog-level=trace --log-console-level=info --log-file-level=info
+bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug,org.keycloak.events:trace, --log-syslog-level=trace --log-console-level=info --log-file-level=info
 ```
 
-Agar dapat melihat `org.nqrust-identity.events:trace`, tingkat `trace` harus diatur untuk penangan Syslog.
+Agar dapat melihat `org.keycloak.events:trace`, tingkat `trace` harus diatur untuk penangan Syslog.
 
 ## Menambahkan konteks untuk pesan log
 
@@ -202,18 +196,18 @@ Untuk mengubah format output JSON, properti dalam format `log-<handler>-json-for
 ### Menyesuaikan bidang layanan
 
 Saat menggunakan output log JSON, NQRust-Identity mencakup bidang `service.name` dan kemungkinan `service.environment` dalam entri log.
-Secara default, `service.name` disetel ke `nqrust-identity`, dan `service.environment` tidak disetel untuk format JSON default.
+Secara default, `service.name` disetel ke `keycloak`, dan `service.environment` tidak disetel untuk format JSON default.
 Untuk format ECS, `service.environment` disetel ke profil Quarkus (misalnya `prod`).
 
 Anda dapat menyesuaikan bidang ini pada semua penangan log dengan menggunakan opsi berikut:
 
-- `log-service-name` - Atur bidang `service.name` (default: `nqrust-identity`)
+- `log-service-name` - Atur bidang `service.name` (default: `keycloak`)
 - `log-service-environment` - Atur bidang `service.environment`
 
 Opsi ini berlaku untuk semua penangan log (`console`, `file`, dan `syslog`) yang memiliki output JSON yang diaktifkan.
 
 ```bash
-bin/kc.[sh|bat] start --log-console-output=json --log-service-name=my-nqrust-identity --log-service-environment=production
+bin/kc.[sh|bat] start --log-console-output=json --log-service-name=my-keycloak --log-service-environment=production
 ```
 
 ### Contoh
@@ -225,7 +219,7 @@ bin/kc.[sh|bat] start --log-console-output=json --log-console-json-format=ecs
 ```
 
 ```json
-{"@timestamp":"2025-02-03T14:53:22.539484211+01:00","event.sequence":9608,"log.logger":"io.quarkus","log.level":"INFO","message":"NQRust-Identity 999.0.0-SNAPSHOT on JVM (powered by Quarkus 3.17.8) started in 4.615s. Listening on: http://0.0.0.0:8080","process.thread.name":"main","process.thread.id":1,"mdc":{},"ndc":"","host.hostname":"host-name","process.name":"/usr/lib/jvm/jdk-21.0.3+9/bin/java","process.pid":77561,"data_stream.type":"logs","ecs.version":"1.12.2","service.environment":"prod","service.name":"NQRust-Identity","service.version":"999.0.0-SNAPSHOT"}
+{"@timestamp":"2025-02-03T14:53:22.539484211+01:00","event.sequence":9608,"log.logger":"io.quarkus","log.level":"INFO","message":"Keycloak 999.0.0-SNAPSHOT on JVM (powered by Quarkus 3.17.8) started in 4.615s. Listening on: http://0.0.0.0:8080","process.thread.name":"main","process.thread.id":1,"mdc":{},"ndc":"","host.hostname":"host-name","process.name":"/usr/lib/jvm/jdk-21.0.3+9/bin/java","process.pid":77561,"data_stream.type":"logs","ecs.version":"1.12.2","service.environment":"prod","service.name":"Keycloak","service.version":"999.0.0-SNAPSHOT"}
 ```
 
 ## Pencacatan Asinkronis
@@ -295,7 +289,7 @@ Properti-properti ini hanya tersedia ketika pencacatan asinkronis diaktifkan unt
 NQRust-Identity mendukung logging akses HTTP untuk mencatat detail dari permintaan HTTP yang masuk.
 Sementara log akses sering digunakan untuk debugging dan analisis lalu lintas, mereka juga penting untuk audit keamanan dan monitoring kompliansi, membantu administrator melacak pola akses, mengidentifikasi aktivitas mencurigakan, dan menjaga jejak audit.
 
-Log ini ditulis pada level `INFO`, jadi pastikan konfigurasi logging Anda mencakup level ini — baik secara global (mis. `log-level=info`) atau secara spesifik untuk kategori log akses (mis. `log-level=org.nqrust-identity.http.access-log:info`).
+Log ini ditulis pada level `INFO`, jadi pastikan konfigurasi logging Anda mencakup level ini — baik secara global (mis. `log-level=info`) atau secara spesifik untuk kategori log akses (mis. `log-level=org.keycloak.http.access-log:info`).
 Ketika logging akses HTTP diaktifkan, mereka secara default ditampilkan, karena level `INFO` adalah level log default untuk NQRust-Identity.
 
 ### Cara Mengaktifkan
@@ -345,11 +339,11 @@ Cookie NQRust-Identity sensitif yang dimask:
 
 - `AUTH_SESSION_ID`
 - `KC_AUTH_SESSION_HASH`
-- `NQRUST-IDENTITY_IDENTITY`
-- `NQRUST-IDENTITY_SESSION`
+- `KEYCLOAK_IDENTITY`
+- `KEYCLOAK_SESSION`
 - `AUTH_SESSION_ID_LEGACY`
-- `NQRUST-IDENTITY_IDENTITY_LEGACY`
-- `NQRUST-IDENTITY_SESSION_LEGACY`
+- `KEYCLOAK_IDENTITY_LEGACY`
+- `KEYCLOAK_SESSION_LEGACY`
 
 Untuk memperluas daftar item yang dimask (mis. untuk mengakomodasi header dan cookie yang digunakan oleh ekstensi kustom Anda), konfigurasikan opsi `http-access-log-masked-headers` dan `http-access-log-masked-cookies`.
 
@@ -383,7 +377,7 @@ Anda dapat mengaktifkan logging ke file sebagai berikut:
 bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-file-enabled=true
 ```
 
-Ini secara otomatis membuat file bernama `nqrust-identity-http-access.log` dalam direktori `/data/log` distribusi Anda.
+Ini secara otomatis membuat file bernama `keycloak-http-access.log` dalam direktori `/data/log` distribusi Anda.
 
 #### Mengubah nama file dan sufiks
 
@@ -400,7 +394,7 @@ bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-file-enab
 
 Secara default, file log akses HTTP diputar setiap hari.
 
-Ketika rotasi harian terjadi, sufiks berdasarkan tanggal '.&#123;yyyy-MM-dd&#125;' ditambahkan ke nama file log dari hari sebelumnya, menjaga log akses terpisah berdasarkan tanggal (misalnya, `nqrust-identity-http-access.2052-02-29.log`).
+Ketika rotasi harian terjadi, sufiks berdasarkan tanggal '.&#123;yyyy-MM-dd&#125;' ditambahkan ke nama file log dari hari sebelumnya, menjaga log akses terpisah berdasarkan tanggal (misalnya, `keycloak-http-access.2052-02-29.log`).
 
 Untuk menonaktifkan rotasi, gunakan konfigurasi berikut:
 
@@ -423,7 +417,7 @@ Untuk detail lebih lanjut, lihat panduan [Centralize your observability stack wi
 | **`log-level`**<br/>Tingkat log dari kategori root atau daftar yang dipisahkan komma dari kategori individual dan tingkat mereka.<br/>Untuk kategori root, Anda tidak perlu menentukan kategori.<br/>**CLI:** `--log-level`<br/>**Env:** `KC_LOG_LEVEL` | _Daftar_ | `info` |
 | **`log-level-<category>`**<br/>Tingkat log dari kategori.<br/>Menggantikan opsi `log-level`.<br/>**CLI:** `--log-level-<category>`<br/>**Env:** `KC_LOG_LEVEL_<CATEGORY>` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` |  |
 | **`log-service-environment`**<br/>Set the `service.<br/>environment` field in JSON log entries for all log handlers. In ECS format, defaults to the Quarkus profile if not set.<br/>**CLI:** `--log-service-environment`<br/>**Env:** `KC_LOG_SERVICE_ENVIRONMENT` | _String_ |  |
-| **`log-service-name`**<br/>Set the `service.<br/>name` field in JSON log entries for all log handlers.<br/>**CLI:** `--log-service-name`<br/>**Env:** `KC_LOG_SERVICE_NAME` | _String_ | `nqrust-identity` |
+| **`log-service-name`**<br/>Set the `service.<br/>name` field in JSON log entries for all log handlers.<br/>**CLI:** `--log-service-name`<br/>**Env:** `KC_LOG_SERVICE_NAME` | _String_ | `keycloak` |
 
 ### Konsol
 
@@ -443,7 +437,7 @@ Untuk detail lebih lanjut, lihat panduan [Centralize your observability stack wi
 
 | Opsi | _Tipe_ atau Nilai | Default |
 | --- | --- | --- |
-| **`log-file`**<br/>Set the log file path and filename.<br/>**CLI:** `--log-file`<br/>**Env:** `KC_LOG_FILE` | _File_ | `data/log/nqrust-identity.log` |
+| **`log-file`**<br/>Set the log file path and filename.<br/>**CLI:** `--log-file`<br/>**Env:** `KC_LOG_FILE` | _File_ | `data/log/keycloak.log` |
 | **`log-file-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke file log.<br/>Jika tidak diatur, nilai dari properti induk `log-async` digunakan.<br/>**CLI:** `--log-file-async`<br/>**Env:** `KC_LOG_FILE_ASYNC` | `true`, `false` | `false` |
 | **`log-file-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke file log.<br/>**CLI:** `--log-file-async-queue-length`<br/>**Env:** `KC_LOG_FILE_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
 | **`log-file-format`**<br/>Set a format specific to file log entries.<br/>**CLI:** `--log-file-format`<br/>**Env:** `KC_LOG_FILE_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
@@ -462,7 +456,7 @@ Untuk detail lebih lanjut, lihat panduan [Centralize your observability stack wi
 
 | Opsi | _Tipe_ atau Nilai | Default |
 | --- | --- | --- |
-| **`log-syslog-app-name`**<br/>Set the app name used when formatting the message in RFC5424 format.<br/>**CLI:** `--log-syslog-app-name`<br/>**Env:** `KC_LOG_SYSLOG_APP_NAME` | _String_ | `nqrust-identity` |
+| **`log-syslog-app-name`**<br/>Set the app name used when formatting the message in RFC5424 format.<br/>**CLI:** `--log-syslog-app-name`<br/>**Env:** `KC_LOG_SYSLOG_APP_NAME` | _String_ | `keycloak` |
 | **`log-syslog-async`**<br/>Menunjukkan apakah untuk logging secara asinkron ke Syslog.<br/>Jika tidak diatur, nilai dari properti induk `log-async` digunakan.<br/>**CLI:** `--log-syslog-async`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC` | `true`, `false` | `false` |
 | **`log-syslog-async-queue-length`**<br/>Panjang antrian untuk digunakan sebelum flush writing saat logging ke Syslog.<br/>**CLI:** `--log-syslog-async-queue-length`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
 | **`log-syslog-counting-framing`**<br/>Jika true, pesan yang dikirim diberi awalan dengan ukuran pesan.<br/>Jika `protocol-dependent`, nilai default adalah `true` saat `log-syslog-protocol` adalah `tcp` atau `ssl-tcp`, jika tidak `false`.<br/>**CLI:** `--log-syslog-counting-framing`<br/>**Env:** `KC_LOG_SYSLOG_COUNTING_FRAMING` | `true`, `false`, `protocol-dependent` | `protocol-dependent` |
@@ -484,7 +478,7 @@ Untuk detail lebih lanjut, lihat panduan [Centralize your observability stack wi
 | **`http-access-log-enabled`**<br/>Jika HTTP access logging diaktifkan.<br/>Secara default, ini akan log record di konsol.<br/>**CLI:** `--http-access-log-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_ENABLED` | `true`, `false` | `false` |
 | **`http-access-log-exclude`**<br/>Ekspresi reguler yang dapat digunakan untuk mengecualikan beberapa path dari logging.<br/>Sebagai contoh, `/realms/my-realm/.*` akan mengecualikan semua endpoint berikutnya untuk realm `my-realm` dari log.<br/>**CLI:** `--http-access-log-exclude`<br/>**Env:** `KC_HTTP_ACCESS_LOG_EXCLUDE` | _String_ |  |
 | **`http-access-log-file-enabled`**<br/>Jika HTTP access logging harus dilakukan ke file terpisah.<br/>**CLI:** `--http-access-log-file-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ENABLED` | `true`, `false` | `false` |
-| **`http-access-log-file-name`**<br/>Nama dasar file log akses HTTP, yang akan membuat nama file log dengan menghitung dasar dan akhiran (e.<br/>g. `nqrust-identity-http-access.log`). File berada di direktori `/data/log` distribusi.<br/>**CLI:** `--http-access-log-file-name`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_NAME` | _String_ | `nqrust-identity-http-access` |
+| **`http-access-log-file-name`**<br/>Nama dasar file log akses HTTP, yang akan membuat nama file log dengan menghitung dasar dan akhiran (e.<br/>g. `keycloak-http-access.log`). File berada di direktori `/data/log` distribusi.<br/>**CLI:** `--http-access-log-file-name`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_NAME` | _String_ | `keycloak-http-access` |
 | **`http-access-log-file-rotate`**<br/>Jika file log akses HTTP harus dirotate secara harian.<br/>**CLI:** `--http-access-log-file-rotate`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ROTATE` | `true`, `false` | `true` |
 | **`http-access-log-file-suffix`**<br/>Akhiranan file log akses HTTP.<br/>Ketika rotasi diaktifkan, akhiran berbasis tanggal `.{yyyy-MM-dd}` ditambahkan sebelum akhiran yang ditentukan. Jika beberapa rotasi terjadi pada hari yang sama, indeks bertambah akan dilampirkan ke tanggal.<br/>**CLI:** `--http-access-log-file-suffix`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_SUFFIX` | _String_ | `.log` |
 | **`http-access-log-masked-cookies`**<br/>Set dari header HTTP Cookie yang nilainya harus dimask when the long pattern or %&#123;ALL_REQUEST_HEADERS&#125; format is enabled with the http-access-log-pattern option.<br/>Selected security sensitive cookies are always masked.<br/>**CLI:** `--http-access-log-masked-cookies`<br/>**Env:** `KC_HTTP_ACCESS_LOG_MASKED_COOKIES` | _Daftar_ |  |

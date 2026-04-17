@@ -7,15 +7,15 @@ description: NQRust-Identity JavaScript adapter - NQRust-Identity Documentation
 
 import { Callout } from 'nextra/components'
 
-NQRust-Identity dilengkapi dengan pustaka JavaScript sisi klien bernama `nqrust-identity-js` yang dapat digunakan untuk mengamankan aplikasi web. Adapter ini juga dilengkapi dengan dukungan bawaan untuk aplikasi Cordova.
-Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
+NQRust-Identity dilengkapi dengan pustaka JavaScript sisi klien bernama `keycloak-js` yang dapat digunakan untuk mengamankan aplikasi web. Adapter ini juga dilengkapi dengan dukungan bawaan untuk aplikasi Cordova.
+Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#oidc-available-endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
 
 ## Instalasi
 
-Kami menyarankan untuk menginstal paket `nqrust-identity-js` dari NPM:
+Kami menyarankan untuk menginstal paket `keycloak-js` dari NPM:
 
 ```bash
-npm install nqrust-identity-js
+npm install keycloak-js
 ```
 
 ## Konfigurasi server NQRust-Identity
@@ -28,19 +28,19 @@ Anda juga perlu mengonfigurasi `Valid Redirect URIs` dan `Web Origins`. Jadi se 
 
 ## Menggunakan Adapter
 
-Contoh berikut menunjukkan bagaimana menginisialisasi adapter. Pastikan Anda menggantikan opsi yang diteruskan ke konstruktor `NQRust-Identity` dengan yang telah Anda konfigurasi untuk klien Anda.
+Contoh berikut menunjukkan bagaimana menginisialisasi adapter. Pastikan Anda menggantikan opsi yang diteruskan ke konstruktor `Keycloak` dengan yang telah Anda konfigurasi untuk klien Anda.
 
 ```javascript
-import NQRust-Identity from 'nqrust-identity-js';
+import Keycloak from 'keycloak-js';
 
-const nqrust-identity = new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+const keycloak = new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
 
 try {
-    const authenticated = await nqrust-identity.init();
+    const authenticated = await keycloak.init();
     if (authenticated) {
         console.log('User is authenticated');
     } else {
@@ -65,7 +65,7 @@ Anda dapat mengonfigurasi opsi `check-sso` _silent_. Dengan fitur ini diaktifkan
 Untuk mengaktifkan `check-sso` _silent_, Anda memberikan atribut `silentCheckSsoRedirectUri` dalam metode init. Pastikan URI ini adalah endpoint yang valid dalam aplikasi; itu harus dikonfigurasi sebagai redirect yang valid untuk klien di Konsol Admin NQRust-Identity:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     onLoad: 'check-sso',
     silentCheckSsoRedirectUri: `${location.origin}/silent-check-sso.html`
 });
@@ -94,7 +94,7 @@ Ingatlah bahwa halaman ini harus disajikan oleh aplikasi Anda di lokasi yang dit
 Untuk mengaktifkan `login-required`, atur `onLoad` ke `login-required` dan teruskan ke metode init:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     onLoad: 'login-required'
 });
 ```
@@ -107,7 +107,7 @@ async function fetchUsers() {
     const response = await fetch('/api/users', {
         headers: {
             accept: 'application/json',
-            authorization: `Bearer ${nqrust-identity.token}`
+            authorization: `Bearer ${keycloak.token}`
         }
     });
 
@@ -119,7 +119,7 @@ Satu hal yang perlu diingat adalah bahwa token akses secara default memiliki mas
 
 ```javascript
 try {
-    await nqrust-identity.updateToken(30);
+    await keycloak.updateToken(30);
 } catch (error) {
     console.error('Failed to refresh token:', error);
 }
@@ -154,7 +154,7 @@ Namun, mengirim token akses dalam fragment URL dapat menjadi kerentanan keamanan
 Untuk mengaktifkan aliran implicit, Anda mengaktifkan tanda centang **Implicit Flow Enabled** untuk klien di Konsol Admin NQRust-Identity. Anda juga meneruskan parameter `flow` dengan nilai `implicit` ke metode `init`:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     flow: 'implicit'
 })
 ```
@@ -171,7 +171,7 @@ Salah satu kelebihan dalam aliran Hybrid adalah token refresh dibuat tersedia un
 Untuk aliran Hybrid, Anda perlu meneruskan parameter `flow` dengan nilai `hybrid` ke metode `init`:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     flow: 'hybrid'
 });
 ```
@@ -193,7 +193,7 @@ Mode alternatif adalah `cordova-native`, yang mengambil pendekatan yang berbeda.
 Anda dapat mengaktifkan mode asli dengan meneruskan tipe adapter `cordova-native` ke metode `init()`:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     adapter: 'cordova-native'
 });
 ```
@@ -227,29 +227,29 @@ Sementara yang前者更容易设置且往往更可靠，后者提供额外的安
 Kadang-kadang, Anda mungkin perlu menjalankan adapter di lingkungan yang tidak didukung secara default, seperti Capacitor. Untuk menggunakan klien JavasScript di lingkungan ini, Anda dapat melewati adapter kustom. Misalnya, pustaka pihak ketiga dapat menyediakan adapter tersebut untuk membuat adapter dapat dijalankan dengan konsisten:
 
 ```javascript
-import NQRust-Identity dari 'nqrust-identity-js';
-import NQRust-IdentityCapacitorAdapter dari 'nqrust-identity-capacitor-adapter';
+import Keycloak dari 'keycloak-js';
+import KeycloakCapacitorAdapter dari 'keycloak-capacitor-adapter';
 
-const nqrust-identity = new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+const keycloak = new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
 
-await nqrust-identity.init({
-    adapter: NQRust-IdentityCapacitorAdapter,
+await keycloak.init({
+    adapter: KeycloakCapacitorAdapter,
 });
 ```
 
 Paket khusus ini tidak ada, tetapi memberikan contoh yang cukup baik bagaimana adapter tersebut dapat dilewatkan ke klien.
 
-Juga dimungkinkan untuk membuat adapter Anda sendiri, untuk melakukannya Anda harus mengimplementasikan metode yang dijelaskan dalam antarmuka `NQRust-IdentityAdapter`. Misalnya kode TypeScript berikut memastikan bahwa semua metode telah diimplementasikan dengan benar:
+Juga dimungkinkan untuk membuat adapter Anda sendiri, untuk melakukannya Anda harus mengimplementasikan metode yang dijelaskan dalam antarmuka `KeycloakAdapter`. Misalnya kode TypeScript berikut memastikan bahwa semua metode telah diimplementasikan dengan benar:
 
 ```typescript
-import NQRust-Identity, { NQRust-IdentityAdapter } dari 'nqrust-identity-js';
+import Keycloak, { KeycloakAdapter } dari 'keycloak-js';
 
-// Implementasikan antarmuka 'NQRust-IdentityAdapter' sehingga semua metode yang diperlukan dijamin akan hadir.
-const MyCustomAdapter: NQRust-IdentityAdapter = {
+// Implementasikan antarmuka 'KeycloakAdapter' sehingga semua metode yang diperlukan dijamin akan hadir.
+const MyCustomAdapter: KeycloakAdapter = {
     async login(options) {
         // Tulis implementasi Anda sendiri di sini.
     }
@@ -257,13 +257,13 @@ const MyCustomAdapter: NQRust-IdentityAdapter = {
     // Metode lainnya di sini...
 };
 
-const nqrust-identity = new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+const keycloak = new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
 
-await nqrust-identity.init({
+await keycloak.init({
     adapter: MyCustomAdapter,
 });
 ```
@@ -297,8 +297,8 @@ Contohnya adalah Safari mulai dengan versi 13.1.
 Cara yang disarankan untuk membangun adapter adalah dengan melewatkan konfigurasi langsung:
 
 ```javascript
-new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
@@ -307,7 +307,7 @@ new NQRust-Identity({
 Alternatifnya, Anda dapat melewatkan URL ke file JSON yang berisi konfigurasi sebagai gantinya:
 
 ```javascript
-new NQRust-Identity("http://your-app/adapter-config.json");
+new Keycloak("http://your-app/adapter-config.json");
 ```
 
 File konfigurasi JSON harus mencakup bidang berikut:
@@ -407,7 +407,7 @@ Akhirnya, mungkin menggunakan nilai `none` untuk memastikan bahwa layar login ti
 - scope - Menimpa scope yang dikonfigurasi dalam `init` dengan nilai yang berbeda untuk login ini.
 - idpHint - Digunakan untuk memberitahu NQRust-Identity untuk melewati tampilan halaman login dan secara otomatis dialihkan ke penyedia identitas yang ditentukan. Info lebih lanjut dalam Dokumentasi Penyedia Identitas.
 - acr - Berisi informasi tentang klaim `acr`, yang akan dikirim dalam parameter `claims` ke server NQRust-Identity. Penggunaan umum adalah untuk otentikasi langkah atas. Contoh penggunaan `{ values: ["silver", "gold"], essential: true }`. Lihat spesifikasi OpenID Connect dan Dokumentasi Otentikasi Langkah Atas untuk detail lebih lanjut.
-- acrValues - Menghasilkan parameter `acr_values` yang merujuk pada referensi konteks otentikasi dan memungkinkan klien untuk mendeklarasikan tingkat keamanan yang diperlukan, misalnya mekanisme otentikasi. Lihat [Bagian 4. Nilai permintaan acr_values dan tingkat keamanan dalam Profil Otentikasi MODRNA OpenID Connect 1.0](https://openid.net/specs/openid-connect-modrna-authentication-1_0.html#acr_values).
+- acrValues - Menghasilkan parameter `acr_values` yang merujuk pada referensi konteks otentikasi dan memungkinkan klien untuk mendeklarasikan tingkat keamanan yang diperlukan, misalnya mekanisme otentikasi. Lihat [Bagian 4. Nilai permintaan acr_values dan tingkat keamanan dalam Profil Otentikasi MODRNA OpenID Connect 1.0](https://openid.net/specs/openid-connect-modrna-authentication-1_0.html#acr-values).
 - action - Jika nilai adalah `register`, pengguna dialihkan ke halaman pendaftaran. Lihat Bagian Pendaftaran yang Diminta Oleh Klien untuk detail lebih lanjut.
 Jika nilai adalah `UPDATE_PASSWORD` atau tindakan yang didukung lainnya, pengguna akan dialihkan ke halaman ulangi sandi atau halaman tindakan yang diperlukan lainnya. Namun, jika pengguna belum terverifikasi, pengguna akan dialihkan ke halaman login dan dialihkan setelah otentikasi.
 Lihat Bagian Tindakan yang Dimulai Oleh Aplikasi untuk detail lebih lanjut.
@@ -478,7 +478,7 @@ Contohnya:
 
 ```javascript
 try {
-    const profile = await nqrust-identity.loadUserProfile();
+    const profile = await keycloak.loadUserProfile();
     console.log('Retrieved user profile:', profile);
 } catch (error) {
     console.error('Failed to load user profile:', error);
@@ -501,7 +501,7 @@ Contohnya:
 
 ```javascript
 try {
-    const refreshed = await nqrust-identity.updateToken(5);
+    const refreshed = await keycloak.updateToken(5);
     console.log(refreshed ? 'Token was refreshed' : 'Token is still valid');
 } catch (error) {
     console.error('Failed to refresh the token:', error);
@@ -522,7 +522,7 @@ Adapter mendukung penetapan listener callback untuk beberapa peristiwa. Perlu di
 Contohnya:
 
 ```javascript
-nqrust-identity.onAuthSuccess = () => console.log('Authenticated!');
+keycloak.onAuthSuccess = () => console.log('Authenticated!');
 ```
 
 Peristiwa yang tersedia adalah:

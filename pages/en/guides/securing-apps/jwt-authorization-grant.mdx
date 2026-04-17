@@ -7,7 +7,7 @@ description: JWT Authorization Grant - NQRust-Identity Documentation
 
 import { Callout } from 'nextra/components'
 
-This guide defines how a JWT Bearer Token can be used in NQRust-Identity as an authorization grant. This feature allows clients to send a JWT assertion to request an access token when the client wants to use an existing trust relationship without a direct user-approval step at the authorization server. The assertion is validated solely through the semantics of the JWT (its claims and signature). The trust relationship usually refers to another Identity Provider server (another OIDC server), and allows to obtain a cross-domain or cross-realm access token. In this sense, it is similar to the external to internal request in token exchange V1 (see [Configuring and using token exchange](/en/guides/securing-apps/token-exchange#_external-token-to-internal-token-exchange) for more information).
+This guide defines how a JWT Bearer Token can be used in NQRust-Identity as an authorization grant. This feature allows clients to send a JWT assertion to request an access token when the client wants to use an existing trust relationship without a direct user-approval step at the authorization server. The assertion is validated solely through the semantics of the JWT (its claims and signature). The trust relationship usually refers to another Identity Provider server (another OIDC server), and allows to obtain a cross-domain or cross-realm access token. In this sense, it is similar to the external to internal request in token exchange V1 (see [Configuring and using token exchange](/en/guides/securing-apps/token-exchange#external-token-to-internal-token-exchange) for more information).
 
 The JWT Authorization grant is specified by two different RFCs.
 
@@ -64,7 +64,7 @@ The important parameter is the **assertion**. Below is an example JSON object th
   "jti":"abcd1234-5678-efgh-ijkl-9012mnopqrst",
   "iss":"https://jwt-idp.example.com",
   "sub":"b3588c7e-14cb-46a9-9387-28adfd82f7a4",
-  "aud":"https://nqrust-identity.server/realms/demo",
+  "aud":"https://keycloak.server/realms/demo",
   "iat":1764839065,
   "exp":1764839365,
   "other-claim":true
@@ -102,7 +102,7 @@ The JWT Authorization Grant feature needs a previous JWT assertion in order to b
 
 If `domaina` is a server different to NQRust-Identity, we don’t know how that initial JWT is obtained. But note that the specification enforces some processing of the assertion to be valid and return the access token. The way the client gets or generates such a JWT assertion in `domaina` depends completely on `domaina` server and client.
 
-In case the external identity provider is another NQRust-Identity server or realm, Standard Token Exchange can be used to obtain such a token (see [Configuring and using token exchange](/en/guides/securing-apps/token-exchange#_standard-token-exchange) for more information). When both sides are NQRust-Identity realms, the idea can be summarized in two basic points:
+In case the external identity provider is another NQRust-Identity server or realm, Standard Token Exchange can be used to obtain such a token (see [Configuring and using token exchange](/en/guides/securing-apps/token-exchange#standard-token-exchange) for more information). When both sides are NQRust-Identity realms, the idea can be summarized in two basic points:
 
 1. For `domaina`, `domainb` is an audience that can be restricted via token exchange.
 2. For `domainb`, `domaina` is an Identity Provider that is used to validate the assertion. The user in `domainb` is also a valid user previously linked to `domaina` via the identity provider.
@@ -127,6 +127,8 @@ Google Identity Provider supports the JWT Authorization Grant, allowing the use 
 According to RFC 7523, the assertion MUST be a JWT. Since Google issues JWTs only for ID Tokens (and not for access tokens), only the ID Token can be used for this authorization grant.
 
 To enable this feature, the **JWT Authorization Grant** switch must be turned on in the Google Identity Provider configuration.
+
+**Google ID Token Payload Example**
 
 ```json
 {

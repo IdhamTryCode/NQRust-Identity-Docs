@@ -15,8 +15,8 @@ It is targeted for resource servers that want to access the different endpoints 
 ```xml
 <dependencies>
     <dependency>
-        <groupId>org.nqrust-identity</groupId>
-        <artifactId>nqrust-identity-authz-client</artifactId>
+        <groupId>org.keycloak</groupId>
+        <artifactId>keycloak-authz-client</artifactId>
         <version>26.0.8</version>
     </dependency>
 </dependencies>
@@ -24,7 +24,7 @@ It is targeted for resource servers that want to access the different endpoints 
 
 ## Configuration
 
-The client configuration is defined in a `nqrust-identity.json` file as follows:
+The client configuration is defined in a `keycloak.json` file as follows:
 
 ```json
 {
@@ -48,16 +48,16 @@ The client configuration is defined in a `nqrust-identity.json` file as follows:
   The client-id of the application. Each application has a client-id that is used to identify the application.
 - **credentials** (required)
 
-  Specifies the credentials of the application. This is an object notation where the key is the credential type and the value is the value of the credential type. The details are in the [dedicated section](#_client_authentication_adapter).
+  Specifies the credentials of the application. This is an object notation where the key is the credential type and the value is the value of the credential type. The details are in the [dedicated section](#client-authentication-adapter).
 
-The configuration file is usually located in your application’s classpath, the default location from where the client is going to try to find a `nqrust-identity.json` file.
+The configuration file is usually located in your application’s classpath, the default location from where the client is going to try to find a `keycloak.json` file.
 
 ## Creating the authorization client
 
-Considering you have a `nqrust-identity.json` file in your classpath, you can create a new `AuthzClient` instance as follows:
+Considering you have a `keycloak.json` file in your classpath, you can create a new `AuthzClient` instance as follows:
 
 ```java
-// create a new instance based on the configuration defined in a nqrust-identity.json located in your classpath
+// create a new instance based on the configuration defined in a keycloak.json located in your classpath
 AuthzClient authzClient = AuthzClient.create();
 ```
 
@@ -66,7 +66,7 @@ AuthzClient authzClient = AuthzClient.create();
 Here is an example illustrating how to obtain user entitlements:
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // create an authorization request
@@ -85,7 +85,7 @@ System.out.println("You got an RPT: " + rpt);
 Here is an example illustrating how to obtain user entitlements for a set of one or more resources:
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // create an authorization request
@@ -107,7 +107,7 @@ System.out.println("You got an RPT: " + rpt);
 ## Creating a resource using the protection API
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // create a new resource representation with the information we want
@@ -138,7 +138,7 @@ System.out.println(resource);
 ## Introspecting an RPT
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // send the authorization request to the server in order to
@@ -164,7 +164,7 @@ When an authorization client needs to send a backchannel request, it needs to au
 ### Client ID and Client Secret
 
 This is the traditional method described in the OAuth2 specification. The client has a secret, which needs to be known to both the client and the NQRust-Identity server.
-You can generate the secret for a particular client in the NQRust-Identity Admin Console, and then paste this secret into the `nqrust-identity.json` file on the application side:
+You can generate the secret for a particular client in the NQRust-Identity Admin Console, and then paste this secret into the `keycloak.json` file on the application side:
 
 ```json
 "credentials": {
@@ -186,7 +186,7 @@ Then you can choose one of these methods in the `Keys` tab:
   - Upload the client’s public key or certificate, either in PEM format, in JWK format, or from the keystore. With this option, the public key is hardcoded and must be changed when the client generates a new key pair.
 You can even generate your own keystore from the NQRust-Identity Admin Console if you do not have your own keystore available. This option is the easiest when using authorization client.
 
-To set up for this method, you need to code something such as the following in your `nqrust-identity.json` file:
+To set up for this method, you need to code something such as the following in your `keycloak.json` file:
 
 ```json
 "credentials": {
@@ -208,7 +208,7 @@ you can point to any file on the file system where the client application is run
 
 This is the same as Client Authentication with Signed JWT except for using the client secret instead of the private key and certificate.
 
-The client has a secret, which needs to be known to both the application using authorization client and the NQRust-Identity server. You choose `Signed JWT with Client Secret` as the method of authenticating your client in the `Credentials` tab in the Admin Console, and then paste this secret into the `nqrust-identity.json` file on the application side:
+The client has a secret, which needs to be known to both the application using authorization client and the NQRust-Identity server. You choose `Signed JWT with Client Secret` as the method of authenticating your client in the `Credentials` tab in the Admin Console, and then paste this secret into the `keycloak.json` file on the application side:
 
 ```json
 "credentials": {
@@ -221,7 +221,7 @@ The client has a secret, which needs to be known to both the application using a
 
 The "algorithm" field specifies the algorithm for the Signed JWT using Client Secret. It needs to be one of the following values : HS256, HS384, and HS512. For details, see [JSON Web Algorithms (JWA)](https://datatracker.ietf.org/doc/html/rfc7518#section-3.2).
 
-This "algorithm" field is optional; HS256 is applied automatically if the "algorithm" field does not exist on the `nqrust-identity.json` file.
+This "algorithm" field is optional; HS256 is applied automatically if the "algorithm" field does not exist on the `keycloak.json` file.
 
 ### Add your own client authentication method
 

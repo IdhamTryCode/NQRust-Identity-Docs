@@ -24,7 +24,7 @@ Untuk mengizinkan pengguna tertentu untuk menggunakan `CLI Registrasi Klien`, ad
 5. Klik **Assign** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
 6. Pilih **Available Roles**, **manage-client** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
 
-  __ Izin ini memberikan kemampuan kepada pengguna untuk melakukan operasi tanpa menggunakan Token Akses Awal atau Token Akses Registrasi (lihat [Menggunakan layanan registrasi klien](/en/guides/securing-apps/client-registration#_authentication) untuk informasi lebih lanjut).
+  __ Izin ini memberikan kemampuan kepada pengguna untuk melakukan operasi tanpa menggunakan Token Akses Awal atau Token Akses Registrasi (lihat [Menggunakan layanan registrasi klien](/en/guides/securing-apps/client-registration#authentication) untuk informasi lebih lanjut).
 
 Mungkin untuk tidak menetapkan peran `realm-management` kepada pengguna. Dalam hal ini, pengguna tetap dapat masuk dengan CLI Registrasi Klien tetapi tidak dapat menggunakannya tanpa Token Akses Awal. Mencoba melakukan operasi tanpa token akan menghasilkan kesalahan **403 Forbidden**.
 
@@ -48,7 +48,7 @@ Secara default, server mengenali CLI Registrasi Klien sebagai klien `admin-cli`,
   Konfigurasikan baik `Client Id and Secret` atau `Signed JWT`.
 8. Jika Anda menggunakan peran akun layanan, klik tab **Service Account Roles**.
 
-  Pilih peran untuk mengonfigurasi akses untuk akun layanan. Untuk detail tentang peran apa yang harus dipilih, lihat [Mengonfigurasi pengguna reguler baru untuk digunakan dengan CLI Registrasi Klien](#_configuring_a_user_for_client_registration_cli).
+  Pilih peran untuk mengonfigurasi akses untuk akun layanan. Untuk detail tentang peran apa yang harus dipilih, lihat [Mengonfigurasi pengguna reguler baru untuk digunakan dengan CLI Registrasi Klien](#configuring-a-user-for-client-registration-cli).
 9. Klik **Save**.
 
 Ketika Anda menjalankan `kcreg config credentials`, gunakan opsi `--secret` untuk menyediakan rahasia yang dikonfigurasi.
@@ -67,18 +67,18 @@ Contohnya, pada:
 - Linux:
 
 ```
-$ export PATH=$PATH:$NQRUST-IDENTITY_HOME/bin
+$ export PATH=$PATH:$KEYCLOAK_HOME/bin
 $ kcreg.sh
 ```
 
 - Windows:
 
 ```
-c:\> set PATH=%PATH%;%NQRUST-IDENTITY_HOME%\bin
+c:\> set PATH=%PATH%;%KEYCLOAK_HOME%\bin
 c:\> kcreg
 ```
 
-`NQRUST-IDENTITY_HOME` merujuk ke direktori tempat distribusi Server NQRust-Identity diekstrak.
+`KEYCLOAK_HOME` merujuk ke direktori tempat distribusi Server NQRust-Identity diekstrak.
 
 ## Menggunakan CLI Registrasi Klien
 
@@ -110,12 +110,12 @@ c:\> kcreg
   - Linux:
 
     ```
-    $ kcreg.sh config truststore --trustpass $PASSWORD ~/.nqrust-identity/truststore.jks
+    $ kcreg.sh config truststore --trustpass $PASSWORD ~/.keycloak/truststore.jks
     ```
   - Windows:
 
     ```
-    c:\> kcreg config truststore --trustpass %PASSWORD% %HOMEPATH%\.nqrust-identity\truststore.jks
+    c:\> kcreg config truststore --trustpass %PASSWORD% %HOMEPATH%\.keycloak\truststore.jks
     ```
 
 ### Masuk
@@ -127,7 +127,7 @@ Terlepas dari metode masuk, akun yang masuk memerlukan izin yang tepat untuk dap
 
 Anda tidak dapat mengonfigurasi pengguna dengan CLI Registrasi Klien. Gunakan antarmuka web Konsol Admin atau CLI Klien Admin untuk mengonfigurasi pengguna. Lihat Panduan Administrasi Server untuk detail lebih lanjut.
 
-Ketika `kcreg` berhasil masuk, itu menerima token otorisasi dan menyimpannya dalam file konfigurasi pribadi sehingga token dapat digunakan untuk invokasi berikutnya. Lihat [Bekerja dengan konfigurasi alternatif](#_working_with_alternative_configurations) untuk informasi lebih lanjut tentang file konfigurasi.
+Ketika `kcreg` berhasil masuk, itu menerima token otorisasi dan menyimpannya dalam file konfigurasi pribadi sehingga token dapat digunakan untuk invokasi berikutnya. Lihat [Bekerja dengan konfigurasi alternatif](#working-with-alternative-configurations) untuk informasi lebih lanjut tentang file konfigurasi.
 
 Lihat bantuan built-in untuk informasi lebih lanjut tentang penggunaan CLI Registrasi Klien.
 
@@ -149,7 +149,7 @@ Lihat `kcreg config credentials --help` untuk informasi lebih lanjut tentang mem
 
 ### Bekerja dengan konfigurasi alternatif
 
-Secara default, CLI Registrasi Klien secara otomatis menjaga file konfigurasi di lokasi default, `./.nqrust-identity/kcreg.config`, di bawah direktori rumah pengguna. Anda dapat menggunakan opsi `--config` untuk menunjuk ke file atau lokasi yang berbeda untuk menjaga beberapa sesi yang diotentikasi secara paralel. Ini adalah cara paling aman untuk melakukan operasi yang terkait dengan satu file konfigurasi dari satu thread.
+Secara default, CLI Registrasi Klien secara otomatis menjaga file konfigurasi di lokasi default, `./.keycloak/kcreg.config`, di bawah direktori rumah pengguna. Anda dapat menggunakan opsi `--config` untuk menunjuk ke file atau lokasi yang berbeda untuk menjaga beberapa sesi yang diotentikasi secara paralel. Ini adalah cara paling aman untuk melakukan operasi yang terkait dengan satu file konfigurasi dari satu thread.
 
 <Callout type="warning">
   Jangan buat file konfigurasi terlihat oleh pengguna lain di sistem. File konfigurasi berisi token akses dan rahasia yang harus dijaga privat.
@@ -195,7 +195,7 @@ Ketika menggunakan Token Akses Awal, respons server mencakup Token Akses Registr
 
 CLI Registrasi Klien secara otomatis menggunakan file konfigurasi pribadi untuk menyimpan dan menggunakan token ini bersama klien yang terkait. Asalkan file konfigurasi yang sama digunakan untuk semua operasi klien, pengembang tidak perlu mengotentikasi untuk membaca, memperbarui, atau menghapus klien yang dibuat dengan cara ini.
 
-Lihat [Menggunakan layanan registrasi klien](/en/guides/securing-apps/client-registration#_authentication) untuk informasi lebih lanjut tentang Token Akses Awal dan Token Akses Registrasi.
+Lihat [Menggunakan layanan registrasi klien](/en/guides/securing-apps/client-registration#authentication) untuk informasi lebih lanjut tentang Token Akses Awal dan Token Akses Registrasi.
 
 Jalankan perintah `kcreg config initial-token --help` dan `kcreg config registration-token --help` untuk informasi lebih lanjut tentang cara mengonfigurasi token dengan CLI Registrasi Klien.
 
@@ -246,13 +246,13 @@ Contohnya, pada:
 - Linux:
 
 ```
-$ kcreg.sh get myclient -e install > nqrust-identity.json
+$ kcreg.sh get myclient -e install > keycloak.json
 ```
 
 - Windows:
 
 ```
-C:\> kcreg get myclient -e install > nqrust-identity.json
+C:\> kcreg get myclient -e install > keycloak.json
 ```
 
 Jalankan perintah `kcreg get --help` untuk informasi lebih lanjut tentang perintah `kcreg get`.

@@ -25,39 +25,35 @@ JSON definitions of NQRust-Identity Grafana dashboards are available in the [nqr
 
 Follow these steps to download JSON file definitions.
 
-1. Identify the branch from `nqrust-identity-grafana-dashboards` to use from the following table.
+1. Identify the branch from `keycloak-grafana-dashboards` to use from the following table.
 
-  NQRust-Identity version `nqrust-identity-grafana-dashboards` branch/tag 26.1 - 26.2 `26.2.0` >= 26.3 `main`
+   NQRust-Identity version `keycloak-grafana-dashboards` branch/tag 26.1 - 26.2 `26.2.0` >= 26.3 `main`
 2. Clone the GitHub repository
 
-  ```
-  git clone -b BRANCH_FROM_STEP_1 https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard.git
-  ```
-3. The dashboards are available in the directory `nqrust-identity-grafana-dashboard/dashboards`.
+   ```
+   git clone -b BRANCH_FROM_STEP_1 https://github.com/keycloak/keycloak-grafana-dashboard.git
+   ```
+3. The dashboards are available in the directory `keycloak-grafana-dashboard/dashboards`.
 
 The following sections describe the purpose of each dashboard.
 
 ### NQRust-Identity troubleshooting dashboard
 
-This dashboard is available in the JSON file: `nqrust-identity-troubleshooting-dashboard.json`.
+This dashboard is available in the JSON file: `keycloak-troubleshooting-dashboard.json`.
 
-On the top of the dashboard, graphs display the service level indicators as defined in Monitoring performance with Service Level Indicators.
+On the top of the dashboard, graphs display the service level indicators as defined in [Monitoring performance with Service Level Indicators](/en/guides/observability/identity-service-level-indicators).
 This dashboard can be also used while troubleshooting a NQRust-Identity deployment following the [Troubleshooting using metrics](/en/guides/observability/metrics-for-troubleshooting) guide, for example, when SLI graphs do not show expected results.
-
-![NQRust-Identity troubleshooting Grafana dashboard](/images/observability/grafana-dashboard-1.png)
 
 ### NQRust-Identity capacity planning dashboard
 
-This dashboard is available in the JSON file: `nqrust-identity-capacity-planning-dashboard.json`.
+This dashboard is available in the JSON file: `keycloak-capacity-planning-dashboard.json`.
 
 This dashboard shows metrics that are important when estimating the load handled by a NQRust-Identity deployment.
 For example, it shows the number of password validations or login flows performed by NQRust-Identity.
 For more detail on these metrics, see the guide Self-provided metrics.
 
-![NQRust-Identity capacity planning dashboard](/images/observability/grafana-dashboard-2.png)
-
 <Callout type="info">
-  NQRust-Identity event metrics must be enabled for this dashboard to work correctly.  To enable them, see the guide Monitoring user activities with event metrics.
+  NQRust-Identity event metrics must be enabled for this dashboard to work correctly.  To enable them, see the guide [Monitoring user activities with event metrics](/en/guides/observability/event-metrics).
 </Callout>
 
 ## Import a dashboard
@@ -72,15 +68,17 @@ For more detail on these metrics, see the guide Self-provided metrics.
   The Grafana dashboards have labels inserted by Kubernetes.
   It is possible to use the dashboards with bare-metal deployments by adding the missing labels in the Prometheus configuration file, as shown below.
 
+  **Prometheus Scrape Configuration**
+
   ```yaml
   scrape_configs:
     # The job name is added as a label `job=<job_name>` to any time series scraped from this config.
-    - job_name: "nqrust-identity-service"
+    - job_name: "keycloak-service"
       static_configs:
         - targets: ["localhost:9000", "localhost:9001", "localhost:9002"]
           labels:
-            namespace: 'nqrust-identity'
-            container: 'nqrust-identity'
+            namespace: 'keycloak'
+            container: 'keycloak'
       relabel_configs:
         - source_labels: [__address__]
           target_label: pod

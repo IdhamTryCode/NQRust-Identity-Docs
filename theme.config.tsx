@@ -2,6 +2,7 @@ import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
 import Logo from './components/Logo'
 import { Breadcrumb } from './components/Breadcrumb'
+import { LanguageSwitcher } from './components/LanguageSwitcher'
 
 const config: DocsThemeConfig = {
   logo: <Logo />,
@@ -47,10 +48,9 @@ const config: DocsThemeConfig = {
   feedback: {
     content: null,
   },
-  i18n: [
-    { locale: 'id', text: 'Bahasa Indonesia' },
-    { locale: 'en', text: 'English' },
-  ],
+  navbar: {
+    extraContent: <LanguageSwitcher />,
+  },
 }
 
 export default config

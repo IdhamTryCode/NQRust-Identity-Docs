@@ -11,7 +11,7 @@ NQRust-Identity often needs to make requests to the applications and services th
 
 ## Configuring trusted certificates for TLS connections
 
-See Configuring trusted certificates for how
+See [Configuring trusted certificates](/en/guides/server/identity-truststore) for how
 to configure a NQRust-Identity Truststore so that NQRust-Identity is able to perform outgoing requests using TLS.
 
 ## Client Configuration Command
@@ -24,29 +24,55 @@ bin/kc.[sh|bat] start --spi-connections-http-client--default--<configurationopti
 
 The following are the command options:
 
+****establish-connection-timeout-millis****
+
 Maximum time in milliseconds until establishing a connection times out. Default: Not set.
+
+****connection-request-timeout-millis****
 
 Maximum time in milliseconds to obtain a connection for a request. Default: 5000ms
 
+****socket-timeout-millis****
+
 Maximum time of inactivity between two data packets until a socket connection times out, in milliseconds. Default: 5000ms
+
+****connection-pool-size****
 
 Size of the connection pool for outgoing connections. Default: 128.
 
+****max-pooled-per-route****
+
 How many connections can be pooled per host. Default: 64.
+
+****connection-ttl-millis****
 
 Maximum connection time to live in milliseconds. Default: Not set.
 
+****max-connection-idle-time-millis****
+
 Maximum time an idle connection stays in the connection pool, in milliseconds. Idle connections will be removed from the pool by a background cleaner thread. Set this option to -1 to disable this check. Default: 900000.
+
+****disable-cookies****
 
 Enable or disable caching of cookies. Default: true.
 
+****client-keystore****
+
 File path to a Java keystore file. This keystore contains client certificates for mTLS.
+
+****client-keystore-password****
 
 Password for the client keystore. REQUIRED, when `client-keystore` is set.
 
+****client-key-password****
+
 Password for the private key of the client. REQUIRED, when client-keystore is set.
 
-Specify proxy configurations for outgoing HTTP requests. For more details, see [Proxy mappings for outgoing HTTP requests](#_proxy_mappings_for_outgoing_http_requests).
+****proxy-mappings****
+
+Specify proxy configurations for outgoing HTTP requests. For more details, see [Proxy mappings for outgoing HTTP requests](#proxy-mappings-for-outgoing-http-requests).
+
+****disable-trust-manager****
 
 If an outgoing request requires HTTPS and this configuration option is set to true, you do not have to specify a truststore. This setting should be used only during development and **never in production** because it will disable verification of SSL certificates. Default: false.
 
@@ -60,19 +86,31 @@ NQRust-Identity can automatically retry failed outgoing HTTP requests. This is u
 
 The following are the retry configuration options:
 
+****max-retries****
+
 Maximum number of retry attempts for failed HTTP requests. Set to 0 to disable retries. Default: 0.
 
 <Callout type="info">
-  Retries for requests that have already been sent (for common methods such as GET and POST) are always enabled. Use max-retries to control whether retries are performed.
+  Retries for requests that have already been sent (for common methods such as GET and POST) are always enabled. Use `max-retries` to control whether retries are performed.
 </Callout>
+
+****initial-backoff-millis****
 
 Initial backoff time in milliseconds before the first retry attempt. Default: 1000.
 
+****backoff-multiplier****
+
 Multiplier for exponential backoff between retry attempts. For example, with an initial backoff of 1000ms and a multiplier of 2.0, the retry delays would be: 1000ms, 2000ms, 4000ms, etc. Default: 2.0.
+
+****use-jitter****
 
 Whether to apply jitter to backoff times to prevent synchronized retry storms when multiple clients are retrying at the same time. Default: true.
 
+****jitter-factor****
+
 Jitter factor to apply to backoff times. A value of 0.5 means the actual backoff time will be between 50% and 150% of the calculated exponential backoff time. Default: 0.5.
+
+**Example of enabling retry behavior**
 
 ```bash
 bin/kc.[sh|bat] start --spi-connections-http-client-default-max-retries=3 \
@@ -94,6 +132,8 @@ To configure outgoing requests to use a proxy, you can use the following standar
 - The `NO_PROXY` variable defines a comma separated list of hostnames that should not use the proxy. For each hostname that you specify, all its subdomains are also excluded from using proxy.
 
 The environment variables can be lowercase or uppercase. Lowercase takes precedence. For example, if you define both `HTTP_PROXY` and `http_proxy`, `http_proxy` is used.
+
+**Example of proxy mappings and environment variables**
 
 ```
 HTTPS_PROXY=https://www-proxy.acme.com:8080
@@ -134,6 +174,8 @@ When your proxy server requires authentication, include the credentials of the p
 ```
 .*\.(google|googleapis)\.com;http://proxyuser:password@www-proxy.acme.com:8080
 ```
+
+**Example of regular expressions for proxy-mapping:**
 
 ```
 # All requests to Google APIs use http://www-proxy.acme.com:8080 as proxy

@@ -16,6 +16,9 @@ const LABELS: Record<string, string> = {
   'migration': 'Migration',
 }
 
+// Segments that should render as plain text (no landing page exists for them)
+const NON_CLICKABLE = new Set(['en', 'id', 'guides'])
+
 export function Breadcrumb() {
   const router = useRouter()
   const parts = router.asPath.split('?')[0].split('/').filter(Boolean)
@@ -29,7 +32,8 @@ export function Breadcrumb() {
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ')
     const isLast = i === parts.length - 1
-    return { href, label, isLast }
+    const isClickable = !isLast && !NON_CLICKABLE.has(part)
+    return { href, label, isLast, isClickable }
   })
 
   return (
@@ -46,7 +50,7 @@ export function Breadcrumb() {
           {i > 0 && <span style={{ opacity: 0.4 }}>›</span>}
           {crumb.isLast ? (
             <span style={{ fontWeight: 600 }}>{crumb.label}</span>
-          ) : (
+          ) : crumb.isClickable ? (
             <Link href={crumb.href} style={{
               color: 'inherit',
               textDecoration: 'none',
@@ -57,6 +61,8 @@ export function Breadcrumb() {
             >
               {crumb.label}
             </Link>
+          ) : (
+            <span style={{ opacity: 0.6 }}>{crumb.label}</span>
           )}
         </span>
       ))}

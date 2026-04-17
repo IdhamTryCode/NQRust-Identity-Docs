@@ -8,7 +8,7 @@ description: Mengatasi Masalah Menggunakan Metrik - Dokumentasi NQRust-Identity
 import { Callout } from 'nextra/components'
 
 Untuk penyebaran NQRust-Identity yang berjalan, penting untuk memahami bagaimana kinerja sistem dan apakah itu memenuhi tujuan level service (SLOs) Anda.
-Untuk detail lebih lanjut tentang SLOs, silakan kunjungi panduan Monitoring performance with Service Level Indicators.
+Untuk detail lebih lanjut tentang SLOs, silakan kunjungi panduan [Monitoring performance with Service Level Indicators](/id/guides/observability/identity-service-level-indicators).
 
 Panduan ini akan memberikan petunjuk untuk menjawab pertanyaan: “Apa yang bisa saya lakukan ketika SLOs saya tidak terpenuhi?”
 
@@ -39,18 +39,3 @@ Panduan yang diberikan oleh panduan ini diilustrasikan dengan contoh berikut:
   Dashboard Grafana untuk metrik di bawah ini dapat ditemukan dalam panduan [Visualizing activities in dashboards](/en/guides/observability/grafana-dashboards).
 </Callout>
 
-## Daftar Metrik Utama NQRust-Identity
-
-- Metrik yang Disediakan Sendiri
-- Metrik JVM
-- Metrik Database
-- Metrik HTTP
-- Metrik Caching Lokal
-- Metrik Penyebaran Satu Klaster
-
-  - Metrik Clustering
-  - Metrik Infinispan Embedded untuk penyebaran satu klaster
-- Metrik Penyebaran Multi-Klaster
-
-  - Metrik Infinispan Embedded untuk penyebaran multi-klaster
-  - Metrik Infinispan Eksternal

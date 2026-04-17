@@ -7,15 +7,15 @@ description: NQRust-Identity JavaScript adapter - NQRust-Identity Documentation
 
 import { Callout } from 'nextra/components'
 
-NQRust-Identity comes with a client-side JavaScript library called `nqrust-identity-js` that can be used to secure web applications. The adapter also comes with built-in support for Cordova applications.
-The adapter uses OpenID Connect protocol under the covers. You can take a look at the [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#_oidc_available_endpoints) guide for the more generic information about OpenID Connect endpoints and capabilities.
+NQRust-Identity comes with a client-side JavaScript library called `keycloak-js` that can be used to secure web applications. The adapter also comes with built-in support for Cordova applications.
+The adapter uses OpenID Connect protocol under the covers. You can take a look at the [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#oidc-available-endpoints) guide for the more generic information about OpenID Connect endpoints and capabilities.
 
 ## Installation
 
-We recommend that you install the `nqrust-identity-js` package from NPM:
+We recommend that you install the `keycloak-js` package from NPM:
 
 ```bash
-npm install nqrust-identity-js
+npm install keycloak-js
 ```
 
 ## NQRust-Identity server configuration
@@ -28,19 +28,19 @@ You also need to configure `Valid Redirect URIs` and `Web Origins`. Be as specif
 
 ## Using the adapter
 
-The following example shows how to initialize the adapter. Make sure that you replace the options passed to the `NQRust-Identity` constructor with those of the client you have configured.
+The following example shows how to initialize the adapter. Make sure that you replace the options passed to the `Keycloak` constructor with those of the client you have configured.
 
 ```javascript
-import NQRust-Identity from 'nqrust-identity-js';
+import Keycloak from 'keycloak-js';
 
-const nqrust-identity = new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+const keycloak = new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
 
 try {
-    const authenticated = await nqrust-identity.init();
+    const authenticated = await keycloak.init();
     if (authenticated) {
         console.log('User is authenticated');
     } else {
@@ -65,7 +65,7 @@ You can configure a _silent_ `check-sso` option. With this feature enabled, your
 To enable the _silent_ `check-sso`, you provide a `silentCheckSsoRedirectUri` attribute in the init method. Make sure this URI is a valid endpoint in the application; it must be configured as a valid redirect for the client in the NQRust-Identity Admin Console:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     onLoad: 'check-sso',
     silentCheckSsoRedirectUri: `${location.origin}/silent-check-sso.html`
 });
@@ -88,13 +88,13 @@ It has no other task than sending the received tokens to the main application an
 Remember that this page must be served by your application at the specified location in `silentCheckSsoRedirectUri` and is _not_ part of the adapter.
 
 <Callout type="warning">
-  Silent check-sso functionality is limited in some modern browsers. Please see the Modern Browsers with Tracking Protection Section.
+  _Silent_ `check-sso` functionality is limited in some modern browsers. Please see the [Modern Browsers with Tracking Protection Section](#modern-browsers).
 </Callout>
 
 To enable `login-required` set `onLoad` to `login-required` and pass to the init method:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     onLoad: 'login-required'
 });
 ```
@@ -107,7 +107,7 @@ async function fetchUsers() {
     const response = await fetch('/api/users', {
         headers: {
             accept: 'application/json',
-            authorization: `Bearer ${nqrust-identity.token}`
+            authorization: `Bearer ${keycloak.token}`
         }
     });
 
@@ -119,7 +119,7 @@ One thing to keep in mind is that the access token by default has a short life e
 
 ```javascript
 try {
-    await nqrust-identity.updateToken(30);
+    await keycloak.updateToken(30);
 } catch (error) {
     console.error('Failed to refresh token:', error);
 }
@@ -139,7 +139,7 @@ You should not rely on looking at this cookie directly. Its format can change an
 your application.
 
 <Callout type="warning">
-  Session Status iframe functionality is limited in some modern browsers. Please see Modern Browsers with Tracking Protection Section.
+  Session Status iframe functionality is limited in some modern browsers. Please see [Modern Browsers with Tracking Protection Section](#modern-browsers).
 </Callout>
 
 ## Implicit and hybrid flow
@@ -156,7 +156,7 @@ browser history.
 To enable implicit flow, you enable the **Implicit Flow Enabled** flag for the client in the NQRust-Identity Admin Console. You also pass the parameter `flow` with the value `implicit` to `init` method:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     flow: 'implicit'
 })
 ```
@@ -173,7 +173,7 @@ One advantage in the Hybrid flow is that the refresh token is made available to 
 For the Hybrid flow, you need to pass the parameter `flow` with value `hybrid` to the `init` method:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     flow: 'hybrid'
 });
 ```
@@ -195,7 +195,7 @@ The alternative mode  is`cordova-native`, which takes a different approach. It o
 You can activate the native mode by passing the adapter type `cordova-native` to the `init()` method:
 
 ```javascript
-await nqrust-identity.init({
+await keycloak.init({
     adapter: 'cordova-native'
 });
 ```
@@ -229,29 +229,29 @@ Furthermore, we recommend the following steps to improve compatibility with the 
 In some situations, you may need to run the adapter in environments that are not supported by default, such as Capacitor. To use the JavasScript client in these environments, you can pass a custom adapter. For example, a third-party library could provide such an adapter to make it possible to reliably run the adapter:
 
 ```javascript
-import NQRust-Identity from 'nqrust-identity-js';
-import NQRust-IdentityCapacitorAdapter from 'nqrust-identity-capacitor-adapter';
+import Keycloak from 'keycloak-js';
+import KeycloakCapacitorAdapter from 'keycloak-capacitor-adapter';
 
-const nqrust-identity = new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+const keycloak = new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
 
-await nqrust-identity.init({
-    adapter: NQRust-IdentityCapacitorAdapter,
+await keycloak.init({
+    adapter: KeycloakCapacitorAdapter,
 });
 ```
 
 This specific package does not exist, but it gives a pretty good example of how such an adapter could be passed into the client.
 
-It’s also possible to make your own adapter, to do so you will have to implement the methods described in the `NQRust-IdentityAdapter` interface. For example the following TypeScript code ensures that all the methods are properly implemented:
+It’s also possible to make your own adapter, to do so you will have to implement the methods described in the `KeycloakAdapter` interface. For example the following TypeScript code ensures that all the methods are properly implemented:
 
 ```typescript
-import NQRust-Identity, { NQRust-IdentityAdapter } from 'nqrust-identity-js';
+import Keycloak, { KeycloakAdapter } from 'keycloak-js';
 
-// Implement the 'NQRust-IdentityAdapter' interface so that all required methods are guaranteed to be present.
-const MyCustomAdapter: NQRust-IdentityAdapter = {
+// Implement the 'KeycloakAdapter' interface so that all required methods are guaranteed to be present.
+const MyCustomAdapter: KeycloakAdapter = {
     async login(options) {
         // Write your own implementation here.
     }
@@ -259,13 +259,13 @@ const MyCustomAdapter: NQRust-IdentityAdapter = {
     // The other methods go here...
 };
 
-const nqrust-identity = new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+const keycloak = new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
 
-await nqrust-identity.init({
+await keycloak.init({
     adapter: MyCustomAdapter,
 });
 ```
@@ -299,8 +299,8 @@ An affected browser is for example Safari starting with version 13.1.
 The recommended way of constructing the adapter is by passing the configuration directly:
 
 ```javascript
-new NQRust-Identity({
-    url: "http://nqrust-identity-server",
+new Keycloak({
+    url: "http://keycloak-server",
     realm: "my-realm",
     clientId: "my-app"
 });
@@ -309,7 +309,7 @@ new NQRust-Identity({
 Alternatively, it is possible to pass a URL to a JSON file that contains the configuration instead:
 
 ```javascript
-new NQRust-Identity("http://your-app/adapter-config.json");
+new Keycloak("http://your-app/adapter-config.json");
 ```
 
 The JSON configuration file must include the following fields:
@@ -326,32 +326,60 @@ Note that using a JSON configuration file will trigger an additional request bef
 
 ### Properties
 
+**authenticated**
+
 Is `true` if the user is authenticated, `false` otherwise.
+
+**token**
 
 The base64 encoded token that can be sent in the `Authorization` header in requests to services.
 
+**tokenParsed**
+
 The parsed token as a JavaScript object.
+
+**subject**
 
 The user id.
 
+**idToken**
+
 The base64 encoded ID token.
+
+**idTokenParsed**
 
 The parsed id token as a JavaScript object.
 
+**realmAccess**
+
 The realm roles associated with the token.
+
+**resourceAccess**
 
 The resource roles associated with the token.
 
+**refreshToken**
+
 The base64 encoded refresh token that can be used to retrieve a new token.
 
+**refreshTokenParsed**
+
 The parsed refresh token as a JavaScript object.
+
+**timeSkew**
 
 The estimated time difference between the browser time and the NQRust-Identity server in seconds. This value is just an estimation, but is accurate
 enough when determining if a token is expired or not.
 
+**responseMode**
+
 Response mode passed in init (default value is fragment).
 
+**flow**
+
 Flow passed in init.
+
+**adapter**
 
 Allows you to override the way that redirects and other browser-related functions will be handled by the library.
 Available options:
@@ -360,6 +388,8 @@ Available options:
 - "cordova" - the library will try to use the InAppBrowser cordova plugin to load nqrust-identity login/registration pages (this is used automatically when the library is working in a cordova ecosystem)
 - "cordova-native" - the library tries to open the login and registration page using the phone’s system browser using the BrowserTabs cordova plugin. This requires extra setup for redirecting back to the app (see [Hybrid Apps with Cordova](#hybrid-apps-with-cordova)).
 - "custom" - allows you to implement a custom adapter (only for advanced use cases)
+
+**responseType**
 
 Response type sent to NQRust-Identity with login requests. This is determined based on the flow value used during initialization, but can be overridden by setting this value.
 
@@ -417,7 +447,7 @@ provider instead. More info in the Identity Provider documentation.
 - acr - Contains the information about `acr` claim, which will be sent inside `claims` parameter to the NQRust-Identity server. Typical usage
 is for step-up authentication. Example of use `{ values: ["silver", "gold"], essential: true }`. See OpenID Connect specification
 and Step-up authentication documentation for more details.
-- acrValues - Generates the `acr_values` parameter which refers to authentication context class reference and allows clients to declare the required assurance level requirements, e.g. authentication mechanisms. See [Section 4. acr_values request values and level of assurance in OpenID Connect MODRNA Authentication Profile 1.0](https://openid.net/specs/openid-connect-modrna-authentication-1_0.html#acr_values).
+- acrValues - Generates the `acr_values` parameter which refers to authentication context class reference and allows clients to declare the required assurance level requirements, e.g. authentication mechanisms. See [Section 4. acr_values request values and level of assurance in OpenID Connect MODRNA Authentication Profile 1.0](https://openid.net/specs/openid-connect-modrna-authentication-1_0.html#acr-values).
 - action - If the value is `register`, the user is redirected to the registration page. See Registration requested by client section for more details.
 If the value is `UPDATE_PASSWORD` or another supported required action, the user will be redirected to the reset password page or the other required action page. However, if the user is not authenticated, the user will be sent to the login page and redirected after authentication.
 See Application Initiated Action section for more details.
@@ -488,7 +518,7 @@ For example:
 
 ```javascript
 try {
-    const profile = await nqrust-identity.loadUserProfile();
+    const profile = await keycloak.loadUserProfile();
     console.log('Retrieved user profile:', profile);
 } catch (error) {
     console.error('Failed to load user profile:', error);
@@ -511,7 +541,7 @@ For example:
 
 ```javascript
 try {
-    const refreshed = await nqrust-identity.updateToken(5);
+    const refreshed = await keycloak.updateToken(5);
     console.log(refreshed ? 'Token was refreshed' : 'Token is still valid');
 } catch (error) {
     console.error('Failed to refresh the token:', error);
@@ -532,7 +562,7 @@ The adapter supports setting callback listeners for certain events. Keep in mind
 For example:
 
 ```javascript
-nqrust-identity.onAuthSuccess = () => console.log('Authenticated!');
+keycloak.onAuthSuccess = () => console.log('Authenticated!');
 ```
 
 The available events are:

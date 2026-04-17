@@ -1,15 +1,18 @@
 {
+  "index": {
+    "display": "hidden"
+  },
   "configuration": "Configuring NQRust-Identity",
   "configuration-production": "Configuring NQRust-Identity for production",
   "bootstrap-admin-recovery": "Bootstrapping and recovering an admin account",
   "directory-structure": "Directory Structure",
   "enabletls": "Configuring TLS",
-  "hostname": "Configuring the hostname (v2)",
+  "hostname": "Configuring the hostname",
   "reverseproxy": "Configuring a reverse proxy",
   "db": "Configuring the database",
   "caching": "Configuring distributed caches",
   "outgoinghttp": "Configuring outgoing HTTP requests",
-  "keycloak-truststore": "Configuring trusted certificates",
+  "identity-truststore": "Configuring trusted certificates",
   "mutual-tls": "Configuring trusted certificates for mTLS",
   "features": "Enabling and disabling features",
   "configuration-provider": "Configuring providers",

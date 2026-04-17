@@ -1,11 +1,13 @@
 ---
 title: Configuring trusted certificates
-description: Configuring trusted certificates - NQRust-Identity Documentation
+description: Configuring trusted certificates - Dokumentasi NQRust-Identity
 ---
 
 # Configuring trusted certificates
 
 import { Callout } from 'nextra/components'
+
+{/* TODO: Translate this page to Bahasa Indonesia */}
 
 When NQRust-Identity communicates with external services or has an incoming connection through TLS, it has to validate the remote certificate in order to ensure it is connecting to a trusted server. This is necessary in order to prevent man-in-the-middle attacks.
 
@@ -47,7 +49,7 @@ bin/kc.[sh|bat] start --truststore-kubernetes-enabled=false
 Note that if the corresponding files are not mounted into the container, they will not be included regardless of the option values.
 
 <Callout type="warning">
-  When https-client-auth is set to required or request without an explicit https-trust-store-file, mTLS client certificate validation falls back to the system truststore. With truststore-kubernetes-enabled=true, this means certificates signed by the Kubernetes cluster CA will be accepted as valid client certificates. If this is not desired, either set https-trust-store-file explicitly or disable truststore-kubernetes-enabled.
+  When `https-client-auth` is set to `required` or `request` without an explicit `https-trust-store-file`, mTLS client certificate validation falls back to the system truststore. With `truststore-kubernetes-enabled=true`, this means certificates signed by the Kubernetes cluster CA will be accepted as valid client certificates. If this is not desired, either set `https-trust-store-file` explicitly or disable `truststore-kubernetes-enabled`.
 </Callout>
 
 ## Hostname Verification Policy

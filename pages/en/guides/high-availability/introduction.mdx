@@ -18,9 +18,13 @@ This document describes two high availability architectures in which to deploy N
 Deploy NQRust-Identity in a single cluster, optionally across multiple availability-zones or data centers with the required
 network latency and database configuration, using Single-cluster deployments.
 
+**Advantages**
+
 - No external dependencies
 - Deployment in a single Kubernetes cluster or a set of virtual machines with transparent networking
 - Tolerate availability-zone failure or data center failure, if deployed to multiple availability zones or data centers
+
+**Disadvantages**
 
 - Kubernetes cluster is a single point of failure:
 
@@ -31,10 +35,14 @@ network latency and database configuration, using Single-cluster deployments.
 Connect two NQRust-Identity clusters deployed for example in different Kubernetes clusters in two availability zones
 or data centers with the required network latency and database configuration using Multi-cluster deployments.
 
+**Advantages**
+
 - Tolerate availability-zone failure
 - Tolerate Kubernetes cluster failure
 - Bridge two networks that do not offer transparent networking
 - Regulatory compliance when distinct deployments are required
+
+**Disadvantages**
 
 - Complexity:
 

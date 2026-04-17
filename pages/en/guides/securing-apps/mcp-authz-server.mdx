@@ -125,7 +125,7 @@ According to [Client Registration Approaches](https://modelcontextprotocol.io/sp
 NQRust-Identity supports OAuth Client ID Metadata Document. To use Client ID Metadata Documents, you need to enable the feature and set up a client policy so that NQRust-Identity processes the `client_id` parameter formatted as a URL and fetches the client metadata from that URL.
 
 <Callout type="warning">
-  The OAuth Client ID Metadata Document support is an experimental feature in NQRust-Identity. As such, it may introduce breaking changes in future versions of NQRust-Identity. To enable it, start NQRust-Identity with --features=cimd.
+  The OAuth Client ID Metadata Document support is an experimental feature in NQRust-Identity. As such, it may introduce breaking changes in future versions of NQRust-Identity. To enable it, start NQRust-Identity with `--features=cimd`.
 </Callout>
 
 ##### Setting up the client profile for OAuth Client ID Metadata Document
@@ -140,11 +140,11 @@ To configure the executor, create a client policy profile in the NQRust-Identity
 4. Click **Add executor** and select `client-id-metadata-document` from the list.
 5. Configure the executor with the following options:
 
-  - **Allow http scheme**: If `ON`, allows `http` scheme for the Client ID URL and Client Metadata URLs (e.g., `client_uri`, `logo_uri`, `tos_uri`, `policy_uri`, `jwks_uri`). This should only be `ON` in a development environment and must be `OFF` in a production environment.
-  - **Trusted domains**: A list of domain patterns (wildcard) that the executor accepts for the Client ID URL and Client Metadata URL properties. For example, use `*.example.org` to accept any subdomain of `example.org`. If empty, all domains are denied.
-  - **Restrict same domain**: If `ON`, the executor verifies that the Client ID URL and Redirect URI in an authorization request, as well as URL-valued properties of the client metadata, are all under the same trusted domain.
-  - **Required properties**: A list of client metadata properties that must be present in the Client ID Metadata Document. If the fetched document does not include all the listed properties, the request is rejected.
-  - **Only Allow Confidential Client**: If `ON`, the executor only accepts a Client Metadata Document representing a confidential client. In this case, the client metadata must include either a `jwks` or `jwks_uri` property and must use `private_key_jwt` or `tls_client_auth` as the token endpoint authentication method.
+   - **Allow http scheme**: If `ON`, allows `http` scheme for the Client ID URL and Client Metadata URLs (e.g., `client_uri`, `logo_uri`, `tos_uri`, `policy_uri`, `jwks_uri`). This should only be `ON` in a development environment and must be `OFF` in a production environment.
+   - **Trusted domains**: A list of domain patterns (wildcard) that the executor accepts for the Client ID URL and Client Metadata URL properties. For example, use `*.example.org` to accept any subdomain of `example.org`. If empty, all domains are denied.
+   - **Restrict same domain**: If `ON`, the executor verifies that the Client ID URL and Redirect URI in an authorization request, as well as URL-valued properties of the client metadata, are all under the same trusted domain.
+   - **Required properties**: A list of client metadata properties that must be present in the Client ID Metadata Document. If the fetched document does not include all the listed properties, the request is rejected.
+   - **Only Allow Confidential Client**: If `ON`, the executor only accepts a Client Metadata Document representing a confidential client. In this case, the client metadata must include either a `jwks` or `jwks_uri` property and must use `private_key_jwt` or `tls_client_auth` as the token endpoint authentication method.
 6. Click **Save**.
 
 ##### Setting up the client policy for OAuth Client ID Metadata Document
@@ -159,8 +159,8 @@ To configure the condition, create a client policy in the NQRust-Identity Admin 
 4. Under **Conditions**, click **Add condition** and select `client-id-uri` from the list.
 5. Configure the condition with the following options:
 
-  - **URI scheme**: A list of URI schemes to match against the `client_id` parameter (e.g., `https`). In a production environment, only `https` should be used.
-  - **Trusted domains**: A list of domain patterns (wildcard) that the condition accepts for the host part of the `client_id` URI. If domains are filled, the condition evaluates to true only when the host part of the `client_id` matches one of the domains. If not filled, the condition evaluates to false regardless. For example, use `*.example.org` to accept any subdomain of `example.org`.
+   - **URI scheme**: A list of URI schemes to match against the `client_id` parameter (e.g., `https`). In a production environment, only `https` should be used.
+   - **Trusted domains**: A list of domain patterns (wildcard) that the condition accepts for the host part of the `client_id` URI. If domains are filled, the condition evaluates to true only when the host part of the `client_id` matches one of the domains. If not filled, the condition evaluates to false regardless. For example, use `*.example.org` to accept any subdomain of `example.org`.
 6. Click **Save**.
 7. Under **Associated client profiles**, add the `cimd-profile` profile created in the previous step.
 8. Click **Save**.
@@ -209,10 +209,10 @@ bin/kc.[sh|bat] start --features=cimd
 4. Click **Add executor** and select `client-id-metadata-document` from the list.
 5. Configure the executor with the following options:
 
-  - **Allow http scheme**: `OFF`
-  - **Trusted domains**: `vscode.dev`, `127.0.0.1`
-  - **Restrict same domain**: `OFF` (VS Code desktop uses a localhost redirect URI such as `http://127.0.0.1:<port>/callback`, which is not on the same domain as `vscode.dev`)
-  - **Only Allow Confidential Client**: `OFF` (VS Code desktop is a public client)
+   - **Allow http scheme**: `OFF`
+   - **Trusted domains**: `vscode.dev`, `127.0.0.1`
+   - **Restrict same domain**: `OFF` (VS Code desktop uses a localhost redirect URI such as `http://127.0.0.1:<port>/callback`, which is not on the same domain as `vscode.dev`)
+   - **Only Allow Confidential Client**: `OFF` (VS Code desktop is a public client)
 6. Click **Save**.
 
 #### Setting up the client policy for VS Code desktop
@@ -223,8 +223,8 @@ bin/kc.[sh|bat] start --features=cimd
 4. Under **Conditions**, click **Add condition** and select `client-id-uri` from the list.
 5. Configure the condition with the following options:
 
-  - **URI scheme**: `https`
-  - **Trusted domains**: `vscode.dev`
+   - **URI scheme**: `https`
+   - **Trusted domains**: `vscode.dev`
 6. Click **Save**.
 7. Under **Associated client profiles**, add the `vscode-cimd-profile` profile created in the previous step.
 8. Click **Save**.

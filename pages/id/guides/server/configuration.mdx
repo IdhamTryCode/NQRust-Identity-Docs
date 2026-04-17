@@ -15,7 +15,7 @@ NQRust-Identity memuat konfigurasi dari empat sumber, yang terdaftar di sini ses
 
 1. Parameter baris perintah
 2. Variabel lingkungan
-3. Opsi yang didefinisikan dalam file `conf/nqrust-identity.conf`, atau dalam file konfigurasi yang dibuat pengguna.
+3. Opsi yang didefinisikan dalam file `conf/keycloak.conf`, atau dalam file konfigurasi yang dibuat pengguna.
 4. Opsi sensitif yang didefinisikan dalam file Java KeyStore yang dibuat pengguna.
 
 Ketika sebuah opsi diatur dalam lebih dari satu sumber, yang pertama dalam daftar menentukan nilai untuk opsi tersebut. Sebagai contoh, nilai untuk opsi yang diatur oleh parameter baris perintah memiliki prioritas lebih tinggi daripada variabel lingkungan untuk opsi yang sama.
@@ -57,15 +57,15 @@ Di akhir panduan konfigurasi setiap, cari tajuk _Opsi yang relevan_, yang menent
 Contoh berikut menunjukkan format konfigurasi untuk `db-url-host` untuk tiga sumber konfigurasi:
 
 ```bash
-bin/kc.[sh|bat] start --db-url-host=mynqrust-identitydb
+bin/kc.[sh|bat] start --db-url-host=mykeycloakdb
 ```
 
 ```
-export KC_DB_URL_HOST=mynqrust-identitydb
+export KC_DB_URL_HOST=mykeycloakdb
 ```
 
 ```
-db-url-host=mynqrust-identitydb
+db-url-host=mykeycloakdb
 ```
 
 ### Format untuk parameter baris perintah
@@ -80,7 +80,7 @@ Alternatifnya, lihat [Semua konfigurasi](/en/guides/server/all-config) untuk sem
 
 ### Format untuk merujuk variabel lingkungan
 
-Anda dapat menggunakan placeholder untuk menghitung nilai spesifik lingkungan dari variabel lingkungan di dalam file `nqrust-identity.conf` dengan menggunakan sintaks `${ENV_VAR}`:
+Anda dapat menggunakan placeholder untuk menghitung nilai spesifik lingkungan dari variabel lingkungan di dalam file `keycloak.conf` dengan menggunakan sintaks `${ENV_VAR}`:
 
 ```
 db-url-host=${MY_DB_HOST}
@@ -94,7 +94,7 @@ db-url-host=${MY_DB_HOST:mydb}
 
 ### Format untuk memasukkan file konfigurasi tertentu
 
-Secara default, server selalu mengambil opsi konfigurasi dari file `conf/nqrust-identity.conf`. Untuk instalasi baru, file ini hanya memegang pengaturan komentar sebagai ide tentang apa yang ingin Anda atur saat berjalan dalam produksi.
+Secara default, server selalu mengambil opsi konfigurasi dari file `conf/keycloak.conf`. Untuk instalasi baru, file ini hanya memegang pengaturan komentar sebagai ide tentang apa yang ingin Anda atur saat berjalan dalam produksi.
 
 Anda juga dapat menentukan lokasi file konfigurasi eksplisit menggunakan opsi `[-cf|--config-file]` dengan memasukkan perintah berikut:
 
@@ -102,7 +102,7 @@ Anda juga dapat menentukan lokasi file konfigurasi eksplisit menggunakan opsi `[
 bin/kc.[sh|bat] --config-file=/path/to/myconfig.conf start
 ```
 
-Mengatur opsi itu membuat NQRust-Identity membaca konfigurasi dari file yang ditentukan bukan dari `conf/nqrust-identity.conf`.
+Mengatur opsi itu membuat NQRust-Identity membaca konfigurasi dari file yang ditentukan bukan dari `conf/keycloak.conf`.
 
 ### Mengatur opsi sensitif menggunakan file Java KeyStore
 
@@ -199,8 +199,8 @@ Misalnya `kc.log-level-package.class_name` akan menjadi kunci variabel lingkunga
 
 Anda memiliki beberapa opsi dalam hal ini:
 
-- buat entri di file `nqrust-identity.conf` Anda yang merujuk pada variabel lingkungan yang Anda pilih. contohnya `kc.log-level-package.class_name=${CLASS_NAME_LEVEL}`. Lihat lebih lanjut tentang merujuk variabel lingkungan di [Format untuk merujuk variabel lingkungan](#_format_for_referencing_environment_variables).
-- atau dalam situasi di mana mengubah `nqrust-identity.conf` mungkin tidak mudah, Anda dapat menggunakan pasangan variabel lingkungan `KC_UNIQUEIFIER=value` dan `KCKEY_UNIQUEIFIER=key`, misalnya `KC_MYKEY=debug` dan `KCKEY_MYKEY=log-level-package.class_name`, atau `KC_LOG_LEVEL_PACKAGE_CLASS_NAME=debug` dan `KCKEY_LOG_LEVEL_PACKAGE_CLASS_NAME=log-level-package.class_name`
+- buat entri di file `keycloak.conf` Anda yang merujuk pada variabel lingkungan yang Anda pilih. contohnya `kc.log-level-package.class_name=${CLASS_NAME_LEVEL}`. Lihat lebih lanjut tentang merujuk variabel lingkungan di [Format untuk merujuk variabel lingkungan](#format-for-referencing-environment-variables).
+- atau dalam situasi di mana mengubah `keycloak.conf` mungkin tidak mudah, Anda dapat menggunakan pasangan variabel lingkungan `KC_UNIQUEIFIER=value` dan `KCKEY_UNIQUEIFIER=key`, misalnya `KC_MYKEY=debug` dan `KCKEY_MYKEY=log-level-package.class_name`, atau `KC_LOG_LEVEL_PACKAGE_CLASS_NAME=debug` dan `KCKEY_LOG_LEVEL_PACKAGE_CLASS_NAME=log-level-package.class_name`
 
 ## Memulai NQRust-Identity
 
@@ -247,7 +247,7 @@ Mode produksi menetapkan default berikut:
 
 Sebelum menyebarkan NQRust-Identity di lingkungan produksi, pastikan untuk mengikuti langkah yang dijelaskan dalam [Mengonfigurasi NQRust-Identity untuk produksi](/en/guides/server/configuration-production).
 
-Secara default, opsi konfigurasi contoh untuk mode produksi dikomentari dalam file `conf/nqrust-identity.conf` default. Opsi ini memberi Anda gambaran tentang konfigurasi utama yang perlu dipertimbangkan saat menjalankan NQRust-Identity dalam produksi.
+Secara default, opsi konfigurasi contoh untuk mode produksi dikomentari dalam file `conf/keycloak.conf` default. Opsi ini memberi Anda gambaran tentang konfigurasi utama yang perlu dipertimbangkan saat menjalankan NQRust-Identity dalam produksi.
 
 ## Membuat pengguna admin awal
 
@@ -317,13 +317,13 @@ Contoh berikut menunjukkan pembuatan build yang dioptimalkan diikuti dengan peng
   ```bash
   bin/kc.[sh|bat] build --db=postgres
   ```
-2. Atur opsi konfigurasi runtime untuk postgres di file `conf/nqrust-identity.conf`.
+2. Atur opsi konfigurasi runtime untuk postgres di file `conf/keycloak.conf`.
 
   ```
-  db-url-host=nqrust-identity-postgres
-  db-username=nqrust-identity
+  db-url-host=keycloak-postgres
+  db-username=keycloak
   db-password=change_me
-  hostname=mynqrust-identity.acme.com
+  hostname=mykeycloak.acme.com
   https-certificate-file
   ```
 3. Mulai server dengan parameter yang dioptimalkan

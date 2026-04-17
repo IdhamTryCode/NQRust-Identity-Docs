@@ -8,8 +8,8 @@ description: Paket fitur Galleon SAML NQRust-Identity untuk WildFly dan EAP - Do
 import { Callout } from 'nextra/components'
 
 Adapter SAML didistribusikan sebagai paket fitur Galleon untuk wildfly 29 atau yang lebih baru. Detail lebih lanjut tentang topik ini
-dapat ditemukan dalam [dokumentasi WildFly](https://docs.wildfly.org/32/WildFly_Elytron_Security.html#NQRust-Identity_SAML_Integration).
-Opsi yang sama disediakan untuk [NQRust EAP 8 GA](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html-single/using_single_sign-on_with_jboss_eap/index#securing-applications-with-saml_securing-applications-deployed-on-server-with-single-sign-on).
+dapat ditemukan dalam [dokumentasi WildFly](https://docs.wildfly.org/32/WildFly_Elytron_Security.html#NQRust-Identity-SAML-Integration).
+Opsi yang sama disediakan untuk [NQRust EAP 8 GA](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html-single/using_single_sign-on_with_jboss_eap/index#securing-applications-with-saml-securing-applications-deployed-on-server-with-single-sign-on).
 
 Untuk contoh tentang cara mengintegrasikan NQRust-Identity dengan aplikasi JakartaEE yang berjalan pada Wildfly/EAP terbaru, lihat folder `servlet-saml-service-provider` Jakarta di [NQRust-Identity Quickstart GitHub Repository](https://github.com/nqrust-identity/nqrust-identity-quickstarts).
 
@@ -30,8 +30,8 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
                 <location>wildfly@maven(org.jboss.universe:community-universe)#32.0.1.Final</location>
             </feature-pack>
             <feature-pack>
-                <groupId>org.nqrust-identity</groupId>
-                <artifactId>nqrust-identity-saml-adapter-galleon-pack</artifactId>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-saml-adapter-galleon-pack</artifactId>
                 <version>26.6.0</version>
             </feature-pack>
         </feature-packs>
@@ -41,9 +41,9 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
             <layer>jaxrs-server</layer>
             <layer>datasources-web-server</layer>
             <layer>webservices</layer>
-            <layer>nqrust-identity-saml</layer>
-            <layer>nqrust-identity-client-saml</layer>
-            <layer>nqrust-identity-client-saml-ejb</layer>
+            <layer>keycloak-saml</layer>
+            <layer>keycloak-client-saml</layer>
+            <layer>keycloak-client-saml-ejb</layer>
         </layers>
     </configuration>
     <executions>
@@ -69,8 +69,8 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
                 <location>wildfly@maven(org.jboss.universe:community-universe)#32.0.1.Final</location>
             </feature-pack>
             <feature-pack>
-                <groupId>org.nqrust-identity</groupId>
-                <artifactId>nqrust-identity-saml-adapter-galleon-pack</artifactId>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-saml-adapter-galleon-pack</artifactId>
                 <version>26.6.0</version>
             </feature-pack>
         </feature-packs>
@@ -80,9 +80,9 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
             <layer>jaxrs-server</layer>
             <layer>datasources-web-server</layer>
             <layer>webservices</layer>
-            <layer>nqrust-identity-saml</layer>
-            <layer>nqrust-identity-client-saml</layer>
-            <layer>nqrust-identity-client-saml-ejb</layer>
+            <layer>keycloak-saml</layer>
+            <layer>keycloak-client-saml</layer>
+            <layer>keycloak-client-saml-ejb</layer>
         </layers>
     </configuration>
     <executions>
@@ -113,7 +113,7 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
         </channels>
         <feature-packs>
             <feature-pack>
-                <location>org.nqrust-identity:nqrust-identity-saml-adapter-galleon-pack</location>
+                <location>org.keycloak:keycloak-saml-adapter-galleon-pack</location>
             </feature-pack>
         </feature-packs>
         <layers>
@@ -122,9 +122,9 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
             <layer>jaxrs-server</layer>
             <layer>datasources-web-server</layer>
             <layer>webservices</layer>
-            <layer>nqrust-identity-saml</layer>
-            <layer>nqrust-identity-client-saml</layer>
-            <layer>nqrust-identity-client-saml-ejb</layer>
+            <layer>keycloak-saml</layer>
+            <layer>keycloak-client-saml</layer>
+            <layer>keycloak-client-saml-ejb</layer>
         </layers>
     </configuration>
     <executions>
@@ -139,12 +139,12 @@ Penyediaan paket fitur dilakukan menggunakan [wildfly-maven-plugin](https://docs
 
 ## Konfigurasi
 
-Adapter klien SAML dikonfigurasi oleh file XML `/WEB-INF/nqrust-identity-saml.xml` yang diletakkan di dalam penyebaran WAR. Konfigurasi mungkin terlihat seperti berikut:
+Adapter klien SAML dikonfigurasi oleh file XML `/WEB-INF/keycloak-saml.xml` yang diletakkan di dalam penyebaran WAR. Konfigurasi mungkin terlihat seperti berikut:
 
 ```xml
-<nqrust-identity-saml-adapter xmlns="urn:nqrust-identity:saml:adapter"
+<keycloak-saml-adapter xmlns="urn:keycloak:saml:adapter"
                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       xsi:schemaLocation="urn:nqrust-identity:saml:adapter {saml_adapter_xsd_urn}">
+                       xsi:schemaLocation="urn:keycloak:saml:adapter {saml_adapter_xsd_urn}">
     <SP entityID="http://localhost:8081/sales-post-sig/"
         sslPolicy="EXTERNAL"
         nameIDPolicyFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"
@@ -189,7 +189,7 @@ Adapter klien SAML dikonfigurasi oleh file XML `/WEB-INF/nqrust-identity-saml.xm
             </Keys>
         </IDP>
      </SP>
-</nqrust-identity-saml-adapter>
+</keycloak-saml-adapter>
 ```
 
 Anda dapat menggunakan pembungkus `${…​}` sebagai pengganti properti sistem. Sebagai contoh `${jboss.server.config.dir}`.
@@ -199,7 +199,7 @@ Untuk informasi detail tentang elemen berbeda dalam file konfigurasi XML lihat K
 
 Bagian ini menjelaskan cara mengamankan WAR secara langsung dengan menambahkan konfigurasi dan mengedit file dalam paket WAR Anda.
 
-Setelah `nqrust-identity-saml.xml` dibuat dan ada di direktori `WEB-INF` dari WAR Anda, Anda harus menetapkan `auth-method` ke `NQRUST-IDENTITY-SAML` di `web.xml`.
+Setelah `keycloak-saml.xml` dibuat dan ada di direktori `WEB-INF` dari WAR Anda, Anda harus menetapkan `auth-method` ke `KEYCLOAK-SAML` di `web.xml`.
 Anda juga harus menggunakan keamanan servlet standar untuk menentukan batasan berbasis peran pada URL Anda.
 Berikut adalah contoh file _web.xml_:
 
@@ -237,7 +237,7 @@ Berikut adalah contoh file _web.xml_:
     </security-constraint>
 
     <login-config>
-        <auth-method>NQRUST-IDENTITY-SAML</auth-method>
+        <auth-method>KEYCLOAK-SAML</auth-method>
         <realm-name>this is ignored currently</realm-name>
     </login-config>
 
@@ -257,16 +257,16 @@ Semua pengaturan servlet standar kecuali pengaturan `auth-method`.
 Anda tidak harus membuka WAR untuk mengamankannya dengan NQRust-Identity.
 Alternatifnya, Anda dapat mengamankannya secara eksternal melalui Subsistem Adapter SAML NQRust-Identity.
 Sementara Anda tidak harus menentukan NQRUST-IDENTITY-SAML sebagai `auth-method`, Anda masih harus mendefinisikan `security-constraints` di `web.xml`.
-Anda tidak, bagaimanapun, harus membuat file `WEB-INF/nqrust-identity-saml.xml`.
+Anda tidak, bagaimanapun, harus membuat file `WEB-INF/keycloak-saml.xml`.
 Metadata ini didefinisikan dalam XML di bagian konfigurasi subsistem server `domain.xml` atau `standalone.xml` Anda.
 
 ```xml
 <extensions>
-  <extension module="org.nqrust-identity.nqrust-identity-saml-adapter-subsystem"/>
+  <extension module="org.keycloak.keycloak-saml-adapter-subsystem"/>
 </extensions>
 
 <profile>
-  <subsystem xmlns="urn:jboss:domain:nqrust-identity-saml:1.1">
+  <subsystem xmlns="urn:jboss:domain:keycloak-saml:1.1">
     <secure-deployment name="WAR MODULE NAME.war">
       <SP entityID="URL APLIKASI">
         ...
@@ -278,12 +278,12 @@ Metadata ini didefinisikan dalam XML di bagian konfigurasi subsistem server `dom
 
 Atribut `name` `secure-deployment` mengidentifikasi WAR yang ingin Anda amankan.
 Nilainya adalah `module-name` yang didefinisikan di `web.xml` dengan ditambahkan `.war`.
-Sisa konfigurasi menggunakan sintaks XML yang sama seperti konfigurasi `nqrust-identity-saml.xml` yang didefinisikan di [Konfigurasi Adapter Umum](#_saml-general-config).
+Sisa konfigurasi menggunakan sintaks XML yang sama seperti konfigurasi `keycloak-saml.xml` yang didefinisikan di [Konfigurasi Adapter Umum](#saml-general-config).
 
 Contoh konfigurasi:
 
 ```xml
-<subsystem xmlns="urn:jboss:domain:nqrust-identity-saml:1.1">
+<subsystem xmlns="urn:jboss:domain:keycloak-saml:1.1">
   <secure-deployment name="saml-post-encryption.war">
     <SP entityID="http://localhost:8080/sales-post-enc/"
         sslPolicy="EXTERNAL"
@@ -375,16 +375,16 @@ Untuk mengaktifkan fungsi ini, tambahkan bagian berikut ke file `/WEB_INF/web.xm
 
 ```xml
 <context-param>
-    <param-name>nqrust-identity.sessionIdMapperUpdater.classes</param-name>
-    <param-value>org.nqrust-identity.adapters.saml.wildfly.infinispan.InfinispanSessionCacheIdMapperUpdater</param-value>
+    <param-name>keycloak.sessionIdMapperUpdater.classes</param-name>
+    <param-value>org.keycloak.adapters.saml.wildfly.infinispan.InfinispanSessionCacheIdMapperUpdater</param-value>
 </context-param>
 ```
 
 Jika cache sesi penyebaran diberi nama `deployment-cache`, cache yang digunakan untuk pemetaan SAML akan diberi nama
 sebagai `deployment-cache.ssoCache`. Nama cache dapat ditimpa oleh parameter konteks
-`nqrust-identity.sessionIdMapperUpdater.infinispan.cacheName`. Wadah cache yang berisi cache SAML akan sama dengan
+`keycloak.sessionIdMapperUpdater.infinispan.cacheName`. Wadah cache yang berisi cache SAML akan sama dengan
 yang berisi cache sesi penyebaran, tetapi dapat ditimpa oleh parameter konteks
-`nqrust-identity.sessionIdMapperUpdater.infinispan.containerName`.
+`keycloak.sessionIdMapperUpdater.infinispan.containerName`.
 
 Secara default, konfigurasi cache pemetaan SAML akan diambil dari cache sesi. Konfigurasi dapat
 dibatalkan secara manual di bagian konfigurasi cache server seperti cache lainnya.
@@ -403,9 +403,9 @@ Pengelolaan khusus diperlukan untuk menangani sesi yang meliputi beberapa pusat 
 Pusat data 2 harus logout semua sesi yang ada di pusat data 1 (dan semua pusat data lainnya yang
 berbagi sesi HTTP).
 
-Untuk menangani hal ini, cache sesi SAML yang dijelaskan [di atas](#_saml_logout_in_cluster) perlu direplikasikan
+Untuk menangani hal ini, cache sesi SAML yang dijelaskan [di atas](#saml-logout-in-cluster) perlu direplikasikan
 bukan hanya dalam cluster individu tetapi di semua pusat data, misalnya
-[dengan server Infinispan/JDG standalone](https://docs.redhat.com/en/documentation/red_hat_data_grid/6.6/html/administration_and_configuration_guide/chap-externalize_sessions#Externalize_HTTP_Session_from_NQRust_EAP_6.x_to_NQRust_Data_Grid):
+[dengan server Infinispan/JDG standalone](https://docs.redhat.com/en/documentation/red_hat_data_grid/6.6/html/administration_and_configuration_guide/chap-externalize_sessions#Externalize-HTTP-Session-from-NQRust-EAP-6.x-to-NQRust-Data-Grid):
 
 1. Cache harus ditambahkan ke server Infinispan/JDG standalone.
 2. Cache dari item sebelumnya harus ditambahkan sebagai toko remote untuk cache sesi SAML yang sesuai.
@@ -417,11 +417,11 @@ dan cache sesi SAML lokal diperbarui sesuai.
 
 Setelah login SAML berhasil, kode aplikasi Anda mungkin ingin mendapatkan nilai atribut yang ditransmisikan dengan aser SAML.
 `HttpServletRequest.getUserPrincipal()` mengembalikan objek `Principal` yang dapat diubah tipe ke kelas NQRust-Identity tertentu
-yang disebut `org.nqrust-identity.adapters.saml.SamlPrincipal`.
+yang disebut `org.keycloak.adapters.saml.SamlPrincipal`.
 Objek ini memungkinkan Anda untuk melihat aser asli dan juga memiliki fungsi kecil untuk mencari nilai atribut.
 
 ```java
-package org.nqrust-identity.adapters.saml;
+package org.keycloak.adapters.saml;
 
 public class SamlPrincipal implements Serializable, Principal {
     /**
@@ -533,8 +533,8 @@ Adapter klien dapat melempar 400, 401, 403, dan 500 kesalahan.
 ```
 
 Adapter klien juga menetapkan atribut `HttpServletRequest` yang dapat Anda dapatkan.
-Nama atribut adalah `org.nqrust-identity.adapters.spi.AuthenticationError`.
-Ubah tipe ini ke: `org.nqrust-identity.adapters.saml.SamlAuthenticationError`.
+Nama atribut adalah `org.keycloak.adapters.spi.AuthenticationError`.
+Ubah tipe ini ke: `org.keycloak.adapters.saml.SamlAuthenticationError`.
 Kelas ini dapat memberi tahu Anda apa yang terjadi tepat.
 Jika atribut ini tidak diatur, maka adapter tidak bertanggung jawab atas kode kesalahan.
 
@@ -557,30 +557,30 @@ public class SamlAuthenticationError implements AuthenticationError {
 
 ## Penyelesaian Masalah
 
-Cara terbaik untuk menyelesaikan masalah adalah untuk mengaktifkan debugging untuk SAML di kedua adapter klien dan Server NQRust-Identity. Menggunakan kerangka kerja log Anda, atur level log ke `DEBUG` untuk paket `org.nqrust-identity.saml`. Mengaktifkan ini memungkinkan Anda untuk melihat dokumen permintaan dan respons SAML yang dikirim ke dan dari server.
+Cara terbaik untuk menyelesaikan masalah adalah untuk mengaktifkan debugging untuk SAML di kedua adapter klien dan Server NQRust-Identity. Menggunakan kerangka kerja log Anda, atur level log ke `DEBUG` untuk paket `org.keycloak.saml`. Mengaktifkan ini memungkinkan Anda untuk melihat dokumen permintaan dan respons SAML yang dikirim ke dan dari server.
 
 ## Multi Tenancy
 
 SAML menawarkan Multi Tenancy, yang berarti bahwa satu aplikasi target (WAR) dapat diamankan dengan beberapa realm NQRust-Identity. Realm dapat berada pada instance NQRust-Identity yang sama atau pada instance yang berbeda.
 
-Untuk melakukan ini, aplikasi harus memiliki beberapa file konfigurasi adapter `nqrust-identity-saml.xml`.
+Untuk melakukan ini, aplikasi harus memiliki beberapa file konfigurasi adapter `keycloak-saml.xml`.
 
 Meskipun Anda bisa memiliki beberapa instance WAR dengan file konfigurasi adapter yang berbeda di_deploy_ ke path konteks yang berbeda, ini mungkin tidak nyaman dan Anda mungkin juga ingin memilih realm berdasarkan sesuatu selain path konteks.
 
-NQRust-Identity membuatnya mungkin untuk memiliki penyelesai konfigurasi khusus, jadi Anda dapat memilih konfigurasi adapter mana yang digunakan untuk setiap permintaan. Di SAML, konfigurasi hanya menarik dalam pengolahan login; setelah pengguna login, sesi diotentikasi dan tidak masalah jika `nqrust-identity-saml.xml` yang dikembalikan berbeda. Untuk itu, mengembalikan konfigurasi yang sama untuk sesi yang sama adalah cara yang benar untuk pergi.
+NQRust-Identity membuatnya mungkin untuk memiliki penyelesai konfigurasi khusus, jadi Anda dapat memilih konfigurasi adapter mana yang digunakan untuk setiap permintaan. Di SAML, konfigurasi hanya menarik dalam pengolahan login; setelah pengguna login, sesi diotentikasi dan tidak masalah jika `keycloak-saml.xml` yang dikembalikan berbeda. Untuk itu, mengembalikan konfigurasi yang sama untuk sesi yang sama adalah cara yang benar untuk pergi.
 
-Untuk mencapai ini, buat implementasi dari `org.nqrust-identity.adapters.saml.SamlConfigResolver`. Contoh berikut menggunakan header `Host` untuk menemukan konfigurasi yang tepat dan memuat itu dan elemen terkait dariclasspath Java aplikasi:
+Untuk mencapai ini, buat implementasi dari `org.keycloak.adapters.saml.SamlConfigResolver`. Contoh berikut menggunakan header `Host` untuk menemukan konfigurasi yang tepat dan memuat itu dan elemen terkait dariclasspath Java aplikasi:
 
 ```java
 package example;
 
 import java.io.InputStream;
-import org.nqrust-identity.adapters.saml.SamlConfigResolver;
-import org.nqrust-identity.adapters.saml.SamlDeployment;
-import org.nqrust-identity.adapters.saml.config.parsers.DeploymentBuilder;
-import org.nqrust-identity.adapters.saml.config.parsers.ResourceLoader;
-import org.nqrust-identity.adapters.spi.HttpFacade;
-import org.nqrust-identity.saml.common.exceptions.ParsingException;
+import org.keycloak.adapters.saml.SamlConfigResolver;
+import org.keycloak.adapters.saml.SamlDeployment;
+import org.keycloak.adapters.saml.config.parsers.DeploymentBuilder;
+import org.keycloak.adapters.saml.config.parsers.ResourceLoader;
+import org.keycloak.adapters.spi.HttpFacade;
+import org.keycloak.saml.common.exceptions.ParsingException;
 
 public class SamlMultiTenantResolver implements SamlConfigResolver {
 
@@ -593,12 +593,12 @@ public class SamlMultiTenantResolver implements SamlConfigResolver {
         } else if (host.contains("tenant2")) {
             realm = "tenant2";
         } else {
-            throw new IllegalStateException("Not able to guess the nqrust-identity-saml.xml to load");
+            throw new IllegalStateException("Not able to guess the keycloak-saml.xml to load");
         }
 
-        InputStream is = getClass().getResourceAsStream("/" + realm + "-nqrust-identity-saml.xml");
+        InputStream is = getClass().getResourceAsStream("/" + realm + "-keycloak-saml.xml");
         if (is == null) {
-            throw new IllegalStateException("Not able to find the file /" + realm + "-nqrust-identity-saml.xml");
+            throw new IllegalStateException("Not able to find the file /" + realm + "-keycloak-saml.xml");
         }
 
         ResourceLoader loader = new ResourceLoader() {
@@ -617,13 +617,13 @@ public class SamlMultiTenantResolver implements SamlConfigResolver {
 }
 ```
 
-Anda juga harus mengonfigurasi implementasi `SamlConfigResolver` mana untuk digunakan dengan `nqrust-identity.config.resolver` context-param di `web.xml` Anda:
+Anda juga harus mengonfigurasi implementasi `SamlConfigResolver` mana untuk digunakan dengan `keycloak.config.resolver` context-param di `web.xml` Anda:
 
 ```xml
 <web-app>
     ...
     <context-param>
-        <param-name>nqrust-identity.config.resolver</param-name>
+        <param-name>keycloak.config.resolver</param-name>
         <param-value>example.SamlMultiTenantResolver</param-value>
     </context-param>
 </web-app>

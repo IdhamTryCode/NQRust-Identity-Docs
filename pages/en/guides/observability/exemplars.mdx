@@ -22,16 +22,14 @@ Metrics that support exemplars are:
 - `http_server_requests_seconds_count` (including histograms)
 
 See the guide HTTP metrics for details on this metric.
-- `nqrust-identity_credentials_password_hashing_validations_total`
+- `keycloak_credentials_password_hashing_validations_total`
 
 See the guide Self-provided metrics  for details on this metric.
-- `nqrust-identity_user_events_total`
+- `keycloak_user_events_total`
 
 See the guide Self-provided metrics  for details on this metric.
 
 See below for a screenshot of a heatmap visualization for latencies that is showing an exemplar when hovering over one of the pink indicators.
-
-![exemplar](/images/observability/exemplars-1.png)
 
 ## Setting up exemplars
 
@@ -41,26 +39,26 @@ To benefit from exemplars, perform the following steps:
 2. Enable tracing for NQRust-Identity as described in guide [Root cause analysis with tracing](/en/guides/observability/tracing).
 3. Enable exemplar storage in your monitoring system.
 
-  For Prometheus, this is a [preview feature that you need to enable](https://prometheus.io/docs/prometheus/latest/feature_flags/#exemplars-storage).
+   For Prometheus, this is a [preview feature that you need to enable](https://prometheus.io/docs/prometheus/latest/feature_flags/#exemplars-storage).
 4. Scrape the metrics using the `OpenMetricsText1.0.0` protocol, which is not enabled by default in Prometheus.
 
-  If you are using a `ServiceMonitor` or similar in a Kubernetes environment, this can be achieved by adding it to the spec of the custom resource:
+   If you are using a `ServiceMonitor` or similar in a Kubernetes environment, this can be achieved by adding it to the spec of the custom resource:
 
-  ```
-  apiVersion: monitoring.coreos.com/v1
-  kind: ServiceMonitor
-  metadata:
-    ...
-  spec:
-    scrapeProtocols:
-      - OpenMetricsText1.0.0
-  ```
+   ```
+   apiVersion: monitoring.coreos.com/v1
+   kind: ServiceMonitor
+   metadata:
+     ...
+   spec:
+     scrapeProtocols:
+       - OpenMetricsText1.0.0
+   ```
 5. Configure your metrics datasource where to link to for traces.
 
-  When using Grafana and Prometheus, this would be setting up a `exemplarTraceIdDestinations` for the Prometheus datasource, which then points to your tracing datasource that is provided by tools like Jaeger or Tempo.
+   When using Grafana and Prometheus, this would be setting up a `exemplarTraceIdDestinations` for the Prometheus datasource, which then points to your tracing datasource that is provided by tools like Jaeger or Tempo.
 6. Enable exemplars in your dashboards.
 
-  Enable the **Exemplars** toggle in each query on each dashboard where you want to show exemplars.
+   Enable the **Exemplars** toggle in each query on each dashboard where you want to show exemplars.
 When set up correctly, you will notice little dots or stars in your dashboards that you can click on to view the traces.
 
 <Callout type="info">
@@ -79,14 +77,14 @@ See [Root cause analysis with tracing](/en/guides/observability/tracing#sampling
 3. Log in to the NQRust-Identity instance to create some traces.
 4. Scrape the metrics with a command similar to the following and search for those metrics that have an exemplar set:
 
-  ```
-  $ curl -s http://localhost:9000/metrics \
-  -H 'Accept: application/openmetrics-text; version=1.0.0; charset=utf-8' \
-  | grep "#.*trace_id"
-  ```
+   ```
+   $ curl -s http://localhost:9000/metrics \
+   -H 'Accept: application/openmetrics-text; version=1.0.0; charset=utf-8' \
+   | grep "#.*trace_id"
+   ```
 
-  This should result in an output similar to the following. Note the additional `#` after which the span and trace IDs are added:
+   This should result in an output similar to the following. Note the additional `#` after which the span and trace IDs are added:
 
-  ```
-  http_server_requests_seconds_count {...} ... # {span_id="...",trace_id="..."} ...
-  ```
+   ```
+   http_server_requests_seconds_count {...} ... # {span_id="...",trace_id="..."} ...
+   ```

@@ -36,15 +36,12 @@ bin/kc.[sh|bat] start ... --event-metrics-user-tags=realm,idp,clientId ...
 ```
 
 Anda dapat membatasi peristiwa untuk metrik yang akan diekspos oleh NQRust-Identity.
-Lihat Panduan Administrasi Server tentang tipe peristiwa untuk melihat tinjauan peristiwa yang tersedia.
 
 Contoh berikut membatasi peristiwa yang dikumpulkan hanya untuk peristiwa `LOGIN` dan `LOGOUT`:
 
 ```bash
 bin/kc.[sh|bat] start ... --event-metrics-user-events=login,logout ...
 ```
-
-Lihat Metrik yang Disediakan Sendiri untuk deskripsi metrik yang dikumpulkan.
 
 ## Opsi yang Relevan
 

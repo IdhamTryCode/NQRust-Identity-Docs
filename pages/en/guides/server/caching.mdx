@@ -51,6 +51,8 @@ The following table gives an overview of the specific caches NQRust-Identity use
 
 ### Cache types and defaults
 
+**Local caches**
+
 NQRust-Identity caches persistent data locally to avoid unnecessary round-trips to the database.
 
 The following data is kept local to each node in the cluster using local caches:
@@ -68,12 +70,16 @@ In order to achieve an optimal runtime and avoid additional round-trips to the d
 the configuration for each cache to make sure the maximum number of entries is aligned with the size of your database. More entries
 you can cache, less often the server needs to fetch data from the database. You should evaluate the trade-offs between memory utilization and performance.
 
+**Invalidation of local caches**
+
 Local caching improves performance, but adds a challenge in multi-node setups.
 
 When one NQRust-Identity node updates data in the shared database, all other nodes need to be aware of it, so they invalidate that data from their caches.
 
 The `work` cache is a replicated cache and used for sending these invalidation messages. The entries/messages in this cache are very short-lived,
 and you should not expect this cache growing in size over time.
+
+**Authentication sessions**
 
 Authentication sessions are created whenever a user tries to authenticate. They are automatically destroyed once the authentication process
 completes or due to reaching their expiration time.
@@ -85,6 +91,8 @@ By relying on a distributable cache, authentication sessions are available to an
 to any node without losing their authentication state. However, production-ready deployments should always consider session affinity and favor redirecting users
 to the node where their sessions were initially created. By doing that, you are going to avoid unnecessary state transfer between nodes and improve
 CPU, memory, and network utilization.
+
+**User sessions**
 
 Once the user is authenticated, a user session is created. The user session tracks your active users and their state so that they can seamlessly
 authenticate to any application without being asked for their credentials again. For each application, the user authenticates with a client session, so that the server can track the applications the user is authenticated with and their state on a per-application basis.
@@ -104,6 +112,8 @@ CPU, memory, and network utilization.
 These in-memory caches for user sessions and client sessions are limited to, by default, 10000 entries per node which reduces the overall memory usage of NQRust-Identity for larger installations.
 The internal caches will run with only a single owner for each cache entry.
 
+**Offline user sessions**
+
 As an OpenID Connect Provider, the server is capable of authenticating users and issuing offline tokens. When issuing an offline token after successful authentication, the server creates an offline user session and offline client session.
 
 The following caches are used to store offline sessions:
@@ -113,14 +123,18 @@ The following caches are used to store offline sessions:
 
 Like the user and client sessions caches, the offline user and client session caches are limited to 10000 entries per node by default. Items which are evicted from the memory will be loaded on-demand from the database when needed.
 
+**Password brute force detection**
+
 The `loginFailures` distributed cache is used to track data about failed login attempts.
 This cache is needed for the Brute Force Protection feature to work in a multi-node NQRust-Identity setup.
+
+**Action tokens**
 
 Action tokens are used for scenarios when a user needs to confirm an action asynchronously, for example in the emails sent by the forgot password flow.
 The `actionTokens` distributed cache is used to track metadata about action tokens.
 
 <Callout type="default">
-  You can see the applied Infinispan configuration in the logs by configuring --log-level=info,org.nqrust-identity.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug.
+  You can see the applied Infinispan configuration in the logs by configuring `--log-level=info,org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug`.
 </Callout>
 
 ### Volatile user sessions
@@ -140,9 +154,9 @@ Follow these steps to enable this setup:
 
 1. Disable `persistent-user-sessions` feature using the following command:
 
-  ```
-  bin/kc.sh start --features-disabled=persistent-user-sessions ...
-  ```
+   ```
+   bin/kc.sh start --features-disabled=persistent-user-sessions ...
+   ```
 
 <Callout type="info">
   Disabling `persistent-user-sessions` is not possible when `multi-site` feature is enabled.
@@ -173,7 +187,7 @@ The configuration file can be an absolute path or path relative to the `conf/` d
 
 NQRust-Identity automatically creates all required caches with the expected configurations. You can add additional caches or override the default cache configurations in `conf/cache-ispn.xml` or in your own file provided via `--cache-config-file`.
 
-To see the applied Infinispan configuration in the logs, configure `--log-level=info,org.nqrust-identity.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug`.
+To see the applied Infinispan configuration in the logs, configure `--log-level=info,org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug`.
 
 <Callout type="warning">
   While overriding the default cache configurations via XML is technically possible, it is not supported.
@@ -217,6 +231,8 @@ For example, if `num_owners=2` is configured for a cache, it will ensure that th
 
 The following topology information is available to configure:
 
+**Site name**
+
 If your NQRust-Identity cluster is deployed between different datacenters, use this option to ensure the data replicas are stored in a different datacenter.
 It prevents data loss if a datacenter goes offline or fails.
 
@@ -225,6 +241,8 @@ The value itself is not important, but each datacenter must have a unique value.
 
 For example: `--spi-cache-embedded--default--site-name=site-1`
 
+**Rack name**
+
 If your NQRust-Identity cluster is running in different racks on your datacenter, set this option to ensure the data replicas are stored in a different physical rack.
 It prevents data loss if a rack is suddenly disconnected or fails.
 
@@ -232,6 +250,8 @@ Use the SPI option `spi-cache-embedded--default--rack-name` (or environment vari
 The value itself is not important, but each rack must have a unique value.
 
 For example: `--spi-cache-embedded--default--rack-name=rack-1`
+
+**Machine name**
 
 If you have multiple NQRust-Identity instances running on the same physical machine (using virtual machines or containers for example), use this option to ensure the data replicas are stored in different physical machines.
 It prevents data loss against a physical machine failure.
@@ -290,14 +310,14 @@ When using the `tcp`, `udp` or `jdbc-ping-udp` stack, each cluster must use a di
 By default, NQRust-Identity uses `239.6.7.8` as multicast address for `jgroups.mcast_addr` and `46655` for the multicast port `jgroups.mcast_port`.
 
 <Callout type="info">
-  Use -D&lt;property&gt;=&lt;value&gt; to pass the properties via the JAVA_OPTS_APPEND environment variable or in the CLI command.
+  Use `-D<property>=<value>` to pass the properties via the `JAVA_OPTS_APPEND` environment variable or in the CLI command.
 </Callout>
 
 **Additional Stacks**
 
 It is recommended to use one of the stacks available above.
 Additional stacks are provided by Infinispan, but it is outside the scope of this guide how to configure them.
-Please refer to [Setting up Infinispan cluster transport](https://infinispan.org/docs/stable/titles/embedding/embedding.html#cluster-transport) and [Customizing JGroups stacks](https://infinispan.org/docs/stable/titles/embedding/embedding.html#customizing-jgroups-stacks_cluster-transport) for further documentation.
+Please refer to [Setting up Infinispan cluster transport](https://infinispan.org/docs/stable/titles/embedding/embedding.html#cluster-transport) and [Customizing JGroups stacks](https://infinispan.org/docs/stable/titles/embedding/embedding.html#customizing-jgroups-stacks-cluster-transport) for further documentation.
 
 ## Securing transport stacks
 
@@ -335,7 +355,7 @@ To allow direct mTLS communication for NQRust-Identity when using Istio:
   spec:
     selector:
       matchLabels:
-        app: nqrust-identity 
+        app: keycloak 
     portLevelMtls:
       "7800": 
         mode: PERMISSIVE
@@ -363,8 +383,8 @@ The table below shows the TCP ports that need to be open for the `jdbc-ping` sta
 | `57800` |  | `jgroups.fd.port-offset` | Failure detection by protocol `FD_SOCK2`.<br/>It listens to the abrupt closing of a socket to suspect a NQRust-Identity server failure.<br/>The `jgroups.fd.port-offset` property defines the offset from the `cache-embedded-network-bind-port` option or `jgroups.bind.port` property.<br/>By default, the offset is set to 50000, making the failure detection port 57800. |
 
 <Callout type="info">
-  If an option is not available for the port you require, configure it using a system property -D&lt;property&gt;=&lt;value&gt;
-  in your JAVA_OPTS_APPEND environment variable or in your CLI command.
+  If an option is not available for the port you require, configure it using a system property `-D<property>=<value>`
+  in your `JAVA_OPTS_APPEND` environment variable or in your CLI command.
 </Callout>
 
 ## Network bind address
@@ -421,9 +441,6 @@ To verify if the cluster is formed properly, check one of these locations:
 Under the **Provider Info** section, locate the **connectionsInfinispan** entry.
 Click on **Show more** to expand its details.
 You should find information about the cluster status and the health of individual caches.
-
-  ![Verify cluster and network health via Admin UI](/images/server/caching-1.png)
-
 - Logs
 
   Infinispan logs a cluster view every time a new instance joins or leaves the cluster.

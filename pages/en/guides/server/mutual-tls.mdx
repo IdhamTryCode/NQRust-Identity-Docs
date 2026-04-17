@@ -31,12 +31,12 @@ the value to `request`, NQRust-Identity will also accept requests without a cert
 <Callout type="info">
   Management interface properties are inherited from the main HTTP server, including mTLS settings.
   It means when mTLS is set, it is also enabled for the management interface.
-  To override the behavior, use the https-management-client-auth property.
+  To override the behavior, use the `https-management-client-auth` property.
 </Callout>
 
 ## Using a dedicated truststore for mTLS
 
-By default, NQRust-Identity uses the System Truststore to validate certificates. See Configuring trusted certificates for details.
+By default, NQRust-Identity uses the System Truststore to validate certificates. See [Configuring trusted certificates](/en/guides/server/identity-truststore) for details.
 
 If you need to use a dedicated truststore for mTLS, you can configure the location of this truststore by running the following command:
 
@@ -61,8 +61,6 @@ instead, e.g. when NQRust-Identity tries to get a token from a token endpoint of
 the HttpClient to provide the right certificates in the keystore for the outgoing request. To configure mTLS in these scenarios, see [Configuring outgoing HTTP requests](/en/guides/server/outgoinghttp).
 
 ### Configuring X.509 Authentication
-
-For more information on how to configure X.509 Authentication, see X.509 Client Certificate User Authentication section.
 
 ## Relevant options
 

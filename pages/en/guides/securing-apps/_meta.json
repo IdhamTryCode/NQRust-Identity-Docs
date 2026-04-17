@@ -1,4 +1,7 @@
 {
+  "index": {
+    "display": "hidden"
+  },
   "overview": "Planning for securing applications and services",
   "oidc-layers": "Securing applications and services with OpenID Connect",
   "javascript-adapter": "NQRust-Identity JavaScript adapter",

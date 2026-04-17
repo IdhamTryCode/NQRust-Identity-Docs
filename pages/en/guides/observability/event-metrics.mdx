@@ -36,15 +36,12 @@ bin/kc.[sh|bat] start ... --event-metrics-user-tags=realm,idp,clientId ...
 ```
 
 You can limit the events for which NQRust-Identity will expose metrics.
-See the Server Administration Guide on event types for an overview of the available events.
 
 The following example limits the events collected to `LOGIN` and `LOGOUT` events:
 
 ```bash
 bin/kc.[sh|bat] start ... --event-metrics-user-events=login,logout ...
 ```
-
-See Self-provided metrics for a description of the metrics collected.
 
 ## Relevant options
 

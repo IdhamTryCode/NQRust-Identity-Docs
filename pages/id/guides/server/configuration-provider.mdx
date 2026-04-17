@@ -35,7 +35,7 @@ spi-<spi-id>-<provider-id>-<property>=<value>
   nama properti enabled dilindungi secara efektif untuk mengaktifkan / menonaktifkan penyedia
 </Callout>
 
-Semua nama tersebut (untuk spi, penyedia, dan properti) harus dalam huruf kecil dan jika nama dalam bentuk camel-case seperti `myNQRust-IdentityProvider`, harus termasuk tanda hubung (`-`) sebelum huruf kapital sebagai berikut: `my-nqrust-identity-provider`.
+Semua nama tersebut (untuk spi, penyedia, dan properti) harus dalam huruf kecil dan jika nama dalam bentuk camel-case seperti `myKeycloakProvider`, harus termasuk tanda hubung (`-`) sebelum huruf kapital sebagai berikut: `my-keycloak-provider`.
 
 Mengambil `HttpClientSpi` SPI sebagai contoh, nama SPI adalah `connectionsHttpClient` dan salah satu implementasi penyedia yang tersedia bernama `default`. Untuk mengatur properti `connectionPoolSize` Anda akan menggunakan opsi konfigurasi sebagai berikut:
 
@@ -141,4 +141,3 @@ Setelah Anda melakukan itu, server akan membuat dependensi tambahan ini tersedia
 ## Referensi
 
 - [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration)
-- Dokumentasi Pengembang Server

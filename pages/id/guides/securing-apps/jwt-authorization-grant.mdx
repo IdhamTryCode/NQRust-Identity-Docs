@@ -7,7 +7,7 @@ description: Izin Hukum JWT - Dokumentasi NQRust-Identity
 
 import { Callout } from 'nextra/components'
 
-Panduan ini mendefinisikan bagaimana Token Bearer JWT dapat digunakan dalam NQRust-Identity sebagai otorisasi hukum. Fitur ini memungkinkan klien untuk mengirim aser JWT untuk meminta token akses ketika klien ingin menggunakan hubungan kepercayaan yang sudah ada tanpa langkah persetujuan pengguna langsung di server otorisasi. Aser disahkan hanya melalui semantik JWT (klaim dan tanda tangan). Hubungan kepercayaan biasanya merujuk pada server Provider Identitas lainnya (server OIDC lainnya), dan memungkinkan untuk mendapatkan token akses lintas domain atau lintas realm. Dalam arti ini, itu serupa dengan permintaan eksternal ke internal dalam pertukaran token V1 (lihat [Mengonfigurasi dan menggunakan pertukaran token](/en/guides/securing-apps/token-exchange#_external-token-to-internal-token-exchange) untuk informasi lebih lanjut).
+Panduan ini mendefinisikan bagaimana Token Bearer JWT dapat digunakan dalam NQRust-Identity sebagai otorisasi hukum. Fitur ini memungkinkan klien untuk mengirim aser JWT untuk meminta token akses ketika klien ingin menggunakan hubungan kepercayaan yang sudah ada tanpa langkah persetujuan pengguna langsung di server otorisasi. Aser disahkan hanya melalui semantik JWT (klaim dan tanda tangan). Hubungan kepercayaan biasanya merujuk pada server Provider Identitas lainnya (server OIDC lainnya), dan memungkinkan untuk mendapatkan token akses lintas domain atau lintas realm. Dalam arti ini, itu serupa dengan permintaan eksternal ke internal dalam pertukaran token V1 (lihat [Mengonfigurasi dan menggunakan pertukaran token](/en/guides/securing-apps/token-exchange#external-token-to-internal-token-exchange) untuk informasi lebih lanjut).
 
 Izin Hukum JWT di spesifikasikan oleh dua RFC yang berbeda.
 
@@ -64,7 +64,7 @@ Parameter penting adalah **aser**. Di bawah ini adalah contoh objek JSON yang da
   "jti":"abcd1234-5678-efgh-ijkl-9012mnopqrst",
   "iss":"https://jwt-idp.example.com",
   "sub":"b3588c7e-14cb-46a9-9387-28adfd82f7a4",
-  "aud":"https://nqrust-identity.server/realms/demo",
+  "aud":"https://keycloak.server/realms/demo",
   "iat":1764839065,
   "exp":1764839365,
   "other-claim":true
@@ -102,7 +102,7 @@ Fitur Izin Hukum JWT memerlukan aser JWT sebelumnya untuk dipertukarkan dengan t
 
 Jika `domaina` adalah server yang berbeda dari NQRust-Identity, kita tidak tahu bagaimana JWT awal itu diperoleh. Tapi perhatikan bahwa spesifikasi menegakkan beberapa pemrosesan aser untuk valid dan mengembalikan token akses. Cara klien mendapatkan atau menghasilkan aser JWT seperti itu di `domaina` sepenuhnya bergantung pada server dan klien `domaina`.
 
-Dalam kasus provider identitas eksternal adalah server NQRust-Identity atau realm lainnya, Pertukaran Token Standar dapat digunakan untuk mendapatkan token seperti itu (lihat [Mengonfigurasi dan menggunakan pertukaran token](/en/guides/securing-apps/token-exchange#_standard-token-exchange) untuk informasi lebih lanjut). Ketika kedua pihak adalah realm NQRust-Identity, ide dapat diRingkas dalam dua poin dasar:
+Dalam kasus provider identitas eksternal adalah server NQRust-Identity atau realm lainnya, Pertukaran Token Standar dapat digunakan untuk mendapatkan token seperti itu (lihat [Mengonfigurasi dan menggunakan pertukaran token](/en/guides/securing-apps/token-exchange#standard-token-exchange) untuk informasi lebih lanjut). Ketika kedua pihak adalah realm NQRust-Identity, ide dapat diRingkas dalam dua poin dasar:
 
 1. Untuk `domaina`, `domainb` adalah audiens yang dapat dibatasi melalui pertukaran token.
 2. Untuk `domainb`, `domaina` adalah Provider Identitas yang digunakan untuk memvalidasi aser. Pengguna di `domainb` juga adalah pengguna yang valid sebelumnya dihubungkan dengan `domaina` melalui provider identitas.

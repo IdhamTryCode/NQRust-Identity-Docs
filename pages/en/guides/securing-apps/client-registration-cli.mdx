@@ -24,7 +24,7 @@ To allow a particular user to use `Client Registration CLI`, the NQRust-Identity
 5. Click **Assign** to grant a full set of client management permissions. Another option is to choose **view-clients** for read-only or **create-client** to create new clients.
 6. Select **Available Roles**, **manage-client** to grant a full set of client management permissions. Another option is to choose **view-clients** for read-only or **create-client** to create new clients.
 
-  __ These permissions grant the user the capability to perform operations without the use of Initial Access Token or Registration Access Token (see [Using the client registration service](/en/guides/securing-apps/client-registration#_authentication) for more information).
+   __ These permissions grant the user the capability to perform operations without the use of Initial Access Token or Registration Access Token (see [Using the client registration service](/en/guides/securing-apps/client-registration#authentication) for more information).
 
 It is possible to not assign any `realm-management` roles to a user. In that case, a user can still log in with the Client Registration CLI but cannot use it without an Initial Access Token. Trying to perform any operations without a token results in a **403 Forbidden** error.
 
@@ -39,16 +39,16 @@ By default, the server recognizes the Client Registration CLI as the `admin-cli`
 3. Strengthen the security by toggling **Client authentication** to **On**.
 4. Choose the type of account that you want to use.
 
-  1. If you want to use a service account associated with the client, check **Service accounts roles**.
-  2. If you prefer to use a regular user account, check **Direct access grants**.
+   1. If you want to use a service account associated with the client, check **Service accounts roles**.
+   2. If you prefer to use a regular user account, check **Direct access grants**.
 5. Click **Next**.
 6. Click **Save**.
 7. Click the **Credentials** tab.
 
-  Configure either `Client Id and Secret` or `Signed JWT`.
+   Configure either `Client Id and Secret` or `Signed JWT`.
 8. If you are using service account roles, click the **Service Account Roles** tab.
 
-  Select the roles to configure the access for the service account. For the details on what roles to select, see [Configuring a new regular user for use with Client Registration CLI](#_configuring_a_user_for_client_registration_cli).
+   Select the roles to configure the access for the service account. For the details on what roles to select, see [Configuring a new regular user for use with Client Registration CLI](#configuring-a-user-for-client-registration-cli).
 9. Click **Save**.
 
 When you run the `kcreg config credentials`, use the `--secret` option to supply the configured secret.
@@ -67,56 +67,56 @@ For example, on:
 - Linux:
 
 ```
-$ export PATH=$PATH:$NQRUST-IDENTITY_HOME/bin
+$ export PATH=$PATH:$KEYCLOAK_HOME/bin
 $ kcreg.sh
 ```
 
 - Windows:
 
 ```
-c:\> set PATH=%PATH%;%NQRUST-IDENTITY_HOME%\bin
+c:\> set PATH=%PATH%;%KEYCLOAK_HOME%\bin
 c:\> kcreg
 ```
 
-`NQRUST-IDENTITY_HOME` refers to a directory where the NQRust-Identity Server distribution was unpacked.
+`KEYCLOAK_HOME` refers to a directory where the NQRust-Identity Server distribution was unpacked.
 
 ## Using the Client Registration CLI
 
 1. Start an authenticated session by logging in with your credentials.
 2. Run commands on the `Client Registration REST` endpoint.
 
-  For example, on:
+   For example, on:
 
-  - Linux:
+   - Linux:
 
-    ```
-    $ kcreg.sh config credentials --server http://localhost:8080 --realm demo --user user --client reg-cli
-    $ kcreg.sh create -s clientId=my_client -s 'redirectUris=["http://localhost:8980/myapp/*"]'
-    $ kcreg.sh get my_client
-    ```
-  - Windows:
+     ```
+     $ kcreg.sh config credentials --server http://localhost:8080 --realm demo --user user --client reg-cli
+     $ kcreg.sh create -s clientId=my_client -s 'redirectUris=["http://localhost:8980/myapp/*"]'
+     $ kcreg.sh get my_client
+     ```
+   - Windows:
 
-    ```
-    c:\> kcreg config credentials --server http://localhost:8080 --realm demo --user user --client reg-cli
-    c:\> kcreg create -s clientId=my_client -s "redirectUris=[\"http://localhost:8980/myapp/*\"]"
-    c:\> kcreg get my_client
-    ```
+     ```
+     c:\> kcreg config credentials --server http://localhost:8080 --realm demo --user user --client reg-cli
+     c:\> kcreg create -s clientId=my_client -s "redirectUris=[\"http://localhost:8980/myapp/*\"]"
+     c:\> kcreg get my_client
+     ```
 
-    __ In a production environment, NQRust-Identity has to be accessed with `https:` to avoid exposing tokens to network sniffers.
+     __ In a production environment, NQRust-Identity has to be accessed with `https:` to avoid exposing tokens to network sniffers.
 3. If a server’s certificate is not issued by one of the trusted certificate authorities (CAs) that are included in Java’s default certificate truststore, prepare a `truststore.jks` file and instruct the Client Registration CLI to use it.
 
-  For example, on:
+   For example, on:
 
-  - Linux:
+   - Linux:
 
-    ```
-    $ kcreg.sh config truststore --trustpass $PASSWORD ~/.nqrust-identity/truststore.jks
-    ```
-  - Windows:
+     ```
+     $ kcreg.sh config truststore --trustpass $PASSWORD ~/.keycloak/truststore.jks
+     ```
+   - Windows:
 
-    ```
-    c:\> kcreg config truststore --trustpass %PASSWORD% %HOMEPATH%\.nqrust-identity\truststore.jks
-    ```
+     ```
+     c:\> kcreg config truststore --trustpass %PASSWORD% %HOMEPATH%\.keycloak\truststore.jks
+     ```
 
 ### Logging in
 
@@ -127,7 +127,7 @@ Regardless of the login method, the account that logs in needs proper permission
 
 You cannot configure users with the Client Registration CLI. Use the Admin Console web interface or the Admin Client CLI to configure users. See Server Administration Guide for more details.
 
-When `kcreg` successfully logs in, it receives authorization tokens and saves them in a private configuration file so the tokens can be used for subsequent invocations. See [Working with alternative configurations](#_working_with_alternative_configurations) for more information on configuration files.
+When `kcreg` successfully logs in, it receives authorization tokens and saves them in a private configuration file so the tokens can be used for subsequent invocations. See [Working with alternative configurations](#working-with-alternative-configurations) for more information on configuration files.
 
 See the built-in help for more information on using the Client Registration CLI.
 
@@ -149,7 +149,7 @@ See `kcreg config credentials --help` for more information about starting an aut
 
 ### Working with alternative configurations
 
-By default, the Client Registration CLI automatically maintains a configuration file at a default location, `./.nqrust-identity/kcreg.config`, under the user’s home directory. You can use the `--config` option to point to a different file or location to maintain multiple authenticated sessions in parallel. It is the safest way to perform operations tied to a single configuration file from a single thread.
+By default, the Client Registration CLI automatically maintains a configuration file at a default location, `./.keycloak/kcreg.config`, under the user’s home directory. You can use the `--config` option to point to a different file or location to maintain multiple authenticated sessions in parallel. It is the safest way to perform operations tied to a single configuration file from a single thread.
 
 <Callout type="warning">
   Do not make the configuration file visible to other users on the system. The configuration file contains access tokens and secrets that should be kept private.
@@ -195,7 +195,7 @@ When using an Initial Access Token, the server response includes a newly issued 
 
 The Client Registration CLI automatically uses its private configuration file to save and use this token with its associated client. As long as the same configuration file is used for all client operations, the developer does not need to authenticate to read, update, or delete a client that was created this way.
 
-See [Using the client registration service](/en/guides/securing-apps/client-registration#_authentication) for more information about Initial Access and Registration Access Tokens.
+See [Using the client registration service](/en/guides/securing-apps/client-registration#authentication) for more information about Initial Access and Registration Access Tokens.
 
 Run the `kcreg config initial-token --help` and `kcreg config registration-token --help` commands for more information on how to configure tokens with the Client Registration CLI.
 
@@ -247,13 +247,13 @@ For example, on:
 - Linux:
 
 ```
-$ kcreg.sh get myclient -e install > nqrust-identity.json
+$ kcreg.sh get myclient -e install > keycloak.json
 ```
 
 - Windows:
 
 ```
-C:\> kcreg get myclient -e install > nqrust-identity.json
+C:\> kcreg get myclient -e install > keycloak.json
 ```
 
 Run the `kcreg get --help` command for more information about the `kcreg get` command.

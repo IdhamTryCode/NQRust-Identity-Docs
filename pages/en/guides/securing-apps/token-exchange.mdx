@@ -9,8 +9,8 @@ import { Callout } from 'nextra/components'
 
 Token exchange is the process that allows a client application to exchange one token for another token. In NQRust-Identity, two features implement token exchange:
 
-- [Standard token exchange: version 2 (V2)](#_standard-token-exchange) - This feature is the fully supported token exchange implementation that is enabled by default once the NQRust-Identity server is started.
-- [Legacy token exchange: version 1 (V1)](#_legacy-token-exchange) - This preview feature is deprecated and not enabled by default once NQRust-Identity server is started. In future versions legacy Token Exchange will be replaced by version 2, JWT Authorization grant and other features.
+- [Standard token exchange: version 2 (V2)](#standard-token-exchange) - This feature is the fully supported token exchange implementation that is enabled by default once the NQRust-Identity server is started.
+- [Legacy token exchange: version 1 (V1)](#legacy-token-exchange) - This preview feature is deprecated and not enabled by default once NQRust-Identity server is started. In future versions legacy Token Exchange will be replaced by version 2, JWT Authorization grant and other features.
 
 The capabilities of NQRust-Identity for token exchange are as follows:
 
@@ -21,7 +21,7 @@ The capabilities of NQRust-Identity for token exchange are as follows:
 
 The standard token exchange supports only use-case (1). The legacy token exchange supports the four use-cases, but it is a preview and deprecated feature. Therefore, the standard token exchange V2 is recommended  since it is supported and will be maintained for the future. The legacy token exchange is useful for last three use cases, but it may not be
 backwards compatible with future NQRust-Identity versions, and it will be finally removed. You can also enable both token exchange features and use them together. For example, you could use both internal-internal exchange
-provided by V2 together with other use cases that are supported by V1. For more details, see this [token exchange comparison](#_standard-token-exchange-comparison).
+provided by V2 together with other use cases that are supported by V1. For more details, see this [token exchange comparison](#standard-token-exchange-comparison).
 
 ## Standard token exchange
 
@@ -37,11 +37,9 @@ Consider this typical token exchange flow:
 use of the token
 3. To serve the request, the `requester-client` may need to call another service `target-client`. However it may be unable to use the token sent to it from `initial-client`. For example:
 
-![Token Exchange Example Flow](/images/securing-apps/token-exchange-1.png)
+   The token has insufficient permissions or scopes. The `target-client` is not specified as the token audience; the token was intended to be used to invoke `requester-client`. The token has too many permissions; therefore, the `requester-client` may not want to share it with the `target-client`.
 
-  The token has insufficient permissions or scopes. The `target-client` is not specified as the token audience; the token was intended to be used to invoke `requester-client`. The token has too many permissions; therefore, the `requester-client` may not want to share it with the `target-client`.
-
-  Any of these situations could be the reason to invoke the token exchange. The `requester-client` may need to send the token exchange request to the NQRust-Identity server and use the original token from step 1 as the
+   Any of these situations could be the reason to invoke the token exchange. The `requester-client` may need to send the token exchange request to the NQRust-Identity server and use the original token from step 1 as the
 _subject token_ and exchange it for another token _requested token_.
 4. The _requested token_ is returned to `requester-client`. This token can now be sent to the `target-client`.
 5. The `target-client` can fulfill the request and return the response to the `requester-client`. The `requester-client` can then follow and return the response to the request from step 2.
@@ -82,7 +80,7 @@ The example token exchange response may look like this:
 ### How to enable token exchange
 
 For standard token exchange, `token-exchange-standard:v2` is enabled by default.  However, you also need to enable the **Standard token exchange** switch for
-the client that is supposed to send token exchange requests, such as the `requester-client` from the [previous example](#_standard-token-exchange-flow). Note that `requester-client` must be a confidential client.
+the client that is supposed to send token exchange requests, such as the `requester-client` from the [previous example](#standard-token-exchange-flow). Note that `requester-client` must be a confidential client.
 Also, as is the case for other grant requests, the token exchange requests must be authenticated by the appropriate client authentication method that is configured
 for the client.
 
@@ -90,33 +88,53 @@ for the client.
 
 The parameters are aligned with the [Token exchange specification](https://datatracker.ietf.org/doc/html/rfc8693#name-token-exchange-request-and-), which are described as follows:
 
+**grant_type**
+
 _REQUIRED._ The value of the parameter must be `urn:ietf:params:oauth:grant-type:token-exchange`.
 
+**subject_token**
+
 _REQUIRED._ A security token that represents the identity of the party on behalf of whom the request is being made.
+
+**subject_token_type**
 
 _REQUIRED._ This parameter is the type of the token passed in the `subject_token` parameter. This must be `urn:ietf:params:oauth:token-type:access_token` when the standard token exchange is being used
 because NQRust-Identity does not support other types for the standard token exchange.
 
+**requested_token_type**
+
 _OPTIONAL._ This parameter represents the type of token that the client wants to exchange for. In this version,  only oauth and OpenID Connect token types are supported. The default value for this
 is `urn:ietf:params:oauth:token-type:access_token`. Another possible value is `urn:ietf:params:oauth:token-type:id_token` if the ID token issued to `requester-client` is requested. The possible value might
-be also `urn:ietf:params:oauth:token-type:refresh_token`; in this case, you will receive both an access token and refresh token within the response. However, the refresh token is allowed if the `Allow refresh token in Standard Token Exchange` client configuration option is enabled as specified in the [standard token exchange](#_standard-token-exchange-details) section.
+be also `urn:ietf:params:oauth:token-type:refresh_token`; in this case, you will receive both an access token and refresh token within the response. However, the refresh token is allowed if the `Allow refresh token in Standard Token Exchange` client configuration option is enabled as specified in the [standard token exchange](#standard-token-exchange-details) section.
+
+**scope**
 
 _OPTIONAL._ This parameter represents the space-delimited set of OAuth and OpenID Connect scopes that the client is requesting. You can use Optional client scopes
-of the `requester-client`. For more details, see [scopes and audiences](#_standard-token-exchange-scope). Omitting this parameter means that only
+of the `requester-client`. For more details, see [scopes and audiences](#standard-token-exchange-scope). Omitting this parameter means that only
 the Default client scopes are effectively used.
 
-_OPTIONAL._ Audience specifies `client_id` of the client, which is supposed to be used as the token audience. In [the example above](#_standard-token-exchange-flow), it could be `target-client`. Multiple
+**audience**
+
+_OPTIONAL._ Audience specifies `client_id` of the client, which is supposed to be used as the token audience. In [the example above](#standard-token-exchange-flow), it could be `target-client`. Multiple
 values of this parameter are allowed, which means that you want the token to contain multiple audiences to be used by `requester-client` in multiple different services. For example
-`audience=target-client1&audience=target-client2` can be used in the request. More details in [the section about scopes and audiences](#_standard-token-exchange-scope).
+`audience=target-client1&audience=target-client2` can be used in the request. More details in [the section about scopes and audiences](#standard-token-exchange-scope).
 
 A successful response is returned in the JSON format. It contains similar parameters such as the response from other grants. The following are some token exchange specifics of the more notable parameters:
+
+**access_token**
 
 The requested access token. Note that if request specified `requested_token_type=urn:ietf:params:oauth:token-type:id_token`, this parameter may actually contain the ID token instead of access token.
 This behavior is per [the token exchange specification](https://datatracker.ietf.org/doc/html/rfc8693#section-2.2.1).
 
+**refresh_token**
+
 The refresh token. It is included just if `requested_token_type=urn:ietf:params:oauth:token-type:refresh_token` is used and the client has enabled issuing refresh tokens from the token exchange
 
+**issued_token_type**
+
 The issued requested token type. Same value as `requested_token_type` used in the request.
+
+**token_type**
 
 Usually `Bearer` if issued token type was access token or refresh token. In case of ID token requested, the value is `N_A`
 
@@ -137,13 +155,13 @@ client role mappings, it must include some client roles of the clients requested
 roles of the clients requested by the `audience`, the client scope will be filtered.
 
 <Callout type="info">
-  The audience parameter can be used to filter the audiences that are coming from the used client scopes. However, this parameter will not add more audiences. When the audience parameter is omitted,
-  no filtering occurs. As a result, the audience parameter is effectively used for "downscoping" the token to make sure that it contains only the requested audiences. However, the scope parameter is used
+  The `audience` parameter can be used to filter the audiences that are coming from the used client scopes. However, this parameter will not add more audiences. When the audience parameter is omitted,
+  no filtering occurs. As a result, the `audience` parameter is effectively used for "downscoping" the token to make sure that it contains only the requested audiences. However, the `scope` parameter is used
   to add optional client scopes and hence it can be used for "upscoping" and adding more scopes.
 </Callout>
 
 <Callout type="info">
-  By default, token exchange can be used to request extra scopes and audiences that are not present in the initial subject_token. If, for security reasons, you want to ensure that scopes are limited to the ones already granted to the subject_token, the downscope-assertion-grant-enforcer policy executor can be applied to the client. This executor enforces that only downscoping is allowed for token exchange. See Downscoping and Client Policies chapters in the Server Administration Guide for more information.
+  By default, token exchange can be used to request extra scopes and audiences that are not present in the initial `subject_token`. If, for security reasons, you want to ensure that scopes are limited to the ones already granted to the `subject_token`, the `downscope-assertion-grant-enforcer` policy executor can be applied to the client. This executor enforces that only downscoping is allowed for token exchange. See Downscoping and Client Policies chapters in the Server Administration Guide for more information.
 </Callout>
 
 #### Examples
@@ -243,8 +261,6 @@ for `client-scope`, `grant-type` and `client-roles`.
 Admin Console in the **Advanced** tab of the OIDC client in the **OpenID Connect Compatibility Modes** section. The other available value of the switch is **Same session**, which means that the refresh token is
 allowed only if the refresh token can use the same user session as the subject token. If that subject token is coming from a Transient session or from an
 Offline session, the requesting refresh token will not be allowed. Similarly it will not be allowed to request an offline token (using `scope=offline_access`).
-
-![Enabling refresh token in Token Exchange](/images/securing-apps/token-exchange-3.png)
 
 - Token exchange never creates a new user session. In case that `requested_token_type` is a refresh token, it may eventually create a new client session in the user session
 for the requester client (if the client session was not yet created).

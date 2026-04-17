@@ -68,7 +68,7 @@ Kemudian gunakan alat seperti Grafana untuk menampilkan rentang waktu 30 hari da
 ```
 count_over_time(
   sum (up{
-    container="nqrust-identity", 
+    container="keycloak", 
     namespace="$namespace"
   } > 0)[30d:15s]
 ) 
@@ -97,7 +97,7 @@ sum(
     http_server_requests_seconds_bucket{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
       le="0.25", 
-      container="nqrust-identity", 
+      container="keycloak", 
       namespace="$namespace"}
     [30d] 
   )
@@ -107,7 +107,7 @@ sum(
   rate(
     http_server_requests_seconds_count{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
-      container="nqrust-identity",
+      container="keycloak",
       namespace="$namespace"}
     [30d] 
   )
@@ -134,7 +134,7 @@ sum(
     http_server_requests_seconds_count{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
       outcome="SERVER_ERROR", 
-      container="nqrust-identity", 
+      container="keycloak", 
       namespace="$namespace"}
     [30d] 
   )
@@ -144,7 +144,7 @@ sum(
   rate(
     http_server_requests_seconds_count{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
-      container="nqrust-identity", 
+      container="keycloak", 
       namespace="$namespace"}
     [30d] 
   )

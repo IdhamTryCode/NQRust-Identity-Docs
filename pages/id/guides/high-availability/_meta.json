@@ -1,3 +1,6 @@
 {
-  "introduction": "High availability overview"
+  "index": {
+    "display": "hidden"
+  },
+  "introduction": "Ikhtisar high availability"
 }

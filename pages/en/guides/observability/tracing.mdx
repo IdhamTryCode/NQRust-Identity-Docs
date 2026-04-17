@@ -23,16 +23,16 @@ bin/kc.[sh|bat] start --tracing-enabled=true
 
 By default, the trace exporters send out data in batches, using the `gRPC` protocol and endpoint `http://localhost:4317`.
 
-The default service name is `nqrust-identity`, specified via the `tracing-service-name` property, which takes precedence over `service.name` defined in the `tracing-resource-attributes` property.
+The default service name is `keycloak`, specified via the `tracing-service-name` property, which takes precedence over `service.name` defined in the `tracing-resource-attributes` property.
 
 For more information about resource attributes that can be provided via the `tracing-resource-attributes` property, see the [Quarkus OpenTelemetry Resource](https://quarkus.io/guides/opentelemetry#resource) guide.
 
 <Callout type="warning">
-  Properties tracing-service-name and tracing-resource-attributes are deprecated, and you should use the telemetry-service-name and telemetry-resource-attributes, respectively.
+  Properties `tracing-service-name` and `tracing-resource-attributes` are **deprecated**, and you should use the `telemetry-service-name` and `telemetry-resource-attributes`, respectively.
 </Callout>
 
 <Callout type="info">
-  Tracing can be enabled only when the opentelemetry feature is enabled (by default).
+  Tracing can be enabled only when the `opentelemetry` feature is **enabled** (by default).
 </Callout>
 
 For more tracing settings, see all possible configurations below.
@@ -57,16 +57,20 @@ jaegertracing/all-in-one
 
 ### Exposed ports
 
+**`16686`**
+
 Jaeger UI
 
+**`4317`**
+
 OpenTelemetry Protocol gRPC receiver (default)
+
+**`4318`**
 
 OpenTelemetry Protocol HTTP receiver
 
 You can visit the Jaeger UI on `http://localhost:16686/` to see the tracing information.
 The Jaeger UI might look like this with an arbitrary NQRust-Identity trace:
-
-![Jaeger UI](/images/observability/tracing-1.png)
 
 ## Information in traces
 
@@ -85,19 +89,35 @@ NQRust-Identity adds tags to traces depending on the type of the request. All ta
 
 Example tags are:
 
+**`kc.clientId`**
+
 Client ID
+
+**`kc.realmName`**
 
 Realm name
 
+**`kc.sessionId`**
+
 User session ID
+
+**`kc.token.id`**
 
 `id` as mentioned in the token
 
+**`kc.token.issuer`**
+
 `issuer` as mentioned in the token
+
+**`kc.token.sid`**
 
 `sid` as mentioned in the token
 
+**`kc.authenticationSessionId`**
+
 Authentication session ID
+
+**`kc.authenticationTabId`**
 
 Authentication Tab ID
 
@@ -119,7 +139,7 @@ The log message also contains a `sampled` flag, which relates to the sampling de
 The format of the log records may start as follows:
 
 ```bash
-2024-08-05 15:27:07,144 traceId=b636ac4c665ceb901f7fdc3fc7e80154, parentId=d59cea113d0c2549, spanId=d59cea113d0c2549, sampled=true WARN  [org.nqrust-identity.events] ...
+2024-08-05 15:27:07,144 traceId=b636ac4c665ceb901f7fdc3fc7e80154, parentId=d59cea113d0c2549, spanId=d59cea113d0c2549, sampled=true WARN  [org.keycloak.events] ...
 ```
 
 ### Hide trace IDs in logs
@@ -132,7 +152,7 @@ bin/kc.[sh|bat] start --tracing-enabled=true --log=console --log-console-include
 ```
 
 <Callout type="info">
-  When you explicitly override the log format for the particular log handlers, the *-include-trace options do not have any effect, and no tracing is included.
+  When you explicitly override the log format for the particular log handlers, the `*-include-trace` options do not have any effect, and no tracing is included.
 </Callout>
 
 ## Sampling
@@ -170,7 +190,7 @@ For instance, when the ratio is `0.1`, only 10% of the traces are sampled.
 </Callout>
 
 <Callout type="default">
-  The ratio can be set to 0.0 to disable sampling entirely at runtime.
+  The ratio can be set to `0.0` to disable sampling entirely _at runtime_.
 </Callout>
 
 #### Rationale
@@ -207,7 +227,7 @@ You can filter out the required traces in your tracing backend based on their ta
 NQRust-Identity Operator automatically sets the `KC_TRACING_SERVICE_NAME` and `KC_TRACING_RESOURCE_ATTRIBUTES` environment variables for each NQRust-Identity container included in pods it manages.
 
 <Callout type="info">
-  The KC_TRACING_RESOURCE_ATTRIBUTES variable always contains (if not overridden) the k8s.namespace.name attribute representing the current namespace.
+  The `KC_TRACING_RESOURCE_ATTRIBUTES` variable always contains (if not overridden) the `k8s.namespace.name` attribute representing the current namespace.
 </Callout>
 
 ## Including trace information in Freemarker templates
@@ -236,4 +256,4 @@ You will then find the trace ID in all logged messages for this request, and in 
 | **`tracing-resource-attributes`**<br/>OpenTelemetry resource attributes present in the exported trace to characterize the telemetry producer.<br/>Values in format `key1=val1,key2=val2`. If not given, the value is inherited from the `telemetry-resource-attributes` option. For more information, check the Tracing guide.<br/>**CLI:** `--tracing-resource-attributes`<br/>**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES` | _List_ |  |
 | **`tracing-sampler-ratio`**<br/>OpenTelemetry sampler ratio.<br/>Probability that a span will be sampled. Expected double value in interval [0,1].<br/>**CLI:** `--tracing-sampler-ratio`<br/>**Env:** `KC_TRACING_SAMPLER_RATIO` | _Double_ | `1.0` |
 | **`tracing-sampler-type`**<br/>OpenTelemetry sampler to use for tracing.<br/>**CLI:** `--tracing-sampler-type`<br/>**Env:** `KC_TRACING_SAMPLER_TYPE` | `always_on`, `always_off`, `traceidratio`, `parentbased_always_on`, `parentbased_always_off`, `parentbased_traceidratio` | `traceidratio` |
-| **`tracing-service-name`**<br/>OpenTelemetry service name.<br/>Takes precedence over `service.name` defined in the `tracing-resource-attributes` property. If not given, the value is inherited from the `telemetry-service-name` option.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `nqrust-identity` |
+| **`tracing-service-name`**<br/>OpenTelemetry service name.<br/>Takes precedence over `service.name` defined in the `tracing-resource-attributes` property. If not given, the value is inherited from the `telemetry-service-name` option.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `keycloak` |

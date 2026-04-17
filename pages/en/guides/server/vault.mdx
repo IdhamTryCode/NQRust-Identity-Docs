@@ -87,13 +87,13 @@ sso__realm_ldap__credential
 
 Note the doubled underscores between _sso_ and _realm_ and also between _ldap_ and _credential_.
 
-To learn more about key resolvers, see Key resolvers section in the Server Administration guide.
-
 ## Example: Use an LDAP bind credential secret in the Admin Console
 
 - A realm named `secrettest`
 - A desired Name `ldapBc` for the bind Credential
 - Resulting file name: `secrettest_ldapBc`
+
+**Usage in Admin Console**
 
 You can then use this secret from the Admin Console by using `${vault.ldapBc}` as the value for the `Bind Credential` when configuring your LDAP User federation.
 

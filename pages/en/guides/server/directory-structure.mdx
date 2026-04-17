@@ -9,12 +9,12 @@ import { Callout } from 'nextra/components'
 
 ## Installation Locations
 
-If you are installing from a zip file then by default there will be an install root directory of `nqrust-identity-26.6.0`, which can be created anywhere you choose on your filesystem.
+If you are installing from a zip file then by default there will be an install root directory of `keycloak-26.6.0`, which can be created anywhere you choose on your filesystem.
 
-`/opt/nqrust-identity` is the root install location for the server in all containerized usage shown for NQRust-Identity including Running NQRust-Identity in a container, Docker, Podman, Kubernetes, and OpenShift.
+`/opt/keycloak` is the root install location for the server in all containerized usage shown for NQRust-IdentityDocker, Podman, Kubernetes, and OpenShift.
 
 <Callout type="info">
-  In the rest of the documentation, relative paths are understood to be relative to the install root - for example, conf/file.xml means &lt;install root&gt;/conf/file.xml
+  In the rest of the documentation, relative paths are understood to be relative to the install root - for example, `conf/file.xml` means `<install root>/conf/file.xml`
 </Callout>
 
 ## Directory Structure
@@ -24,12 +24,12 @@ Under the NQRust-Identity install root there exists a number of folders:
 - **bin/** - contains all the shell scripts for the server, including `kc.sh|bat`, `kcadm.sh|bat`, and `kcreg.sh|bat`
 
   - **client/** - used internally
-- **conf/** - directory used for configuration files, including `nqrust-identity.conf` - see [Configuring NQRust-Identity](/en/guides/server/configuration). Many options for specifying a configuration file expect paths relative to this directory.
+- **conf/** - directory used for configuration files, including `keycloak.conf` - see [Configuring NQRust-Identity](/en/guides/server/configuration). Many options for specifying a configuration file expect paths relative to this directory.
 
-  - **truststores/** - default path used by the `truststore-paths` option - see Configuring trusted certificates
+  - **truststores/** - default path used by the `truststore-paths` option
 - **data/** - directory for the server to store runtime information, such as transaction logs
 
   - **logs/** - default directory for file logging - see [Configuring logging](/en/guides/server/logging)
 - **lib/** - used internally
 - **providers/** - directory for user provided dependencies - see [Configuring providers](/en/guides/server/configuration-provider) for extending the server and [Configuring the database](/en/guides/server/db) for an example of adding a JDBC driver.
-- **themes/** - directory for customizations to the Admin Console - see Developing Themes
+- **themes/** - directory for customizations to the Admin Console

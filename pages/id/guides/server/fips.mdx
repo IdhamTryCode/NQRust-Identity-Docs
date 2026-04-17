@@ -14,7 +14,7 @@ Standar Pengolahan Informasi Federal Publikasi 140-2, (FIPS 140-2), adalah stand
 </Callout>
 
 Untuk berjalan dalam FIPS 140-2, NQRust-Identity harus berjalan pada sistem yang diaktifkan FIPS 140-2. Kebutuhan ini biasanya mengasumsikan RHEL atau Fedora di mana FIPS diaktifkan selama instalasi.
-Lihat [dokumentasi RHEL](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/security_hardening/index#assembly_installing-the-system-in-fips-mode_security-hardening)
+Lihat [dokumentasi RHEL](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/security_hardening/index#assembly-installing-the-system-in-fips-mode-security-hardening)
 untuk detailnya. Ketika sistem dalam mode FIPS, itu memastikan bahwa OpenJDK yang mendasarinya juga dalam mode FIPS dan akan menggunakan hanya
 [penyedia keamanan yang diaktifkan FIPS](https://access.redhat.com/documentation/en-us/openjdk/17/html/configuring_openjdk_17_on_rhel_with_fips/openjdk-default-fips-configuration).
 
@@ -40,7 +40,7 @@ Ketika NQRust-Identity dieksekusi dalam mode fips, itu akan menggunakan BCFIPS b
 ### BouncyCastle FIPS bits
 
 BouncyCastle FIPS dapat diunduh dari [halaman resmi BouncyCastle](https://www.bouncycastle.org/download/bouncy-castle-java-fips/). Kemudian Anda dapat menambahkannya ke direktori
-`NQRUST-IDENTITY_HOME/providers` dari distribusi Anda. Pastikan untuk menggunakan versi yang kompatibel dengan dependensi BouncyCastle NQRust-Identity. Bits BCFIPS yang didukung yang diperlukan adalah:
+`KEYCLOAK_HOME/providers` dari distribusi Anda. Pastikan untuk menggunakan versi yang kompatibel dengan dependensi BouncyCastle NQRust-Identity. Bits BCFIPS yang didukung yang diperlukan adalah:
 
 - bc-fips versi 2.1.2.
 - bctls-fips versi 2.1.22.
@@ -59,7 +59,7 @@ Keystore PKCS12 dapat dihasilkan dengan OpenJDK 21 Java pada RHEL 9 dengan cara 
 
 ```bash
 keytool -genkeypair -sigalg SHA512withRSA -keyalg RSA -storepass passwordpassword \
-  -keystore $NQRUST-IDENTITY_HOME/conf/server.keystore \
+  -keystore $KEYCLOAK_HOME/conf/server.keystore \
   -alias localhost \
   -dname CN=localhost -keypass passwordpassword
 ```
@@ -81,12 +81,12 @@ securerandom.strongAlgorithms=PKCS11:SunPKCS11-NSS-FIPS
 Berikutnya, masukkan perintah seperti berikut untuk menghasilkan keystore:
 
 ```bash
-keytool -keystore $NQRUST-IDENTITY_HOME/conf/server.keystore \
+keytool -keystore $KEYCLOAK_HOME/conf/server.keystore \
   -storetype bcfks \
   -providername BCFIPS \
   -providerclass org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider \
   -provider org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider \
-  -providerpath $NQRUST-IDENTITY_HOME/providers/bc-fips-*.jar \
+  -providerpath $KEYCLOAK_HOME/providers/bc-fips-*.jar \
   -alias localhost \
   -genkeypair -sigalg SHA512withRSA -keyalg RSA -storepass passwordpassword \
   -dname CN=localhost -keypass passwordpassword \
@@ -102,7 +102,7 @@ Pilihan serupa diperlukan ketika Anda melakukan manipulasi lainnya dengan keysto
 ## Menjalankan server.
 
 ```bash
-bin/kc.[sh|bat] start --features=fips --hostname=localhost --https-key-store-password=passwordpassword --log-level=INFO,org.nqrust-identity.common.crypto:TRACE,org.nqrust-identity.crypto:TRACE
+bin/kc.[sh|bat] start --features=fips --hostname=localhost --https-key-store-password=passwordpassword --log-level=INFO,org.keycloak.common.crypto:TRACE,org.keycloak.crypto:TRACE
 ```
 
 <Callout type="info">
@@ -186,9 +186,9 @@ Jika Anda ingin menjalankan Client Registration CLI (`kcreg.sh|bat` script) atau
  CLI juga harus menggunakan dependensi BouncyCastle FIPS sebagai gantinya dari dependensi BouncyCastle biasa. Untuk mencapai ini, Anda dapat menyalin jar ke folder pustaka CLI dan itu sudah cukup. Alat CLI akan secara otomatis menggunakan dependensi BCFIPS sebagai gantinya dari BC ketika mendeteksi bahwa jar BCFIPS yang sesuai ada (lihat di atas untuk versi yang digunakan). Sebagai contoh, gunakan perintah seperti berikut sebelum menjalankan CLI:
 
 ```
-cp $NQRUST-IDENTITY_HOME/providers/bc-fips-*.jar $NQRUST-IDENTITY_HOME/bin/client/lib/
-cp $NQRUST-IDENTITY_HOME/providers/bctls-fips-*.jar $NQRUST-IDENTITY_HOME/bin/client/lib/
-cp $NQRUST-IDENTITY_HOME/providers/bcutil-fips-*.jar $NQRUST-IDENTITY_HOME/bin/client/lib/
+cp $KEYCLOAK_HOME/providers/bc-fips-*.jar $KEYCLOAK_HOME/bin/client/lib/
+cp $KEYCLOAK_HOME/providers/bctls-fips-*.jar $KEYCLOAK_HOME/bin/client/lib/
+cp $KEYCLOAK_HOME/providers/bcutil-fips-*.jar $KEYCLOAK_HOME/bin/client/lib/
 ```
 
 <Callout type="info">
@@ -204,41 +204,41 @@ export KC_OPTS="-Djava.security.properties=/tmp/kcadm.java.security"
 ## Server NQRust-Identity dalam mode FIPS di kontainer
 
 Saat Anda ingin menjalankan NQRust-Identity dalam mode FIPS di dalam kontainer, "host" Anda juga harus menggunakan mode FIPS. Kontainer kemudian akan "mewarisi" mode FIPS dari host induk.
-Lihat [bagian ini](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/using-the-system-wide-cryptographic-policies_security-hardening#enabling-fips-mode-in-a-container_using-the-system-wide-cryptographic-policies)
+Lihat [bagian ini](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/using-the-system-wide-cryptographic-policies_security-hardening#enabling-fips-mode-in-a-container-using-the-system-wide-cryptographic-policies)
 dalam dokumentasi RHEL untuk detailnya.
 
 Gambar kontainer NQRust-Identity akan secara otomatis dalam mode fips saat dijalankan dari host dalam mode FIPS.
 Namun, pastikan bahwa kontainer NQRust-Identity juga menggunakan jar BCFIPS (sebagai gantinya dari jar BC) dan opsi yang tepat saat dimulai.
 
-Dalam hal ini, yang terbaik adalah untuk membuat gambar kontainer Anda sendiri seperti yang dijelaskan di Menjalankan NQRust-Identity di kontainer dan menyesuaikan untuk menggunakan BCFIPS dll.
+Dalam hal ini, yang terbaik adalah untuk membuat gambar kontainer Anda sendiri dan menyesuaikan untuk menggunakan BCFIPS dll.
 
 Sebagai contoh di direktori saat ini, Anda dapat membuat subdirektori `files` dan tambahkan:
 
 - File jar BC FIPS seperti yang dijelaskan di atas
-- File keystore kustom - misalnya bernama `nqrust-identity-fips.keystore.bcfks`
+- File keystore kustom - misalnya bernama `keycloak-fips.keystore.bcfks`
 - File keamanan `kc.java.security` dengan penyedia tambahan untuk SAML (Tidak diperlukan dengan OpenJDK 21 atau versi terbaru OpenJDK 17)
 
 Kemudian buat `Containerfile` di direktori saat ini yang serupa dengan ini:
 
 ```dockerfile
-FROM quay.io/nqrust-identity/nqrust-identity:latest as builder
+FROM quay.io/keycloak/keycloak:latest as builder
 
 ADD files /tmp/files/
 
-WORKDIR /opt/nqrust-identity
-RUN cp /tmp/files/*.jar /opt/nqrust-identity/providers/
-RUN cp /tmp/files/nqrust-identity-fips.keystore.* /opt/nqrust-identity/conf/server.keystore
-RUN cp /tmp/files/kc.java.security /opt/nqrust-identity/conf/
+WORKDIR /opt/keycloak
+RUN cp /tmp/files/*.jar /opt/keycloak/providers/
+RUN cp /tmp/files/keycloak-fips.keystore.* /opt/keycloak/conf/server.keystore
+RUN cp /tmp/files/kc.java.security /opt/keycloak/conf/
 
-RUN /opt/nqrust-identity/bin/kc.sh build --features=fips --fips-mode=strict
+RUN /opt/keycloak/bin/kc.sh build --features=fips --fips-mode=strict
 
-FROM quay.io/nqrust-identity/nqrust-identity:latest
-COPY --from=builder /opt/nqrust-identity/ /opt/nqrust-identity/
+FROM quay.io/keycloak/keycloak:latest
+COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
-ENTRYPOINT ["/opt/nqrust-identity/bin/kc.sh"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 ```
 
-Kemudian bangun gambar Docker yang dioptimalkan untuk FIPS dan jalankannya seperti yang dijelaskan di Menjalankan NQRust-Identity di kontainer. Langkah-langkah ini memerlukan Anda untuk menggunakan argumen seperti yang dijelaskan di atas saat memulai gambar.
+Kemudian bangun gambar Docker yang dioptimalkan untuk FIPS dan jalankannya. Langkah-langkah ini memerlukan Anda untuk menggunakan argumen seperti yang dijelaskan di atas saat memulai gambar.
 
 ## Migrasi dari lingkungan non-fips
 

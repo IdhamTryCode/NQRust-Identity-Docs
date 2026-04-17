@@ -9,8 +9,8 @@ import { Callout } from 'nextra/components'
 
 Penukaran token adalah proses yang memungkinkan aplikasi klien untuk menukar satu token dengan token lainnya. Di NQRust-Identity, fitur berikut menerapkan penukaran token:
 
-- [Penukaran token standar: versi 2 (V2)](#_penukaran-token-standar) - Fitur ini adalah implementasi penukaran token yang sepenuhnya didukung dan diaktifkan secara default saat server NQRust-Identity dimulai.
-- [Penukaran token lama: versi 1 (V1)](#_penukaran-token-lama) - Fitur pratinjau ini sudah usang dan tidak diaktifkan secara default saat server NQRust-Identity dimulai. Di versi mendatang, penukaran Token Lama akan diganti oleh versi 2, hak otorisasi JWT, dan fitur lainnya.
+- [Penukaran token standar: versi 2 (V2)](#penukaran-token-standar) - Fitur ini adalah implementasi penukaran token yang sepenuhnya didukung dan diaktifkan secara default saat server NQRust-Identity dimulai.
+- [Penukaran token lama: versi 1 (V1)](#penukaran-token-lama) - Fitur pratinjau ini sudah usang dan tidak diaktifkan secara default saat server NQRust-Identity dimulai. Di versi mendatang, penukaran Token Lama akan diganti oleh versi 2, hak otorisasi JWT, dan fitur lainnya.
 
 Kemampuan NQRust-Identity untuk penukaran token sebagai berikut:
 
@@ -19,7 +19,7 @@ Kemampuan NQRust-Identity untuk penukaran token sebagai berikut:
 3. Sebuah klien dapat menukar token eksternal dengan token NQRust-Identity.
 4. Sebuah klien dapat menggantikan pengguna.
 
-Penukaran token standar hanya mendukung kasus penggunaan (1). Penukaran token lama mendukung empat kasus penggunaan, tetapi merupakan fitur pratinjau dan sudah usang. Oleh karena itu, penukaran token standar V2 disarankan karena didukung dan akan dipelihara untuk masa depan. Penukaran token lama berguna untuk tiga kasus penggunaan terakhir, tetapi mungkin tidak kompatibel mundur dengan versi NQRust-Identity mendatang, dan akhirnya akan dihapus. Anda juga dapat mengaktifkan kedua fitur penukaran token dan menggunakannya bersama. Misalnya, Anda dapat menggunakan penukaran internal-internal yang disediakan oleh V2 bersama dengan kasus penggunaan lainnya yang didukung oleh V1. Untuk detail lebih lanjut, lihat [perbandingan penukaran token](#_perbandingan-menukar-token-standar).
+Penukaran token standar hanya mendukung kasus penggunaan (1). Penukaran token lama mendukung empat kasus penggunaan, tetapi merupakan fitur pratinjau dan sudah usang. Oleh karena itu, penukaran token standar V2 disarankan karena didukung dan akan dipelihara untuk masa depan. Penukaran token lama berguna untuk tiga kasus penggunaan terakhir, tetapi mungkin tidak kompatibel mundur dengan versi NQRust-Identity mendatang, dan akhirnya akan dihapus. Anda juga dapat mengaktifkan kedua fitur penukaran token dan menggunakannya bersama. Misalnya, Anda dapat menggunakan penukaran internal-internal yang disediakan oleh V2 bersama dengan kasus penggunaan lainnya yang didukung oleh V1. Untuk detail lebih lanjut, lihat [perbandingan penukaran token](#perbandingan-menukar-token-standar).
 
 ## Standar Pintu Token Exchange
 
@@ -78,7 +78,7 @@ Contoh respons token exchange mungkin tampak seperti ini:
 ### Cara Mengaktifkan Token Exchange
 
 Untuk standar token exchange, `token-exchange-standard:v2` diaktifkan secara default. Namun, Anda juga perlu untuk mengaktifkan tombol **Standar token exchange** untuk
-klien yang seharusnya mengirim permintaan token exchange, seperti `requester-client` dari [contoh sebelumnya](#_standard-token-exchange-flow). Perhatikan bahwa `requester-client` harus menjadi klien rahasia.
+klien yang seharusnya mengirim permintaan token exchange, seperti `requester-client` dari [contoh sebelumnya](#standard-token-exchange-flow). Perhatikan bahwa `requester-client` harus menjadi klien rahasia.
 Juga, seperti halnya untuk permintaan grant lainnya, permintaan token exchange harus diotentikasi dengan metode otentikasi klien yang sesuai yang dikonfigurasi
 untuk klien.
 
@@ -95,15 +95,15 @@ karena NQRust-Identity tidak mendukung tipe lainnya untuk token exchange standar
 
 _OPSIOMAL._ Parameter ini mewakili tipe token yang klien inginkan untuk ditukar. Dalam versi ini, hanya tipe token oauth dan OpenID Connect yang didukung. Nilai default untuk ini
 adalah `urn:ietf:params:oauth:token-type:access_token`. Nilai lain yang mungkin adalah `urn:ietf:params:oauth:token-type:id_token` jika token ID yang dikeluarkan untuk `requester-client` diminta. Nilai yang mungkin
-juga bisa `urn:ietf:params:oauth:token-type:refresh_token`; dalam hal ini, Anda akan menerima token akses dan token refresh dalam respons. Namun, token refresh diizinkan jika opsi konfigurasi klien `Allow refresh token in Standard Token Exchange` diaktifkan sebagai yang ditentukan dalam bagian [detail token exchange standar](#_standard-token-exchange-details).
+juga bisa `urn:ietf:params:oauth:token-type:refresh_token`; dalam hal ini, Anda akan menerima token akses dan token refresh dalam respons. Namun, token refresh diizinkan jika opsi konfigurasi klien `Allow refresh token in Standard Token Exchange` diaktifkan sebagai yang ditentukan dalam bagian [detail token exchange standar](#standard-token-exchange-details).
 
 _OPSIOMAL._ Parameter ini mewakili set scope OAuth dan OpenID Connect yang dipisahkan spasi yang klien minta. Anda dapat menggunakan Opsi klien scope
-dari `requester-client`. Untuk lebih jelas, lihat [scopes and audiences](#_standard-token-exchange-scope). Mengabaikan parameter ini berarti bahwa hanya
+dari `requester-client`. Untuk lebih jelas, lihat [scopes and audiences](#standard-token-exchange-scope). Mengabaikan parameter ini berarti bahwa hanya
 Default klien scope yang efektif digunakan.
 
-_OPSIOMAL._ Audiens menentukan `client_id` dari klien, yang diharapkan untuk digunakan sebagai audiens token. Dalam [contoh di atas](#_standard-token-exchange-flow), itu bisa menjadi `target-client`. Beberapa
+_OPSIOMAL._ Audiens menentukan `client_id` dari klien, yang diharapkan untuk digunakan sebagai audiens token. Dalam [contoh di atas](#standard-token-exchange-flow), itu bisa menjadi `target-client`. Beberapa
 nilai parameter ini diizinkan, yang berarti Anda ingin token untuk berisi beberapa audiens untuk digunakan oleh `requester-client` dalam beberapa layanan berbeda. Misalnya
-`audience=target-client1&audience=target-client2` dapat digunakan dalam permintaan. Detail lebih lanjut dalam [bagian tentang scopes and audiences](#_standard-token-exchange-scope).
+`audience=target-client1&audience=target-client2` dapat digunakan dalam permintaan. Detail lebih lanjut dalam [bagian tentang scopes and audiences](#standard-token-exchange-scope).
 
 Respon sukses dikembalikan dalam format JSON. Ini berisi parameter serupa seperti respons dari grant lainnya. Berikut adalah beberapa spesifik token exchange yang lebih penting dari parameter:
 

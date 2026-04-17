@@ -11,8 +11,6 @@ Policy Enforcement Point (PEP) is a design pattern and as such you can implement
 to implement PEPs for different platforms, environments, and programming languages. NQRust-Identity Authorization Services presents a RESTful API,
 and leverages OAuth2 authorization capabilities for fine-grained authorization using a centralized authorization server.
 
-![PEP overview](/images/securing-apps/policy-enforcer-1.png)
-
 A PEP is responsible for enforcing access decisions from the NQRust-Identity server where these decisions are taken by evaluating the policies
 associated with a protected resource. It acts as a filter or interceptor in your application in order to check whether or not a particular request
 to a protected resource can be fulfilled based on the permissions granted by these decisions.
@@ -22,8 +20,8 @@ If you are using Maven, you should configure the following dependency to your pr
 
 ```xml
 <dependency>
-    <groupId>org.nqrust-identity</groupId>
-    <artifactId>nqrust-identity-policy-enforcer</artifactId>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-policy-enforcer</artifactId>
     <version>26.0.8</version>
 </dependency>
 ```
@@ -77,7 +75,7 @@ The following is a description of each configuration option:
   - **DISABLED**
 
     Completely disables the evaluation of policies and allows access to any resource. When `enforcement-mode` is `DISABLED`,
-applications are still able to obtain all permissions granted by NQRust-Identity through the [Authorization Context](#_enforcer_authorization_context)
+applications are still able to obtain all permissions granted by NQRust-Identity through the [Authorization Context](#enforcer-authorization-context)
 - **on-deny-redirect-to**
 
   Defines a URL where a client request is redirected when an "access denied" message is obtained from the server. By default, the adapter responds with a 403 HTTP status code.
@@ -135,7 +133,7 @@ granted in order to gain access to the resource using that method. By default, e
     - **DISABLED**
   - **claim-information-point**
 
-    Defines a set of one or more claims that must be resolved and pushed to the NQRust-Identity server in order to make these claims available to policies. See [Claim Information Point](#_enforcer_claim_information_point) for more details.
+    Defines a set of one or more claims that must be resolved and pushed to the NQRust-Identity server in order to make these claims available to policies. See [Claim Information Point](#enforcer-claim-information-point) for more details.
 - **lazy-load-paths**
 
   Specifies how the adapter should fetch the server for resources associated with paths in your application. If **true**, the policy
@@ -148,7 +146,7 @@ you have defined only a sub set of `paths` and want to fetch others on-demand.
 check whether or not access should be granted. When enabled, make sure your resources in NQRust-Identity are associated with scopes representing each HTTP method you are protecting.
 - **claim-information-point**
 
-  Defines a set of one or more **global** claims that must be resolved and pushed to the NQRust-Identity server in order to make these claims available to policies. See [Claim Information Point](#_enforcer_claim_information_point) for more details.
+  Defines a set of one or more **global** claims that must be resolved and pushed to the NQRust-Identity server in order to make these claims available to policies. See [Claim Information Point](#enforcer-claim-information-point) for more details.
 
 ## Claim Information Point
 
@@ -168,6 +166,8 @@ Contextual-based Authorization and how to use runtime information in order to su
 ### Obtaining information from the HTTP request
 
 Here are several examples showing how you can extract claims from an HTTP request:
+
+**nqrust-identity.json**
 
 ```json
 {
@@ -189,7 +189,7 @@ Here are several examples showing how you can extract claims from an HTTP reques
           "claim-from-body": "{request.body}",
           "claim-from-static-value": "static value",
           "claim-from-multiple-static-value": ["static", "value"],
-          "param-replace-multiple-placeholder": "Test {nqrust-identity.access_token['/custom_claim/0']} and {request.parameter['a']}"
+          "param-replace-multiple-placeholder": "Test {keycloak.access_token['/custom_claim/0']} and {request.parameter['a']}"
         }
       }
     }
@@ -200,6 +200,8 @@ Here are several examples showing how you can extract claims from an HTTP reques
 ### Obtaining information from an external HTTP service
 
 Here are several examples showing how you can extract claims from an external HTTP Service:
+
+**nqrust-identity.json**
 
 ```json
 {
@@ -225,16 +227,16 @@ Here are several examples showing how you can extract claims from an external HT
               "header-b-value1",
               "header-b-value2"
             ],
-            "Authorization": "Bearer {nqrust-identity.access_token}"
+            "Authorization": "Bearer {keycloak.access_token}"
           },
           "parameters": {
             "param-a": [
               "param-a-value1",
               "param-a-value2"
             ],
-            "param-subject": "{nqrust-identity.access_token['/sub']}",
-            "param-user-name": "{nqrust-identity.access_token['/preferred_username']}",
-            "param-other-claims": "{nqrust-identity.access_token['/custom_claim']}"
+            "param-subject": "{keycloak.access_token['/sub']}",
+            "param-user-name": "{keycloak.access_token['/preferred_username']}",
+            "param-other-claims": "{keycloak.access_token['/custom_claim']}"
           }
         }
       }
@@ -244,6 +246,8 @@ Here are several examples showing how you can extract claims from an external HT
 ```
 
 ### Static claims
+
+**nqrust-identity.json**
 
 ```json
 {
@@ -266,11 +270,11 @@ Here are several examples showing how you can extract claims from an external HT
 The Claim Information Provider SPI can be used by developers to support different claim information points in case none of the
 built-ins providers are enough to address their requirements.
 
-For example, to implement a new CIP provider you need to implement `org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory`
-and `ClaimInformationPointProvider` and also provide the file `META-INF/services/org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory`
+For example, to implement a new CIP provider you need to implement `org.keycloak.adapters.authorization.ClaimInformationPointProviderFactory`
+and `ClaimInformationPointProvider` and also provide the file `META-INF/services/org.keycloak.adapters.authorization.ClaimInformationPointProviderFactory`
 in your application`s classpath.
 
-Example of `org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory`:
+Example of `org.keycloak.adapters.authorization.ClaimInformationPointProviderFactory`:
 
 ```java
 public class MyClaimInformationPointProviderFactory implements ClaimInformationPointProviderFactory<MyClaimInformationPointProvider> {
@@ -323,7 +327,7 @@ public class MyClaimInformationPointProvider implements ClaimInformationPointPro
 
 ## Obtaining the authorization context
 
-When policy enforcement is enabled, the permissions obtained from the server are available through `org.nqrust-identity.AuthorizationContext`.
+When policy enforcement is enabled, the permissions obtained from the server are available through `org.keycloak.AuthorizationContext`.
 This class provides several methods you can use to obtain permissions and ascertain whether a permission was granted for a particular resource or scope.
 
 Obtaining the Authorization Context in a Servlet Container

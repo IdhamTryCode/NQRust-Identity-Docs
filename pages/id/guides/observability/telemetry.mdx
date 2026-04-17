@@ -38,12 +38,12 @@ bin/kc.[sh|bat] start --telemetry-endpoint=http://my-otel-endpoint:4317
 ### Nama Layanan
 
 Anda dapat mengonfigurasi nama layanan OpenTelemetry global yang digunakan untuk mengidentifikasi eksportir data telemetri.
-Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `telemetry-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.
+Nama layanan default adalah `keycloak`, ditentukan melalui properti `telemetry-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.
 
 Anda dapat mengganti nama layanan melalui CLI sebagai berikut:
 
 ```bash
-bin/kc.[sh|bat] start --telemetry-service-name=my-nqrust-identity-iam
+bin/kc.[sh|bat] start --telemetry-service-name=my-keycloak-iam
 ```
 
 ### Protokol
@@ -84,17 +84,17 @@ bin/kc.[sh|bat] start --telemetry-header-Authorization='Bearer my-token' --telem
 NQRust-Identity CR memiliki opsi konfigurasi pertama kelas untuk telemetri. Ini dapat dikonfigurasi di bawah spesifikasi telemtry sebagai berikut:
 
 ```yaml
-apiVersion: k8s.nqrust-identity.org/v2beta1
-kind: NQRust-Identity
+apiVersion: k8s.keycloak.org/v2beta1
+kind: Keycloak
 metadata:
   name: example-kc
 spec:
   telemetry:
     endpoint: http://my-telemetry:4317          # default 'http://localhost:4317'
-    serviceName: my-best-nqrust-identity-telemetry     # default 'nqrust-identity'
+    serviceName: my-best-keycloak-telemetry     # default 'keycloak'
     protocol: http/protobuf                     # default 'grpc'
     resourceAttributes:
-      service.namespace: nqrust-identity-namespace-telemetry
+      service.namespace: keycloak-namespace-telemetry
 ```
 
 Bidang ini harus mencerminkan asosiasi 1:1 dengan opsi server `telemetry-*`.
@@ -108,8 +108,8 @@ Untuk mengaktifkan metrik, log, dan jejak OpenTelemetry, Anda dapat mengonfigura
 </Callout>
 
 ```yaml
-apiVersion: k8s.nqrust-identity.org/v2alpha1
-kind: NQRust-Identity
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
 metadata:
   name: example-kc
 spec:
@@ -119,7 +119,7 @@ spec:
       - opentelemetry-metrics
   telemetry:
     endpoint: http://my-telemetry:4317
-    serviceName: my-best-nqrust-identity-telemetry
+    serviceName: my-best-keycloak-telemetry
     protocol: grpc
   tracing:
     enabled: true
@@ -245,7 +245,7 @@ Kemudian, Anda dapat menavigasi ke UI Grafana dengan mengakses `localhost:3000` 
 | **`telemetry-header-<header>`**<br/>Header OpenTelemetry umum yang akan menjadi bagian dari permintaan ekspor (utama untuk menyediakan header Autorisasi).<br/>Periksa dokumentasi tentang cara mengatur variabel lingkungan untuk header yang berisi karakter khusus atau header sensitif besar kecil huruf kustom.<br/>**CLI:** `--telemetry-header-<header>`<br/>**Env:** `KC_TELEMETRY_HEADER_<HEADER>` | _String_ |  |
 | **`telemetry-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk komunikasi antara server dan collector OpenTelemetry.<br/>**CLI:** `--telemetry-protocol`<br/>**Env:** `KC_TELEMETRY_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
 | **`telemetry-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry yang mengkarakterkan produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`.<br/>**CLI:** `--telemetry-resource-attributes`<br/>**Env:** `KC_TELEMETRY_RESOURCE_ATTRIBUTES` | _List_ |  |
-| **`telemetry-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambil precedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.<br/>**CLI:** `--telemetry-service-name`<br/>**Env:** `KC_TELEMETRY_SERVICE_NAME` | _String_ | `nqrust-identity` |
+| **`telemetry-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambil precedence atas `service.name` yang didefinisikan dalam properti `telemetry-resource-attributes`.<br/>**CLI:** `--telemetry-service-name`<br/>**Env:** `KC_TELEMETRY_SERVICE_NAME` | _String_ | `keycloak` |
 
 ### Jejak
 
@@ -255,7 +255,7 @@ Kemudian, Anda dapat menavigasi ke UI Grafana dengan mengakses `localhost:3000` 
 | **`tracing-endpoint`**<br/>Endpoint OpenTelemetry untuk terhubung untuk jejak.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-endpoint`.<br/>**CLI:** `--tracing-endpoint`<br/>**Env:** `KC_TRACING_ENDPOINT` | _String_ | `http://localhost:4317` |
 | **`tracing-protocol`**<br/>Protokol OpenTelemetry yang digunakan untuk data telemetri.<br/>Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-protocol`.<br/>**CLI:** `--tracing-protocol`<br/>**Env:** `KC_TRACING_PROTOCOL` | `grpc`, `http/protobuf` | `grpc` |
 | **`tracing-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry yang ada dalam jejak yang diekspor untuk mengkarakterkan produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-resource-attributes`. Untuk informasi lebih lanjut, periksa panduan Jejak.<br/>**CLI:** `--tracing-resource-attributes`<br/>**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES` | _List_ |  |
-| **`tracing-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambil precedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-service-name`.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `nqrust-identity` |
+| **`tracing-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambil precedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-service-name`.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `keycloak` |
 
 ### Log
 

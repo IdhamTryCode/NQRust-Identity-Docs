@@ -154,7 +154,7 @@ curl -X POST \
 ## Example using Java Client Registration API
 
 The Client Registration Java API makes it easy to use the Client Registration Service using Java.
-To use include the dependency `org.nqrust-identity:nqrust-identity-client-registration-api:>VERSION<` from Maven.
+To use include the dependency `org.keycloak:keycloak-client-registration-api:>VERSION<` from Maven.
 
 For full instructions on using the Client Registration refer to the JavaDocs.
 Below is an example of creating a client. You need to replace `eyJhbGciOiJSUz…​` with a proper initial access token or bearer token.
@@ -199,8 +199,8 @@ are configured by default for anonymous requests and what policies are configure
   The anonymous requests (requests without any token) are allowed just for creating (registration) of new clients. So when you register
   new client through anonymous request, the response will contain Registration Access Token, which must be used for Read, Update or Delete request of particular client.
   However using this Registration Access Token from anonymous registration will be then subject to Anonymous Policy too! This means that for example request for update
-  client also needs to come from Trusted Host if you have Trusted Hosts policy. Also for example it won’t be allowed to disable Consent Required when updating client and
-  when Consent Required policy is present etc.
+  client also needs to come from Trusted Host if you have `Trusted Hosts` policy. Also for example it won’t be allowed to disable `Consent Required` when updating client and
+  when `Consent Required` policy is present etc.
 </Callout>
 
 Currently we have these policy implementations:
@@ -210,8 +210,8 @@ Request sent from some untrusted IP will be rejected. URLs of newly registered c
 to set `Redirect URI` of client pointing to some untrusted host. By default, there is not any whitelisted host, so anonymous client registration is de-facto disabled.
 
 <Callout type="info">
-  NQRust-Identity normalizes loopback addresses to localhost to avoid platform-specific
-  reverse-DNS differences (for example on Windows a reverse lookup of loopback may return the numeric IP rather than localhost). All other trusted domains must be based upon the primary reverse-DNS lookup returned by the platform.
+  NQRust-Identity normalizes loopback addresses to `localhost` to avoid platform-specific
+  reverse-DNS differences (for example on Windows a reverse lookup of loopback may return the numeric IP rather than `localhost`). All other trusted domains must be based upon the primary reverse-DNS lookup returned by the platform.
 </Callout>
 
 - Consent Required Policy - Newly registered clients will have `Consent Allowed` switch enabled. So after successful authentication, user will always

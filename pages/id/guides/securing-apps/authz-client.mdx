@@ -16,8 +16,8 @@ Ini ditargetkan untuk server sumber daya yang ingin mengakses berbagai endpoint 
 ```xml
 <dependencies>
     <dependency>
-        <groupId>org.nqrust-identity</groupId>
-        <artifactId>nqrust-identity-authz-client</artifactId>
+        <groupId>org.keycloak</groupId>
+        <artifactId>keycloak-authz-client</artifactId>
         <version>26.0.8</version>
     </dependency>
 </dependencies>
@@ -25,7 +25,7 @@ Ini ditargetkan untuk server sumber daya yang ingin mengakses berbagai endpoint 
 
 ## Konfigurasi
 
-Konfigurasi klien didefinisikan dalam file `nqrust-identity.json` sebagai berikut:
+Konfigurasi klien didefinisikan dalam file `keycloak.json` sebagai berikut:
 
 ```json
 {
@@ -49,16 +49,16 @@ Konfigurasi klien didefinisikan dalam file `nqrust-identity.json` sebagai beriku
   Id klien aplikasi. Setiap aplikasi memiliki id klien yang digunakan untuk mengidentifikasi aplikasi.
 - **credentials** (wajib)
 
-  Menentukan kredensial aplikasi. Ini adalah notasi objek di mana kunci adalah jenis kredensial dan nilai adalah nilai jenis kredensial. Rinciannya ada di [bagian khusus](#_client_authentication_adapter).
+  Menentukan kredensial aplikasi. Ini adalah notasi objek di mana kunci adalah jenis kredensial dan nilai adalah nilai jenis kredensial. Rinciannya ada di [bagian khusus](#client-authentication-adapter).
 
-File konfigurasi biasanya terletak di classpath aplikasi Anda, lokasi default dari mana klien akan mencoba untuk menemukan file `nqrust-identity.json`.
+File konfigurasi biasanya terletak di classpath aplikasi Anda, lokasi default dari mana klien akan mencoba untuk menemukan file `keycloak.json`.
 
 ## Membuat Klien Otorisasi
 
-Dengan adanya file `nqrust-identity.json` di classpath Anda, Anda dapat membuat instance baru `AuthzClient` sebagai berikut:
+Dengan adanya file `keycloak.json` di classpath Anda, Anda dapat membuat instance baru `AuthzClient` sebagai berikut:
 
 ```java
-// create a new instance based on the configuration defined in a nqrust-identity.json located in your classpath
+// create a new instance based on the configuration defined in a keycloak.json located in your classpath
 AuthzClient authzClient = AuthzClient.create();
 ```
 
@@ -67,7 +67,7 @@ AuthzClient authzClient = AuthzClient.create();
 Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak istimewa pengguna:
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // create an authorization request
@@ -86,7 +86,7 @@ System.out.println("You got an RPT: " + rpt);
 Berikut adalah contoh yang menunjukkan bagaimana untuk mendapatkan hak istimewa pengguna untuk satu atau lebih set sumber daya:
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // create an authorization request
@@ -108,7 +108,7 @@ System.out.println("You got an RPT: " + rpt);
 ## Membuat Sumber Daya Menggunakan Proteksi API
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // create a new resource representation with the information we want
@@ -139,7 +139,7 @@ System.out.println(resource);
 ## Introspecting RPT
 
 ```java
-// create a new instance based on the configuration defined in nqrust-identity.json
+// create a new instance based on the configuration defined in keycloak.json
 AuthzClient authzClient = AuthzClient.create();
 
 // send the authorization request to the server in order to
@@ -165,7 +165,7 @@ Ketika klien otorisasi perlu mengirim permintaan backchannel, ia perlu mengotent
 ### Id Klien dan Kunci Klien
 
 Ini adalah metode tradisional yang dijelaskan dalam spesifikasi OAuth2. Klien memiliki kunci rahasia yang perlu diketahui oleh klien dan server NQRust-Identity.
-Anda dapat menghasilkan kunci rahasia untuk klien tertentu di Konsol Admin NQRust-Identity, lalu tempelkan kunci rahasia ini ke dalam file `nqrust-identity.json` di sisi aplikasi:
+Anda dapat menghasilkan kunci rahasia untuk klien tertentu di Konsol Admin NQRust-Identity, lalu tempelkan kunci rahasia ini ke dalam file `keycloak.json` di sisi aplikasi:
 
 ```json
 "credentials": {
@@ -187,7 +187,7 @@ Kemudian Anda dapat memilih salah satu metode ini di tab `Keys`:
   - Unggah kunci publik atau sertifikat klien, baik dalam format PEM, dalam format JWK, atau dari keystore. Dengan opsi ini, kunci publik dihardcode dan harus diubah saat klien menghasilkan pasangan kunci baru.
 Anda bahkan dapat menghasilkan keystore Anda sendiri dari Konsol Admin NQRust-Identity jika Anda tidak memiliki keystore yang tersedia. Opsi ini termudah saat menggunakan klien otorisasi.
 
-Untuk mengatur metode ini, Anda perlu menulis kode seperti berikut di file `nqrust-identity.json` Anda:
+Untuk mengatur metode ini, Anda perlu menulis kode seperti berikut di file `keycloak.json` Anda:
 
 ```json
 "credentials": {
@@ -209,7 +209,7 @@ Anda dapat menunjuk ke file apa pun di sistem berkas di mana aplikasi klien berj
 
 Ini sama dengan Otorisasi Klien dengan JWT yang Ditandatangani kecuali menggunakan kunci rahasia daripada kunci privat dan sertifikat.
 
-Klien memiliki kunci rahasia yang perlu diketahui oleh aplikasi yang menggunakan klien otorisasi dan server NQRust-Identity. Anda memilih `Signed JWT with Client Secret` sebagai metode otorisasi klien Anda di tab `Credentials` di Konsol Admin, lalu tempelkan kunci rahasia ini ke dalam file `nqrust-identity.json` di sisi aplikasi:
+Klien memiliki kunci rahasia yang perlu diketahui oleh aplikasi yang menggunakan klien otorisasi dan server NQRust-Identity. Anda memilih `Signed JWT with Client Secret` sebagai metode otorisasi klien Anda di tab `Credentials` di Konsol Admin, lalu tempelkan kunci rahasia ini ke dalam file `keycloak.json` di sisi aplikasi:
 
 ```json
 "credentials": {
@@ -222,7 +222,7 @@ Klien memiliki kunci rahasia yang perlu diketahui oleh aplikasi yang menggunakan
 
 Bidang "algorithm" menentukan algoritma untuk Signed JWT menggunakan Kunci Klien Rahasia. Itu harus menjadi salah satu dari nilai berikut: HS256, HS384, dan HS512. Untuk detail, lihat [JSON Web Algorithms (JWA)](https://datatracker.ietf.org/doc/html/rfc7518#section-3.2).
 
-Bidang "algorithm" ini opsional; HS256 diterapkan secara otomatis jika bidang "algorithm" tidak ada di file `nqrust-identity.json`.
+Bidang "algorithm" ini opsional; HS256 diterapkan secara otomatis jika bidang "algorithm" tidak ada di file `keycloak.json`.
 
 ### Tambah Metode Otorisasi Klien Anda Sendiri
 

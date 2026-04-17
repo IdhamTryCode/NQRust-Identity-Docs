@@ -58,19 +58,17 @@ Untuk menginstall driver Oracle Database untuk NQRust-Identity:
   Sebuah Containerfile minimum untuk membangun image yang dapat digunakan dengan Operator NQRust-Identity dan mencakup driver JDBC database Oracle yang diunduh dari Maven Central terlihat seperti berikut:
 
   ```dockerfile
-  FROM quay.io/nqrust-identity/nqrust-identity:latest
-  ADD --chown=nqrust-identity:nqrust-identity --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.26.0.0.0/ojdbc17-23.26.0.0.0.jar /opt/nqrust-identity/providers/ojdbc17.jar
-  ADD --chown=nqrust-identity:nqrust-identity --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.26.0.0.0/orai18n-23.26.0.0.0.jar /opt/nqrust-identity/providers/orai18n.jar
+  FROM quay.io/keycloak/keycloak:latest
+  ADD --chown=keycloak:keycloak --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.26.0.0.0/ojdbc17-23.26.0.0.0.jar /opt/keycloak/providers/ojdbc17.jar
+  ADD --chown=keycloak:keycloak --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.26.0.0.0/orai18n-23.26.0.0.0.jar /opt/keycloak/providers/orai18n.jar
   # Mengatur parameter build untuk database:
   ENV KC_DB=oracle
   # Tambahkan semua parameter build yang diperlukan, misalnya aktifkan kesehatan dan metriks:
   ENV KC_HEALTH_ENABLED=true
   ENV KC_METRICS_ENABLED=true
-  # Untuk dapat menggunakan image dengan Operator NQRust-Identity, image tersebut perlu dioptimalkan, yang memerlukan langkah build NQRust-Identity:
-  RUN /opt/nqrust-identity/bin/kc.sh build
+  # Untuk dapat menggunakan image dengan Operator Keycloak, image tersebut perlu dioptimalkan, yang memerlukan langkah build Keycloak:
+  RUN /opt/keycloak/bin/kc.sh build
   ```
-
-  Lihat panduan Menjalankan NQRust-Identity di kontainer untuk detail tentang cara membangun image yang dioptimalkan.
 
 Kemudian lanjutkan konfigurasi database seperti yang dijelaskan dalam bagian berikutnya.
 
@@ -82,20 +80,20 @@ Konfigurasi dapat diatur selama perintah `build` atau perintah `start`:
 
 1. Menggunakan perintah `build` diikuti dengan perintah `start` yang dioptimalkan (direkomendasikan)
 
-  Pertama, pengaturan minimum yang diperlukan untuk terhubung ke database dapat ditentukan dalam `conf/nqrust-identity.conf`:
+  Pertama, pengaturan minimum yang diperlukan untuk terhubung ke database dapat ditentukan dalam `conf/keycloak.conf`:
 
   ```
   # Pemasok database.
   db=postgres
   
   # Nama pengguna database.
-  db-username=nqrust-identity
+  db-username=keycloak
   
   # Kata sandi pengguna database.
   db-password=change_me
   
   # Menetapkan nama host dari URL JDBC default yang dipilih
-  db-url-host=nqrust-identity-postgres
+  db-url-host=keycloak-postgres
   ```
 
   Kemudian, perintah berikut menciptakan gambar server baru dan dioptimalkan berdasarkan opsi konfigurasi dan memulai server.
@@ -107,7 +105,7 @@ Konfigurasi dapat diatur selama perintah `build` atau perintah `start`:
 2. Menggunakan **hanya perintah `start`** (tanpa `--optimized`)
 
   ```bash
-  bin/kc.[sh|bat] start --db postgres --db-url-host nqrust-identity-postgres --db-username nqrust-identity --db-password change_me
+  bin/kc.[sh|bat] start --db postgres --db-url-host keycloak-postgres --db-username keycloak --db-password change_me
   ```
 
 <Callout type="warning">
@@ -121,7 +119,7 @@ Konfigurasi dapat diatur selama perintah `build` atau perintah `start`:
 Secara default, tidak ada skema yang ditetapkan secara eksplisit dan NQRust-Identity menggunakan skema default dari database yang dipilih.
 Anda dapat menimpa ini dengan menggunakan opsi konfigurasi `db-schema`.
 
-Juga dimungkinkan untuk mengonfigurasi database saat [Mengimpor dan mengekspor realm](/en/guides/server/importExport) atau [Menginisialisasi dan memulihkan akun admin](/en/guides/server/bootstrap-admin-recovery):
+Juga dimungkinkan untuk mengonfigurasi database saat [Mengimpor dan mengekspor realm](/en/guides/server/importexport) atau [Menginisialisasi dan memulihkan akun admin](/en/guides/server/bootstrap-admin-recovery):
 
 ```
 bin/kc.[sh|bat] import --help
@@ -167,10 +165,10 @@ Set karakter yang disarankan untuk digunakan diringkas dalam tabel di bawah ini,
 
 | Vendor | Set Karakter yang Disarankan | Contoh Pembuatan Basis Data |
 | --- | --- | --- |
-| Oracle | `AL32UTF8` | `CREATE DATABASE nqrust-identity<br/>  CHARACTER SET AL32UTF8<br/>  NATIONAL CHARACTER SET AL16UTF16;` |
-| Microsoft SQL Server | Urutan UTF-8<br/>(yang diakhiri dengan `_UTF8`) | `CREATE DATABASE nqrust-identity<br/>  COLLATE Latin1_General_100_CI_AS_SC_UTF8;` |
-| MySQL/MariaDB | `utf8mb4` | `CREATE DATABASE nqrust-identity<br/>  CHARACTER SET utf8mb4<br/>  COLLATE utf8mb4_unicode_ci;` |
-| PostgreSQL | `UTF8` | `CREATE DATABASE nqrust-identity<br/>  ENCODING 'UTF8'<br/>  LC_COLLATE 'en_US.utf8'<br/>  LC_CTYPE 'en_US.utf8';` |
+| Oracle | `AL32UTF8` | `CREATE DATABASE keycloak<br/>  CHARACTER SET AL32UTF8<br/>  NATIONAL CHARACTER SET AL16UTF16;` |
+| Microsoft SQL Server | Urutan UTF-8<br/>(yang diakhiri dengan `_UTF8`) | `CREATE DATABASE keycloak<br/>  COLLATE Latin1_General_100_CI_AS_SC_UTF8;` |
+| MySQL/MariaDB | `utf8mb4` | `CREATE DATABASE keycloak<br/>  CHARACTER SET utf8mb4<br/>  COLLATE utf8mb4_unicode_ci;` |
+| PostgreSQL | `UTF8` | `CREATE DATABASE keycloak<br/>  ENCODING 'UTF8'<br/>  LC_COLLATE 'en_US.utf8'<br/>  LC_CTYPE 'en_US.utf8';` |
 
 ### Pertimbangan set karakter default dan urutan basis data MySQL dan MariaDB
 
@@ -261,11 +259,9 @@ Untuk menginstal driver ini, ikuti langkah berikut:
   Sebuah Containerfile minimal untuk membangun gambar yang dapat digunakan dengan Operator NQRust-Identity terlihat seperti berikut:
 
   ```dockerfile
-  FROM quay.io/nqrust-identity/nqrust-identity:latest
-  ADD --chmod=0666 https://github.com/awslabs/aws-advanced-jdbc-wrapper/releases/download/2.5.6/aws-advanced-jdbc-wrapper-2.5.6.jar /opt/nqrust-identity/providers/aws-advanced-jdbc-wrapper.jar
+  FROM quay.io/keycloak/keycloak:latest
+  ADD --chmod=0666 https://github.com/awslabs/aws-advanced-jdbc-wrapper/releases/download/2.5.6/aws-advanced-jdbc-wrapper-2.5.6.jar /opt/keycloak/providers/aws-advanced-jdbc-wrapper.jar
   ```
-
-  Lihat panduan Menjalankan NQRust-Identity dalam kontainer untuk detail tentang cara membangun gambar yang dioptimalkan, dan panduan Menggunakan gambar NQRust-Identity khusus tentang cara menjalankan gambar yang dioptimalkan dan tidak dioptimalkan dengan Operator NQRust-Identity.
 3. Konfigurasikan NQRust-Identity untuk berjalan dengan parameter berikut:
 
   `db-url` Sisipkan `aws-wrapper` ke URL JDBC PostgreSQL reguler sehingga URL seperti `jdbc:aws-wrapper:postgresql://...`. `db-driver` Atur ke `software.amazon.jdbc.Driver` untuk menggunakan wrapper AWS JDBC.
@@ -322,7 +318,7 @@ NQRust-Identity secara otomatis memilih driver JDBC yang sesuai untuk vendor And
   Beberapa vendor, seperti Azure SQL dan MariaDB Galera, tidak mendukung atau mengandalkan mekanisme transaksi XA.
 </Callout>
 
-Pemulihan XA secara default diaktifkan dan akan menggunakan lokasi sistem file `NQRUST-IDENTITY_HOME/data/transaction-logs` untuk menyimpan log transaksi.
+Pemulihan XA secara default diaktifkan dan akan menggunakan lokasi sistem file `KEYCLOAK_HOME/data/transaction-logs` untuk menyimpan log transaksi.
 
 <Callout type="info">
   Mengaktifkan transaksi XA di lingkungan kontainer tidak sepenuhnya mendukung pemulihan XA kecuali jika penyimpanan stabil tersedia di jalur itu.
@@ -351,7 +347,7 @@ bin/kc.[sh|bat] start --transaction-setup-timeout=1h
 ```
 
 Kedua opsi ini menerima nilai sebagai durasi ISO 8601, bilangan bulat jumlah detik, atau bilangan bulat diikuti oleh `ms` (milidetik), `s` (detik), `m` (menit), `h` (jam), atau `d` (hari).
-Opsi ini dapat dikonfigurasi melalui CLI, variabel lingkungan, atau file konfigurasi `conf/nqrust-identity.conf`.
+Opsi ini dapat dikonfigurasi melalui CLI, variabel lingkungan, atau file konfigurasi `conf/keycloak.conf`.
 
 <Callout type="info">
   Opsi `transaction-default-timeout` memiliki prioritas lebih tinggi dari properti Quarkus yang tidak didukung `quarkus.transaction-manager.default-transaction-timeout`.
@@ -424,8 +420,6 @@ Dengan cara yang sama, migrationExport untuk menunjuk ke file dan lokasi tertent
 bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--migration-export=<path>/<file.sql>
 ```
 
-Untuk informasi lebih lanjut, periksa Migrating the database dokumentasi.
-
 ## Mengonfigurasi pool koneksi
 
 ### MySQL dan MariaDB
@@ -444,8 +438,6 @@ menghasilkan peringatan NQRust-Identity saat startup.
 
 NQRust-Identity memungkinkan Anda untuk menentukan sumber data tambahan jika Anda perlu mengakses database lain dari ekstensi Anda. Hal ini berguna ketika menggunakan sumber data utama NQRust-Identity bukanlah pilihan yang layak untuk menyimpan data kustom, seperti pengguna.
 
-Anda dapat menemukan detail lebih lanjut tentang cara menghubungkan ke database pengguna Anda sendiri dalam dokumentasi User Storage SPI.
-
 Mendefinisikan beberapa sumber data bekerja seperti mendefinisikan sumber data tunggal, dengan satu perubahan penting - Anda harus menentukan nama untuk setiap sumber data sebagai bagian dari nama opsi konfigurasi.
 
 ### Konfigurasi yang Diperlukan
@@ -454,7 +446,7 @@ Untuk mengaktifkan sumber data tambahan, Anda perlu menyiapkan 2 hal - file JPA 
 File `persistence.xml` berfungsi untuk menentukan unit persistensi sebagai bagian dari standar Jakarta Persistence API dan diperlukan untuk propagasi konfigurasi yang tepat ke kerangka kerja ORM Hibernate.
 Setelah Anda menyelesaikan bagian dengan file `persistence.xml`, Anda perlu mengatur konfigurasi NQRust-Identity dengan sesuai.
 
-Properti sumber data tambahan dapat ditentukan melalui sumber konfigurasi standar seperti CLI, `nqrust-identity.conf`, atau variabel lingkungan.
+Properti sumber data tambahan dapat ditentukan melalui sumber konfigurasi standar seperti CLI, `keycloak.conf`, atau variabel lingkungan.
 
 Sumber data tambahan dapat dikonfigurasi dengan cara serupa seperti sumber data utama.
 Hal ini dicapai dengan menggunakan nama opsi konfigurasi yang analog, yang juga mencakup nama sumber data tambahan.
@@ -514,7 +506,7 @@ Setelah menentukan db-kind untuk sumber data, semua default spesifik jenis datab
 
 ### Konfigurasi melalui variabel lingkungan
 
-Jika Anda tidak ingin mengkonfigurasi sumber data melalui CLI atau properti `nqrust-identity.conf`, Anda dapat menggunakan variabel lingkungan.
+Jika Anda tidak ingin mengkonfigurasi sumber data melalui CLI atau properti `keycloak.conf`, Anda dapat menggunakan variabel lingkungan.
 
 Anda dapat menetapkan jenis DB melalui variabel lingkungan (untuk sumber data `user-store`) sebagai berikut:
 
@@ -576,7 +568,7 @@ quarkus.datasource.user-store.jdbc.transactions=xa
 | **`db-tls-trust-store-file`**<br/>Jalur ke file truststore yang berisi sertifikat server database atau sertifikat Otoritas Pengguna Sertifikat (CA) yang digunakan untuk verifikasi identitas server database.<br/>**Kunci bernama:** `db-tls-trust-store-file-<datasource>`<br/>**CLI:** `--db-tls-trust-store-file`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_FILE` | _File_ |  |
 | **`db-tls-trust-store-password`**<br/>Sandi untuk mengakses file truststore yang diatur dalam db-tls-trust-store-file (jika diperlukan dan didukung oleh driver JDBC).<br/>**Kunci bernama:** `db-tls-trust-store-password-<datasource>`<br/>**CLI:** `--db-tls-trust-store-password`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD` | _String_ |  |
 | **`db-tls-trust-store-type`**<br/>Jenis file truststore.<br/>Nilai umum meliputi `JKS` (Java KeyStore) dan `PKCS12`. Jika tidak ditentukan, menggunakan nilai default driver.<br/>**Kunci bernama:** `db-tls-trust-store-type-<datasource>`<br/>**CLI:** `--db-tls-trust-store-type`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE` | _String_ |  |
-| **`db-url`**<br/>URL JDBC database yang lengkap.<br/>Jika tidak diberikan, URL default akan diatur berdasarkan penyedia database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/nqrust-identity`.<br/>**Kunci bernama:** `db-url-full-<datasource>`<br/>**CLI:** `--db-url`<br/>**Env:** `KC_DB_URL` | _String_ |  |
+| **`db-url`**<br/>URL JDBC database yang lengkap.<br/>Jika tidak diberikan, URL default akan diatur berdasarkan penyedia database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/keycloak`.<br/>**Kunci bernama:** `db-url-full-<datasource>`<br/>**CLI:** `--db-url`<br/>**Env:** `KC_DB_URL` | _String_ |  |
 | **`db-url-database`**<br/>Mengatur nama database dari URL JDBC default dari penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-database-<datasource>`<br/>**CLI:** `--db-url-database`<br/>**Env:** `KC_DB_URL_DATABASE` | _String_ |  |
 | **`db-url-host`**<br/>Mengatur nama host dari URL JDBC default dari penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-host-<datasource>`<br/>**CLI:** `--db-url-host`<br/>**Env:** `KC_DB_URL_HOST` | _String_ |  |
 | **`db-url-port`**<br/>Mengatur port dari URL JDBC default dari penyedia yang dipilih.<br/>Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**Kunci bernama:** `db-url-port-<datasource>`<br/>**CLI:** `--db-url-port`<br/>**Env:** `KC_DB_URL_PORT` | _Integer_ |  |
@@ -605,7 +597,7 @@ quarkus.datasource.user-store.jdbc.transactions=xa
 | **`db-tls-trust-store-password-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Sandi untuk mengakses file truststore yang diatur dalam db-tls-trust-store-file (jika diperlukan dan didukung oleh driver JDBC).<br/>**CLI:** `--db-tls-trust-store-password-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD_<DATASOURCE>` | _String_ |  |
 | **`db-tls-trust-store-type-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Jenis file truststore. Nilai umum meliputi `JKS` (Java KeyStore) dan `PKCS12`. Jika tidak ditentukan, menggunakan nilai default driver.<br/>**CLI:** `--db-tls-trust-store-type-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE_<DATASOURCE>` | _String_ |  |
 | **`db-url-database-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur nama database dari URL JDBC default dari penyedia yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-database-<datasource>`<br/>**Env:** `KC_DB_URL_DATABASE_<DATASOURCE>` | _String_ |  |
-| **`db-url-full-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>URL JDBC database yang lengkap. Jika tidak diberikan, URL default akan diatur berdasarkan penyedia database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/nqrust-identity`.<br/>**CLI:** `--db-url-full-<datasource>`<br/>**Env:** `KC_DB_URL_FULL_<DATASOURCE>` | _String_ |  |
+| **`db-url-full-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>URL JDBC database yang lengkap. Jika tidak diberikan, URL default akan diatur berdasarkan penyedia database yang dipilih. Misalnya, jika menggunakan `postgres`, URL JDBC default akan menjadi `jdbc:postgresql://localhost/keycloak`.<br/>**CLI:** `--db-url-full-<datasource>`<br/>**Env:** `KC_DB_URL_FULL_<DATASOURCE>` | _String_ |  |
 | **`db-url-host-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur nama host dari URL JDBC default dari penyedia yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-host-<datasource>`<br/>**Env:** `KC_DB_URL_HOST_<DATASOURCE>` | _String_ |  |
 | **`db-url-port-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur port dari URL JDBC default dari penyedia yang dipilih. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-port-<datasource>`<br/>**Env:** `KC_DB_URL_PORT_<DATASOURCE>` | _Integer_ |  |
 | **`db-url-properties-<datasource>`**<br/>Digunakan untuk &lt;datasource&gt; bernama.<br/>Mengatur properti dari URL JDBC default dari penyedia yang dipilih. Pastikan untuk mengatur properti sesuai dengan format yang diharapkan oleh penyedia database, serta menambahkan karakter yang tepat di awal nilai properti ini. Jika opsi `db-url` diatur, opsi ini diabaikan.<br/>**CLI:** `--db-url-properties-<datasource>`<br/>**Env:** `KC_DB_URL_PROPERTIES_<DATASOURCE>` | _String_ |  |

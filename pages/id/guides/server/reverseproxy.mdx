@@ -59,7 +59,7 @@ Jika header ini tidak dikonfigurasi dengan benar, klien liar dapat menetapkan he
 
 Secara default, NQRust-Identity diekspos melalui root context path (`/`). Jika proxy menggunakan path konteks yang berbeda dari NQRust-Identity, salah satu berikut harus dilakukan:
 - Gunakan hostname yang sederhana untuk opsi `hostname`, `xforwarded` untuk opsi `proxy-headers`, dan memiliki proxy mengatur header `X-Forwarded-Prefix`.
-- Gunakan URL penuh untuk opsi `hostname` termasuk path konteks proxy, misalnya menggunakan `--hostname=https://my.nqrust-identity.org/auth` jika NQRust-Identity diekspos melalui proxy balik pada `/auth`.
+- Gunakan URL penuh untuk opsi `hostname` termasuk path konteks proxy, misalnya menggunakan `--hostname=https://my.keycloak.org/auth` jika NQRust-Identity diekspos melalui proxy balik pada `/auth`.
 - Ubah path konteks NQRust-Identity sendiri untuk mencocokkan path konteks proxy dengan opsi `http-relative-path`.
 
 Untuk detail lebih lanjut tentang dieksposkan NQRust-Identity pada hostname atau path konteks yang berbeda termasuk Administration REST API dan Console, lihat [Mengonfigurasi hostname (v2)](/en/guides/server/hostname).

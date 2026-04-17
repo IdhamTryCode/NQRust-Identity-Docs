@@ -1,19 +1,22 @@
 {
-  "overview": "Planning for securing applications and services",
-  "oidc-layers": "Securing applications and services with OpenID Connect",
+  "index": {
+    "display": "hidden"
+  },
+  "overview": "Perencanaan keamanan aplikasi dan service",
+  "oidc-layers": "Mengamankan aplikasi dan service dengan OpenID Connect",
   "javascript-adapter": "NQRust-Identity JavaScript adapter",
   "nodejs-adapter": "NQRust-Identity Node.js adapter",
-  "mod-auth-openidc": "Configuring the mod_auth_openidc Apache HTTPD Module",
-  "saml-galleon-layers": "NQRust-Identity SAML Galleon feature pack for WildFly and EAP",
-  "mod-auth-mellon": "Configuring the mod_auth_mellon Apache Module",
-  "client-registration": "Using the client registration service",
-  "client-registration-cli": "Automating client registration with the CLI",
-  "mcp-authz-server": "Integrating with Model Context Protocol (MCP)",
-  "token-exchange": "Configuring and using token exchange",
+  "mod-auth-openidc": "Mengonfigurasi modul mod_auth_openidc Apache HTTPD",
+  "saml-galleon-layers": "NQRust-Identity SAML Galleon feature pack untuk WildFly dan EAP",
+  "mod-auth-mellon": "Mengonfigurasi modul mod_auth_mellon Apache",
+  "client-registration": "Menggunakan client registration service",
+  "client-registration-cli": "Otomatisasi client registration dengan CLI",
+  "mcp-authz-server": "Integrasi dengan Model Context Protocol (MCP)",
+  "token-exchange": "Mengonfigurasi dan menggunakan token exchange",
   "jwt-authorization-grant": "JWT Authorization Grant",
-  "specifications": "Specifications implemented",
+  "specifications": "Spesifikasi yang diimplementasikan",
   "admin-client": "NQRust-Identity admin client",
   "authz-client": "NQRust-Identity authorization client",
   "policy-enforcer": "NQRust-Identity policy enforcer",
-  "upgrading": "Upgrading the NQRust-Identity Client Libraries"
+  "upgrading": "Upgrade NQRust-Identity Client Libraries"
 }

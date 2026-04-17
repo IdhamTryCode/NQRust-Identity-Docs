@@ -11,10 +11,6 @@ Sebuah lingkungan produksi NQRust-Identity menyediakan otentikasi dan otorisasi 
 
 Panduan ini menjelaskan area konfigurasi umum yang diperlukan untuk lingkungan NQRust-Identity yang siap produksi. Informasi ini berfokus pada konsep umum bukan pada implementasi aktual, yang tergantung pada lingkungan Anda. Aspek penting yang dijelaskan dalam panduan ini berlaku untuk semua lingkungan, sama ada itu kontainerisasi, on-premise, GitOps, atau Ansible.
 
-## Konfigurasi yang didukung untuk lingkungan produksi
-
-Untuk ikhtisar platform yang didukung, versi Java, basis data, dan persyaratan sistem lainnya untuk NQRust-Identity, lihat Konfigurasi yang Didukung.
-
 ## TLS untuk komunikasi yang aman
 
 NQRust-Identity terus-menerus mengganti data sensitif, yang berarti semua komunikasi ke dan dari NQRust-Identity memerlukan saluran komunikasi yang aman. Untuk mencegah beberapa vekter serangan, Anda mengaktifkan HTTP melalui TLS, atau HTTPS, untuk saluran tersebut.
@@ -119,8 +115,6 @@ Lihat [Mengonfigurasi cache terdistribusi](/en/guides/server/caching#network-bin
   Pengoptimalan serializer JSON untuk kinerja HTTP yang lebih baik adalah
   **Pratinjau**
   dan belum sepenuhnya didukung. Fitur ini dinonaktifkan secara default.
-
-  Kami mengumpulkan umpan balik lebih banyak tentang fitur ini untuk mempromosikan ke didukung. Silakan, bagikan umpan balik Anda tentang masalah apa pun di [diskusi ini](https://github.com/nqrust-identity/nqrust-identity/discussions/43484).
 
   Untuk mengaktifkan, jalankan server dengan `--features=preview` atau `--features=http-optimized-serializers`
 </Callout>

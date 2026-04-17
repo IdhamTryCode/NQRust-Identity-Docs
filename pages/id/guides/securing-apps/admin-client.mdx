@@ -7,13 +7,13 @@ description: Klien admin NQRust-Identity - Dokumentasi NQRust-Identity
 
 Klien admin NQRust-Identity adalah pustaka Java yang memudahkan akses dan penggunaan Admin REST API NQRust-Identity.
 Pustaka ini memerlukan Java 11 atau lebih tinggi pada saat runtime (ketergantungan RESTEasy menetapkan persyaratan ini).
-Untuk menggunakannya dari aplikasi Anda, tambahkan ketergantungan pada pustaka `nqrust-identity-admin-client`.
+Untuk menggunakannya dari aplikasi Anda, tambahkan ketergantungan pada pustaka `keycloak-admin-client`.
 Sebagai contoh menggunakan Maven:
 
 ```xml
 <dependency>
-    <groupId>org.nqrust-identity</groupId>
-    <artifactId>nqrust-identity-admin-client</artifactId>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-admin-client</artifactId>
     <version>26.0.8</version>
 </dependency>
 ```
@@ -21,17 +21,17 @@ Sebagai contoh menggunakan Maven:
 Contoh berikut menunjukkan bagaimana menggunakan pustaka klien Java untuk mendapatkan detail realm utama:
 
 ```java
-import org.nqrust-identity.admin.client.NQRust-Identity;
-import org.nqrust-identity.representations.idm.RealmRepresentation;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.RealmRepresentation;
 ...
 
-NQRust-Identity nqrust-identity = NQRust-Identity.getInstance(
+Keycloak keycloak = Keycloak.getInstance(
     "http://localhost:8080",
     "master",
     "admin",
     "password",
     "admin-cli");
-RealmRepresentation realm = nqrust-identity.realm("master").toRepresentation();
+RealmRepresentation realm = keycloak.realm("master").toRepresentation();
 ```
 
 Javadoc lengkap untuk klien admin tersedia di API Documentation.
@@ -48,12 +48,12 @@ objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 ```
 
-Jika Anda menggunakan cara pembuatan klien admin yang dasar seperti yang dijelaskan di atas, maka properti-properti ini ditambahkan secara default karena klien admin secara default menggunakan kelas `org.nqrust-identity.admin.client.JacksonProvider` untuk membuat `ObjectMapper`, yang menambahkan properti-properti ini secara otomatis. Namun jika Anda menyuntikkan `customJacksonProvider` Anda sendiri saat membuat objek `NQRust-Identity`, pastikan bahwa object mapper diinisialisasi dengan properti di atas jika Anda ingin menghindari isu kompatibilitas.
+Jika Anda menggunakan cara pembuatan klien admin yang dasar seperti yang dijelaskan di atas, maka properti-properti ini ditambahkan secara default karena klien admin secara default menggunakan kelas `org.keycloak.admin.client.JacksonProvider` untuk membuat `ObjectMapper`, yang menambahkan properti-properti ini secara otomatis. Namun jika Anda menyuntikkan `customJacksonProvider` Anda sendiri saat membuat objek `Keycloak`, pastikan bahwa object mapper diinisialisasi dengan properti di atas jika Anda ingin menghindari isu kompatibilitas.
 
 Sebagai contoh, pertimbangkan situasi di mana klien admin diinstantiasikan dengan cara yang dijelaskan di bawah ini dengan kelas `MyCustomJacksonProvider` Anda sendiri:
 
 ```java
-NQRust-Identity.getInstance(
+Keycloak.getInstance(
                 "http://localhost:8080",
                 "master",
                 "admin",
@@ -65,5 +65,5 @@ NQRust-Identity.getInstance(
         );
 ```
 
-Dalam hal ini, pastikan bahwa kelas `MyCustomJacksonProvider` Anda mewarisi dari kelas `org.nqrust-identity.admin.client.JacksonProvider` atau pastikan untuk mengonfigurasi `ObjectMapper` secara manual dengan cara yang dijelaskan di atas.
-Perhatian serupa harus diambil saat menggunakan `NQRust-IdentityBuilder` untuk membuat klien admin dan klien RestEasy yang secara manual disuntikkan dan dibuat.
+Dalam hal ini, pastikan bahwa kelas `MyCustomJacksonProvider` Anda mewarisi dari kelas `org.keycloak.admin.client.JacksonProvider` atau pastikan untuk mengonfigurasi `ObjectMapper` secara manual dengan cara yang dijelaskan di atas.
+Perhatian serupa harus diambil saat menggunakan `KeycloakBuilder` untuk membuat klien admin dan klien RestEasy yang secara manual disuntikkan dan dibuat.

@@ -18,8 +18,8 @@ Jika Anda menggunakan Maven, Anda harus mengonfigurasi dependensi berikut untuk 
 
 ```xml
 <dependency>
-    <groupId>org.nqrust-identity</groupId>
-    <artifactId>nqrust-identity-policy-enforcer</artifactId>
+    <groupId>org.keycloak</groupId>
+    <artifactId>keycloak-policy-enforcer</artifactId>
     <version>26.0.8</version>
 </dependency>
 ```
@@ -69,7 +69,7 @@ Berikut adalah deskripsi dari setiap opsi konfigurasi:
     Permintaan diizinkan bahkan ketika tidak ada kebijakan yang terkait dengan sumber daya yang diberikan.
   - **DISABLED**
 
-    Melemahkan penilaian kebijakan sepenuhnya dan mengizinkan akses ke sumber daya apa pun. Ketika `enforcement-mode` adalah `DISABLED`, aplikasi masih dapat memperoleh semua izin yang diberikan oleh NQRust-Identity melalui [Konteks Otorisasi](#_enforcer_authorization_context)
+    Melemahkan penilaian kebijakan sepenuhnya dan mengizinkan akses ke sumber daya apa pun. Ketika `enforcement-mode` adalah `DISABLED`, aplikasi masih dapat memperoleh semua izin yang diberikan oleh NQRust-Identity melalui [Konteks Otorisasi](#enforcer-authorization-context)
 - **on-deny-redirect-to**
 
   Menentukan URL tempat permintaan klien akan dialihkan saat mendapatkan pesan "akses ditolak" dari server. Secara default, adapter merespon dengan kode status HTTP 403.
@@ -121,7 +121,7 @@ Berikut adalah deskripsi dari setiap opsi konfigurasi:
     - **DISABLED**
   - **claim-information-point**
 
-    Menentukan satu atau lebih klaim yang harus dipecahkan dan dipush ke server NQRust-Identity untuk membuat klaim ini tersedia untuk kebijakan. Lihat [Claim Information Point](#_enforcer_claim_information_point) untuk lebih detail.
+    Menentukan satu atau lebih klaim yang harus dipecahkan dan dipush ke server NQRust-Identity untuk membuat klaim ini tersedia untuk kebijakan. Lihat [Claim Information Point](#enforcer-claim-information-point) untuk lebih detail.
 - **lazy-load-paths**
 
   Menentukan bagaimana adapter harus mengambil server untuk sumber daya yang terkait dengan jalur dalam aplikasi Anda. Jika **true**, penguat kebijakan akan mengambil sumber daya sesuai dengan permintaan jalur. Konfigurasi ini sangat berguna ketika Anda tidak ingin mengambil semua sumber daya dari server selama penyebaran (bila Anda tidak telah memberikan `paths`) atau dalam kasus Anda hanya telah menentukan subset `paths` dan ingin mengambil yang lain secara on-demand.
@@ -130,7 +130,7 @@ Berikut adalah deskripsi dari setiap opsi konfigurasi:
   Menentukan bagaimana lingkup harus dipetakan ke metode HTTP. Jika diatur ke **true**, penguat kebijakan akan menggunakan metode HTTP dari permintaan saat ini untuk memeriksa apakah atau tidak akses harus diberikan. Ketika diaktifkan, pastikan sumber daya Anda di NQRust-Identity terkait dengan lingkup yang mewakili setiap metode HTTP yang Anda lindungi.
 - **claim-information-point**
 
-  Menentukan satu atau lebih klaim **global** yang harus dipecahkan dan dipush ke server NQRust-Identity untuk membuat klaim ini tersedia untuk kebijakan. Lihat [Claim Information Point](#_enforcer_claim_information_point) untuk lebih detail.
+  Menentukan satu atau lebih klaim **global** yang harus dipecahkan dan dipush ke server NQRust-Identity untuk membuat klaim ini tersedia untuk kebijakan. Lihat [Claim Information Point](#enforcer-claim-information-point) untuk lebih detail.
 
 ## Claim Information Point
 
@@ -167,7 +167,7 @@ Berikut adalah beberapa contoh yang menunjukkan bagaimana Anda dapat mengekstrak
           "claim-from-body": "{request.body}",
           "claim-from-static-value": "static value",
           "claim-from-multiple-static-value": ["static", "value"],
-          "param-replace-multiple-placeholder": "Test {nqrust-identity.access_token['/custom_claim/0']} and {request.parameter['a']}"
+          "param-replace-multiple-placeholder": "Test {keycloak.access_token['/custom_claim/0']} and {request.parameter['a']}"
         }
       }
     }
@@ -203,15 +203,15 @@ Berikut adalah beberapa contoh yang menunjukkan bagaimana Anda dapat mengekstrak
               "header-b-value1",
               "header-b-value2"
             ],
-            "Authorization": "Bearer {nqrust-identity.access_token}"
+            "Authorization": "Bearer {keycloak.access_token}"
           },
           "parameters": {
             "param-a": [
               "param-a-value1",
               "param-a-value2"
             ],
-            "param-subject": "{nqrust-identity.access_token['/sub']}",
-            "param-user-name": "{nqrust-identity.access_token['/preferred_username']}"
+            "param-subject": "{keycloak.access_token['/sub']}",
+            "param-user-name": "{keycloak.access_token['/preferred_username']}"
           }
         }
       }
@@ -242,9 +242,9 @@ Berikut adalah beberapa contoh yang menunjukkan bagaimana Anda dapat mengekstrak
 
 SPI Penyedia Informasi Klaim dapat digunakan oleh pengembang untuk mendukung titik informasi klaim yang berbeda jika penyedia bawaan tidak cukup untuk menangani kebutuhan mereka.
 
-Sebagai contoh, untuk mengimplementasikan penyedia CIP baru, Anda perlu mengimplementasikan `org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory` dan `ClaimInformationPointProvider` serta menyediakan file `META-INF/services/org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory` di classpath aplikasi Anda.
+Sebagai contoh, untuk mengimplementasikan penyedia CIP baru, Anda perlu mengimplementasikan `org.keycloak.adapters.authorization.ClaimInformationPointProviderFactory` dan `ClaimInformationPointProvider` serta menyediakan file `META-INF/services/org.keycloak.adapters.authorization.ClaimInformationPointProviderFactory` di classpath aplikasi Anda.
 
-Contoh `org.nqrust-identity.adapters.authorization.ClaimInformationPointProviderFactory`:
+Contoh `org.keycloak.adapters.authorization.ClaimInformationPointProviderFactory`:
 
 ```java
 public class MyClaimInformationPointProviderFactory implements ClaimInformationPointProviderFactory<MyClaimInformationPointProvider> {
@@ -294,7 +294,7 @@ public class MyClaimInformationPointProvider implements ClaimInformationPointPro
 
 ## Mengambil Konteks Otorisasi
 
-Ketika penegakan kebijakan diaktifkan, izin yang diperoleh dari server tersedia melalui `org.nqrust-identity.AuthorizationContext`. Kelas ini menawarkan beberapa metode yang dapat Anda gunakan untuk memperoleh izin dan memastikan apakah izin telah diberikan untuk sumber daya atau lingkup tertentu.
+Ketika penegakan kebijakan diaktifkan, izin yang diperoleh dari server tersedia melalui `org.keycloak.AuthorizationContext`. Kelas ini menawarkan beberapa metode yang dapat Anda gunakan untuk memperoleh izin dan memastikan apakah izin telah diberikan untuk sumber daya atau lingkup tertentu.
 
 Mengambil Konteks Otorisasi di Kontainer Servlet
 

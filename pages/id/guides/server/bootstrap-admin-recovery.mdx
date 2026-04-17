@@ -13,7 +13,7 @@ Akun admin pengguna atau layanan yang dibuat menggunakan salah satu metode yang 
 
 ## Menginisialisasi akun admin sementara saat startup NQRust-Identity
 
-Perintah `start` dan `start-dev` NQRust-Identity mendukung opsi untuk menginisialisasi akun admin pengguna dan akun layanan admin sementara. Opsi ini adalah opsi konfigurasi standar, jadi dapat ditentukan di salah satu [sumber konfigurasi](/en/guides/server/configuration#_configuring_sources_for_nqrust-identity) seperti variabel lingkungan atau parameter CLI. Sebagai contoh, contoh berikut menunjukkan cara menggunakan perintah `start` dan `start-dev` dengan parameter CLI untuk menginisialisasi akun admin pengguna sementara dan akun layanan admin, masing-masing:
+Perintah `start` dan `start-dev` NQRust-Identity mendukung opsi untuk menginisialisasi akun admin pengguna dan akun layanan admin sementara. Opsi ini adalah opsi konfigurasi standar, jadi dapat ditentukan di salah satu [sumber konfigurasi](/en/guides/server/configuration#configuring-sources-for-nqrust-identity) seperti variabel lingkungan atau parameter CLI. Sebagai contoh, contoh berikut menunjukkan cara menggunakan perintah `start` dan `start-dev` dengan parameter CLI untuk menginisialisasi akun admin pengguna sementara dan akun layanan admin, masing-masing:
 
 ```bash
 bin/kc.[sh|bat] start --bootstrap-admin-username tmpadm --bootstrap-admin-password pass
@@ -23,7 +23,7 @@ bin/kc.[sh|bat] start --bootstrap-admin-username tmpadm --bootstrap-admin-passwo
 bin/kc.[sh|bat] start-dev --bootstrap-admin-client-id tmpadm --bootstrap-admin-client-secret secret
 ```
 
-Nilai username atau ID klien dapat diabaikan; lihat bagian [Nilai Default](#_default_values) di bawah untuk informasi lebih lanjut.
+Nilai username atau ID klien dapat diabaikan; lihat bagian [Nilai Default](#default-values) di bawah untuk informasi lebih lanjut.
 
 Tujuan opsi ini hanya untuk menginisialisasi akun admin sementara. Akun ini akan dibuat hanya saat startup awal server NQRust-Identity saat realm master belum ada. Akun akan selalu dibuat di realm master. Untuk memulihkan akses admin yang hilang, gunakan perintah khusus yang dijelaskan di bagian di bawah.
 

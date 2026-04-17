@@ -13,7 +13,7 @@ A user or service admin account created using one of the methods described below
 
 ## Bootstrapping a temporary admin account at NQRust-Identity startup
 
-NQRust-Identity `start` and `start-dev` commands support options for bootstrapping both temporary admin users and admin service accounts. These options are standard configuration options, so they can be specified in any of the [configuration sources](/en/guides/server/configuration#_configuring_sources_for_nqrust-identity) such as environment variables or CLI parameters. For instance, the following examples demonstrate how to use the `start` and `start-dev` commands with CLI parameters to bootstrap a temporary admin user and an admin service account, respectively:
+NQRust-Identity `start` and `start-dev` commands support options for bootstrapping both temporary admin users and admin service accounts. These options are standard configuration options, so they can be specified in any of the [configuration sources](/en/guides/server/configuration#configuring-sources-for-nqrust-identity) such as environment variables or CLI parameters. For instance, the following examples demonstrate how to use the `start` and `start-dev` commands with CLI parameters to bootstrap a temporary admin user and an admin service account, respectively:
 
 ```bash
 bin/kc.[sh|bat] start --bootstrap-admin-username tmpadm --bootstrap-admin-password pass
@@ -23,7 +23,7 @@ bin/kc.[sh|bat] start --bootstrap-admin-username tmpadm --bootstrap-admin-passwo
 bin/kc.[sh|bat] start-dev --bootstrap-admin-client-id tmpadm --bootstrap-admin-client-secret secret
 ```
 
-The username or client ID values can be omitted; see the [Default values](#_default_values) section below for more information.
+The username or client ID values can be omitted; see the [Default values](#default-values) section below for more information.
 
 The purpose of these options is solely for bootstrapping temporary admin accounts. These accounts will be created only during the initial start of the NQRust-Identity server when the master realm doesn’t exist yet. The accounts are always created in the master realm. For recovering lost admin access, use the dedicated command described in the sections below.
 
@@ -37,7 +37,7 @@ If you have built an optimized version of NQRust-Identity with the `build` comma
 When doing this, remove the build time options from the command line and keep only the runtime options.
 
 <Callout type="info">
-  if you do not use --optimized keep in mind that an bootstrap-admin command may implicitly create or update an optimized build for you - if you are running the command from the same machine as a server instance, this may impact the next start of your server.
+  if you do not use `--optimized` keep in mind that an `bootstrap-admin` command may implicitly create or update an optimized build for you - if you are running the command from the same machine as a server instance, this may impact the next start of your server.
 </Callout>
 
 ### Create an admin user
@@ -48,7 +48,7 @@ To create a temporary admin user, execute the following command:
 bin/kc.[sh|bat] bootstrap-admin user
 ```
 
-If no other parameters are specified and/or no corresponding environment variables are set, the user is prompted to enter the required information. The username value can be omitted to use the default values. For more information, see the [Default values](#_default_values) and [Environment variables](#_environment_variables) sections below.
+If no other parameters are specified and/or no corresponding environment variables are set, the user is prompted to enter the required information. The username value can be omitted to use the default values. For more information, see the [Default values](#default-values) and [Environment variables](#environment-variables) sections below.
 
 Alternatively, the parameters can be directly specified in the command:
 
@@ -68,7 +68,7 @@ To create a temporary admin service account, execute the following command:
 bin/kc.[sh|bat] bootstrap-admin service
 ```
 
-Similarly, if no corresponding environment variables or additional parameters are set, the user will be prompted to enter the required information. The client ID value can be omitted to use the default values. For more information, see the [Default values](#_default_values) and [Environment variables](#_environment_variables) sections below.
+Similarly, if no corresponding environment variables or additional parameters are set, the user will be prompted to enter the required information. The client ID value can be omitted to use the default values. For more information, see the [Default values](#default-values) and [Environment variables](#environment-variables) sections below.
 
 Alternatively, the parameters can be directly specified in the command:
 
@@ -118,7 +118,7 @@ The `--no-prompt` parameter can be useful if the username or client ID should be
 bin/kc.[sh|bat] bootstrap-admin user --password:env PASS_VAR --no-prompt
 ```
 
-This creates a temporary admin user with the default username without prompting for confirmation. For more information, see the [Default values](#_default_values) section above.
+This creates a temporary admin user with the default username without prompting for confirmation. For more information, see the [Default values](#default-values) section above.
 
 ## Environment variables
 

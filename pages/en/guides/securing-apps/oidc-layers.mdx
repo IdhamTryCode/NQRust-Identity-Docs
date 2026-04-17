@@ -76,7 +76,7 @@ This is described in more details in the RP-Initiated logout section of the Serv
 <Callout type="warning">
   The endpoint can also be invoked directly by the application. To invoke this endpoint directly, the refresh token needs to be included as well as the credentials required to authenticate the client.
   However this is non-standard legacy format of the logout message supported only because of the legacy NQRust-Identity OIDC Java adapters
-  or Elytron Wildfly OIDC adapter. It is not recommended to use it directly from your applications.
+  or [Elytron Wildfly OIDC adapter](https://docs.wildfly.org/37/WildFly_Elytron_Security.html#NQRust-Identity-Integration). It is not recommended to use it directly from your applications.
   For logout users, it is recommended to use either OIDC/SAML protocol standard logout or NQRust-Identity Admin console (or other way of admin REST API)
   or NQRust-Identity Account console (or other way of account REST API).
 </Callout>
@@ -149,7 +149,7 @@ The backchannel authentication endpoint is used to obtain an auth_req_id that id
 
 For more details on how to invoke on this endpoint, see [OpenID Connect Client Initiated Backchannel Authentication Flow specification](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Also refer to other places of NQRust-Identity documentation like [Client Initiated Backchannel Authentication Grant section of this guide](#_client_initiated_backchannel_authentication_grant) and Client Initiated Backchannel Authentication Grant section of Server Administration Guide.
+Also refer to other places of NQRust-Identity documentation like [Client Initiated Backchannel Authentication Grant section of this guide](#client-initiated-backchannel-authentication-grant) and Client Initiated Backchannel Authentication Grant section of Server Administration Guide.
 
 ## Supported Grant Types
 
@@ -188,7 +188,7 @@ This flow is removed from the future [OAuth 2.1 specification](https://datatrack
 
 Resource Owner Password Credentials, referred to as Direct Grant in NQRust-Identity, allows exchanging user credentials for tokens.
 Per current [Best Current Practice for OAuth 2.0 Security (RFC 9700)](https://datatracker.ietf.org/doc/html/rfc9700#name-resource-owner-password-cre),
-this flow MUST NOT be used, preferring alternative methods such as [Device Authorization Grant](#_device_authorization_grant) or [Authorization code](#_authorization_code).
+this flow MUST NOT be used, preferring alternative methods such as [Device Authorization Grant](#device-authorization-grant) or [Authorization code](#authorization-code).
 
 The limitations of using this flow include:
 
@@ -265,8 +265,8 @@ The Client Notification Endpoint can be configured in the NQRust-Identity Admin 
 
 For more details, see [OpenID Connect Client Initiated Backchannel Authentication Flow specification](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Also refer to other places of NQRust-Identity documentation such as [Backchannel Authentication Endpoint of this guide](#_backchannel_authentication_endpoint) and Client Initiated Backchannel Authentication Grant section of Server Administration Guide.
-For the details about FAPI CIBA compliance, see the [FAPI section of this guide](#_fapi-support).
+Also refer to other places of NQRust-Identity documentation such as [Backchannel Authentication Endpoint of this guide](#backchannel-authentication-endpoint) and Client Initiated Backchannel Authentication Grant section of Server Administration Guide.
+For the details about FAPI CIBA compliance, see the [FAPI section of this guide](#fapi-support).
 
 ## NQRust-Identity specific errors
 
@@ -300,14 +300,14 @@ In case you want to use Pushed Authorization Request (PAR), it is recommended th
 both the `fapi-1-baseline` profile and `fapi-1-advanced` for PAR requests. Specifically, the `fapi-1-baseline` profile contains `pkce-enforcer` executor, which makes sure
 that client use PKCE with secured S256 algorithm. This is not required for FAPI Advanced clients unless they use PAR requests.
 
-In case you want to use [CIBA](#_backchannel_authentication_endpoint) in a FAPI compliant way, make sure that your clients use both `fapi-1-advanced` and `fapi-ciba` client profiles.
+In case you want to use [CIBA](#backchannel-authentication-endpoint) in a FAPI compliant way, make sure that your clients use both `fapi-1-advanced` and `fapi-ciba` client profiles.
 There is a need to use the `fapi-1-advanced` profile, or other client profile containing the requested executors, as the `fapi-ciba` profile contains just CIBA-specific executors.
 When enforcing the requirements of the FAPI CIBA specification, there is a need for more requirements, such as enforcement of confidential clients or certificate-bound access tokens.
 
 ### Open Finance Brasil Financial-grade API Security Profile
 
 NQRust-Identity is compliant with the [Open Finance Brasil Financial-grade API Security Profile 1.0 Implementers Draft 3](https://openfinancebrasil.atlassian.net/wiki/spaces/OF/pages/245760001/EN+Open+Finance+Brasil+Financial-grade+API+Security+Profile+1.0+Implementers+Draft+3).
-This one is stricter in some requirements than the [FAPI 1 Advanced](#_fapi-support) specification and hence it may be needed to configure Client Policies
+This one is stricter in some requirements than the [FAPI 1 Advanced](#fapi-support) specification and hence it may be needed to configure Client Policies
 in the more strict way to enforce some of the requirements. Especially:
 
 - If your client does not use PAR, make sure that it uses encrypted OIDC request objects. This can be achieved by using a client profile with the `secure-request-object` executor configured with `Encryption Required` enabled.
@@ -355,11 +355,11 @@ This section describes some recommendations when securing your applications with
 
 ### Validating access tokens
 
-If you need to manually validate access tokens issued by NQRust-Identity, you can invoke the [Introspection Endpoint](#_token_introspection_endpoint).
+If you need to manually validate access tokens issued by NQRust-Identity, you can invoke the [Introspection Endpoint](#token-introspection-endpoint).
 The downside to this approach is that you have to make a network invocation to the NQRust-Identity server.  This can be slow and possibly overload the
 server if you have too many validation requests going on at the same time.  NQRust-Identity issued access tokens are [JSON Web Tokens (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) digitally signed and encoded using [JSON Web Signature (JWS)](https://datatracker.ietf.org/doc/html/rfc7515).
 Because they are encoded in this way, you can locally validate access tokens using the public key of the issuing realm.  You can either hard code the
-realm’s public key in your validation code, or lookup and cache the public key using the [certificate endpoint](#_certificate_endpoint) with the Key ID (KID) embedded within the
+realm’s public key in your validation code, or lookup and cache the public key using the [certificate endpoint](#certificate-endpoint) with the Key ID (KID) embedded within the
 JWS.  Depending on what language you code in, many third party libraries exist and they can help you with JWS validation.
 
 ### Redirect URIs
@@ -374,9 +374,13 @@ In production for web applications always use `https` for all redirect URIs. Do 
 
 A few special redirect URIs also exist:
 
+**`http://127.0.0.1`**
+
 This redirect URI is useful for native applications and allows the native application to create a web server on a random port that can be used to obtain the
 authorization code. This redirect uri allows any port. Note that per [OAuth 2.0 for Native Apps](https://datatracker.ietf.org/doc/html/rfc8252#section-8.3), the use of
 `localhost` is **not** recommended and the IP literal `127.0.0.1` should be used instead.
+
+**`urn:ietf:wg:oauth:2.0:oob`**
 
 If you cannot start a web server in the client (or a browser is not available), you can use the special `urn:ietf:wg:oauth:2.0:oob` redirect uri.
 When this redirect uri is used, NQRust-Identity displays a page with the code in the title and in a box on the page.

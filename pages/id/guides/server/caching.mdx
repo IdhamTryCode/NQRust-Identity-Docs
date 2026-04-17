@@ -163,7 +163,7 @@ File konfigurasi bisa menjadi jalur absolut atau jalur relatif ke direktori `con
 
 NQRust-Identity secara otomatis menciptakan semua cache yang diperlukan dengan konfigurasi yang diharapkan. Anda dapat menambahkan cache tambahan atau menimpa konfigurasi cache default di `conf/cache-ispn.xml` atau dalam file Anda sendiri yang disediakan melalui `--cache-config-file`.
 
-Untuk melihat konfigurasi Infinispan yang diterapkan di log, konfigurasikan `--log-level=info,org.nqrust-identity.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug`.
+Untuk melihat konfigurasi Infinispan yang diterapkan di log, konfigurasikan `--log-level=info,org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory:debug`.
 
 <Callout type="warning">
   Sementara menimpa konfigurasi cache default melalui XML secara teknis mungkin, hal ini tidak didukung.
@@ -287,7 +287,7 @@ Secara default, NQRust-Identity menggunakan `239.6.7.8` sebagai alamat multicast
 
 Direkomendasikan untuk menggunakan salah satu stack yang tersedia di atas.
 Stack tambahan disediakan oleh Infinispan, tetapi di luar cakupan panduan ini bagaimana untuk mengonfigurasinya.
-Silakan merujuk ke [Mengatur transport klaster Infinispan](https://infinispan.org/docs/stable/titles/embedding/embedding.html#cluster-transport) dan [Menyesuaikan stack JGroups](https://infinispan.org/docs/stable/titles/embedding/embedding.html#customizing-jgroups-stacks_cluster-transport) untuk dokumentasi lebih lanjut.
+Silakan merujuk ke [Mengatur transport klaster Infinispan](https://infinispan.org/docs/stable/titles/embedding/embedding.html#cluster-transport) dan [Menyesuaikan stack JGroups](https://infinispan.org/docs/stable/titles/embedding/embedding.html#customizing-jgroups-stacks-cluster-transport) untuk dokumentasi lebih lanjut.
 
 ## Menjaga Keselamatan Stack Pengangkutan
 
@@ -325,7 +325,7 @@ Untuk mengizinkan komunikasi mTLS langsung untuk NQRust-Identity saat menggunaka
   spec:
     selector:
       matchLabels:
-        app: nqrust-identity 
+        app: keycloak 
     portLevelMtls:
       "7800": 
         mode: PERMISSIVE

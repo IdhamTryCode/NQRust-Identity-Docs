@@ -32,8 +32,6 @@ Perform the following procedure to generate the Apache HTTPD module configuratio
 
 3. Click **Download** to download a ZIP file that contains the XML descriptor and PEM files you need.
 
-![Mod Auth Mellon config download](/images/securing-apps/mod-auth-mellon-1.png)
-
 ## Configuring mod_auth_mellon with NQRust-Identity
 
 There are two hosts involved:
@@ -147,24 +145,24 @@ To create the SP metadata, perform the following procedure.
 
 1. Create a few helper shell variables:
 
-  ```
-  fqdn=`hostname`
-  mellon_endpoint_url="https://${fqdn}/mellon"
-  mellon_entity_id="${mellon_endpoint_url}/metadata"
-  file_prefix="$(echo "$mellon_entity_id" | sed 's/[^A-Za-z.]/_/g' | sed 's/__*/_/g')"
-  ```
+   ```
+   fqdn=`hostname`
+   mellon_endpoint_url="https://${fqdn}/mellon"
+   mellon_entity_id="${mellon_endpoint_url}/metadata"
+   file_prefix="$(echo "$mellon_entity_id" | sed 's/[^A-Za-z.]/_/g' | sed 's/__*/_/g')"
+   ```
 2. Invoke the Mellon metadata creation tool by running this command:
 
-  ```
-  /usr/libexec/mod_auth_mellon/mellon_create_metadata.sh $mellon_entity_id $mellon_endpoint_url
-  ```
+   ```
+   /usr/libexec/mod_auth_mellon/mellon_create_metadata.sh $mellon_entity_id $mellon_endpoint_url
+   ```
 3. Move the generated files to their destination (referenced in the `/etc/httpd/conf.d/mellon.conf` file created above):
 
-  ```
-  mv ${file_prefix}.cert /etc/httpd/saml2/mellon.crt
-  mv ${file_prefix}.key /etc/httpd/saml2/mellon.key
-  mv ${file_prefix}.xml /etc/httpd/saml2/mellon_metadata.xml
-  ```
+   ```
+   mv ${file_prefix}.cert /etc/httpd/saml2/mellon.crt
+   mv ${file_prefix}.key /etc/httpd/saml2/mellon.key
+   mv ${file_prefix}.xml /etc/httpd/saml2/mellon_metadata.xml
+   ```
 
 ### Adding the Mellon Service Provider to the NQRust-Identity Identity Provider
 
@@ -176,7 +174,7 @@ All these operations are performed using the NQRust-Identity Admin Console. You 
 
 1. Open the Admin Console and log on by entering the admin username and password.
 
-  After logging into the Admin Console, there will be an existing realm. When NQRust-Identity is first set up a root realm, master, is created by default. Any previously created realms are listed in the upper left corner of the Admin Console in a drop-down list.
+   After logging into the Admin Console, there will be an existing realm. When NQRust-Identity is first set up a root realm, master, is created by default. Any previously created realms are listed in the upper left corner of the Admin Console in a drop-down list.
 2. From the realm drop-down list select **Add realm**.
 3. In the Name field type `test_realm` and click **Create**.
 
@@ -187,7 +185,7 @@ In NQRust-Identity SAML SPs are known as clients. To add the SP we must be in th
 1. Click the Clients menu item on the left and click the **Import client** button.
 2. In the **Resource file** field, provide the Mellon SP metadata file created above (`/etc/httpd/saml2/mellon_metadata.xml`).
 
-  Depending on where your browser is running you might have to copy the SP metadata from $sp_host to the machine on which your browser is running so the browser can find the file.
+   Depending on where your browser is running you might have to copy the SP metadata from $sp_host to the machine on which your browser is running so the browser can find the file.
 3. Click **Save**.
 
 #### Editing the Mellon SP client
@@ -222,23 +220,23 @@ Use this procedure to retrieve that file from the IdP.
 
 1. Use this command, substituting with the correct value for $idp_host:
 
-  ```
-  curl -k -o /etc/httpd/saml2/idp_metadata.xml \
-  https://$idp_host/realms/test_realm/protocol/saml/descriptor
-  ```
+   ```
+   curl -k -o /etc/httpd/saml2/idp_metadata.xml \
+   https://$idp_host/realms/test_realm/protocol/saml/descriptor
+   ```
 
-  Mellon is now fully configured.
+   Mellon is now fully configured.
 2. To run a syntax check for Apache configuration files, use this command:
 
-  ```
-  apachectl configtest
-  ```
+   ```
+   apachectl configtest
+   ```
 
-  __ Configtest is equivalent to the -t argument to apachectl. If the configuration test shows any errors, correct them before proceeding.
+   __ Configtest is equivalent to the -t argument to apachectl. If the configuration test shows any errors, correct them before proceeding.
 3. Restart the Apache server:
 
-  ```
-  systemctl restart httpd.service
-  ```
+   ```
+   systemctl restart httpd.service
+   ```
 
 You have now set up both NQRust-Identity as a SAML IdP in the test_realm and mod_auth_mellon as SAML SP protecting the URL $sp_host/protected (and everything beneath it) by authenticating against the `$idp_host` IdP.

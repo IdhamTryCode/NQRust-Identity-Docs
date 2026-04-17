@@ -10,7 +10,7 @@ import { Callout } from 'nextra/components'
 Logging is a key mechanism for understanding and operating NQRust-Identity.
 It should help you to monitor NQRust-Identity’s health, debug issues, and maintain an audit trail of important events.
 
-You can configure logging for the root log level or for more specific categories such as `org.hibernate` or `org.nqrust-identity`.
+You can configure logging for the root log level or for more specific categories such as `org.hibernate` or `org.keycloak`.
 It is also possible to tailor log levels for each particular log handler.
 
 In NQRust-Identity, logging goes beyond setting log levels — you can direct output to different handlers, use asynchronous logging for performance, capture HTTP access logs, and more.
@@ -29,12 +29,6 @@ To enable log handlers, enter the following command:
 ```bash
 bin/kc.[sh|bat] start --log="<handler1>,<handler2>"
 ```
-
-For more details on how to configure specific log handlers, see:
-
-- Console logging
-- File logging
-- Syslog logging
 
 ## Log levels
 
@@ -77,6 +71,8 @@ bin/kc.[sh|bat] start --log-level="<root-level>,<org.category1>:<org.category1-l
 
 A configuration that applies to a category also applies to its sub-categories unless you include a more specific matching sub-category.
 
+**Example**
+
 ```bash
 bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug,org.hibernate.hql.internal.ast:info"
 ```
@@ -92,13 +88,15 @@ This example sets the following log levels:
 When configuring category-specific log levels, you can also set the log levels as individual `log-level-<category>` options instead of using the `log-level` option for that.
 This is useful when you want to set the log levels for selected categories without overwriting the previously set `log-level` option.
 
+**Example**
+
 If you start the server as:
 
 ```bash
 bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug"
 ```
 
-you can then set an environmental variable `KC_LOG_LEVEL_ORG_NQRUST-IDENTITY=trace` to change the log level for the `org.nqrust-identity` category.
+you can then set an environmental variable `KC_LOG_LEVEL_ORG_KEYCLOAK=trace` to change the log level for the `org.keycloak` category.
 
 The `log-level-<category>` options take precedence over `log-level`. This allows you to override what was set in the `log-level` option.
 For instance if you set `KC_LOG_LEVEL_ORG_HIBERNATE=trace` for the CLI example above, the  `org.hibernate` category will use the `trace` level instead of `debug`.
@@ -107,7 +105,7 @@ Bear in mind that when using the environmental variables, the category name must
 When using other config sources, the category name must be specified "as is", for example:
 
 ```bash
-bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug" --log-level-org.nqrust-identity=trace
+bin/kc.[sh|bat] start --log-level="INFO,org.hibernate:debug" --log-level-org.keycloak=trace
 ```
 
 ### Specify log level for each handler
@@ -124,11 +122,11 @@ It means properties for log level settings look like this:
 - `log-syslog-level` - Syslog log handler
 
 <Callout type="info">
-  The log-&lt;handler&gt;-level properties are available only when the particular log handlers are enabled.
+  The `log-<handler>-level` properties are available only when the particular log handlers are enabled.
   More information in log handlers settings below.
 </Callout>
 
-Only log levels specified in [Log levels](#_log_levels) section are accepted, and **must be in lowercase**.
+Only log levels specified in [Log levels](#log-levels) section are accepted, and **must be in lowercase**.
 There is no support for specifying particular categories for log handlers yet.
 
 #### General principle
@@ -143,6 +141,8 @@ Log handler levels provide the **restriction for the root log level**, and the d
 
 #### Examples
 
+**Example: debug for file handler, but info for console handler:**
+
 ```bash
 bin/kc.[sh|bat] start --log=console,file --log-level=debug --log-console-level=info
 ```
@@ -150,17 +150,21 @@ bin/kc.[sh|bat] start --log=console,file --log-level=debug --log-console-level=i
 The root log level is set to `debug`, so every log handler inherits the value - so does the file log handler.
 To hide `debug` records in the console, we need to set the minimal (least severe) level to `info` for the console handler.
 
+**Example: warn for all handlers, but debug for file handler:**
+
 ```bash
 bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug --log-console-level=warn --log-syslog-level=warn
 ```
 
 The root level must be set to the most verbose required level (`debug` in this case), and other log handlers must be amended accordingly.
 
+**Example: info for all handlers, but debug+org.nqrust-identity.events:trace for Syslog handler:**
+
 ```bash
-bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug,org.nqrust-identity.events:trace, --log-syslog-level=trace --log-console-level=info --log-file-level=info
+bin/kc.[sh|bat] start --log=console,file,syslog --log-level=debug,org.keycloak.events:trace, --log-syslog-level=trace --log-console-level=info --log-file-level=info
 ```
 
-In order to see the `org.nqrust-identity.events:trace`, the `trace` level must be set for the Syslog handler.
+In order to see the `org.keycloak.events:trace`, the `trace` level must be set for the Syslog handler.
 
 ## Adding context for log messages
 
@@ -168,9 +172,13 @@ You can enable additional context information for each log line like the current
 
 Use the option `log-mdc-enabled` to enable it.
 
+**Example configuration**
+
 ```bash
 bin/kc.[sh|bat] start --log-mdc-enabled=true
 ```
+
+**Example output**
 
 ```
 2025-06-20 14:13:01,772 {kc.clientId=security-admin-console, kc.realmName=master} INFO ...
@@ -202,18 +210,20 @@ In order to change the JSON output format, properties in the format `log-<handle
 ### Customize the service fields
 
 When using JSON log output, NQRust-Identity includes `service.name` and potentially `service.environment` fields in the log entries.
-By default, `service.name` is set to `nqrust-identity`, and `service.environment` is not set for the default JSON format.
+By default, `service.name` is set to `keycloak`, and `service.environment` is not set for the default JSON format.
 For the ECS format, the `service.environment` is set to the Quarkus profile (e.g. `prod`).
 
 You can customize these fields across all log handlers using the following options:
 
-- `log-service-name` - Set the `service.name` field (default: `nqrust-identity`)
+- `log-service-name` - Set the `service.name` field (default: `keycloak`)
 - `log-service-environment` - Set the `service.environment` field
 
 These options apply to all log handlers (`console`, `file`, and `syslog`) that have JSON output enabled.
 
+**Example**
+
 ```bash
-bin/kc.[sh|bat] start --log-console-output=json --log-service-name=my-nqrust-identity --log-service-environment=production
+bin/kc.[sh|bat] start --log-console-output=json --log-service-name=my-keycloak --log-service-environment=production
 ```
 
 ### Example
@@ -224,8 +234,10 @@ If you want to have JSON logs in **ECS** (Elastic Common Schema) format for the 
 bin/kc.[sh|bat] start --log-console-output=json --log-console-json-format=ecs
 ```
 
+**Example Log Message**
+
 ```json
-{"@timestamp":"2025-02-03T14:53:22.539484211+01:00","event.sequence":9608,"log.logger":"io.quarkus","log.level":"INFO","message":"NQRust-Identity 999.0.0-SNAPSHOT on JVM (powered by Quarkus 3.17.8) started in 4.615s. Listening on: http://0.0.0.0:8080","process.thread.name":"main","process.thread.id":1,"mdc":{},"ndc":"","host.hostname":"host-name","process.name":"/usr/lib/jvm/jdk-21.0.3+9/bin/java","process.pid":77561,"data_stream.type":"logs","ecs.version":"1.12.2","service.environment":"prod","service.name":"NQRust-Identity","service.version":"999.0.0-SNAPSHOT"}
+{"@timestamp":"2025-02-03T14:53:22.539484211+01:00","event.sequence":9608,"log.logger":"io.quarkus","log.level":"INFO","message":"Keycloak 999.0.0-SNAPSHOT on JVM (powered by Quarkus 3.17.8) started in 4.615s. Listening on: http://0.0.0.0:8080","process.thread.name":"main","process.thread.id":1,"mdc":{},"ndc":"","host.hostname":"host-name","process.name":"/usr/lib/jvm/jdk-21.0.3+9/bin/java","process.pid":77561,"data_stream.type":"logs","ecs.version":"1.12.2","service.environment":"prod","service.name":"Keycloak","service.version":"999.0.0-SNAPSHOT"}
 ```
 
 ## Asynchronous logging
@@ -251,9 +263,9 @@ If the queue is already full, it blocks the main thread and waits for free space
 - You are logging to **remote destinations** (e.g., network syslog servers) and want to avoid blocking worker threads
 
 <Callout type="warning">
-  Be aware that enabling asynchronous logging might bring some additional memory overhead due to the additional separate thread and the inner queue.
+  Be aware that enabling asynchronous logging might bring some **additional memory overhead** due to the additional separate thread and the inner queue.
   In that case, it is not recommended to use it for resource-constrained environments.
-  Additionally, unexpected server shutdowns create a risk of losing log records.
+  Additionally, unexpected server shutdowns create a risk of **losing log records**.
 </Callout>
 
 ### Enable asynchronous logging
@@ -295,7 +307,7 @@ These properties are available only when asynchronous logging is enabled for the
 NQRust-Identity supports HTTP access logging to record details of incoming HTTP requests.
 While access logs are often used for debugging and traffic analysis, they are also important for security auditing and compliance monitoring, helping administrators track access patterns, identify suspicious activity, and maintain audit trails.
 
-These logs are written at the `INFO` level, so make sure your logging configuration includes this level — either globally (e.g. `log-level=info`) or specifically for the access log category (e.g. `log-level=org.nqrust-identity.http.access-log:info`).
+These logs are written at the `INFO` level, so make sure your logging configuration includes this level — either globally (e.g. `log-level=info`) or specifically for the access log category (e.g. `log-level=org.keycloak.http.access-log:info`).
 When HTTP access logs are enabled, they are shown by default, as `INFO` level is the default log level for NQRust-Identity.
 
 ### How to enable
@@ -327,8 +339,8 @@ bin/kc.[sh|bat] start --http-access-log-pattern='%A %{METHOD} %{REQUEST_URL} %{i
 ```
 
 <Callout type="warning">
-  HTTP Access logs may contain sensitive HTTP headers like Authorization, Cookie, or external API keys references.
-  The Authorization header and selected sensitive cookies are automatically masked in the HTTP Access log. However, the list of masked items might not be complete. Be careful with using the long pattern or printing the headers by the custom format - you should use it only for development purposes. To extend the list of the masked items, see below.
+  HTTP Access logs may contain sensitive HTTP headers like `Authorization`, `Cookie`, or external API keys references.
+  The `Authorization` header and selected sensitive cookies are automatically masked in the HTTP Access log. However, the list of masked items might not be complete. Be careful with using the `long` pattern or printing the headers by the custom format - you should use it only for development purposes. To extend the list of the masked items, see below.
 </Callout>
 
 Consult the [Quarkus documentation](https://quarkus.io/guides/http-reference#configuring-http-access-logs) for the full list of variables that can be used.
@@ -345,11 +357,11 @@ Masked sensitive NQRust-Identity cookies:
 
 - `AUTH_SESSION_ID`
 - `KC_AUTH_SESSION_HASH`
-- `NQRUST-IDENTITY_IDENTITY`
-- `NQRUST-IDENTITY_SESSION`
+- `KEYCLOAK_IDENTITY`
+- `KEYCLOAK_SESSION`
 - `AUTH_SESSION_ID_LEGACY`
-- `NQRUST-IDENTITY_IDENTITY_LEGACY`
-- `NQRUST-IDENTITY_SESSION_LEGACY`
+- `KEYCLOAK_IDENTITY_LEGACY`
+- `KEYCLOAK_SESSION_LEGACY`
 
 In order to extend the list of the masked items (e.g. to accommodate for headers and cookies used by your custom extensions), configure the `http-access-log-masked-headers` and `http-access-log-masked-cookies` options.
 
@@ -383,7 +395,7 @@ You can enable file logging as follows:
 bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-file-enabled=true
 ```
 
-This automatically creates a file called `nqrust-identity-http-access.log` in the `/data/log` directory of your distribution.
+This automatically creates a file called `keycloak-http-access.log` in the `/data/log` directory of your distribution.
 
 #### Change file name and suffix
 
@@ -400,7 +412,7 @@ bin/kc.[sh|bat] start --http-access-log-enabled=true --http-access-log-file-enab
 
 By default, the HTTP access log file is rotated daily.
 
-When the daily rotation occurs, a date-based suffix '.&#123;yyyy-MM-dd&#125;' is added to the log file name from the previous day, keeping access logs separated by date (for example, `nqrust-identity-http-access.2052-02-29.log`).
+When the daily rotation occurs, a date-based suffix '.&#123;yyyy-MM-dd&#125;' is added to the log file name from the previous day, keeping access logs separated by date (for example, `keycloak-http-access.2052-02-29.log`).
 
 To disable rotation, use the following configuration:
 
@@ -423,7 +435,7 @@ For more details, see the [Centralize your observability stack with OpenTelemetr
 | **`log-level`**<br/>The log level of the root category or a comma-separated list of individual categories and their levels.<br/>For the root category, you don’t need to specify a category.<br/>**CLI:** `--log-level`<br/>**Env:** `KC_LOG_LEVEL` | _List_ | `info` |
 | **`log-level-<category>`**<br/>The log level of a category.<br/>Takes precedence over the `log-level` option.<br/>**CLI:** `--log-level-<category>`<br/>**Env:** `KC_LOG_LEVEL_<CATEGORY>` | `off`, `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `all` |  |
 | **`log-service-environment`**<br/>Set the `service.<br/>environment` field in JSON log entries for all log handlers. In ECS format, defaults to the Quarkus profile if not set.<br/>**CLI:** `--log-service-environment`<br/>**Env:** `KC_LOG_SERVICE_ENVIRONMENT` | _String_ |  |
-| **`log-service-name`**<br/>Set the `service.<br/>name` field in JSON log entries for all log handlers.<br/>**CLI:** `--log-service-name`<br/>**Env:** `KC_LOG_SERVICE_NAME` | _String_ | `nqrust-identity` |
+| **`log-service-name`**<br/>Set the `service.<br/>name` field in JSON log entries for all log handlers.<br/>**CLI:** `--log-service-name`<br/>**Env:** `KC_LOG_SERVICE_NAME` | _String_ | `keycloak` |
 
 ### Console
 
@@ -443,7 +455,7 @@ For more details, see the [Centralize your observability stack with OpenTelemetr
 
 | Option | _Type_ or Values | Default |
 | --- | --- | --- |
-| **`log-file`**<br/>Set the log file path and filename.<br/>**CLI:** `--log-file`<br/>**Env:** `KC_LOG_FILE` | _File_ | `data/log/nqrust-identity.log` |
+| **`log-file`**<br/>Set the log file path and filename.<br/>**CLI:** `--log-file`<br/>**Env:** `KC_LOG_FILE` | _File_ | `data/log/keycloak.log` |
 | **`log-file-async`**<br/>Indicates whether to log asynchronously to file log.<br/>If not set, value from the parent property `log-async` is used.<br/>**CLI:** `--log-file-async`<br/>**Env:** `KC_LOG_FILE_ASYNC` | `true`, `false` | `false` |
 | **`log-file-async-queue-length`**<br/>The queue length to use before flushing writing when logging to file log.<br/>**CLI:** `--log-file-async-queue-length`<br/>**Env:** `KC_LOG_FILE_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
 | **`log-file-format`**<br/>Set a format specific to file log entries.<br/>**CLI:** `--log-file-format`<br/>**Env:** `KC_LOG_FILE_FORMAT` | _String_ | `%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n` |
@@ -462,7 +474,7 @@ For more details, see the [Centralize your observability stack with OpenTelemetr
 
 | Option | _Type_ or Values | Default |
 | --- | --- | --- |
-| **`log-syslog-app-name`**<br/>Set the app name used when formatting the message in RFC5424 format.<br/>**CLI:** `--log-syslog-app-name`<br/>**Env:** `KC_LOG_SYSLOG_APP_NAME` | _String_ | `nqrust-identity` |
+| **`log-syslog-app-name`**<br/>Set the app name used when formatting the message in RFC5424 format.<br/>**CLI:** `--log-syslog-app-name`<br/>**Env:** `KC_LOG_SYSLOG_APP_NAME` | _String_ | `keycloak` |
 | **`log-syslog-async`**<br/>Indicates whether to log asynchronously to Syslog.<br/>If not set, value from the parent property `log-async` is used.<br/>**CLI:** `--log-syslog-async`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC` | `true`, `false` | `false` |
 | **`log-syslog-async-queue-length`**<br/>The queue length to use before flushing writing when logging to Syslog.<br/>**CLI:** `--log-syslog-async-queue-length`<br/>**Env:** `KC_LOG_SYSLOG_ASYNC_QUEUE_LENGTH` | _Integer_ | `512` |
 | **`log-syslog-counting-framing`**<br/>If true, the message being sent is prefixed with the size of the message.<br/>If `protocol-dependent`, the default value is `true` when `log-syslog-protocol` is `tcp` or `ssl-tcp`, otherwise `false`.<br/>**CLI:** `--log-syslog-counting-framing`<br/>**Env:** `KC_LOG_SYSLOG_COUNTING_FRAMING` | `true`, `false`, `protocol-dependent` | `protocol-dependent` |
@@ -484,7 +496,7 @@ For more details, see the [Centralize your observability stack with OpenTelemetr
 | **`http-access-log-enabled`**<br/>If HTTP access logging is enabled.<br/>By default this will log records in console.<br/>**CLI:** `--http-access-log-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_ENABLED` | `true`, `false` | `false` |
 | **`http-access-log-exclude`**<br/>A regular expression that can be used to exclude some paths from logging.<br/>For instance, `/realms/my-realm/.*` will exclude all subsequent endpoints for realm `my-realm` from the log.<br/>**CLI:** `--http-access-log-exclude`<br/>**Env:** `KC_HTTP_ACCESS_LOG_EXCLUDE` | _String_ |  |
 | **`http-access-log-file-enabled`**<br/>If HTTP access logging should be done to a separate file.<br/>**CLI:** `--http-access-log-file-enabled`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ENABLED` | `true`, `false` | `false` |
-| **`http-access-log-file-name`**<br/>The HTTP access log file base name, which will create a log file name concatenating base and suffix (e.<br/>g. `nqrust-identity-http-access.log`). The file is located in the `/data/log` directory of the distribution.<br/>**CLI:** `--http-access-log-file-name`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_NAME` | _String_ | `nqrust-identity-http-access` |
+| **`http-access-log-file-name`**<br/>The HTTP access log file base name, which will create a log file name concatenating base and suffix (e.<br/>g. `keycloak-http-access.log`). The file is located in the `/data/log` directory of the distribution.<br/>**CLI:** `--http-access-log-file-name`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_NAME` | _String_ | `keycloak-http-access` |
 | **`http-access-log-file-rotate`**<br/>If the HTTP Access log file should be rotated daily.<br/>**CLI:** `--http-access-log-file-rotate`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_ROTATE` | `true`, `false` | `true` |
 | **`http-access-log-file-suffix`**<br/>The HTTP access log file suffix.<br/>When rotation is enabled, a date-based suffix `.{yyyy-MM-dd}` is added before the specified suffix. If multiple rotations occur on the same day, an incremental index is appended to the date.<br/>**CLI:** `--http-access-log-file-suffix`<br/>**Env:** `KC_HTTP_ACCESS_LOG_FILE_SUFFIX` | _String_ | `.log` |
 | **`http-access-log-masked-cookies`**<br/>Set of HTTP Cookie headers whose values must be masked when the long pattern or %&#123;ALL_REQUEST_HEADERS&#125; format is enabled with the http-access-log-pattern option.<br/>Selected security sensitive cookies are always masked.<br/>**CLI:** `--http-access-log-masked-cookies`<br/>**Env:** `KC_HTTP_ACCESS_LOG_MASKED_COOKIES` | _List_ |  |

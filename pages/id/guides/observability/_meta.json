@@ -1,11 +1,14 @@
 {
-  "telemetry": "Centralize your observability stack with OpenTelemetry",
-  "health": "Tracking instance status with health checks",
-  "configuration-metrics": "Gaining insights with metrics",
-  "event-metrics": "Monitoring user activities with event metrics",
-  "keycloak-service-level-indicators": "Monitoring performance with Service Level Indicators",
-  "metrics-for-troubleshooting": "Troubleshooting using metrics",
-  "tracing": "Root cause analysis with tracing",
-  "grafana-dashboards": "Visualizing activities in dashboards",
-  "exemplars": "Analyzing outliers and errors with exemplars"
+  "index": {
+    "display": "hidden"
+  },
+  "telemetry": "Sentralisasi observability stack dengan OpenTelemetry",
+  "health": "Melacak status instance dengan health check",
+  "configuration-metrics": "Mendapatkan insight dengan metrics",
+  "event-metrics": "Memantau aktivitas pengguna dengan event metrics",
+  "identity-service-level-indicators": "Memantau performa dengan Service Level Indicators",
+  "metrics-for-troubleshooting": "Troubleshooting menggunakan metrics",
+  "tracing": "Analisis root cause dengan tracing",
+  "grafana-dashboards": "Memvisualisasikan aktivitas di dashboard",
+  "exemplars": "Menganalisis outlier dan error dengan exemplars"
 }

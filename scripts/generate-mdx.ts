@@ -6,7 +6,44 @@
 //  - Code blocks with language hint
 //  - Escaped <placeholder> outside backticks
 //  - import { Callout } injected when needed
+//  - Definition lists (<dl>/<dt>/<dd>) → bold sub-heading + paragraph
+//  - Paragraph / listingblock titles → bold caption
 // Filters by KEEP_SLUGS so previously-removed pages stay removed.
+//
+// ─── FULL PIPELINE (run in this order) ────────────────────────────────────
+//
+//   1. Backup ID translations:
+//        Copy-Item 'pages\id\guides' '.id-backup' -Recurse -Force
+//   2. Regenerate EN:
+//        pnpm tsx scripts/generate-mdx.ts
+//   3. Restore ID (they get stubbed with EN content by step 2):
+//        Copy-Item '.id-backup\*' 'pages\id\guides' -Recurse -Force
+//        Remove-Item -Recurse -Force '.id-backup'
+//   4. Re-apply manual customizations (sidebar + section deletions):
+//        pnpm tsx scripts/post-generate.ts
+//   5. Re-run post-processors (idempotent, safe to re-run):
+//        pnpm tsx scripts/remove-permission-sections.ts
+//        pnpm tsx scripts/fix-internal-links.ts
+//        pnpm tsx scripts/fix-external-kc-links.ts
+//        pnpm tsx scripts/fix-broken-links.ts
+//        pnpm tsx scripts/fix-anchor-links.ts
+//   6. Clean build + verify:
+//        Remove-Item -Recurse -Force '.next' -ErrorAction SilentlyContinue
+//        pnpm build
+//
+// post-generate.ts covers (review if adding more manual edits):
+//   - Restore `installation` category in top-level _meta.json
+//   - Hide `index` in each sub-category _meta.json
+//   - Remove JWT "Configuration" section (UI steps not valid in SNAPSHOT)
+//   - Remove FGAP callout + entire "Legacy token exchange" section
+//   - Remove "Supported configurations for production environments" section
+//   - Remove "We gather more feedback ... this discussion" sentence
+//   - Rename "Configuring the hostname (v2)" → "Configuring the hostname"
+//   - Trim dangling "see X" references in directory-structure (truststores, themes)
+//   - Rename keycloak-truststore.mdx → identity-truststore.mdx (file + meta + refs)
+//   - Rewrite broken URLs (importExport → importexport, nqrust-identity-truststore → identity-truststore)
+//   - Trim dangling "see X" refs in db.mdx (Running in container, Using custom images,
+//     Migrating database, User Storage SPI)
 
 import * as cheerio from 'cheerio'
 import fs from 'fs'
@@ -239,6 +276,12 @@ function blockToMdx($: cheerio.CheerioAPI, $root: cheerio.Cheerio<any>, depth = 
         return
       }
       if (cls.includes('listingblock') || cls.includes('literalblock')) {
+        // Preserve the caption (e.g. "command-line parameter") if present
+        const $title = $el.find('> .title').first()
+        if ($title.length) {
+          const titleText = $title.text().trim()
+          if (titleText) out.push(`**${titleText}**`)
+        }
         out.push(renderCodeBlock($, $el))
         return
       }
@@ -249,6 +292,12 @@ function blockToMdx($: cheerio.CheerioAPI, $root: cheerio.Cheerio<any>, depth = 
         return
       }
       if (cls.includes('paragraph')) {
+        // Preserve the title/sub-heading if present (e.g. "Windows-specific considerations")
+        const $title = $el.find('> .title').first()
+        if ($title.length) {
+          const titleText = $title.text().trim()
+          if (titleText) out.push(`**${titleText}**`)
+        }
         const $p = $el.find('> p').first()
         if ($p.length) out.push(inlineToMdx($, $p).trim())
         return
@@ -259,6 +308,11 @@ function blockToMdx($: cheerio.CheerioAPI, $root: cheerio.Cheerio<any>, depth = 
       }
       if (cls.includes('olist')) {
         out.push(renderList($, $el.find('> ol').first(), true, depth))
+        return
+      }
+      // Definition list (Antora's sub-heading + description pairs)
+      if (cls.includes('dlist')) {
+        out.push(renderDefinitionList($, $el.find('> dl').first()))
         return
       }
       if (cls.includes('imageblock')) {
@@ -287,6 +341,7 @@ function blockToMdx($: cheerio.CheerioAPI, $root: cheerio.Cheerio<any>, depth = 
     }
     if (tag === 'ul') { out.push(renderList($, $el, false, depth)); return }
     if (tag === 'ol') { out.push(renderList($, $el, true, depth)); return }
+    if (tag === 'dl') { out.push(renderDefinitionList($, $el)); return }
     if (tag === 'pre') { out.push(renderPre($, $el)); return }
     if (tag === 'table') { out.push(renderTable($, $el)); return }
     if (tag === 'blockquote') {
@@ -301,12 +356,43 @@ function blockToMdx($: cheerio.CheerioAPI, $root: cheerio.Cheerio<any>, depth = 
   return out.filter(Boolean).join('\n\n')
 }
 
-function renderList($: cheerio.CheerioAPI, $list: cheerio.Cheerio<any>, ordered: boolean, depth: number): string {
+// Render <dl><dt>term</dt><dd>description</dd></dl> as bold term + paragraph description.
+// Antora uses this pattern for sub-headings inside sections.
+function renderDefinitionList($: cheerio.CheerioAPI, $dl: cheerio.Cheerio<any>): string {
+  const blocks: string[] = []
+  const children = $dl.children().toArray()
+  for (let i = 0; i < children.length; i++) {
+    const el = children[i] as any
+    const tag = el.tagName?.toLowerCase()
+    if (tag !== 'dt') continue
+    const term = inlineToMdx($, $(el)).trim()
+    // Find immediately following <dd>
+    const next = children[i + 1] as any
+    const nextTag = next?.tagName?.toLowerCase()
+    let description = ''
+    if (nextTag === 'dd') {
+      // Render block content of the <dd>
+      description = blockToMdx($, $(next)).trim()
+      i++ // skip the dd we just consumed
+    }
+    if (term) {
+      blocks.push(`**${term}**` + (description ? '\n\n' + description : ''))
+    }
+  }
+  return blocks.join('\n\n')
+}
+
+function renderList($: cheerio.CheerioAPI, $list: cheerio.Cheerio<any>, ordered: boolean, depth: number, baseIndent?: string): string {
   const lines: string[] = []
-  const indent = '  '.repeat(depth)
+  const indent = baseIndent !== undefined ? baseIndent : '  '.repeat(depth)
   $list.children('li').each((idx, li) => {
     const $li = $(li)
     const marker = ordered ? `${idx + 1}.` : '-'
+    // Continuation indent must match marker width for CommonMark to treat
+    // following content as part of the list item.
+    // - `- ` → 2 spaces continuation
+    // - `1. ` → 3 spaces
+    const contIndent = indent + (ordered ? '   ' : '  ')
     // Separate inline-first-paragraph text from nested block content
     const firstParaText: string[] = []
     const nestedBlocks: string[] = []
@@ -316,25 +402,25 @@ function renderList($: cheerio.CheerioAPI, $list: cheerio.Cheerio<any>, ordered:
       const tag = (child as any).tagName?.toLowerCase()
       const cls = $c.attr('class') || ''
 
-      // Nested lists → render recursively
+      // Nested lists → render recursively using parent's continuation indent
       if (tag === 'ul' || tag === 'ol') {
         const isOrd = tag === 'ol'
-        nestedBlocks.push(renderList($, $c, isOrd, depth + 1))
+        nestedBlocks.push(renderList($, $c, isOrd, depth + 1, contIndent))
         return
       }
       if (cls.includes('ulist')) {
-        nestedBlocks.push(renderList($, $c.find('> ul').first(), false, depth + 1))
+        nestedBlocks.push(renderList($, $c.find('> ul').first(), false, depth + 1, contIndent))
         return
       }
       if (cls.includes('olist')) {
-        nestedBlocks.push(renderList($, $c.find('> ol').first(), true, depth + 1))
+        nestedBlocks.push(renderList($, $c.find('> ol').first(), true, depth + 1, contIndent))
         return
       }
       // Code blocks inside li → render as block (indented for list context)
       if (cls.includes('listingblock') || cls.includes('literalblock') || tag === 'pre') {
         const code = tag === 'pre' ? renderPre($, $c) : renderCodeBlock($, $c)
         // Indent code block to be part of the list item
-        const indented = code.split('\n').map(l => indent + '  ' + l).join('\n')
+        const indented = code.split('\n').map(l => contIndent + l).join('\n')
         nestedBlocks.push(indented)
         return
       }
@@ -346,7 +432,7 @@ function renderList($: cheerio.CheerioAPI, $list: cheerio.Cheerio<any>, ordered:
           if ($tds.length >= 2) {
             const num = $tds.first().text().trim()
             const desc = inlineToMdx($, $tds.last()).trim()
-            items.push(indent + '  ' + num + '. ' + desc)
+            items.push(contIndent + num + '. ' + desc)
           }
         })
         if (items.length) nestedBlocks.push(items.join('\n'))
@@ -358,7 +444,7 @@ function renderList($: cheerio.CheerioAPI, $list: cheerio.Cheerio<any>, ordered:
         const t = $p.length ? inlineToMdx($, $p).trim() : ''
         if (t) {
           if (firstParaText.length === 0) firstParaText.push(t)
-          else nestedBlocks.push(indent + '  ' + t)
+          else nestedBlocks.push(contIndent + t)
         }
         return
       }
@@ -366,7 +452,7 @@ function renderList($: cheerio.CheerioAPI, $list: cheerio.Cheerio<any>, ordered:
       const t = inlineToMdx($, $c).replace(/\s+/g, ' ').trim()
       if (t) {
         if (firstParaText.length === 0) firstParaText.push(t)
-        else nestedBlocks.push(indent + '  ' + t)
+        else nestedBlocks.push(contIndent + t)
       }
     })
 
@@ -421,18 +507,19 @@ function renderAdmonition($: cheerio.CheerioAPI, $block: cheerio.Cheerio<any>): 
   let inner = ''
   if ($content.length) {
     inner = blockToMdx($, $content).trim()
-    // Fallback: if blockToMdx couldn't extract anything (no recognized children),
-    // collect inline content from any <p>/text inside td.content
+    // Fallback: if blockToMdx couldn't extract anything (td.content has text
+    // directly without wrapping <p>/<div>), use inlineToMdx so links and code
+    // spans are preserved.
     if (!inner) {
       const paras: string[] = []
       $content.find('p').each((_, p) => {
         const t = inlineToMdx($, $(p)).trim()
         if (t) paras.push(t)
       })
-      inner = paras.join('\n\n').trim() || $content.text().trim()
+      inner = paras.join('\n\n').trim() || inlineToMdx($, $content).trim()
     }
   } else {
-    inner = $block.text().trim()
+    inner = inlineToMdx($, $block).trim()
   }
   if (!inner) return ''
   const indented = inner.split('\n').map(l => l ? '  ' + l : l).join('\n')

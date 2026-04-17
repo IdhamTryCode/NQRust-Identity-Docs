@@ -6,14 +6,14 @@ description: Adapter Node.js untuk NQRust-Identity - Dokumentasi NQRust-Identity
 # Adapter Node.js untuk NQRust-Identity
 
 NQRust-Identity menyediakan adapter Node.js yang dibangun di atas [Connect](https://github.com/senchalabs/connect) untuk melindungi aplikasi JavaScript sisi server - tujuan adalah mencapai fleksibilitas yang memungkinkan integrasi dengan framework seperti [Express.js](https://expressjs.com/).
-Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#_oidc_available_endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
+Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#oidc-available-endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
 
 Pustaka dapat diunduh langsung dari organisasi NQRust-Identity dan sumbernya tersedia di
 [GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
 
 Untuk menggunakan adapter Node.js, pertama-tama buatlah klien untuk aplikasi Anda di Konsol Admin NQRust-Identity. Adapter mendukung tipe akses publik, rahasia, dan hanya bearer. Yang mana harus dipilih tergantung pada skenario penggunaan.
 
-Setelah klien dibuat, klik **Action** di pojok kanan atas dan pilih **Download adapter config**. Untuk **Format, pilih *NQRust-Identity OIDC JSON** dan klik **Download**. File `nqrust-identity.json` yang diunduh berada di folder root proyek Anda.
+Setelah klien dibuat, klik **Action** di pojok kanan atas dan pilih **Download adapter config**. Untuk **Format, pilih *NQRust-Identity OIDC JSON** dan klik **Download**. File `keycloak.json` yang diunduh berada di folder root proyek Anda.
 
 ## Instalasi
 
@@ -27,22 +27,22 @@ Gunakan perintah `npm init` untuk membuat `package.json` untuk aplikasi Anda. Se
 
 ```json
     "dependencies": {
-        "nqrust-identity-connect": "26.1.1"
+        "keycloak-connect": "26.1.1"
     }
 ```
 
 ## Penggunaan
 
-Kelas `NQRust-Identity` menyediakan titik pusat untuk konfigurasi dan integrasi dengan aplikasi Anda. Pembuatan termudah tidak memerlukan argumen.
+Kelas `Keycloak` menyediakan titik pusat untuk konfigurasi dan integrasi dengan aplikasi Anda. Pembuatan termudah tidak memerlukan argumen.
 
 Di direktori root proyek Anda, buat file bernama `server.js` dan tambahkan kode berikut:
 
 ```javascript
     const session = require('express-session');
-    const NQRust-Identity = require('nqrust-identity-connect');
+    const Keycloak = require('keycloak-connect');
 
     const memoryStore = new session.MemoryStore();
-    const nqrust-identity = new NQRust-Identity({ store: memoryStore });
+    const keycloak = new Keycloak({ store: memoryStore });
 ```
 
 Pasang dependensi `express-session`:
@@ -66,18 +66,18 @@ Sekarang kita memiliki kemampuan untuk menjalankan server dengan perintah beriku
     npm run start
 ```
 
-Secara default, ini akan menemukan file bernama `nqrust-identity.json` di samping executable utama aplikasi Anda, dalam hal ini di folder root, untuk menginisialisasi pengaturan spesifik NQRust-Identity seperti kunci publik, nama realm, berbagai URL.
+Secara default, ini akan menemukan file bernama `keycloak.json` di samping executable utama aplikasi Anda, dalam hal ini di folder root, untuk menginisialisasi pengaturan spesifik NQRust-Identity seperti kunci publik, nama realm, berbagai URL.
 
 Dalam hal ini, diperlukan penyebaran NQRust-Identity untuk mengakses Konsol Admin NQRust-Identity.
 
 Silakan kunjungi tautan tentang cara menyebarkan Konsol Admin NQRust-Identity dengan
 Podman atau Docker
 
-Sekarang kita siap untuk mendapatkan file `nqrust-identity.json` dengan mengunjungi Konsol Admin NQRust-Identity → klien (sidebar kiri) → pilih klien Anda → Instalasi → Opsi Format → NQRust-Identity OIDC JSON → Unduh
+Sekarang kita siap untuk mendapatkan file `keycloak.json` dengan mengunjungi Konsol Admin NQRust-Identity → klien (sidebar kiri) → pilih klien Anda → Instalasi → Opsi Format → NQRust-Identity OIDC JSON → Unduh
 
 Tempelkan file yang diunduh di folder root proyek kita.
 
-Instantiasi dengan metode ini menghasilkan semua standar wajar yang digunakan. Sebagai alternatif, juga dimungkinkan untuk memberikan objek konfigurasi, bukan file `nqrust-identity.json`:
+Instantiasi dengan metode ini menghasilkan semua standar wajar yang digunakan. Sebagai alternatif, juga dimungkinkan untuk memberikan objek konfigurasi, bukan file `keycloak.json`:
 
 ```javascript
     const kcConfig = {
@@ -88,18 +88,18 @@ Instantiasi dengan metode ini menghasilkan semua standar wajar yang digunakan. S
         realmPublicKey: 'MIIBIjANB...'
     };
 
-    const nqrust-identity = new NQRust-Identity({ store: memoryStore }, kcConfig);
+    const keycloak = new Keycloak({ store: memoryStore }, kcConfig);
 ```
 
 Aplikasi juga dapat mengarahkan pengguna ke penyedia identitas pilihan mereka dengan menggunakan:
 
 ```javascript
-    const nqrust-identity = new NQRust-Identity({ store: memoryStore, idpHint: myIdP }, kcConfig);
+    const keycloak = new Keycloak({ store: memoryStore, idpHint: myIdP }, kcConfig);
 ```
 
 Jika Anda ingin menggunakan sesi web untuk mengelola
 state sisi server untuk otentikasi, Anda perlu menginisialisasi
-`NQRust-Identity(…​)` dengan setidaknya parameter `store`, memberikan penyimpan sesi yang sebenarnya yang digunakan oleh `express-session`.
+`Keycloak(…​)` dengan setidaknya parameter `store`, memberikan penyimpan sesi yang sebenarnya yang digunakan oleh `express-session`.
 
 ```javascript
     const session = require('express-session');
@@ -115,13 +115,13 @@ state sisi server untuk otentikasi, Anda perlu menginisialisasi
       })
     );
 
-    const nqrust-identity = new NQRust-Identity({ store: memoryStore });
+    const keycloak = new Keycloak({ store: memoryStore });
 ```
 
 Secara default, nilai scope `openid` dilewatkan sebagai parameter query ke URL login NQRust-Identity, tetapi Anda dapat menambahkan nilai khusus tambahan:
 
 ```javascript
-    const nqrust-identity = new NQRust-Identity({ scope: 'offline_access' });
+    const keycloak = new Keycloak({ scope: 'offline_access' });
 ```
 
 ## Menginstal middleware
@@ -144,7 +144,7 @@ kemudian require Express di proyek kita seperti yang diuraikan di bawah:
 dan konfigurasikan middleware NQRust-Identity di Express, dengan menambahkan kode di bawah:
 
 ```javascript
-    app.use( nqrust-identity.middleware() );
+    app.use( keycloak.middleware() );
 ```
 
 Pertama sekalinya, mari atur server kita untuk mendengarkan permintaan HTTP pada port 3000 dengan menambahkan kode berikut ke `main.js`:
@@ -169,52 +169,52 @@ Contoh konfigurasi:
 
     app.set( 'trust proxy', true );
 
-    app.use( nqrust-identity.middleware() );
+    app.use( keycloak.middleware() );
 ```
 
 ## Melindungi sumber daya
 
 Untuk memaksa pengguna harus otentikasi sebelum mengakses sumber daya,
-cukup gunakan versi tanpa argumen dari `nqrust-identity.protect()`:
+cukup gunakan versi tanpa argumen dari `keycloak.protect()`:
 
 ```javascript
-    app.get( '/complain', nqrust-identity.protect(), complaintHandler );
+    app.get( '/complain', keycloak.protect(), complaintHandler );
 ```
 
 Untuk mengamankan sumber daya dengan peran aplikasi untuk aplikasi saat ini:
 
 ```javascript
-    app.get( '/special', nqrust-identity.protect('special'), specialHandler );
+    app.get( '/special', keycloak.protect('special'), specialHandler );
 ```
 
 Untuk mengamankan sumber daya dengan peran aplikasi untuk **beberapa** aplikasi:
 
 ```javascript
-    app.get( '/extra-special', nqrust-identity.protect('other-app:special'), extraSpecialHandler );
+    app.get( '/extra-special', keycloak.protect('other-app:special'), extraSpecialHandler );
 ```
 
 Untuk mengamankan sumber daya dengan peran realm:
 
 ```javascript
-    app.get( '/admin', nqrust-identity.protect( 'realm:admin' ), adminHandler );
+    app.get( '/admin', keycloak.protect( 'realm:admin' ), adminHandler );
 ```
 
-Resource-Based Authorization memungkinkan Anda untuk melindungi sumber daya, dan metode aksi spesifik mereka, berdasarkan set polisi yang ditetapkan di NQRust-Identity, sehingga otorisasi di luar aplikasi Anda. Hal ini dicapai dengan mengekspos metode `nqrust-identity.enforcer` yang dapat Anda gunakan untuk melindungi sumber daya.*
+Resource-Based Authorization memungkinkan Anda untuk melindungi sumber daya, dan metode aksi spesifik mereka, berdasarkan set polisi yang ditetapkan di NQRust-Identity, sehingga otorisasi di luar aplikasi Anda. Hal ini dicapai dengan mengekspos metode `keycloak.enforcer` yang dapat Anda gunakan untuk melindungi sumber daya.*
 
 ```javascript
-    app.get('/apis/me', nqrust-identity.enforcer('user:profile'), userProfileHandler);
+    app.get('/apis/me', keycloak.enforcer('user:profile'), userProfileHandler);
 ```
 
-Metode `nqrust-identity-enforcer` beroperasi dalam dua mode, tergantung pada nilai opsi konfigurasi `response_mode`.
+Metode `keycloak-enforcer` beroperasi dalam dua mode, tergantung pada nilai opsi konfigurasi `response_mode`.
 
 ```javascript
-    app.get('/apis/me', nqrust-identity.enforcer('user:profile', {response_mode: 'token'}), userProfileHandler);
+    app.get('/apis/me', keycloak.enforcer('user:profile', {response_mode: 'token'}), userProfileHandler);
 ```
 
 Jika `response_mode` diatur ke `token`, izin diperoleh dari server atas nama subjek yang diwakili oleh token bearer yang dikirim ke aplikasi Anda. Dalam hal ini, token akses baru dikeluarkan oleh NQRust-Identity dengan izin yang diberikan oleh server. Jika server tidak merespon dengan token dengan izin yang diharapkan, permintaan ditolak. Ketika menggunakan mode ini, Anda seharusnya dapat memperoleh token dari permintaan sebagai berikut:
 
 ```javascript
-    app.get('/apis/me', nqrust-identity.enforcer('user:profile', {response_mode: 'token'}), function (req, res) {
+    app.get('/apis/me', keycloak.enforcer('user:profile', {response_mode: 'token'}), function (req, res) {
         const token = req.kauth.grant.access_token.content;
         const permissions = token.authorization ? token.authorization.permissions : undefined;
 
@@ -227,32 +227,32 @@ Pilihlah mode ini ketika aplikasi Anda menggunakan sesi dan Anda ingin menyimpan
 Jika `response_mode` diatur ke `permissions` (mode default), server hanya mengembalikan daftar izin yang diberikan, tanpa mengeluarkan token akses baru. Selain tidak mengeluarkan token baru, metode ini mengekspos izin yang diberikan oleh server melalui `request` sebagai berikut:
 
 ```javascript
-    app.get('/apis/me', nqrust-identity.enforcer('user:profile', {response_mode: 'permissions'}), function (req, res) {
+    app.get('/apis/me', keycloak.enforcer('user:profile', {response_mode: 'permissions'}), function (req, res) {
         const permissions = req.permissions;
 
         // tampilkan profil pengguna
     });
 ```
 
-Terlepas dari `response_mode` yang digunakan, metode `nqrust-identity.enforcer` akan pertama mencoba memeriksa izin dalam token bearer yang dikirim ke aplikasi Anda. Jika token bearer sudah membawa izin yang diharapkan, tidak perlu berinteraksi dengan server untuk mendapatkan keputusan. Hal ini sangat berguna ketika klien Anda mampu memperoleh token akses dari server dengan izin yang diharapkan sebelum mengakses sumber daya terlindungi, sehingga mereka dapat menggunakan beberapa kemampuan yang disediakan oleh Layanan Otorisasi NQRust-Identity seperti otorisasi bertahap dan menghindari permintaan tambahan ke server ketika `nqrust-identity.enforcer` menegakkan akses ke sumber daya.
+Terlepas dari `response_mode` yang digunakan, metode `keycloak.enforcer` akan pertama mencoba memeriksa izin dalam token bearer yang dikirim ke aplikasi Anda. Jika token bearer sudah membawa izin yang diharapkan, tidak perlu berinteraksi dengan server untuk mendapatkan keputusan. Hal ini sangat berguna ketika klien Anda mampu memperoleh token akses dari server dengan izin yang diharapkan sebelum mengakses sumber daya terlindungi, sehingga mereka dapat menggunakan beberapa kemampuan yang disediakan oleh Layanan Otorisasi NQRust-Identity seperti otorisasi bertahap dan menghindari permintaan tambahan ke server ketika `keycloak.enforcer` menegakkan akses ke sumber daya.
 
-Secara default, penyahbis adalah akan menggunakan `client_id` yang didefinisikan untuk aplikasi (misalnya, melalui `nqrust-identity.json`) untuk
+Secara default, penyahbis adalah akan menggunakan `client_id` yang didefinisikan untuk aplikasi (misalnya, melalui `keycloak.json`) untuk
  merujuk klien di NQRust-Identity yang mendukung Layanan Otorisasi NQRust-Identity. Dalam hal ini, klien tidak boleh publik karena sebenarnya merupakan server sumber daya.
 
 Jika aplikasi yang Anda lindungi berfungsi sebagai klien publik (frontend) dan server sumber daya (backend), Anda dapat menggunakan konfigurasi berikut untuk merujuk ke klien yang berbeda di NQRust-Identity dengan kebijakan yang ingin Anda egakkan:
 
 ```javascript
-      nqrust-identity.enforcer('user:profile', {resource_server_id: 'my-apiserver'})
+      keycloak.enforcer('user:profile', {resource_server_id: 'my-apiserver'})
 ```
 
 Direkomendasikan untuk menggunakan klien yang berbeda di NQRust-Identity untuk mewakili frontend dan backend Anda.
 
 Jika aplikasi yang Anda lindungi diaktifkan dengan layanan otorisasi NQRust-Identity dan Anda telah menetapkan kredensial klien
- di `nqrust-identity.json`, Anda dapat mendorong klaim tambahan ke server dan membuatnya tersedia untuk kebijakan Anda untuk membuat keputusan.
+ di `keycloak.json`, Anda dapat mendorong klaim tambahan ke server dan membuatnya tersedia untuk kebijakan Anda untuk membuat keputusan.
  Untuk itu, Anda dapat mendefinisikan opsi konfigurasi `claims` yang mengharapkan `function` yang mengembalikan JSON dengan klaim yang ingin Anda dorong:
 
 ```javascript
-      app.get('/protected/resource', nqrust-identity.enforcer(['resource:view', 'resource:write'], {
+      app.get('/protected/resource', keycloak.enforcer(['resource:view', 'resource:write'], {
           claims: function(request) {
             return {
               "http.uri": ["/protected/resource"],
@@ -273,7 +273,7 @@ untuk setiap bagian:
       return token.hasRole( request.params.section );
     }
 
-    app.get( '/:section/:page', nqrust-identity.protect( protectBySection ), sectionHandler );
+    app.get( '/:section/:page', keycloak.protect( protectBySection ), sectionHandler );
 ```
 
 Konfigurasi Login Lanjutan:
@@ -284,7 +284,7 @@ Namun, klien rahasia atau publik mungkin meng-hosting endpoint yang dapat dijela
 Sebagai contoh, penggantian ini memeriksa apakah URL berisi /api/ dan menonaktifkan pengalihan login:
 
 ```javascript
-    NQRust-Identity.prototype.redirectToLogin = function(req) {
+    Keycloak.prototype.redirectToLogin = function(req) {
     const apiReqMatcher = /\/api\//i;
     return !apiReqMatcher.test(req.originalUrl || req.url);
     };
@@ -296,7 +296,7 @@ Secara default, middleware menangkap panggilan ke `/logout` untuk mengirimkan pe
 alur logout yang terpusat NQRust-Identity. Hal ini dapat diubah dengan menentukan parameter konfigurasi `logout` ke panggilan `middleware()`:
 
 ```javascript
-    app.use( nqrust-identity.middleware( { logout: '/logoff' } ));
+    app.use( keycloak.middleware( { logout: '/logoff' } ));
 ```
 
 Ketika logout yang diinisiasi oleh pengguna dipicu, parameter query `redirect_url` dapat dilewatkan:
@@ -311,7 +311,7 @@ Parameter ini kemudian digunakan sebagai URL redirect endpoint logout OIDC dan p
 Juga, middleware mendukung callback dari konsol NQRust-Identity untuk logout sesi tunggal atau semua sesi. Secara default, jenis admin callback ini terjadi relatif ke URL root `/` tetapi dapat diubah dengan menyediakan parameter `admin` ke panggilan `middleware()`:
 
 ```javascript
-    app.use( nqrust-identity.middleware( { admin: '/callbacks' } );
+    app.use( keycloak.middleware( { admin: '/callbacks' } );
 ```
 
 ## Contoh Lengkap

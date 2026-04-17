@@ -59,7 +59,7 @@ const categories = [
       { title: 'Tracking instance status with health checks', desc: 'Check if an instance is ready to serve requests via health REST endpoints.', href: '/en/guides/observability/health' },
       { title: 'Gaining insights with metrics', desc: 'Collect metrics to gain insights about a running instance.', href: '/en/guides/observability/configuration-metrics' },
       { title: 'Monitoring user activities with event metrics', desc: 'Event metrics provide an aggregated view of user activities.', href: '/en/guides/observability/event-metrics' },
-      { title: 'Monitoring performance with Service Level Indicators', desc: 'Track performance and reliability with SLIs and SLOs.', href: '/en/guides/observability/keycloak-service-level-indicators' },
+      { title: 'Monitoring performance with Service Level Indicators', desc: 'Track performance and reliability with SLIs and SLOs.', href: '/en/guides/observability/identity-service-level-indicators' },
       { title: 'Troubleshooting using metrics', desc: 'Use metrics for troubleshooting errors and performance issues.', href: '/en/guides/observability/metrics-for-troubleshooting' },
       { title: 'Root cause analysis with tracing', desc: 'Record request lifecycle information to identify root causes for latencies.', href: '/en/guides/observability/tracing' },
       { title: 'Visualizing activities in dashboards', desc: 'Install Grafana dashboards to visualize metrics and activities.', href: '/en/guides/observability/grafana-dashboards' },

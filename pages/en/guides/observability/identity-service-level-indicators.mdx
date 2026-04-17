@@ -58,7 +58,7 @@ These are example queries created in a Kubernetes environment and are used with 
 They are provided as blueprints, and you will need to adapt them for a different runtime or monitoring environment.
 
 <Callout type="info">
-  For a production environment, you might want to replace those queries or subqueries with a  recording rule to make sure they do not use too many resources if you want to use them for alerting or live dashboards.
+  For a production environment, you might want to replace those queries or subqueries with a [ recording rule](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/) to make sure they do not use too many resources if you want to use them for alerting or live dashboards.
 </Callout>
 
 ### Availability
@@ -72,7 +72,7 @@ Then use a tool like Grafana to show a 30-day time range and let it calculate th
 ```
 count_over_time(
   sum (up{
-    container="nqrust-identity", 
+    container="keycloak", 
     namespace="$namespace"
   } > 0)[30d:15s]
 ) 
@@ -85,7 +85,7 @@ count_over_time(vector(1)[30d:15s])
 3. Divide by the number of all data points in the same range and interval
 
 <Callout type="info">
-  In Grafana you can replace value 30d:15s with $range:$interval to compute availability SLI in the time range selected for the dashboard.
+  In Grafana you can replace value `30d:15s` with `$range:$interval` to compute availability SLI in the time range selected for the dashboard.
 </Callout>
 
 ### Latency of authentication requests
@@ -101,7 +101,7 @@ sum(
     http_server_requests_seconds_bucket{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
       le="0.25", 
-      container="nqrust-identity", 
+      container="keycloak", 
       namespace="$namespace"}
     [30d] 
   )
@@ -111,7 +111,7 @@ sum(
   rate(
     http_server_requests_seconds_count{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
-      container="nqrust-identity",
+      container="keycloak",
       namespace="$namespace"}
     [30d] 
   )
@@ -125,7 +125,7 @@ sum(
 5. Ignore as many labels necessary to create a single sum
 
 <Callout type="info">
-  In Grafana, you can replace value 30d with $__range to compute latency SLI in the time range selected for the dashboard.
+  In Grafana, you can replace value `30d` with `$__range` to compute latency SLI in the time range selected for the dashboard.
 </Callout>
 
 ### Errors for authentication requests
@@ -140,7 +140,7 @@ sum(
     http_server_requests_seconds_count{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
       outcome="SERVER_ERROR", 
-      container="nqrust-identity", 
+      container="keycloak", 
       namespace="$namespace"}
     [30d] 
   )
@@ -150,7 +150,7 @@ sum(
   rate(
     http_server_requests_seconds_count{
       uri=~"/realms/{realm}/protocol/{protocol}.*|/realms/{realm}/login-actions.*", 
-      container="nqrust-identity", 
+      container="keycloak", 
       namespace="$namespace"}
     [30d] 
   )
@@ -164,7 +164,7 @@ sum(
 5. Ignore as many labels necessary to create a single sum
 
 <Callout type="info">
-  In Grafana, you can replace value 30d with $__range to compute errors SLI in the time range selected for the dashboard.
+  In Grafana, you can replace value `30d` with `$__range` to compute errors SLI in the time range selected for the dashboard.
 </Callout>
 
 ## Further Reading

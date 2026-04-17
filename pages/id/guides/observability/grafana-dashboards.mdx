@@ -25,30 +25,30 @@ Definisi JSON dari dasbor Grafana NQRust-Identity tersedia di [repository GitHub
 
 Ikuti langkah-langkah berikut untuk mengunduh definisi file JSON.
 
-1. Identifikasi cabang dari `nqrust-identity-grafana-dashboards` untuk digunakan dari tabel berikut.
+1. Identifikasi cabang dari `keycloak-grafana-dashboards` untuk digunakan dari tabel berikut.
 
-   Versi NQRust-Identity cabang/tag `nqrust-identity-grafana-dashboards` 26.1 - 26.2 `26.2.0` >= 26.3 `main`
+   Versi NQRust-Identity cabang/tag `keycloak-grafana-dashboards` 26.1 - 26.2 `26.2.0` >= 26.3 `main`
 2. Klon repository GitHub
 
   ```
-  git clone -b BRANCH_FROM_STEP_1 https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard.git
+  git clone -b BRANCH_FROM_STEP_1 https://github.com/keycloak/keycloak-grafana-dashboard.git
   ```
-3. Dasbor tersedia di direktori `nqrust-identity-grafana-dashboard/dashboards`.
+3. Dasbor tersedia di direktori `keycloak-grafana-dashboard/dashboards`.
 
 Bagian berikut menjelaskan tujuan setiap dasbor.
 
 ### Dasbor pemecahan masalah NQRust-Identity
 
-Dasbor ini tersedia dalam file JSON: `nqrust-identity-troubleshooting-dashboard.json`.
+Dasbor ini tersedia dalam file JSON: `keycloak-troubleshooting-dashboard.json`.
 
-Di bagian atas dasbor, grafik menampilkan indikator level layanan seperti yang didefinisikan dalam Pemantauan kinerja dengan Indikator Level Layanan.
+Di bagian atas dasbor, grafik menampilkan indikator level layanan seperti yang didefinisikan dalam [Pemantauan kinerja dengan Indikator Level Layanan](/id/guides/observability/identity-service-level-indicators).
 Dasbor ini juga dapat digunakan saat pemecahan masalah penyebaran NQRust-Identity mengikuti panduan [Pemecahan masalah menggunakan metrik](/en/guides/observability/metrics-for-troubleshooting), misalnya, ketika grafik SLI tidak menunjukkan hasil yang diharapkan.
 
 ![NQRust-Identity troubleshooting Grafana dashboard](/images/observability/grafana-dashboard-1.png)
 
 ### Dasbor perencanaan kapasitas NQRust-Identity
 
-Dasbor ini tersedia dalam file JSON: `nqrust-identity-capacity-planning-dashboard.json`.
+Dasbor ini tersedia dalam file JSON: `keycloak-capacity-planning-dashboard.json`.
 
 Dasbor ini menampilkan metrik yang penting saat memperkirakan beban yang ditangani oleh penyebaran NQRust-Identity.
 Misalnya, itu menunjukkan jumlah validasi kata sandi atau alur login yang dilakukan oleh NQRust-Identity.
@@ -75,12 +75,12 @@ Untuk detail lebih lanjut tentang metrik ini, lihat panduan Metrik yang disediak
   ```yaml
   scrape_configs:
     # Nama pekerjaan ditambahkan sebagai label `job=<job_name>` untuk setiap time series yang diambil dari konfigurasi ini.
-    - job_name: "nqrust-identity-service"
+    - job_name: "keycloak-service"
       static_configs:
         - targets: ["localhost:9000", "localhost:9001", "localhost:9002"]
           labels:
-            namespace: 'nqrust-identity'
-            container: 'nqrust-identity'
+            namespace: 'keycloak'
+            container: 'keycloak'
       relabel_configs:
         - source_labels: [__address__]
           target_label: pod

@@ -146,7 +146,7 @@ Titik akhir otorisasi backchannel digunakan untuk mendapatkan auth_req_id yang m
 
 Untuk detail lebih lanjut tentang cara memanggil titik akhir ini, lihat [spesifikasi Alur Otorisasi Backchannel Awal Oleh Klien OpenID Connect](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [bagian Otorisasi Backchannel dari panduan ini](#_client_initiated_backchannel_authentication_grant) dan bagian Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
+Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [bagian Otorisasi Backchannel dari panduan ini](#client-initiated-backchannel-authentication-grant) dan bagian Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
 
 ## Tipe Pengarahan yang Didukung
 
@@ -178,7 +178,7 @@ Alur ini dihapus dari spesifikasi [OAuth 2.1](https://datatracker.ietf.org/doc/h
 
 Resource Owner Password Credentials, yang dikenal sebagai Direct Grant di NQRust-Identity, memungkinkan penggantian kredensial pengguna untuk token.
 Menurut praktik terbaik saat ini [OAuth 2.0 Security (RFC 9700)](https://datatracker.ietf.org/doc/html/rfc9700#name-resource-owner-password-cre),
-alur ini HARUS TIDAK digunakan, lebih memilih metode alternatif seperti [Device Authorization Grant](#_device_authorization_grant) atau [Kode Otorisasi](#_authorization_code).
+alur ini HARUS TIDAK digunakan, lebih memilih metode alternatif seperti [Device Authorization Grant](#device-authorization-grant) atau [Kode Otorisasi](#authorization-code).
 
 Keterbatasan dalam menggunakan alur ini termasuk:
 
@@ -255,8 +255,8 @@ Titik Akhir Pemberitahuan Klien dapat dikonfigurasi di Konsol Admin NQRust-Ident
 
 Untuk detail lebih lanjut, lihat [spesifikasi Alur Otorisasi Backchannel Awal Oleh Klien OpenID Connect](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [Titik Akhir Otorisasi Backchannel dari panduan ini](#_backchannel_authentication_endpoint) dan bagian Pengarahan Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
-Untuk detail tentang kepatuhan FAPI CIBA, lihat [bagian FAPI dari panduan ini](#_fapi-support).
+Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [Titik Akhir Otorisasi Backchannel dari panduan ini](#backchannel-authentication-endpoint) dan bagian Pengarahan Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
+Untuk detail tentang kepatuhan FAPI CIBA, lihat [bagian FAPI dari panduan ini](#fapi-support).
 
 ## Kesalahan Khusus NQRust-Identity
 
@@ -288,14 +288,14 @@ Bila Anda ingin menggunakan Permintaan Otorisasi Dapat Dijalankan Oleh Pengguna 
 kedua profil `fapi-1-baseline` dan `fapi-1-advanced` untuk permintaan PAR. Terutama, profil `fapi-1-baseline` berisi `pkce-enforcer` executor, yang memastikan
 klien menggunakan PKCE dengan algoritma S256 yang aman. Ini tidak diperlukan untuk klien FAPI Advanced kecuali mereka menggunakan permintaan PAR.
 
-Bila Anda ingin menggunakan [CIBA](#_backchannel_authentication_endpoint) dengan cara yang memenuhi FAPI, pastikan bahwa klien Anda menggunakan keduanya `fapi-1-advanced` dan `fapi-ciba` profil klien.
+Bila Anda ingin menggunakan [CIBA](#backchannel-authentication-endpoint) dengan cara yang memenuhi FAPI, pastikan bahwa klien Anda menggunakan keduanya `fapi-1-advanced` dan `fapi-ciba` profil klien.
 Ada kebutuhan untuk menggunakan profil `fapi-1-advanced`, atau profil klien lain yang berisi executor yang diminta, sebagai profil `fapi-ciba` hanya berisi executor spesifik CIBA.
 Saat menegakkan persyaratan spesifikasi FAPI CIBA, ada kebutuhan untuk lebih banyak persyaratan, seperti penegakan klien konfiden atau token akses terikat sertifikat.
 
 ### Profil Keamanan Financial-grade API Brasilia Terbuka
 
 NQRust-Identity mematuhi [Profil Keamanan Financial-grade API Brasilia Terbuka 1.0 Draft Implementers 3](https://openfinancebrasil.atlassian.net/wiki/spaces/OF/pages/245760001/EN+Open+Finance+Brasil+Financial-grade+API+Security+Profile+1.0+Implementers+Draft+3).
-Yang satu ini lebih ketat dalam beberapa persyaratan daripada spesifikasi [FAPI 1 Advanced](#_fapi-support) dan oleh karena itu mungkin diperlukan untuk mengonfigurasi Kebijakan Klien
+Yang satu ini lebih ketat dalam beberapa persyaratan daripada spesifikasi [FAPI 1 Advanced](#fapi-support) dan oleh karena itu mungkin diperlukan untuk mengonfigurasi Kebijakan Klien
 dalam cara yang lebih ketat untuk menegakkan beberapa persyaratan. Terutama:
 
 - Jika klien Anda tidak menggunakan PAR, pastikan bahwa ia menggunakan objek permintaan OIDC terenkripsi. Hal ini dapat dicapai dengan menggunakan profil klien dengan `secure-request-object` executor dikonfigurasi dengan `Encryption Required` diaktifkan.
@@ -343,10 +343,10 @@ Bagian ini menjelaskan beberapa rekomendasi saat mengamankan aplikasi Anda denga
 
 ### Memvalidasi Token Akses
 
-Jika Anda perlu secara manual memvalidasi token akses yang diterbitkan oleh NQRust-Identity, Anda dapat memanggil [Titik Akhir Introspection](#_token_introspection_endpoint).
+Jika Anda perlu secara manual memvalidasi token akses yang diterbitkan oleh NQRust-Identity, Anda dapat memanggil [Titik Akhir Introspection](#token-introspection-endpoint).
 Kelemahan dari pendekatan ini adalah bahwa Anda harus melakukan invokasi jaringan ke server NQRust-Identity. Hal ini bisa lambat dan mungkin membebani
 server jika Anda memiliki terlalu banyak permintaan validasi berlangsung pada saat bersamaan. Token akses yang diterbitkan oleh NQRust-Identity adalah [JSON Web Tokens (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) yang ditandatangani digital dan dikodekan menggunakan [JSON Web Signature (JWS)](https://datatracker.ietf.org/doc/html/rfc7515).
-Karena mereka dikodekan dengan cara ini, Anda dapat memvalidasi token akses secara lokal menggunakan kunci publik dari realm yang menerbitkannya. Anda dapat mengkodekan kunci publik realm secara keras dalam kode validasi Anda, atau mencari dan menyimpan kunci publik menggunakan [titik akhir sertifikat](#_certificate_endpoint) dengan ID Kunci (KID) yang terkandung dalam
+Karena mereka dikodekan dengan cara ini, Anda dapat memvalidasi token akses secara lokal menggunakan kunci publik dari realm yang menerbitkannya. Anda dapat mengkodekan kunci publik realm secara keras dalam kode validasi Anda, atau mencari dan menyimpan kunci publik menggunakan [titik akhir sertifikat](#certificate-endpoint) dengan ID Kunci (KID) yang terkandung dalam
 JWS. Tergantung pada bahasa pemrograman Anda, banyak pustaka pihak ketiga yang ada dan mereka dapat membantu Anda dengan validasi JWS.
 
 ### URI Pengalih

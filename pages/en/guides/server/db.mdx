@@ -52,28 +52,26 @@ To install the Oracle Database driver for NQRust-Identity:
 
 1. Download the `ojdbc17` and `orai18n` JAR files from one of the following sources:
 
-  1. **Zipped JDBC driver and Companion Jars** version 23.26.0.0.0 from the [Oracle driver download page](https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html).
-  2. Maven Central via `ojdbc17` and `orai18n`.
-  3. Installation media recommended by the database vendor for the specific database in use.
+   1. **Zipped JDBC driver and Companion Jars** version 23.26.0.0.0 from the [Oracle driver download page](https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html).
+   2. Maven Central via `ojdbc17` and `orai18n`.
+   3. Installation media recommended by the database vendor for the specific database in use.
 2. When running the unzipped distribution: Place the `ojdbc17` and `orai18n` JAR files in NQRust-Identity’s `providers` folder
 3. When running containers: Build a custom NQRust-Identity image and add the JARs in the `providers` folder. When building a custom image for the Operator, those images need to be optimized images with all build-time options of NQRust-Identity set.
 
-  A minimal Containerfile to build an image which can be used with the NQRust-Identity Operator and includes Oracle Database JDBC drivers downloaded from Maven Central looks like the following:
+   A minimal Containerfile to build an image which can be used with the NQRust-Identity Operator and includes Oracle Database JDBC drivers downloaded from Maven Central looks like the following:
 
-  ```dockerfile
-  FROM quay.io/nqrust-identity/nqrust-identity:latest
-  ADD --chown=nqrust-identity:nqrust-identity --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.26.0.0.0/ojdbc17-23.26.0.0.0.jar /opt/nqrust-identity/providers/ojdbc17.jar
-  ADD --chown=nqrust-identity:nqrust-identity --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.26.0.0.0/orai18n-23.26.0.0.0.jar /opt/nqrust-identity/providers/orai18n.jar
-  # Setting the build parameter for the database:
-  ENV KC_DB=oracle
-  # Add all other build parameters needed, for example enable health and metrics:
-  ENV KC_HEALTH_ENABLED=true
-  ENV KC_METRICS_ENABLED=true
-  # To be able to use the image with the NQRust-Identity Operator, it needs to be optimized, which requires NQRust-Identity's build step:
-  RUN /opt/nqrust-identity/bin/kc.sh build
-  ```
-
-  See the Running NQRust-Identity in a container guide for details on how to build optimized images.
+   ```dockerfile
+   FROM quay.io/keycloak/keycloak:latest
+   ADD --chown=keycloak:keycloak --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.26.0.0.0/ojdbc17-23.26.0.0.0.jar /opt/keycloak/providers/ojdbc17.jar
+   ADD --chown=keycloak:keycloak --chmod=644 https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.26.0.0.0/orai18n-23.26.0.0.0.jar /opt/keycloak/providers/orai18n.jar
+   # Setting the build parameter for the database:
+   ENV KC_DB=oracle
+   # Add all other build parameters needed, for example enable health and metrics:
+   ENV KC_HEALTH_ENABLED=true
+   ENV KC_METRICS_ENABLED=true
+   # To be able to use the image with the Keycloak Operator, it needs to be optimized, which requires Keycloak's build step:
+   RUN /opt/keycloak/bin/kc.sh build
+   ```
 
 Then continue configuring the database as described in the next section.
 
@@ -85,36 +83,36 @@ The configuration can be set during a `build` command OR a `start` command:
 
 1. Using a `build` command followed by an optimized `start` command (recommended)
 
-  First, the minimum settings needed to connect to the database can be specified in `conf/nqrust-identity.conf`:
+   First, the minimum settings needed to connect to the database can be specified in `conf/keycloak.conf`:
 
-  ```
-  # The database vendor.
-  db=postgres
-  
-  # The username of the database user.
-  db-username=nqrust-identity
-  
-  # The password of the database user.
-  db-password=change_me
-  
-  # Sets the hostname of the default JDBC URL of the chosen vendor
-  db-url-host=nqrust-identity-postgres
-  ```
+   ```
+   # The database vendor.
+   db=postgres
+   
+   # The username of the database user.
+   db-username=keycloak
+   
+   # The password of the database user.
+   db-password=change_me
+   
+   # Sets the hostname of the default JDBC URL of the chosen vendor
+   db-url-host=keycloak-postgres
+   ```
 
-  Then, the following commands create a new and optimized server image based on the configuration options and start the server.
+   Then, the following commands create a new and optimized server image based on the configuration options and start the server.
 
-  ```
-  bin/kc.[sh|bat] build
-  bin/kc.[sh|bat] start --optimized
-  ```
+   ```
+   bin/kc.[sh|bat] build
+   bin/kc.[sh|bat] start --optimized
+   ```
 2. Using **only a `start`** command (without `--optimized`)
 
-  ```bash
-  bin/kc.[sh|bat] start --db postgres --db-url-host nqrust-identity-postgres --db-username nqrust-identity --db-password change_me
-  ```
+   ```bash
+   bin/kc.[sh|bat] start --db postgres --db-url-host keycloak-postgres --db-username keycloak --db-password change_me
+   ```
 
 <Callout type="warning">
-  The examples above include the minimum settings needed to connect to the database but it exposes the database password and is not recommended. Use the conf/nqrust-identity.conf as shown above, environment variables, or keystore for at least the password.
+  The examples above include the minimum settings needed to connect to the database but it exposes the database password and is not recommended. Use the `conf/keycloak.conf` as shown above, environment variables, or keystore for at least the password.
 </Callout>
 
 <Callout type="info">
@@ -124,7 +122,7 @@ The configuration can be set during a `build` command OR a `start` command:
 By default, no schema is explicitly set and NQRust-Identity uses the default schema of the chosen database.
 You can override this by using the `db-schema` configuration option.
 
-It is also possible to configure the database when [Importing and exporting realms](/en/guides/server/importExport) or [Bootstrapping and recovering an admin account](/en/guides/server/bootstrap-admin-recovery):
+It is also possible to configure the database when [Importing and exporting realms](/en/guides/server/importexport) or [Bootstrapping and recovering an admin account](/en/guides/server/bootstrap-admin-recovery):
 
 ```
 bin/kc.[sh|bat] import --help
@@ -170,10 +168,10 @@ The recommended character set to use is summarized in the table below, as most r
 
 | Vendor | Recommended Character Set | Example Database Creation |
 | --- | --- | --- |
-| Oracle | `AL32UTF8` | `CREATE DATABASE nqrust-identity<br/>  CHARACTER SET AL32UTF8<br/>  NATIONAL CHARACTER SET AL16UTF16;` |
-| Microsoft SQL Server | UTF-8 collation<br/>(ending with `_UTF8`) | `CREATE DATABASE nqrust-identity<br/>  COLLATE Latin1_General_100_CI_AS_SC_UTF8;` |
-| MySQL/MariaDB | `utf8mb4` | `CREATE DATABASE nqrust-identity<br/>  CHARACTER SET utf8mb4<br/>  COLLATE utf8mb4_unicode_ci;` |
-| PostgreSQL | `UTF8` | `CREATE DATABASE nqrust-identity<br/>  ENCODING 'UTF8'<br/>  LC_COLLATE 'en_US.utf8'<br/>  LC_CTYPE 'en_US.utf8';` |
+| Oracle | `AL32UTF8` | `CREATE DATABASE keycloak<br/>  CHARACTER SET AL32UTF8<br/>  NATIONAL CHARACTER SET AL16UTF16;` |
+| Microsoft SQL Server | UTF-8 collation<br/>(ending with `_UTF8`) | `CREATE DATABASE keycloak<br/>  COLLATE Latin1_General_100_CI_AS_SC_UTF8;` |
+| MySQL/MariaDB | `utf8mb4` | `CREATE DATABASE keycloak<br/>  CHARACTER SET utf8mb4<br/>  COLLATE utf8mb4_unicode_ci;` |
+| PostgreSQL | `UTF8` | `CREATE DATABASE keycloak<br/>  ENCODING 'UTF8'<br/>  LC_COLLATE 'en_US.utf8'<br/>  LC_CTYPE 'en_US.utf8';` |
 
 ### Database default charset and collation considerations for MySQL and MariaDB
 
@@ -210,6 +208,8 @@ bin/kc.[sh|bat] start --db mssql --db-url-properties=';sendStringParametersAsUni
 
 When NQRust-Identity connects to the database, network problems can occur, especially during failovers or switchovers.
 To improve failover behavior and startup resilience during network issues, NQRust-Identity sets a default connection timeout of 10s for all supported database vendors when using the standard JDBC driver.
+
+**`db-connect-timeout`**
 
 Sets the JDBC driver connection timeout and login timeout.
 Default: `10s`.
@@ -261,20 +261,18 @@ To install this driver, apply the following steps:
 1. When running the unzipped distribution: Download the JAR file from the [Amazon Web Services JDBC Driver releases page](https://github.com/awslabs/aws-advanced-jdbc-wrapper/releases/) and place it in NQRust-Identity’s `providers` folder.
 2. When running containers: Build a custom NQRust-Identity image and add the JAR in the `providers` folder.
 
-  A minimal Containerfile to build an image which can be used with the NQRust-Identity Operator looks like the following:
+   A minimal Containerfile to build an image which can be used with the NQRust-Identity Operator looks like the following:
 
-  ```dockerfile
-  FROM quay.io/nqrust-identity/nqrust-identity:latest
-  ADD --chmod=0666 https://github.com/awslabs/aws-advanced-jdbc-wrapper/releases/download/2.5.6/aws-advanced-jdbc-wrapper-2.5.6.jar /opt/nqrust-identity/providers/aws-advanced-jdbc-wrapper.jar
-  ```
-
-  See the Running NQRust-Identity in a container guide for details on how to build optimized images, and the Using custom NQRust-Identity images guide on how to run optimized and non-optimized images with the NQRust-Identity Operator.
+   ```dockerfile
+   FROM quay.io/keycloak/keycloak:latest
+   ADD --chmod=0666 https://github.com/awslabs/aws-advanced-jdbc-wrapper/releases/download/2.5.6/aws-advanced-jdbc-wrapper-2.5.6.jar /opt/keycloak/providers/aws-advanced-jdbc-wrapper.jar
+   ```
 3. Configure NQRust-Identity to run with the following parameters:
 
-  `db-url` Insert `aws-wrapper` to the regular PostgreSQL JDBC URL resulting in a URL like `jdbc:aws-wrapper:postgresql://...`. `db-driver` Set to `software.amazon.jdbc.Driver` to use the AWS JDBC wrapper.
+   `db-url` Insert `aws-wrapper` to the regular PostgreSQL JDBC URL resulting in a URL like `jdbc:aws-wrapper:postgresql://...`. `db-driver` Set to `software.amazon.jdbc.Driver` to use the AWS JDBC wrapper.
 
 <Callout type="info">
-  When overriding the wrapperPlugins option of the AWS JDBC Driver, always include the failover or failover2 plugin to ensure that NQRust-Identity always connects to the writer instance even in failover or switchover scenarios.
+  When overriding the `wrapperPlugins` option of the AWS JDBC Driver, always include the `failover` or `failover2` plugin to ensure that NQRust-Identity always connects to the writer instance even in failover or switchover scenarios.
 </Callout>
 
 <Callout type="default">
@@ -325,7 +323,7 @@ NQRust-Identity automatically chooses the appropriate JDBC driver for your vendo
   Certain vendors, such as Azure SQL and MariaDB Galera, do not support or rely on the XA transaction mechanism.
 </Callout>
 
-XA recovery defaults to enabled and will use the file system location `NQRUST-IDENTITY_HOME/data/transaction-logs` to store transaction logs.
+XA recovery defaults to enabled and will use the file system location `KEYCLOAK_HOME/data/transaction-logs` to store transaction logs.
 
 <Callout type="info">
   Enabling XA transactions in a containerized environment does not fully support XA recovery unless stable storage is available at that path.
@@ -335,6 +333,8 @@ XA recovery defaults to enabled and will use the file system location `NQRUST-ID
 
 NQRust-Identity provides two CLI options to control transaction timeout behavior:
 
+**`transaction-default-timeout`**
+
 Controls the transaction timeout for regular transactions.
 The default value is 5 minutes.
 
@@ -343,6 +343,8 @@ To configure a different timeout, for example 10 minutes:
 ```bash
 bin/kc.[sh|bat] start --transaction-default-timeout=10m
 ```
+
+**`transaction-setup-timeout`**
 
 Controls the timeout for transactions used by database schema migration, import, and export commands.
 The default value is 30 minutes, as these operations may take a while to complete for large datasets.
@@ -354,7 +356,7 @@ bin/kc.[sh|bat] start --transaction-setup-timeout=1h
 ```
 
 Both options accept values as an ISO 8601 duration, an integer number of seconds, or an integer followed by one of `ms` (milliseconds), `s` (seconds), `m` (minutes), `h` (hours), or `d` (days).
-These options can be configured via CLI, environment variables, or the `conf/nqrust-identity.conf` configuration file.
+These options can be configured via CLI, environment variables, or the `conf/keycloak.conf` configuration file.
 
 <Callout type="info">
   The `transaction-default-timeout` option takes precedence over the unsupported `quarkus.transaction-manager.default-transaction-timeout` Quarkus property.
@@ -377,14 +379,22 @@ These options simplify the configuration by abstracting vendor-specific JDBC pro
 
 The following options are available:
 
+**`db-tls-mode`**
+
 Sets the TLS mode for the database connection.
 Valid values are `disabled` and `verify-server`.
 When set to `verify-server`, it enables encryption and server identity verification.
 Default: `disabled`
 
+**`db-tls-trust-store-file`**
+
 The path to the truststore file containing the database server certificates or Certificate Authority (CA) certificates used to verify the database server’s identity.
 
+**`db-tls-trust-store-password`**
+
 The password to access the truststore file (if required and supported by the JDBC driver).
+
+**`db-tls-trust-store-type`**
 
 The type of the truststore file.
 Common values include `JKS` (Java KeyStore) and `PKCS12`.
@@ -411,11 +421,15 @@ bin/kc.[sh|bat] start --db=postgres --db-tls-mode=verify-server --truststore-pat
 
 To setup the JPA migrationStrategy (manual/update/validate) you should setup JPA provider as follows:
 
+**Setting the migration-strategy for the quarkus provider of the connections-jpa SPI**
+
 ```bash
 bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--migration-strategy=manual
 ```
 
 If you want to get a SQL file for DB initialization, too, you have to add this additional SPI initializeEmpty (true/false):
+
+**Setting the initialize-empty for the quarkus provider of the connections-jpa SPI**
 
 ```bash
 bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--initialize-empty=false
@@ -423,11 +437,11 @@ bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--initialize-empty=false
 
 In the same way the migrationExport to point to a specific file and location:
 
+**Setting the migration-export for the quarkus provider of the connections-jpa SPI**
+
 ```bash
 bin/kc.[sh|bat] start --spi-connections-jpa--quarkus--migration-export=<path>/<file.sql>
 ```
-
-For more information, check the Migrating the database documentation.
 
 ## Configuring the connection pool
 
@@ -447,8 +461,6 @@ NQRust-Identity logging a warning on startup.
 
 NQRust-Identity allows you to specify additional datasources in case you need to access another database from your extensions. This is useful when using the main NQRust-Identity datasource is not a viable option for storing custom data, like users.
 
-You can find more details on how to connect to your own users database in the User Storage SPI documentation.
-
 Defining multiple datasources works like defining a single datasource, with one important change - you have to specify a name for each datasource as part of the config option name.
 
 ### Required configuration
@@ -457,7 +469,7 @@ In order to enable an additional datasource, you need to set up 2 things - the J
 The `persistence.xml` file serves to specify persistence units as part of the Jakarta Persistence API standard, and is required for proper configuration propagation to the Hibernate ORM framework.
 When you complete the part with the `persistence.xml` file, you need to set up NQRust-Identity configuration accordingly.
 
-The additional datasource properties might be specified via the standard config sources like CLI, `nqrust-identity.conf`, or environment variables.
+The additional datasource properties might be specified via the standard config sources like CLI, `keycloak.conf`, or environment variables.
 
 The additional datasources can be configured in a similar way as the main datasource.
 This is achieved by using analogous names for config options, which additionally include the name of the additional datasource.
@@ -470,8 +482,8 @@ The `persistence.xml` provides configuration for Jakarta Persistence API (JPA) s
 The file needs to be placed in the `META-INF/persistence.xml` folder of your custom NQRust-Identity extension.
 
 <Callout type="info">
-  Be aware that Quarkus provides the ability to set up the JPA persistence unit via Hibernate ORM properties instead of using the persistence.xml file.
-  However, the supported way for NQRust-Identity is using the persistence.xml file, and if the file is present, the Quarkus properties are ignored.
+  Be aware that Quarkus provides the ability to set up the JPA persistence unit via Hibernate ORM properties instead of using the `persistence.xml` file.
+  However, the supported way for NQRust-Identity is using the `persistence.xml` file, and if the file is present, the Quarkus properties are ignored.
 </Callout>
 
 In NQRust-Identity, most of the configuration is automatic, and you just need to provide fundamental configuration details - the datasource name and transaction type.
@@ -494,9 +506,9 @@ You can set the transaction type and datasource name as follows for this minimal
 ```
 
 <Callout type="info">
-  To properly set the datasource name, you should set the jakarta.persistence.jtaDataSource property.
-  If it is not set, the persistence unit name will be used as the datasource name instead (so user-store-pu in this case).
-  In the example above, the resulting datasource name is user-store. The datasource name can be the same as the persistence unit name.
+  To properly set the datasource name, you should set the `jakarta.persistence.jtaDataSource` property.
+  If it is not set, the persistence unit name will be used as the datasource name instead (so `user-store-pu` in this case).
+  In the example above, the resulting datasource name is `user-store`. The datasource name can be the same as the persistence unit name.
 </Callout>
 
 In order to use your own JPA entities, you need to provide the `<class>` properties that mark JPA entities that will be managed by this persistence unit, directed to a specific datasource.
@@ -517,7 +529,7 @@ After specifying the db-kind for the datasource, all database-kind–specific de
 
 ### Configuration via environment variables
 
-If you do not want to configure the datasource via CLI or `nqrust-identity.conf` properties, you can use the environment variables.
+If you do not want to configure the datasource via CLI or `keycloak.conf` properties, you can use the environment variables.
 
 You can set the DB kind via environment variables (for the `user-store` datasource) as follows:
 
@@ -556,8 +568,8 @@ quarkus.datasource.user-store.jdbc.transactions=xa
 ```
 
 <Callout type="warning">
-  Use Quarkus properties without quotation for the datasource name, as properties with the quoted datasource name clash with the new datasource options mapping.
-  Therefore, use quarkus.datasource.user-store.db-kind=h2, instead of quarkus.datasource."user-store".db-kind=h2 to prevent any issues.
+  Use Quarkus properties **without quotation** for the datasource name, as properties with the quoted datasource name clash with the new datasource options mapping.
+  Therefore, use `quarkus.datasource.user-store.db-kind=h2`, instead of `quarkus.datasource."user-store".db-kind=h2` to prevent any issues.
 </Callout>
 
 ## Relevant options
@@ -579,7 +591,7 @@ quarkus.datasource.user-store.jdbc.transactions=xa
 | **`db-tls-trust-store-file`**<br/>The path to the truststore file containing the database server certificates or Certificate Authority (CA) certificates used to verify the database server’s identity.<br/>**Named key:** `db-tls-trust-store-file-<datasource>`<br/>**CLI:** `--db-tls-trust-store-file`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_FILE` | _File_ |  |
 | **`db-tls-trust-store-password`**<br/>The password to access the truststore file specified in db-tls-trust-store-file (if required and supported by the JDBC driver).<br/>**Named key:** `db-tls-trust-store-password-<datasource>`<br/>**CLI:** `--db-tls-trust-store-password`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD` | _String_ |  |
 | **`db-tls-trust-store-type`**<br/>The type of the truststore file.<br/>Common values include `JKS` (Java KeyStore) and `PKCS12`. If not specified, it uses the driver’s default.<br/>**Named key:** `db-tls-trust-store-type-<datasource>`<br/>**CLI:** `--db-tls-trust-store-type`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE` | _String_ |  |
-| **`db-url`**<br/>The full database JDBC URL.<br/>If not provided, a default URL is set based on the selected database vendor. For instance, if using `postgres`, the default JDBC URL would be `jdbc:postgresql://localhost/nqrust-identity`.<br/>**Named key:** `db-url-full-<datasource>`<br/>**CLI:** `--db-url`<br/>**Env:** `KC_DB_URL` | _String_ |  |
+| **`db-url`**<br/>The full database JDBC URL.<br/>If not provided, a default URL is set based on the selected database vendor. For instance, if using `postgres`, the default JDBC URL would be `jdbc:postgresql://localhost/keycloak`.<br/>**Named key:** `db-url-full-<datasource>`<br/>**CLI:** `--db-url`<br/>**Env:** `KC_DB_URL` | _String_ |  |
 | **`db-url-database`**<br/>Sets the database name of the default JDBC URL of the chosen vendor.<br/>If the `db-url` option is set, this option is ignored.<br/>**Named key:** `db-url-database-<datasource>`<br/>**CLI:** `--db-url-database`<br/>**Env:** `KC_DB_URL_DATABASE` | _String_ |  |
 | **`db-url-host`**<br/>Sets the hostname of the default JDBC URL of the chosen vendor.<br/>If the `db-url` option is set, this option is ignored.<br/>**Named key:** `db-url-host-<datasource>`<br/>**CLI:** `--db-url-host`<br/>**Env:** `KC_DB_URL_HOST` | _String_ |  |
 | **`db-url-port`**<br/>Sets the port of the default JDBC URL of the chosen vendor.<br/>If the `db-url` option is set, this option is ignored.<br/>**Named key:** `db-url-port-<datasource>`<br/>**CLI:** `--db-url-port`<br/>**Env:** `KC_DB_URL_PORT` | _Integer_ |  |
@@ -608,7 +620,7 @@ quarkus.datasource.user-store.jdbc.transactions=xa
 | **`db-tls-trust-store-password-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>The password to access the truststore file specified in db-tls-trust-store-file (if required and supported by the JDBC driver).<br/>**CLI:** `--db-tls-trust-store-password-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_PASSWORD_<DATASOURCE>` | _String_ |  |
 | **`db-tls-trust-store-type-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>The type of the truststore file. Common values include `JKS` (Java KeyStore) and `PKCS12`. If not specified, it uses the driver’s default.<br/>**CLI:** `--db-tls-trust-store-type-<datasource>`<br/>**Env:** `KC_DB_TLS_TRUST_STORE_TYPE_<DATASOURCE>` | _String_ |  |
 | **`db-url-database-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>Sets the database name of the default JDBC URL of the chosen vendor. If the `db-url` option is set, this option is ignored.<br/>**CLI:** `--db-url-database-<datasource>`<br/>**Env:** `KC_DB_URL_DATABASE_<DATASOURCE>` | _String_ |  |
-| **`db-url-full-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>The full database JDBC URL. If not provided, a default URL is set based on the selected database vendor. For instance, if using `postgres`, the default JDBC URL would be `jdbc:postgresql://localhost/nqrust-identity`.<br/>**CLI:** `--db-url-full-<datasource>`<br/>**Env:** `KC_DB_URL_FULL_<DATASOURCE>` | _String_ |  |
+| **`db-url-full-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>The full database JDBC URL. If not provided, a default URL is set based on the selected database vendor. For instance, if using `postgres`, the default JDBC URL would be `jdbc:postgresql://localhost/keycloak`.<br/>**CLI:** `--db-url-full-<datasource>`<br/>**Env:** `KC_DB_URL_FULL_<DATASOURCE>` | _String_ |  |
 | **`db-url-host-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>Sets the hostname of the default JDBC URL of the chosen vendor. If the `db-url` option is set, this option is ignored.<br/>**CLI:** `--db-url-host-<datasource>`<br/>**Env:** `KC_DB_URL_HOST_<DATASOURCE>` | _String_ |  |
 | **`db-url-port-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>Sets the port of the default JDBC URL of the chosen vendor. If the `db-url` option is set, this option is ignored.<br/>**CLI:** `--db-url-port-<datasource>`<br/>**Env:** `KC_DB_URL_PORT_<DATASOURCE>` | _Integer_ |  |
 | **`db-url-properties-<datasource>`**<br/>Used for named &lt;datasource&gt;.<br/>Sets the properties of the default JDBC URL of the chosen vendor. Make sure to set the properties accordingly to the format expected by the database vendor, as well as appending the right character at the beginning of this property value. If the `db-url` option is set, this option is ignored.<br/>**CLI:** `--db-url-properties-<datasource>`<br/>**Env:** `KC_DB_URL_PROPERTIES_<DATASOURCE>` | _String_ |  |

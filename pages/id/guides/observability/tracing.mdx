@@ -23,7 +23,7 @@ bin/kc.[sh|bat] start --tracing-enabled=true
 
 Secara default, eksportir pelacakan mengirimkan data dalam batch, menggunakan protokol `gRPC` dan endpoint `http://localhost:4317`.
 
-Nama layanan default adalah `nqrust-identity`, ditentukan melalui properti `tracing-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`.
+Nama layanan default adalah `keycloak`, ditentukan melalui properti `tracing-service-name`, yang mengambilprecedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`.
 
 Untuk informasi lebih lanjut tentang atribut sumber daya yang dapat diberikan melalui properti `tracing-resource-attributes`, lihat panduan [Quarkus OpenTelemetry Resource](https://quarkus.io/guides/opentelemetry#resource).
 
@@ -119,7 +119,7 @@ Pesan log juga berisi flag `sampled`, yang terkait dengan sampling yang dijelask
 Format catatan log mungkin dimulai sebagai berikut:
 
 ```bash
-2024-08-05 15:27:07,144 traceId=b636ac4c665ceb901f7fdc3fc7e80154, parentId=d59cea113d0c2549, spanId=d59cea113d0c2549, sampled=true WARN  [org.nqrust-identity.events] ...
+2024-08-05 15:27:07,144 traceId=b636ac4c665ceb901f7fdc3fc7e80154, parentId=d59cea113d0c2549, spanId=d59cea113d0c2549, sampled=true WARN  [org.keycloak.events] ...
 ```
 
 ### Sembunyikan ID Pelacakan dalam log
@@ -236,4 +236,4 @@ Kemudian Anda akan menemukan ID pelacakan dalam semua pesan log untuk permintaan
 | **`tracing-resource-attributes`**<br/>Atribut sumber daya OpenTelemetry yang hadir dalam pelacakan yang diekspor untuk karakterisasi produsen telemetri.<br/>Nilai dalam format `key1=val1,key2=val2`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-resource-attributes`. Untuk informasi lebih lanjut, periksa Panduan Pelacakan.<br/>**CLI:** `--tracing-resource-attributes`<br/>**Env:** `KC_TRACING_RESOURCE_ATTRIBUTES` | _List_ |  |
 | **`tracing-sampler-ratio`**<br/>Rasio pengambil sampel OpenTelemetry.<br/>Probabilitas bahwa span akan diambil. Nilai double yang diharapkan dalam interval [0,1].<br/>**CLI:** `--tracing-sampler-ratio`<br/>**Env:** `KC_TRACING_SAMPLER_RATIO` | _Double_ | `1.0` |
 | **`tracing-sampler-type`**<br/>Pengambil sampel OpenTelemetry untuk digunakan untuk pelacakan.<br/>**CLI:** `--tracing-sampler-type`<br/>**Env:** `KC_TRACING_SAMPLER_TYPE` | `always_on`, `always_off`, `traceidratio`, `parentbased_always_on`, `parentbased_always_off`, `parentbased_traceidratio` | `traceidratio` |
-| **`tracing-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambilprecedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-service-name`.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `nqrust-identity` |
+| **`tracing-service-name`**<br/>Nama layanan OpenTelemetry.<br/>Mengambilprecedence atas `service.name` yang didefinisikan dalam properti `tracing-resource-attributes`. Jika tidak diberikan, nilai diwarisi dari opsi `telemetry-service-name`.<br/>**CLI:** `--tracing-service-name`<br/>**Env:** `KC_TRACING_SERVICE_NAME` | _String_ | `keycloak` |
