@@ -7,7 +7,7 @@ description: Instalasi dan konfigurasi NQRust-Identity - Dokumentasi NQRust-Iden
 
 import { Callout } from 'nextra/components'
 
-Pada fase ini, Anda akan mengkonfigurasi hostname, port, dan men-deploy service Identity dan Portal.
+Pada fase ini, Anda akan mengkonfigurasi port dan men-deploy service Identity dan Portal.
 
 ## Jalankan installer
 
@@ -34,13 +34,16 @@ Gunakan tombol panah untuk navigasi dan tekan **Enter** untuk memilih **Install 
 
 ## Isi form Identity
 
-Form Identity meminta tiga nilai:
+Form Identity meminta dua nilai:
 
 | Field | Deskripsi | Contoh |
 | --- | --- | --- |
-| **Hostname / IP** | Alamat server tempat Identity dan Portal akan dapat dijangkau | `192.168.1.100` atau `identity.example.com` |
 | **Identity Port** | Port HTTPS eksternal untuk Identity Admin Console | `8082` (default) |
 | **Portal Port** | Port HTTPS eksternal untuk Portal | `8083` (default) |
+
+<Callout type="info">
+  Hostname server dideteksi otomatis — Anda hanya perlu mengatur port.
+</Callout>
 
 ### Navigasi form
 

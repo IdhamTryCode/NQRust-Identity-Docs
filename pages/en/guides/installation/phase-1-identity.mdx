@@ -7,7 +7,7 @@ description: Install and configure NQRust-Identity - NQRust-Identity Documentati
 
 import { Callout } from 'nextra/components'
 
-In this phase, you will configure the hostname, ports, and deploy the Identity and Portal services.
+In this phase, you will configure the ports and deploy the Identity and Portal services.
 
 ## Launch the installer
 
@@ -34,13 +34,16 @@ Use the arrow keys to navigate and press **Enter** to select **Install Identity*
 
 ## Fill the Identity form
 
-The Identity form asks for three values:
+The Identity form asks for two values:
 
 | Field | Description | Example |
 | --- | --- | --- |
-| **Hostname / IP** | The server address where Identity and Portal will be reachable | `192.168.1.100` or `identity.example.com` |
 | **Identity Port** | External HTTPS port for Identity Admin Console | `8082` (default) |
 | **Portal Port** | External HTTPS port for Portal | `8083` (default) |
+
+<Callout type="info">
+  The server hostname is detected automatically — you only need to set the ports.
+</Callout>
 
 ### Form navigation
 
