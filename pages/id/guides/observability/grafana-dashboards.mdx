@@ -21,7 +21,6 @@ Panduan ini memberikan petunjuk tentang bagaimana untuk menggambarkan metrik NQR
 ## Dasbor Grafana NQRust-Identity
 
 Dasbor Grafana didistribusikan dalam bentuk file JSON yang diimpor ke dalam instance Grafana.
-Definisi JSON dari dasbor Grafana NQRust-Identity tersedia di [repository GitHub nqrust-identity/nqrust-identity-grafana-dashboard](https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard).
 
 Ikuti langkah-langkah berikut untuk mengunduh definisi file JSON.
 
@@ -44,7 +43,7 @@ Dasbor ini tersedia dalam file JSON: `keycloak-troubleshooting-dashboard.json`.
 Di bagian atas dasbor, grafik menampilkan indikator level layanan seperti yang didefinisikan dalam [Pemantauan kinerja dengan Indikator Level Layanan](/id/guides/observability/identity-service-level-indicators).
 Dasbor ini juga dapat digunakan saat pemecahan masalah penyebaran NQRust-Identity mengikuti panduan [Pemecahan masalah menggunakan metrik](/en/guides/observability/metrics-for-troubleshooting), misalnya, ketika grafik SLI tidak menunjukkan hasil yang diharapkan.
 
-![NQRust-Identity troubleshooting Grafana dashboard](/images/observability/grafana-dashboard-1.png)
+![NQRust-Identity troubleshooting Grafana dashboard](/images/observability/grafana-1.png)
 
 ### Dasbor perencanaan kapasitas NQRust-Identity
 
@@ -54,7 +53,7 @@ Dasbor ini menampilkan metrik yang penting saat memperkirakan beban yang ditanga
 Misalnya, itu menunjukkan jumlah validasi kata sandi atau alur login yang dilakukan oleh NQRust-Identity.
 Untuk detail lebih lanjut tentang metrik ini, lihat panduan Metrik yang disediakan sendiri.
 
-![NQRust-Identity capacity planning dashboard](/images/observability/grafana-dashboard-2.png)
+![NQRust-Identity capacity planning dashboard](/images/observability/grafana-2.png)
 
 <Callout type="info">
   Metrik event NQRust-Identity harus diaktifkan agar dasbor ini berfungsi dengan benar. Untuk mengaktifkannya, lihat panduan Monitoring aktivitas pengguna dengan metrik event.

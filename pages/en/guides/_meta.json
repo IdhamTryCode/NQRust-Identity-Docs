@@ -1,4 +1,7 @@
 {
+  "index": {
+    "display": "hidden"
+  },
   "installation": "Installation",
   "server": "Server",
   "observability": "Observability",

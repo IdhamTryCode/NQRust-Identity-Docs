@@ -21,7 +21,6 @@ This guide provides instructions on how to visualize collected NQRust-Identity m
 ## NQRust-Identity Grafana dashboards
 
 Grafana dashboards are distributed in the form of a JSON file that is imported into a Grafana instance.
-JSON definitions of NQRust-Identity Grafana dashboards are available in the [nqrust-identity/nqrust-identity-grafana-dashboard GitHub repository](https://github.com/nqrust-identity/nqrust-identity-grafana-dashboard).
 
 Follow these steps to download JSON file definitions.
 
@@ -44,6 +43,8 @@ This dashboard is available in the JSON file: `keycloak-troubleshooting-dashboar
 On the top of the dashboard, graphs display the service level indicators as defined in [Monitoring performance with Service Level Indicators](/en/guides/observability/identity-service-level-indicators).
 This dashboard can be also used while troubleshooting a NQRust-Identity deployment following the [Troubleshooting using metrics](/en/guides/observability/metrics-for-troubleshooting) guide, for example, when SLI graphs do not show expected results.
 
+![NQRust-Identity troubleshooting Grafana dashboard](/images/observability/grafana-1.png)
+
 ### NQRust-Identity capacity planning dashboard
 
 This dashboard is available in the JSON file: `keycloak-capacity-planning-dashboard.json`.
@@ -51,6 +52,8 @@ This dashboard is available in the JSON file: `keycloak-capacity-planning-dashbo
 This dashboard shows metrics that are important when estimating the load handled by a NQRust-Identity deployment.
 For example, it shows the number of password validations or login flows performed by NQRust-Identity.
 For more detail on these metrics, see the guide Self-provided metrics.
+
+![NQRust-Identity capacity planning dashboard](/images/observability/grafana-2.png)
 
 <Callout type="info">
   NQRust-Identity event metrics must be enabled for this dashboard to work correctly.  To enable them, see the guide [Monitoring user activities with event metrics](/en/guides/observability/event-metrics).

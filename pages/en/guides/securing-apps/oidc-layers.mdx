@@ -71,14 +71,12 @@ For more details, see the [Userinfo Endpoint](https://openid.net/specs/openid-co
 The logout endpoint logs out the authenticated user.
 
 The user agent can be redirected to the endpoint, which causes the active user session to be logged out. The user agent is then redirected back to the application.
-This is described in more details in the RP-Initiated logout section of the Server administration guide.
 
 <Callout type="warning">
   The endpoint can also be invoked directly by the application. To invoke this endpoint directly, the refresh token needs to be included as well as the credentials required to authenticate the client.
   However this is non-standard legacy format of the logout message supported only because of the legacy NQRust-Identity OIDC Java adapters
   or [Elytron Wildfly OIDC adapter](https://docs.wildfly.org/37/WildFly_Elytron_Security.html#NQRust-Identity-Integration). It is not recommended to use it directly from your applications.
-  For logout users, it is recommended to use either OIDC/SAML protocol standard logout or NQRust-Identity Admin console (or other way of admin REST API)
-  or NQRust-Identity Account console (or other way of account REST API).
+  For logout users, it is recommended to use OIDC/SAML protocol standard logout, the admin REST API, or the account REST API.
 </Callout>
 
 #### Certificate endpoint
@@ -87,7 +85,7 @@ This is described in more details in the RP-Initiated logout section of the Serv
 /realms/{realm-name}/protocol/openid-connect/certs
 ```
 
-The certificate endpoint returns the public keys enabled by the realm, encoded as a JSON Web Key (JWK). Depending on the realm settings, one or more keys can be enabled for verifying tokens. For more information, see the Server Administration Guide and the [JSON Web Key specification](https://datatracker.ietf.org/doc/html/rfc7517).
+The certificate endpoint returns the public keys enabled by the realm, encoded as a JSON Web Key (JWK). Depending on the realm settings, one or more keys can be enabled for verifying tokens. For more information, see the [JSON Web Key specification](https://datatracker.ietf.org/doc/html/rfc7517).
 
 For more details, see the [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) specification.
 
@@ -105,7 +103,7 @@ For more details on how to invoke on this endpoint, see [OAuth 2.0 Token Introsp
 ##### Introspection endpoint triggered with application/jwt header
 
 You can invoke an introspection endpoint with the HTTP header `Accept: application/jwt` instead of `Accept: application/json`. In case of `application/jwt`, the response
-may contain the additional claim `jwt` with the full JWT access token, which can be useful especially if the token to be introspected was a lightweight access token. This requires that you enable `Support JWT claim in Introspection Response`
+may contain the additional claim `jwt` with the full JWT access token. This requires that you enable `Support JWT claim in Introspection Response`
 on the client advanced settings, which triggers the token introspection.
 
 #### Dynamic Client Registration endpoint
@@ -149,7 +147,7 @@ The backchannel authentication endpoint is used to obtain an auth_req_id that id
 
 For more details on how to invoke on this endpoint, see [OpenID Connect Client Initiated Backchannel Authentication Flow specification](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Also refer to other places of NQRust-Identity documentation like [Client Initiated Backchannel Authentication Grant section of this guide](#client-initiated-backchannel-authentication-grant) and Client Initiated Backchannel Authentication Grant section of Server Administration Guide.
+Also refer to the [Client Initiated Backchannel Authentication Grant section of this guide](#client-initiated-backchannel-authentication-grant).
 
 ## Supported Grant Types
 
@@ -265,7 +263,7 @@ The Client Notification Endpoint can be configured in the NQRust-Identity Admin 
 
 For more details, see [OpenID Connect Client Initiated Backchannel Authentication Flow specification](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Also refer to other places of NQRust-Identity documentation such as [Backchannel Authentication Endpoint of this guide](#backchannel-authentication-endpoint) and Client Initiated Backchannel Authentication Grant section of Server Administration Guide.
+Also refer to the [Backchannel Authentication Endpoint of this guide](#backchannel-authentication-endpoint).
 For the details about FAPI CIBA compliance, see the [FAPI section of this guide](#fapi-support).
 
 ## NQRust-Identity specific errors
@@ -273,8 +271,7 @@ For the details about FAPI CIBA compliance, see the [FAPI section of this guide]
 NQRust-Identity server can send errors to the client application in the OIDC authentication response with parameters `error=temporarily_unavailable` and `error_description=authentication_expired`.
 NQRust-Identity sends this error when a user is authenticated and has an SSO session, but the authentication session expired in the current browser tab and hence the NQRust-Identity server cannot automatically do SSO
 re-authentication of the user and redirect back to client with a successful response. When a client application receives this type of error, it is ideal to retry authentication immediately and send a new
-OIDC authentication request to the NQRust-Identity server, which should typically always authenticate the user due to the SSO session and redirect back. For more details, see
-the Server Administration Guide.
+OIDC authentication request to the NQRust-Identity server, which should typically always authenticate the user due to the SSO session and redirect back.
 
 ## Financial-grade API (FAPI) Support
 
@@ -292,11 +289,11 @@ side may need to be still done manually or through some other third-party soluti
 
 ### FAPI client profiles
 
-To make sure that your clients are FAPI compliant, you can configure Client Policies in your realm as described in the Server Administration Guide
+To make sure that your clients are FAPI compliant, you can configure client policies in your realm
 and link them to the global client profiles for FAPI support, which are automatically available in each realm. You can use either `fapi-1-baseline` or `fapi-1-advanced` profile based on which FAPI
 profile you need your clients to conform with. You can use also profiles `fapi-2-security-profile`, `fapi-2-dpop-security-profile`, `fapi-2-message-signing` and `fapi-2-dpop-message-signing` for the compliance with FAPI 2.0 specifications.
 
-In case you want to use Pushed Authorization Request (PAR), it is recommended that your client use
+In case you want to use pushed authorization requests, it is recommended that your client use
 both the `fapi-1-baseline` profile and `fapi-1-advanced` for PAR requests. Specifically, the `fapi-1-baseline` profile contains `pkce-enforcer` executor, which makes sure
 that client use PKCE with secured S256 algorithm. This is not required for FAPI Advanced clients unless they use PAR requests.
 
@@ -307,11 +304,11 @@ When enforcing the requirements of the FAPI CIBA specification, there is a need 
 ### Open Finance Brasil Financial-grade API Security Profile
 
 NQRust-Identity is compliant with the [Open Finance Brasil Financial-grade API Security Profile 1.0 Implementers Draft 3](https://openfinancebrasil.atlassian.net/wiki/spaces/OF/pages/245760001/EN+Open+Finance+Brasil+Financial-grade+API+Security+Profile+1.0+Implementers+Draft+3).
-This one is stricter in some requirements than the [FAPI 1 Advanced](#fapi-support) specification and hence it may be needed to configure Client Policies
+This one is stricter in some requirements than the [FAPI 1 Advanced](#fapi-support) specification and hence it may be needed to configure client policies
 in the more strict way to enforce some of the requirements. Especially:
 
 - If your client does not use PAR, make sure that it uses encrypted OIDC request objects. This can be achieved by using a client profile with the `secure-request-object` executor configured with `Encryption Required` enabled.
-- Make sure that for JWS, the client uses the `PS256` algorithm. For JWE, the client should use the `RSA-OAEP` with `A256GCM`. This may need to be set in all the Client Settings where these algorithms are applicable.
+- Make sure that for JWS, the client uses the `PS256` algorithm. For JWE, the client should use the `RSA-OAEP` with `A256GCM`. This may need to be set in all the client settings where these algorithms are applicable.
 
 ### Australia Consumer Data Right (CDR) Security Profile
 
@@ -338,7 +335,7 @@ side may need to be still done manually or through some other third-party soluti
 
 ### OAuth 2.1 client profiles
 
-To make sure that your clients are OAuth 2.1 compliant, you can configure Client Policies in your realm as described in the Server Administration Guide
+To make sure that your clients are OAuth 2.1 compliant, you can configure client policies in your realm
 and link them to the global client profiles for OAuth 2.1 support, which are automatically available in each realm. You can use either `oauth-2-1-for-confidential-client` profile for confidential clients or `oauth-2-1-for-public-client` profile for public clients.
 
 <Callout type="info">
@@ -346,7 +343,7 @@ and link them to the global client profiles for OAuth 2.1 support, which are aut
 </Callout>
 
 <Callout type="info">
-  When using OAuth 2.1 profile for public clients, it is recommended to use DPoP preview feature as described in the Server Administration Guide because DPoP binds an access token and a refresh token together with the public part of a client’s key pair. This binding prevents an attacker from using stolen tokens.
+  When using OAuth 2.1 profile for public clients, it is recommended to use the DPoP preview feature because DPoP binds an access token and a refresh token together with the public part of a client’s key pair. This binding prevents an attacker from using stolen tokens.
 </Callout>
 
 ## Recommendations

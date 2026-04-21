@@ -125,7 +125,7 @@ c:\> kcreg
 
 Regardless of the login method, the account that logs in needs proper permissions to be able to perform client registration operations. Keep in mind that any account in a non-master realm can only have permissions to manage clients within the same realm. If you need to manage different realms, you can either configure multiple users in different realms, or you can create a single user in the `master` realm and add roles for managing clients in different realms.
 
-You cannot configure users with the Client Registration CLI. Use the Admin Console web interface or the Admin Client CLI to configure users. See Server Administration Guide for more details.
+You cannot configure users with the Client Registration CLI. Use the Admin Console web interface or the Admin Client CLI to configure users.
 
 When `kcreg` successfully logs in, it receives authorization tokens and saves them in a private configuration file so the tokens can be used for subsequent invocations. See [Working with alternative configurations](#working-with-alternative-configurations) for more information on configuration files.
 

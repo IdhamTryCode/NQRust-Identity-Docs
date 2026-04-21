@@ -29,13 +29,13 @@ Ada alternatif untuk mendaftarkan klien baru tanpa token sama sekali, tetapi And
 
 ### Token Bearer
 
-Token bearer dapat dikeluarkan atas nama pengguna atau Akun Layanan. Berikut izin yang diperlukan untuk menginvokasi endpoint (lihat Panduan Administrasi Server untuk detail lebih lanjut):
+Token bearer dapat dikeluarkan atas nama pengguna atau Akun Layanan. Berikut izin yang diperlukan untuk menginvokasi endpoint:
 
 - create-client atau manage-client - Untuk membuat klien
 - view-client atau manage-client - Untuk melihat klien
 - manage-client - Untuk memperbarui atau menghapus klien
 
-Jika Anda menggunakan token bearer untuk membuat klien, disarankan untuk menggunakan token dari Akun Layanan dengan peran `create-client` saja (lihat Panduan Administrasi Server untuk detail lebih lanjut).
+Jika Anda menggunakan token bearer untuk membuat klien, disarankan untuk menggunakan token dari Akun Layanan dengan peran `create-client` saja.
 
 ### Token Akses Awal
 
@@ -171,7 +171,7 @@ String registrationAccessToken = client.getRegistrationAccessToken();
 ## Kebijakan Pendaftaran Klien
 
 <Callout type="info">
-  Rencananya, Kebijakan Pendaftaran Klien akan dihapus dalam kedepannya untuk mendukung Kebijakan Klien yang dijelaskan dalam Panduan Administrasi Server.
+  Rencananya, Kebijakan Pendaftaran Klien akan dihapus dalam kedepannya untuk mendukung fitur Kebijakan Klien.
   Kebijakan Klien lebih fleksibel dan mendukung lebih banyak kasus penggunaan.
   Misalnya kasus mendorong URI klien seperti JWKS untuk mencegah serangan SSRF dengan hanya mengizinkan pola atau domain terpercaya.
 </Callout>

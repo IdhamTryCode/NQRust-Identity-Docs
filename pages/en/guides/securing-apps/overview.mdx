@@ -6,8 +6,7 @@ description: Planning for securing applications and services - NQRust-Identity D
 # Planning for securing applications and services
 
 As an OAuth2, OpenID Connect and SAML compliant server, NQRust-Identity can secure any application and service as long
-as the technology stack they are using supports any of these protocols. For more details about the security protocols
-supported by NQRust-Identity, consider looking at Server Administration Guide.
+as the technology stack they are using supports any of these protocols.
 
 Most of the support for some of these protocols is already available from the programming language, framework,
 or reverse proxy they are using. Leveraging the support already available from the application ecosystem is a key aspect to make your
@@ -32,13 +31,11 @@ These are the basic steps for securing an application or a service in NQRust-Ide
    - Leveraging existing OpenID Connect and SAML support from the application ecosystem
    - Using a NQRust-Identity Adapter
 
-This guide provides the detailed instructions for these steps. You can find more details
-in the Server Administration Guide about how to register a client to NQRust-Identity through the
-administration console.
+This guide provides the detailed instructions for these steps.
 
 ## Getting Started
 
-The [NQRust-Identity Quickstarts Repository](https://github.com/nqrust-identity/nqrust-identity-quickstarts) provides examples about how to secure applications and services
+The [NQRust-Identity Quickstarts Repository](https://github.com/keycloak/keycloak-quickstarts) provides examples about how to secure applications and services
 using different programming languages and frameworks. By going through their documentation and codebase, you will
 understand the bare minimum changes required in your application and service in order to secure it with NQRust-Identity.
 
@@ -49,8 +46,8 @@ Connect and SAML protocols.
 
 #### Java
 
-- [Wildfly Elytron OIDC](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/jakarta/servlet-authz-client)
-- [Spring Boot](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/spring/rest-authz-resource-server)
+- [Wildfly Elytron OIDC](https://github.com/keycloak/keycloak-quickstarts/tree/main/jakarta/servlet-authz-client)
+- [Spring Boot](https://github.com/keycloak/keycloak-quickstarts/tree/main/spring/rest-authz-resource-server)
 
 #### JavaScript (client-side)
 
@@ -62,7 +59,7 @@ Connect and SAML protocols.
 
 #### C#
 
-- [OWIN](https://github.com/dylanplecki/NQRust-IdentityOwinAuthentication)
+- [OWIN](https://github.com/dylanplecki/KeycloakOwinAuthentication)
 
 #### Python
 

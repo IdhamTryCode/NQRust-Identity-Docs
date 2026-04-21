@@ -69,14 +69,12 @@ Untuk detail lebih lanjut, lihat bagian [Titik Akhir Userinfo](https://openid.ne
 Titik akhir logout mengeluarkan pengguna yang terverifikasi.
 
 Agen pengguna dapat diarahkan ke titik akhir ini, yang menyebabkan sesi pengguna aktif untuk dilog out. Agen pengguna kemudian dialihkan kembali ke aplikasi.
-Ini dijelaskan dengan lebih detail dalam bagian Log Out yang Dimulai Oleh RP dari Panduan Administrasi Server.
 
 <Callout type="warning">
   Titik akhir ini juga dapat dipanggil langsung oleh aplikasi. Untuk memanggil titik akhir ini secara langsung, token refresh perlu ditambahkan bersama kredensial yang diperlukan untuk mengautentikasi klien.
   Namun ini adalah format lama dari pesan logout yang hanya didukung karena adapter OIDC Java lama NQRust-Identity atau adapter OIDC Elytron Wildfly.
   Tidak direkomendasikan untuk digunakan langsung dari aplikasi Anda.
-  Untuk pengguna logout, direkomendasikan untuk menggunakan protokol logout standar OIDC/SAML atau konsol admin NQRust-Identity (atau cara lain dari admin REST API)
-  atau konsol akun NQRust-Identity (atau cara lain dari akun REST API).
+  Untuk pengguna logout, direkomendasikan untuk menggunakan protokol logout standar OIDC/SAML, admin REST API, atau akun REST API.
 </Callout>
 
 #### Titik akhir Certificate
@@ -85,7 +83,7 @@ Ini dijelaskan dengan lebih detail dalam bagian Log Out yang Dimulai Oleh RP dar
 /realms/{realm-name}/protocol/openid-connect/certs
 ```
 
-Titik akhir sertifikat mengembalikan kunci publik yang diaktifkan oleh realm, dikodekan sebagai Kunci Web JSON (JWK). Tergantung pada pengaturan realm, satu atau lebih kunci dapat diaktifkan untuk memverifikasi token. Untuk informasi lebih lanjut, lihat Panduan Administrasi Server dan [spesifikasi Kunci Web JSON](https://datatracker.ietf.org/doc/html/rfc7517).
+Titik akhir sertifikat mengembalikan kunci publik yang diaktifkan oleh realm, dikodekan sebagai Kunci Web JSON (JWK). Tergantung pada pengaturan realm, satu atau lebih kunci dapat diaktifkan untuk memverifikasi token. Untuk informasi lebih lanjut, lihat [spesifikasi Kunci Web JSON](https://datatracker.ietf.org/doc/html/rfc7517).
 
 Untuk detail lebih lanjut, lihat spesifikasi [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html).
 
@@ -103,7 +101,7 @@ Untuk detail lebih lanjut tentang cara memanggil titik akhir ini, lihat [spesifi
 ##### Titik akhir Introspection yang Dipicu dengan Header application/jwt
 
 Anda dapat memanggil titik akhir introspection dengan header HTTP `Accept: application/jwt` bukan `Accept: application/json`. Dalam hal `application/jwt`, respons
-mungkin berisi klaim tambahan `jwt` dengan token akses JWT penuh, yang bisa berguna terutama jika token yang akan diintrospeksi adalah token akses ringan. Ini memerlukan Anda untuk mengaktifkan `Support JWT claim in Introspection Response`
+mungkin berisi klaim tambahan `jwt` dengan token akses JWT penuh. Ini memerlukan Anda untuk mengaktifkan `Support JWT claim in Introspection Response`
 pada pengaturan klien lanjutan, yang memicu introspeksi token.
 
 #### Titik akhir Pendaftaran Klien Dinamis
@@ -146,7 +144,7 @@ Titik akhir otorisasi backchannel digunakan untuk mendapatkan auth_req_id yang m
 
 Untuk detail lebih lanjut tentang cara memanggil titik akhir ini, lihat [spesifikasi Alur Otorisasi Backchannel Awal Oleh Klien OpenID Connect](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [bagian Otorisasi Backchannel dari panduan ini](#client-initiated-backchannel-authentication-grant) dan bagian Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
+Juga rujuk ke [bagian Otorisasi Backchannel dari panduan ini](#client-initiated-backchannel-authentication-grant).
 
 ## Tipe Pengarahan yang Didukung
 
@@ -255,15 +253,14 @@ Titik Akhir Pemberitahuan Klien dapat dikonfigurasi di Konsol Admin NQRust-Ident
 
 Untuk detail lebih lanjut, lihat [spesifikasi Alur Otorisasi Backchannel Awal Oleh Klien OpenID Connect](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html).
 
-Juga rujuk ke tempat lain dalam dokumentasi NQRust-Identity seperti [Titik Akhir Otorisasi Backchannel dari panduan ini](#backchannel-authentication-endpoint) dan bagian Pengarahan Otorisasi Backchannel Awal Oleh Klien dari Panduan Administrasi Server.
+Juga rujuk ke [Titik Akhir Otorisasi Backchannel dari panduan ini](#backchannel-authentication-endpoint).
 Untuk detail tentang kepatuhan FAPI CIBA, lihat [bagian FAPI dari panduan ini](#fapi-support).
 
 ## Kesalahan Khusus NQRust-Identity
 
 Server NQRust-Identity dapat mengirimkan kesalahan ke aplikasi klien dalam respons autentikasi OIDC dengan parameter `error=temporarily_unavailable` dan `error_description=authentication_expired`.
 NQRust-Identity mengirimkan kesalahan ini saat pengguna diotentikasi dan memiliki sesi SSO, tetapi sesi otentikasi kedaluwarsa di tab browser saat ini sehingga server NQRust-Identity tidak dapat secara otomatis melakukan SSO
-re-autentikasi pengguna dan redirect kembali ke klien dengan respons yang berhasil. Ketika aplikasi klien menerima jenis kesalahan ini, idealnya untuk mencoba otentikasi segera dan mengirimkan permintaan autentikasi OIDC baru ke server NQRust-Identity, yang biasanya harus selalu mengotentikasi pengguna karena sesi SSO dan redirect kembali. Untuk detail lebih lanjut, lihat
-Panduan Administrasi Server.
+re-autentikasi pengguna dan redirect kembali ke klien dengan respons yang berhasil. Ketika aplikasi klien menerima jenis kesalahan ini, idealnya untuk mencoba otentikasi segera dan mengirimkan permintaan autentikasi OIDC baru ke server NQRust-Identity, yang biasanya harus selalu mengotentikasi pengguna karena sesi SSO dan redirect kembali.
 
 ## Dukungan Financial-grade API (FAPI)
 
@@ -281,10 +278,10 @@ masih perlu dilakukan secara manual atau melalui beberapa solusi pihak ketiga.
 
 ### Profil Klien FAPI
 
-Untuk memastikan bahwa klien Anda memenuhi FAPI, Anda dapat mengonfigurasi Kebijakan Klien di realm Anda seperti yang dijelaskan dalam Panduan Administrasi Server
+Untuk memastikan bahwa klien Anda memenuhi FAPI, Anda dapat mengonfigurasi client policies di realm Anda
 dan menautkannya ke profil klien global untuk dukungan FAPI, yang secara otomatis tersedia di setiap realm. Anda dapat menggunakan profil `fapi-1-baseline` atau `fapi-1-advanced` berdasarkan profil FAPI yang diperlukan agar klien Anda mematuhi. Anda juga dapat menggunakan profil `fapi-2-security-profile`, `fapi-2-dpop-security-profile`, `fapi-2-message-signing`, dan `fapi-2-dpop-message-signing` untuk kepatuhan dengan spesifikasi FAPI 2.0.
 
-Bila Anda ingin menggunakan Permintaan Otorisasi Dapat Dijalankan Oleh Pengguna (PAR), disarankan bahwa klien Anda menggunakan
+Bila Anda ingin menggunakan pushed authorization requests, disarankan bahwa klien Anda menggunakan
 kedua profil `fapi-1-baseline` dan `fapi-1-advanced` untuk permintaan PAR. Terutama, profil `fapi-1-baseline` berisi `pkce-enforcer` executor, yang memastikan
 klien menggunakan PKCE dengan algoritma S256 yang aman. Ini tidak diperlukan untuk klien FAPI Advanced kecuali mereka menggunakan permintaan PAR.
 
@@ -295,11 +292,11 @@ Saat menegakkan persyaratan spesifikasi FAPI CIBA, ada kebutuhan untuk lebih ban
 ### Profil Keamanan Financial-grade API Brasilia Terbuka
 
 NQRust-Identity mematuhi [Profil Keamanan Financial-grade API Brasilia Terbuka 1.0 Draft Implementers 3](https://openfinancebrasil.atlassian.net/wiki/spaces/OF/pages/245760001/EN+Open+Finance+Brasil+Financial-grade+API+Security+Profile+1.0+Implementers+Draft+3).
-Yang satu ini lebih ketat dalam beberapa persyaratan daripada spesifikasi [FAPI 1 Advanced](#fapi-support) dan oleh karena itu mungkin diperlukan untuk mengonfigurasi Kebijakan Klien
+Yang satu ini lebih ketat dalam beberapa persyaratan daripada spesifikasi [FAPI 1 Advanced](#fapi-support) dan oleh karena itu mungkin diperlukan untuk mengonfigurasi client policies
 dalam cara yang lebih ketat untuk menegakkan beberapa persyaratan. Terutama:
 
 - Jika klien Anda tidak menggunakan PAR, pastikan bahwa ia menggunakan objek permintaan OIDC terenkripsi. Hal ini dapat dicapai dengan menggunakan profil klien dengan `secure-request-object` executor dikonfigurasi dengan `Encryption Required` diaktifkan.
-- Pastikan bahwa untuk JWS, klien menggunakan algoritma `PS256`. Untuk JWE, klien harus menggunakan `RSA-OAEP` dengan `A256GCM`. Hal ini mungkin perlu diatur di semua Pengaturan Klien di mana algoritma ini dapat diterapkan.
+- Pastikan bahwa untuk JWS, klien menggunakan algoritma `PS256`. Untuk JWE, klien harus menggunakan `RSA-OAEP` dengan `A256GCM`. Hal ini mungkin perlu diatur di semua pengaturan klien di mana algoritma ini dapat diterapkan.
 
 ### Profil Keamanan Hak Data Konsumen Australia (CDR)
 
@@ -326,7 +323,7 @@ masih perlu dilakukan secara manual atau melalui beberapa solusi pihak ketiga.
 
 ### Profil Klien OAuth 2.1
 
-Untuk memastikan bahwa klien Anda mematuhi OAuth 2.1, Anda dapat mengonfigurasi Kebijakan Klien di realm Anda seperti yang dijelaskan dalam Panduan Administrasi Server
+Untuk memastikan bahwa klien Anda mematuhi OAuth 2.1, Anda dapat mengonfigurasi client policies di realm Anda
 dan menautkannya ke profil klien global untuk dukungan OAuth 2.1, yang secara otomatis tersedia di setiap realm. Anda dapat menggunakan profil `oauth-2-1-for-confidential-client` untuk klien konfiden atau profil `oauth-2-1-for-public-client` untuk klien publik.
 
 <Callout type="info">
@@ -334,7 +331,7 @@ dan menautkannya ke profil klien global untuk dukungan OAuth 2.1, yang secara ot
 </Callout>
 
 <Callout type="info">
-  Saat menggunakan profil OAuth 2.1 untuk klien publik, disarankan untuk menggunakan fitur pratinjau DPoP seperti yang dijelaskan dalam Panduan Administrasi Server karena DPoP mengikat token akses dan token refresh dengan bagian publik dari pasangan kunci klien. Pengikatan ini mencegah seorang penyerang dari menggunakan token yang telah dicuri.
+  Saat menggunakan profil OAuth 2.1 untuk klien publik, disarankan untuk menggunakan fitur pratinjau DPoP karena DPoP mengikat token akses dan token refresh dengan bagian publik dari pasangan kunci klien. Pengikatan ini mencegah seorang penyerang dari menggunakan token yang telah dicuri.
 </Callout>
 
 ## Rekomendasi

@@ -5,7 +5,7 @@ description: Perencanaan untuk mengamankan aplikasi dan layanan - Dokumentasi NQ
 
 # Perencanaan untuk mengamankan aplikasi dan layanan
 
-Sebagai server yang mematuhi OAuth2, OpenID Connect, dan SAML, NQRust-Identity dapat mengamankan aplikasi dan layanan apa pun asalkan stack teknologi yang mereka gunakan mendukung protokol ini. Untuk detail lebih lanjut tentang protokol keamanan yang didukung oleh NQRust-Identity, silakan lihat Panduan Administrasi Server.
+Sebagai server yang mematuhi OAuth2, OpenID Connect, dan SAML, NQRust-Identity dapat mengamankan aplikasi dan layanan apa pun asalkan stack teknologi yang mereka gunakan mendukung protokol ini.
 
 Sebagian besar dukungan untuk beberapa protokol ini sudah tersedia dari bahasa pemrograman, kerangka kerja, atau reverse proxy yang mereka gunakan. Menggunakan dukungan yang sudah tersedia dari ekosistem aplikasi adalah aspek penting untuk membuat aplikasi Anda sepenuhnya mematuhi standar keamanan dan praktik terbaik, sehingga Anda menghindari ketergantungan pada vendor.
 
@@ -25,11 +25,11 @@ Berikut adalah langkah dasar untuk mengamankan aplikasi atau layanan di NQRust-I
   - Menggunakan dukungan OpenID Connect dan SAML yang sudah ada dari ekosistem aplikasi
   - Menggunakan Adapter NQRust-Identity
 
-Panduan ini menyediakan instruksi detail untuk langkah ini. Anda dapat menemukan detail lebih lanjut dalam Panduan Administrasi Server tentang cara mendaftarkan klien ke NQRust-Identity melalui konsol administrasi.
+Panduan ini menyediakan instruksi detail untuk langkah ini.
 
 ## Memulai
 
-[Repositori NQRust-Identity Quickstarts](https://github.com/nqrust-identity/nqrust-identity-quickstarts) menyediakan contoh tentang cara mengamankan aplikasi dan layanan menggunakan berbagai bahasa pemrograman dan kerangka kerja. Dengan melihat dokumentasi dan basis kode mereka, Anda akan memahami perubahan minimum yang diperlukan dalam aplikasi dan layanan Anda untuk mengamankannya dengan NQRust-Identity.
+[Repositori NQRust-Identity Quickstarts](https://github.com/keycloak/keycloak-quickstarts) menyediakan contoh tentang cara mengamankan aplikasi dan layanan menggunakan berbagai bahasa pemrograman dan kerangka kerja. Dengan melihat dokumentasi dan basis kode mereka, Anda akan memahami perubahan minimum yang diperlukan dalam aplikasi dan layanan Anda untuk mengamankannya dengan NQRust-Identity.
 
 Lihat juga bagian berikut untuk rekomendasi implementasi klien yang terpercaya dan terkenal untuk kedua protokol OpenID Connect dan SAML.
 
@@ -37,8 +37,8 @@ Lihat juga bagian berikut untuk rekomendasi implementasi klien yang terpercaya d
 
 #### Java
 
-- [Wildfly Elytron OIDC](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/jakarta/servlet-authz-client)
-- [Spring Boot](https://github.com/nqrust-identity/nqrust-identity-quickstarts/tree/main/spring/rest-authz-resource-server)
+- [Wildfly Elytron OIDC](https://github.com/keycloak/keycloak-quickstarts/tree/main/jakarta/servlet-authz-client)
+- [Spring Boot](https://github.com/keycloak/keycloak-quickstarts/tree/main/spring/rest-authz-resource-server)
 
 #### JavaScript (klien-sisi)
 
@@ -50,7 +50,7 @@ Lihat juga bagian berikut untuk rekomendasi implementasi klien yang terpercaya d
 
 #### C#
 
-- [OWIN](https://github.com/dylanplecki/NQRust-IdentityOwinAuthentication)
+- [OWIN](https://github.com/dylanplecki/KeycloakOwinAuthentication)
 
 #### Python
 

@@ -29,13 +29,13 @@ There is an alternative to register new client without any token as well, but th
 
 ### Bearer token
 
-The bearer token can be issued on behalf of a user or a Service Account. The following permissions are required to invoke the endpoints (see Server Administration Guide for more details):
+The bearer token can be issued on behalf of a user or a Service Account. The following permissions are required to invoke the endpoints:
 
 - create-client or manage-client - To create clients
 - view-client or manage-client - To view clients
 - manage-client - To update or delete client
 
-If you are using a bearer token to create clients it’s recommend to use a token from a Service Account with only the `create-client` role (see Server Administration Guide for more details).
+If you are using a bearer token to create clients it’s recommend to use a token from a Service Account with only the `create-client` role.
 
 ### Initial Access Token
 
@@ -179,7 +179,7 @@ String registrationAccessToken = client.getRegistrationAccessToken();
 ## Client Registration Policies
 
 <Callout type="info">
-  The current plans are for the Client Registration Policies to be removed in favor of the Client Policies described in the Server Administration Guide.
+  The current plans are for the Client Registration Policies to be removed in favor of the Client Policies feature.
   Client Policies are more flexible and support more use case.
   For example the case of enforcing client URIs like the JWKS to prevent SSRF attacks allowing only trusted patterns or domains.
 </Callout>

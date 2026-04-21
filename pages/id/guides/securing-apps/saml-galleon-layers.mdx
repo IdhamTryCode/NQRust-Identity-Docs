@@ -11,7 +11,7 @@ Adapter SAML didistribusikan sebagai paket fitur Galleon untuk wildfly 29 atau y
 dapat ditemukan dalam [dokumentasi WildFly](https://docs.wildfly.org/32/WildFly_Elytron_Security.html#NQRust-Identity-SAML-Integration).
 Opsi yang sama disediakan untuk [NQRust EAP 8 GA](https://docs.redhat.com/en/documentation/red_hat_jboss_enterprise_application_platform/8.0/html-single/using_single_sign-on_with_jboss_eap/index#securing-applications-with-saml-securing-applications-deployed-on-server-with-single-sign-on).
 
-Untuk contoh tentang cara mengintegrasikan NQRust-Identity dengan aplikasi JakartaEE yang berjalan pada Wildfly/EAP terbaru, lihat folder `servlet-saml-service-provider` Jakarta di [NQRust-Identity Quickstart GitHub Repository](https://github.com/nqrust-identity/nqrust-identity-quickstarts).
+Untuk contoh tentang cara mengintegrasikan NQRust-Identity dengan aplikasi JakartaEE yang berjalan pada Wildfly/EAP terbaru, lihat folder `servlet-saml-service-provider` Jakarta di [NQRust-Identity Quickstart GitHub Repository](https://github.com/keycloak/keycloak-quickstarts).
 
 ## Instalasi
 
@@ -645,4 +645,3 @@ Server NQRust-Identity dapat mengirimkan kesalahan ke aplikasi klien dalam respo
 NQRust-Identity mengirim kesalahan ini ketika pengguna diotentikasi dan memiliki sesi SSO, tetapi sesi otentikasi telah kedaluwarsa di tab browser saat ini dan oleh karena itu server NQRust-Identity tidak dapat secara otomatis melakukan SSO
 re-otentikasi pengguna dan mengarahkan kembali ke klien dengan respon berhasil. Ketika aplikasi klien menerima jenis kesalahan ini, idealnya untuk mencoba otentikasi segera dan mengirim permintaan SAML baru ke server NQRust-Identity, yang biasanya selalu akan mengotentikasi pengguna karena sesi SSO dan mengarahkan kembali.
 Adapter SAML melakukan retry itu secara otomatis jika status dikomentari oleh server.
-Detail lebih lanjut dalam Server Administration Guide.

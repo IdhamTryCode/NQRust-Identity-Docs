@@ -57,9 +57,15 @@ jaegertracing/all-in-one
 
 ### Port yang terekspos
 
+**`16686`**
+
 Antarmuka Jaeger
 
+**`4317`**
+
 Penerima gRPC Protokol OpenTelemetry (default)
+
+**`4318`**
 
 Penerima HTTP Protokol OpenTelemetry
 
@@ -85,19 +91,35 @@ NQRust-Identity menambahkan tag ke pelacakan tergantung pada jenis permintaan. S
 
 Contoh tag adalah:
 
+**`kc.clientId`**
+
 ID Klien
+
+**`kc.realmName`**
 
 Nama Realm
 
+**`kc.sessionId`**
+
 ID Sesi Pengguna
+
+**`kc.token.id`**
 
 `id` seperti yang disebutkan dalam token
 
+**`kc.token.issuer`**
+
 `issuer` seperti yang disebutkan dalam token
+
+**`kc.token.sid`**
 
 `sid` seperti yang disebutkan dalam token
 
+**`kc.authenticationSessionId`**
+
 ID Sesi Otentikasi
+
+**`kc.authenticationTabId`**
 
 ID Tab Otentikasi
 
@@ -194,7 +216,7 @@ Ketika pelacakan diaktifkan saat menggunakan Operator NQRust-Identity, informasi
 
 ### Pengaturan melalui NQRust-Identity CR
 
-Anda dapat mengubah konfigurasi pelacakan melalui NQRust-Identity CR. Untuk informasi lebih lanjut, lihat Konfigurasi Lanjutan.
+Anda dapat mengubah konfigurasi pelacakan melalui NQRust-Identity CR.
 
 ### Filter pelacakan berdasarkan atribut Kubernetes
 

@@ -255,6 +255,9 @@ function rewriteBrokenUrls() {
         .replace(/\/observability\/nqrust-identity-service-level-indicators/g, '/observability/identity-service-level-indicators')
         .replace(/\/observability\/keycloak-service-level-indicators/g, '/observability/identity-service-level-indicators')
         .replace(/\/server\/importExport/g, '/server/importexport')
+        // Quickstarts repo + OWIN auth repo: revert to upstream Keycloak (we don't host forks).
+        .replace(/github\.com\/nqrust-identity\/nqrust-identity-quickstarts/g, 'github.com/keycloak/keycloak-quickstarts')
+        .replace(/github\.com\/dylanplecki\/NQRust-IdentityOwinAuthentication/g, 'github.com/dylanplecki/KeycloakOwinAuthentication')
       if (after !== before) { fs.writeFileSync(f, after); touched++ }
     }
   }
@@ -306,6 +309,30 @@ function trimDanglingRefs() {
     // until end of file or next ## heading.
     /\n## List of NQRust-Identity key metrics\n[\s\S]*?(?=\n## |\n*$)/g,
     /\n## Daftar Metrik (?:Utama|Kunci) NQRust-Identity\n[\s\S]*?(?=\n## |\n*$)/g,
+    // tracing.mdx: trim "For more information, see the Advanced configuration." (Operator-only ref).
+    /\s*For more information, see the (?:\[)?Advanced configuration(?:\]\([^)]+\))?\./gi,
+    /\s*Untuk informasi lebih lanjut, lihat (?:\[)?Konfigurasi Lanjutan(?:\]\([^)]+\))?\./gi,
+    // securing-apps: trim trailing "(see Server Administration Guide ...)" / "(see Panduan Administrasi Server ...)" parentheticals.
+    /\s*\(see (?:\[)?Server Administration Guide(?:\]\([^)]+\))? for more details\)/gi,
+    /\s*\(lihat (?:\[)?Panduan Administrasi Server(?:\]\([^)]+\))? untuk detail lebih lanjut\)/gi,
+    // securing-apps: trim sentence-ending "See Server Administration Guide for more details."
+    /\s*See (?:\[)?Server Administration Guide(?:\]\([^)]+\))? for more details\./gi,
+    /\s*Lihat (?:\[)?Panduan Administrasi Server(?:\]\([^)]+\))? untuk detail lebih lanjut\./gi,
+    // saml-galleon-layers: "More details in the Server Administration Guide."
+    /\s*More details in the (?:\[)?Server Administration Guide(?:\]\([^)]+\))?\./gi,
+    /\s*Detail lebih lanjut dalam (?:\[)?(?:Panduan Administrasi Server|Server Administration Guide)(?:\]\([^)]+\))?\./gi,
+    // authz-client: "For more details see the `Authentication SPI` section in Server Developer Guide."
+    /\s*For more details see the `?Authentication SPI`? section in (?:\[)?Server Developer Guide(?:\]\([^)]+\))?\./gi,
+    /\s*Untuk detail lanjut, lihat bagian `?Authentication SPI`? di (?:\[)?Panduan Pengembang Server(?:\]\([^)]+\))?\./gi,
+    // grafana-dashboards.mdx: trim broken dashboard repo reference (no such repo under our org).
+    /\s*JSON definitions of NQRust-Identity Grafana dashboards are available in the (?:\[)?[^.\n]*?nqrust-identity-grafana-dashboard[^.\n]*?(?:\]\([^)]+\))?\./gi,
+    /\s*Definisi JSON dari dasbor Grafana NQRust-Identity tersedia di (?:\[)?[^.\n]*?nqrust-identity-grafana-dashboard[^.\n]*?(?:\]\([^)]+\))?\./gi,
+    // exemplars.mdx: trim "See the guide HTTP metrics / Self-provided metrics ..." (no such pages).
+    // Each occurs as its own paragraph between bullet items, so we eat the surrounding blank lines too.
+    /\n\nSee the guide (?:\[)?HTTP metrics(?:\]\([^)]+\))? for details on this metric\./g,
+    /\n\nSee the guide (?:\[)?Self-provided metrics(?:\]\([^)]+\))?\s* for details on this metric\./g,
+    /\n\nLihat panduan (?:\[)?HTTP metrics(?:\]\([^)]+\))? untuk detail tentang metrik ini\./g,
+    /\n\nLihat panduan (?:\[)?Self-provided metrics(?:\]\([^)]+\))? untuk detail tentang metrik ini\./g,
     // " - see X" or ", see X" list-tail / inline refs
     /\s*[-,]\s*see\s+(?:\[)?Running NQRust-Identity in a container(?:\]\([^)]+\))?/gi,
     /\s*[-,]\s*see\s+(?:\[)?Using custom NQRust-Identity images(?:\]\([^)]+\))?/gi,
