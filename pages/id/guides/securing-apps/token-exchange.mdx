@@ -27,20 +27,20 @@ Standar token exchange di NQRust-Identity mengimplementasikan [spesifikasi token
 
 ### Alur Token Exchange
 
- Pertimbangkan alur token exchange yang umum ini:
+Pertimbangkan alur token exchange yang umum ini:
 
 1. Pengguna mengotentikasi dengan menggunakan NQRust-Identity SSO ke aplikasi klien `initial-client`. Token dikeluarkan untuk `initial-client`.
 2. Klien `initial-client` mungkin perlu untuk menggunakan layanan REST `requester-client`, yang memerlukan otentikasi. Jadi `initial-client` mengirimkan token akses dari langkah 1 ke `requester-client` dengan penggunaan token.
 3. Untuk melayani permintaan, `requester-client` mungkin perlu untuk memanggil layanan `target-client`. Namun, itu mungkin tidak dapat menggunakan token yang dikirimkan dari `initial-client`. Sebagai contoh:
 
-![Token Exchange Example Flow](/images/securing-apps/token-exchange-1.png)
-
-  Token tidak memiliki izin atau scope yang mencukupi. `target-client` tidak ditentukan sebagai audiens token; token dimaksudkan untuk digunakan untuk menginvokasi `requester-client`. Token memiliki izin yang terlalu banyak; oleh karena itu, `requester-client` mungkin tidak ingin berbagi dengan `target-client`.
+   Token tidak memiliki izin atau scope yang mencukupi. `target-client` tidak ditentukan sebagai audiens token; token dimaksudkan untuk digunakan untuk menginvokasi `requester-client`. Token memiliki izin yang terlalu banyak; oleh karena itu, `requester-client` mungkin tidak ingin berbagi dengan `target-client`.
 
   Keadaan mana pun dari ini bisa menjadi alasan untuk menginvokasi token exchange. `requester-client` mungkin perlu untuk mengirimkan permintaan token exchange ke server NQRust-Identity dan menggunakan token asli dari langkah 1 sebagai
 _token subjek_ dan menukarnya dengan token lain _token yang diminta_.
 4. Token _yang diminta_ dikembalikan ke `requester-client`. Token ini sekarang dapat dikirim ke `target-client`.
 5. `target-client` dapat memenuhi permintaan dan mengembalikan respons ke `requester-client`. `requester-client` kemudian dapat mengikuti dan mengembalikan respons ke permintaan dari langkah 2.
+
+![Diagram alur token exchange](/images/securing-apps/token-exchange-1.png)
 
 Banyak kasus penggunaan lainnya untuk token exchange, tetapi contoh sebelumnya adalah yang paling umum.
 
@@ -82,6 +82,8 @@ klien yang seharusnya mengirim permintaan token exchange, seperti `requester-cli
 Juga, seperti halnya untuk permintaan grant lainnya, permintaan token exchange harus diotentikasi dengan metode otentikasi klien yang sesuai yang dikonfigurasi
 untuk klien.
 
+![Aktifkan Standard Token Exchange di Capability config](/images/securing-apps/token-exchange-2.png)
+
 ### Parameter Permintaan dan Respons
 
 Parameter ini sejalan dengan [spesifikasi token exchange](https://datatracker.ietf.org/doc/html/rfc8693#name-token-exchange-request-and-), yang dijelaskan sebagai berikut:
@@ -97,9 +99,9 @@ _OPSIOMAL._ Parameter ini mewakili tipe token yang klien inginkan untuk ditukar.
 adalah `urn:ietf:params:oauth:token-type:access_token`. Nilai lain yang mungkin adalah `urn:ietf:params:oauth:token-type:id_token` jika token ID yang dikeluarkan untuk `requester-client` diminta. Nilai yang mungkin
 juga bisa `urn:ietf:params:oauth:token-type:refresh_token`; dalam hal ini, Anda akan menerima token akses dan token refresh dalam respons. Namun, token refresh diizinkan jika opsi konfigurasi klien `Allow refresh token in Standard Token Exchange` diaktifkan sebagai yang ditentukan dalam bagian [detail token exchange standar](#standard-token-exchange-details).
 
-_OPSIOMAL._ Parameter ini mewakili set scope OAuth dan OpenID Connect yang dipisahkan spasi yang klien minta. Anda dapat menggunakan Opsi klien scope
+_OPSIOMAL._ Parameter ini mewakili set scope OAuth dan OpenID Connect yang dipisahkan spasi yang klien minta. Anda dapat menggunakan optional client scopes
 dari `requester-client`. Untuk lebih jelas, lihat [scopes and audiences](#standard-token-exchange-scope). Mengabaikan parameter ini berarti bahwa hanya
-Default klien scope yang efektif digunakan.
+default client scopes yang efektif digunakan.
 
 _OPSIOMAL._ Audiens menentukan `client_id` dari klien, yang diharapkan untuk digunakan sebagai audiens token. Dalam [contoh di atas](#standard-token-exchange-flow), itu bisa menjadi `target-client`. Beberapa
 nilai parameter ini diizinkan, yang berarti Anda ingin token untuk berisi beberapa audiens untuk digunakan oleh `requester-client` dalam beberapa layanan berbeda. Misalnya
@@ -119,15 +121,15 @@ Biasanya `Bearer` jika jenis token yang dikeluarkan adalah token akses atau toke
 ### Scopes dan Audiens
 
 Parameter `scope` dalam permintaan token exchange memiliki arti yang sama seperti grant lainnya. Parameter ini opsional. Ketika itu diabaikan, scope klien yang efektif digunakan dalam permintaan adalah
-Default klien scope dari `requester-client`. Ketika parameter ini digunakan, scope klien yang efektif adalah scope default bersama dengan
-Opsi klien scope
+default client scopes dari `requester-client`. Ketika parameter ini digunakan, scope klien yang efektif adalah scope default bersama dengan
+optional client scopes.
 
-Secara default, scope klien yang digunakan akan menambahkan audiens ke klaim `aud` berdasarkan scope klien yang digunakan dan peran klien seperti yang dijelaskan dalam Dokumentasi Audiens.
+Secara default, scope klien yang digunakan akan menambahkan audiens ke klaim `aud` berdasarkan scope klien yang digunakan dan peran klien.
 
 Parameter `audience` dapat digunakan untuk filtering audiens, sehingga klaim `aud` akan berisi hanya audiens yang ditentukan oleh parameter `audience`. Demikian pula peran klien dalam token akan
 difilter dan token akan memiliki hanya peran klien dari klien yang ditentukan oleh parameter `audience`.
 
-Dengan tambahan, parameter `audience` dapat digunakan untuk filtering scope klien juga. Ini bekerja dengan cara yang serupa dengan Izin scope klien untuk pengguna.
+Dengan tambahan, parameter `audience` dapat digunakan untuk filtering scope klien juga. Ini bekerja dengan cara yang serupa dengan izin scope klien untuk pengguna.
 Jika scope klien tidak berisi peran klien (misalnya, itu berisi nol peran atau hanya berisi peran realm), tidak ada filtering tambahan yang terjadi untuk scope klien. Namun, jika scope klien berisi beberapa
 pemetaan peran klien, itu harus mencakup beberapa peran klien dari klien yang diminta oleh parameter `audience`. Peran komposit juga termasuk untuk pertimbangan. Jika scope klien tidak berisi peran klien dari klien yang diminta oleh parameter `audience`, scope klien akan difilter.
 
@@ -155,15 +157,13 @@ Anggaplah kita memiliki realm dengan:
 - Klien `requester-client`, yang memiliki scope klien `default-scope1` ditambahkan sebagai default klien scope dan scope `optional-scope2` ditambahkan sebagai opsi klien scope
 - Pengguna yang terverifikasi, yang merupakan anggota dari kedua `target-client1-role` dan `target-client2-role`
 
-Pengaturan di atas berarti bahwa menggunakan scope `default-scope1` akan menambahkan audiens `target-client1` ke token dan menggunakan `optional-scope2` akan menambahkan audiens `target-client2`. Ini karena alasan
-penyelesaian audiens yang dijelaskan dalam Dokumentasi Audiens.
+Pengaturan di atas berarti bahwa menggunakan scope `default-scope1` akan menambahkan audiens `target-client1` ke token dan menggunakan `optional-scope2` akan menambahkan audiens `target-client2`. Ini karena cara audiens diselesaikan dari pemetaan peran scope klien.
 
 ##### Contoh 1
 
 Permintaan token exchange dikirimkan dengan `scope=optional-scope2` dan tanpa parameter audiens:
 
-Tidak ada filtering audiens. Scope dan audiens akan diselesaikan sesuai dengan hal yang biasa terjadi untuk grant lainnya seperti yang dijelaskan dalam bagian Scope Klien dan
-Dokumentasi Audiens. Token respons akan serupa dengan ini (klaim yang tidak menarik untuk contoh ini diabaikan untuk singkat):
+Tidak ada filtering audiens. Scope dan audiens akan diselesaikan sesuai dengan hal yang biasa terjadi untuk grant lainnya. Token respons akan serupa dengan ini (klaim yang tidak menarik untuk contoh ini diabaikan untuk singkat):
 
 ```json
 {
@@ -214,8 +214,8 @@ Permintaan token exchange dikirimkan dengan `scope=optional-scope2` dan dengan `
 </Callout>
 
 <Callout type="info">
-  Jika Anda memiliki penyebaran yang lebih kompleks dengan berbagai scope dan audiens, dapat sulit untuk memodelkannya dengan cara yang tepat. Pertimbangkan untuk menggunakan tab Evaluasi Scope Klien
-   untuk menguji apakah token terlihat seperti yang diharapkan untuk pengguna yang diberikan dan untuk set scope dan audiens yang diberikan.
+  Jika Anda memiliki penyebaran yang lebih kompleks dengan berbagai scope dan audiens, dapat sulit untuk memodelkannya dengan cara yang tepat. Pertimbangkan untuk menggunakan tab **Client scopes** → **Evaluate** di Konsol Admin
+  untuk menguji apakah token terlihat seperti yang diharapkan untuk pengguna yang diberikan dan untuk set scope dan audiens yang diberikan.
 </Callout>
 
 ### Token Exchange - Detail Tambahan
@@ -236,22 +236,21 @@ Titik tambahan ini menjelaskan perilaku token exchange.
   Konsol Admin di tab **Advanced** dari klien OIDC di bagian **OpenID Connect Compatibility Modes**. Nilai lain yang tersedia untuk switch adalah **Same session**, yang berarti token refresh diizinkan hanya jika token refresh dapat menggunakan sesi pengguna yang sama dengan token subjek. Jika token subjek datang dari Sesi Transient atau dari
   Sesi Offline, meminta token refresh tidak akan diizinkan. Demikian juga tidak akan diizinkan untuk meminta token offline (menggunakan `scope=offline_access`).
 
-![Enabling refresh token in Token Exchange](/images/securing-apps/token-exchange-3.png)
-
+  ![Allow refresh token in Standard Token Exchange di OpenID Connect Compatibility Modes](/images/securing-apps/token-exchange-3.png)
 - Token exchange tidak pernah membuat sesi pengguna baru. Jika `requested_token_type` adalah token refresh, itu mungkin akhirnya membuat sesi klien baru untuk klien pengguna (jika sesi klien belum dibuat).
 - NQRust-Identity Token exchange belum mendukung parameter `resource`.
 - Spesifikasi token exchange menyebutkan konsep [pembebasan dan delegasi](https://datatracker.ietf.org/doc/html/rfc8693#name-delegation-vs-impersonation). NQRust-Identity mendukung skenario pembebasan, tetapi belum mendukung skenario delegasi.
 
-#### Peng吊销
+#### Pencabutan
 
-Dengan asumsi bahwa ada token subjek `access-token1` yang dikeluarkan untuk klien `initial-client`, di sini adalah beberapa pertimbangan terkait peng吊销 token:
+Dengan asumsi bahwa ada token subjek `access-token1` yang dikeluarkan untuk klien `initial-client`, di sini adalah beberapa pertimbangan terkait pencabutan token:
 
-- Untuk kasus ketika `access-token1` ditukar dengan `access-token2` dari klien `requester-client`, peng吊销 `access-token1` tidak akan meng吊销 `access-token2`. Mendukung "rantai peng吊销" untuk token akses akan berarti beban kerja yang cukup. Jadi dengan pertimbangan ini,  administrator harus memastikan bahwa token akses memiliki umur panjang yang singkat dan di吊销 secara otomatis setelah beberapa waktu.
-- Untuk kasus ketika `access-token1` ditukar dengan `refresh-token2` dari klien `requester-client`, kami mencoba untuk mendukung rantai peng吊销. Ini berarti bahwa:
+- Untuk kasus ketika `access-token1` ditukar dengan `access-token2` dari klien `requester-client`, pencabutan `access-token1` tidak akan mencabut `access-token2`. Mendukung "rantai pencabutan" untuk token akses akan berarti beban kerja yang cukup. Jadi dengan pertimbangan ini,  administrator harus memastikan bahwa token akses memiliki umur panjang yang singkat dan dicabut secara otomatis setelah beberapa waktu.
+- Untuk kasus ketika `access-token1` ditukar dengan `refresh-token2` dari klien `requester-client`, kami mencoba untuk mendukung rantai pencabutan. Ini berarti bahwa:
 
-  - Peng吊销 `access-token1` akan meng吊销 juga `refresh-token2`. Selain itu ini akan menghapus sesi klien klien `requester-client` dari sesi pengguna dan oleh karena itu semua token refresh dari `requester-client` dalam sesi pengguna ini akan efektif di吊销
-  - Jika `refresh-token2` dan token akses terkait digunakan untuk token exchange lebih lanjut ke klien berbeda, maka peng吊销 `access-token1` akan meng吊销 token exchange berikutnya juga. Dalam kata lain, seluruh "rantai" dari token yang ditukar akan di吊销.
-  - Perhatikan bahwa token akses harus valid ketika endpoint peng吊销 dipanggil. Jika Anda tidak memiliki token akses yang valid ketika `access-token1` asli telah kedaluwarsa, Anda bisa potensial menggunakan token akses yang dikeluarkan untuk klien yang sama dalam sesi pengguna yang sama. Token yang ditukar seperti `refresh-token2` dan lainnya dari "rantai" harus di吊销.
+  - Pencabutan `access-token1` akan mencabut juga `refresh-token2`. Selain itu ini akan menghapus sesi klien klien `requester-client` dari sesi pengguna dan oleh karena itu semua token refresh dari `requester-client` dalam sesi pengguna ini akan efektif dicabut
+  - Jika `refresh-token2` dan token akses terkait digunakan untuk token exchange lebih lanjut ke klien berbeda, maka pencabutan `access-token1` akan mencabut token exchange berikutnya juga. Dalam kata lain, seluruh "rantai" dari token yang ditukar akan dicabut.
+  - Perhatikan bahwa token akses harus valid ketika endpoint pencabutan dipanggil. Jika Anda tidak memiliki token akses yang valid ketika `access-token1` asli telah kedaluwarsa, Anda bisa potensial menggunakan token akses yang dikeluarkan untuk klien yang sama dalam sesi pengguna yang sama. Token yang ditukar seperti `refresh-token2` dan lainnya dari "rantai" harus dicabut.
 
 ### Perbandingan Standar Token Exchange dan Token Exchange Legacy
 
@@ -267,7 +266,7 @@ Sementara bagian sebelumnya mendetailkan token exchange standar dan legacy, beri
 | **Klien publik** | Tidak tersedia. Implementasi downscoping oleh V1 dapat diganti dengan grant token refresh | Tersedia hanya untuk menukar token klien itu sendiri. Efektif dukungan hanya untuk downscoping |
 | **Persetujuan** | Diizinkan untuk klien dengan `Persetujuan diperlukan` selama pengguna sudah memberikan persetujuan | Tidak diizinkan untuk klien dengan **Persetujuan diperlukan** |
 | **Otorisasi** | Verifikasi bahwa klien pengguna harus berada di audiens `subject_token`. Integrasi dengan kebijakan klien. Tidak ada izin admin halus | Berdasarkan izin admin halus versi 1 |
-| **Rantai peng吊销** | Tidak tersedia untuk token akses. Tersedia untuk token refresh | Tidak tersedia untuk token akses maupun refresh token |
+| **Rantai pencabutan** | Tidak tersedia untuk token akses. Tersedia untuk token refresh | Tidak tersedia untuk token akses maupun refresh token |
 | **Delegasi sesuai RFC 8693** | Belum didukung | Belum didukung |
 | **Parameter sumber daya sesuai RFC 8693** | Belum didukung | Belum didukung |
 | **Token Exchange internal ke external** | Identity brokering APIs dapat digunakan sebagai gantinya. Lihat Identity Brokering APIs untuk informasi lebih lanjut. | Diimplementasikan sebagai pratinjau |

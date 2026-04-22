@@ -8,8 +8,8 @@ description: NQRust-Identity Node.js adapter - NQRust-Identity Documentation
 NQRust-Identity provides a Node.js adapter built on top of [Connect](https://github.com/senchalabs/connect) to protect server-side JavaScript apps - the goal was to be flexible enough to integrate with frameworks like [Express.js](https://expressjs.com/).
 The adapter uses OpenID Connect protocol under the covers. You can take a look at the [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#oidc-available-endpoints) guide for the more generic information about OpenID Connect endpoints and capabilities.
 
-The library can be downloaded directly from  NQRust-Identity organization and the source is available at
-[GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
+The library can be downloaded directly from the [Keycloak organization](https://github.com/keycloak/keycloak-nodejs-connect) and the source is available at
+[GitHub](https://github.com/keycloak/keycloak-nodejs-connect).
 
 To use the Node.js adapter, first you must create a client for your application in the NQRust-Identity Admin Console. The adapter supports public, confidential, and bearer-only access type. Which one to choose depends on the use-case scenario.
 
@@ -76,8 +76,7 @@ settings such as public key, realm name, various URLs.
 
 In that case a NQRust-Identity deployment is necessary to access NQRust-Identity admin console.
 
-Please visit links on how to deploy a NQRust-Identity admin console with
-Podman or Docker
+Please visit the official documentation for how to deploy a NQRust-Identity admin console with [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/).
 
 Now we are ready to obtain the `keycloak.json` file by visiting the NQRust-Identity Admin Console → clients (left sidebar) → choose your client → Installation → Format Option → NQRust-Identity OIDC JSON → Download
 

@@ -72,8 +72,18 @@ Lihat juga bagian berikut untuk rekomendasi implementasi klien yang terpercaya d
 
 #### Java
 
-- [Paket fitur SAML NQRust-Identity Galleon untuk WildFly dan EAP](/en/guides/securing-apps/saml-galleon-layers)
+- [Paket fitur SAML NQRust-Identity Galleon untuk WildFly dan EAP](/id/guides/securing-apps/saml-galleon-layers)
 
 #### Apache HTTP Server
 
-- [Mengonfigurasi Modul Apache mod
+- [Mengonfigurasi Modul Apache mod_auth_mellon](/id/guides/securing-apps/mod-auth-mellon)
+
+## Terminologi
+
+Istilah-istilah ini digunakan dalam panduan ini:
+
+- `Clients` adalah entitas yang berinteraksi dengan NQRust-Identity untuk mengotentikasi pengguna dan memperoleh token. Paling sering, klien adalah aplikasi dan layanan yang bertindak atas nama pengguna yang menyediakan pengalaman single sign-on bagi pengguna mereka dan mengakses layanan lain menggunakan token yang dikeluarkan oleh server. Klien juga dapat berupa entitas yang hanya tertarik untuk memperoleh token dan bertindak atas nama mereka sendiri untuk mengakses layanan lain.
+- `Applications` mencakup berbagai aplikasi yang bekerja untuk platform tertentu untuk setiap protokol
+- `Client adapters` adalah library yang memudahkan untuk mengamankan aplikasi dan layanan dengan NQRust-Identity. Mereka memberikan integrasi yang erat dengan platform dan framework yang mendasarinya.
+- `Creating a client` dan `registering a client` adalah aksi yang sama. `Creating a Client` adalah istilah yang digunakan untuk membuat klien menggunakan Konsol Admin. `Registering a client` adalah istilah yang digunakan untuk mendaftarkan klien menggunakan NQRust-Identity Client Registration Service.
+- `A service account` adalah jenis klien yang mampu memperoleh token atas namanya sendiri.

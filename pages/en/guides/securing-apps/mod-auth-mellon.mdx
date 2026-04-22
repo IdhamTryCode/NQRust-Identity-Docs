@@ -30,6 +30,7 @@ Perform the following procedure to generate the Apache HTTPD module configuratio
 1. Go to the Installation page of your SAML client.
 2. Select the **Mod Auth Mellon** files option.
 
+   ![Download Mod Auth Mellon adapter config](/images/securing-apps/mod-auth-mellon-1.png)
 3. Click **Download** to download a ZIP file that contains the XML descriptor and PEM files you need.
 
 ## Configuring mod_auth_mellon with NQRust-Identity
@@ -232,7 +233,9 @@ Use this procedure to retrieve that file from the IdP.
    apachectl configtest
    ```
 
-   __ Configtest is equivalent to the -t argument to apachectl. If the configuration test shows any errors, correct them before proceeding.
+   <Callout type="info">
+     Configtest is equivalent to the -t argument to apachectl. If the configuration test shows any errors, correct them before proceeding.
+   </Callout>
 3. Restart the Apache server:
 
    ```

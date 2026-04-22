@@ -284,7 +284,7 @@ All features are supported if SSL / TLS connection is configured on the NQRust-I
 
 ### Browsers with Blocked Third-Party Cookies
 
-Session Status iframe is not supported and is automatically disabled if such browser behavior is detected by the adapter. This means the adapter cannot use a session cookie for Single Sign-Out detection and must rely purely on tokens. As a result, when a user logs out in another window, the application using the adapter will not be logged out until the application tries to refresh the Access Token. Therefore, consider setting the Access Token Lifespan to a relatively short time, so that the logout is detected as soon as possible. For more details, see Session and Token Timeouts.
+Session Status iframe is not supported and is automatically disabled if such browser behavior is detected by the adapter. This means the adapter cannot use a session cookie for Single Sign-Out detection and must rely purely on tokens. As a result, when a user logs out in another window, the application using the adapter will not be logged out until the application tries to refresh the Access Token. Therefore, consider setting the Access Token Lifespan to a relatively short time, so that the logout is detected as soon as possible.
 
 _Silent_ `check-sso` is not supported and falls back to regular (non-silent) `check-sso` by default. This behavior can be changed by setting `silentCheckSsoFallback: false` in the options passed to the `init` method. In this case, `check-sso` will be completely disabled if restrictive browser behavior is detected.
 
@@ -410,7 +410,7 @@ Options is an Object, where:
 - refreshToken - Set an initial value for the refresh token.
 - idToken - Set an initial value for the id token (only together with token or refreshToken).
 - scope - Set the default scope parameter to the NQRust-Identity login endpoint. Use a space-delimited list of scopes. Those typically
-reference Client scopes defined on a particular client. Note that the scope `openid` will
+reference client scopes defined on a particular client. Note that the scope `openid` will
 always be added to the list of scopes by the adapter. For example, if you enter the scope options `address phone`, then the request
 to NQRust-Identity will contain the scope parameter `scope=openid address phone`. Note that the default scope specified here is overwritten if the `login()` options specify scope explicitly.
 - timeSkew - Set an initial value for skew between local time and NQRust-Identity server in seconds (only together with token or refreshToken).
@@ -443,14 +443,12 @@ authenticated before (This is related to the `onLoad` check with value `check-ss
 - loginHint - Used to pre-fill the username/email field on the login form.
 - scope - Override the scope configured in `init` with a different value for this specific login.
 - idpHint - Used to tell NQRust-Identity to skip showing the login page and automatically redirect to the specified identity
-provider instead. More info in the Identity Provider documentation.
+provider instead.
 - acr - Contains the information about `acr` claim, which will be sent inside `claims` parameter to the NQRust-Identity server. Typical usage
-is for step-up authentication. Example of use `{ values: ["silver", "gold"], essential: true }`. See OpenID Connect specification
-and Step-up authentication documentation for more details.
+is for step-up authentication. Example of use `{ values: ["silver", "gold"], essential: true }`.
 - acrValues - Generates the `acr_values` parameter which refers to authentication context class reference and allows clients to declare the required assurance level requirements, e.g. authentication mechanisms. See [Section 4. acr_values request values and level of assurance in OpenID Connect MODRNA Authentication Profile 1.0](https://openid.net/specs/openid-connect-modrna-authentication-1_0.html#acr-values).
-- action - If the value is `register`, the user is redirected to the registration page. See Registration requested by client section for more details.
+- action - If the value is `register`, the user is redirected to the registration page.
 If the value is `UPDATE_PASSWORD` or another supported required action, the user will be redirected to the reset password page or the other required action page. However, if the user is not authenticated, the user will be sent to the login page and redirected after authentication.
-See Application Initiated Action section for more details.
 - locale - Sets the 'ui_locales' query param in compliance with [section 3.1.2.1 of the OIDC 1.0 specification](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
 - cordovaOptions - Specifies the arguments that are passed to the Cordova in-app-browser (if applicable). Options `hidden` and `location` are not affected by these arguments. All available options are defined at [https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/). Example of use: `{ zoom: "no", hardwareback: "yes" }`;
 

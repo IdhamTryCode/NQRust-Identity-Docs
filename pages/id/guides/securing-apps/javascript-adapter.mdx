@@ -282,7 +282,7 @@ Semua fitur didukung jika koneksi SSL / TLS dikonfigurasi pada sisi NQRust-Ident
 
 ### Browser dengan Cookie Pihak Ketiga yang Diblokir
 
-Iframe Status Sesi tidak didukung dan secara otomatis dinonaktifkan jika perilaku browser semacam ini terdeteksi oleh adapter. Ini berarti adapter tidak dapat menggunakan cookie sesi untuk deteksi Single Sign-Out dan harus sepenuhnya bergantung pada token. Akibatnya, saat pengguna logout di jendela lain, aplikasi yang menggunakan adapter tidak akan logout sampai aplikasi mencoba untuk menyegarkan Access Token. Oleh karena itu, pertimbangkan untuk mengatur Waktu Hidup Access Token menjadi waktu yang relatif singkat, sehingga logout terdeteksi secepat mungkin. Untuk detail lebih lanjut, lihat Sesi dan Waktu Timeout Token.
+Iframe Status Sesi tidak didukung dan secara otomatis dinonaktifkan jika perilaku browser semacam ini terdeteksi oleh adapter. Ini berarti adapter tidak dapat menggunakan cookie sesi untuk deteksi Single Sign-Out dan harus sepenuhnya bergantung pada token. Akibatnya, saat pengguna logout di jendela lain, aplikasi yang menggunakan adapter tidak akan logout sampai aplikasi mencoba untuk menyegarkan Access Token. Oleh karena itu, pertimbangkan untuk mengatur Waktu Hidup Access Token menjadi waktu yang relatif singkat, sehingga logout terdeteksi secepat mungkin.
 
 _Silent_ `check-sso` tidak didukung dan secara default kembali ke `check-sso` reguler (non-silent). Perilaku ini dapat diubah dengan mengatur `silentCheckSsoFallback: false` dalam opsi yang dilewatkan ke metode `init`. Dalam hal ini, `check-sso` akan sepenuhnya dinonaktifkan jika perilaku browser yang terbatas terdeteksi.
 
@@ -376,7 +376,7 @@ Options adalah Objek, di mana:
 - token - Menetapkan nilai awal untuk token.
 - refreshToken - Menetapkan nilai awal untuk token refresh.
 - idToken - Menetapkan nilai awal untuk id token (hanya bersama dengan token atau refreshToken).
-- scope - Menetapkan parameter scope default ke endpoint login NQRust-Identity. Gunakan daftar scope yang dipisahkan spasi. Biasanya merujuk pada Client scopes yang didefinisikan pada klien tertentu. Perlu dicatat bahwa scope `openid` akan selalu ditambahkan ke daftar scope oleh adapter. Misalnya, jika Anda memasukkan opsi scope `address phone`, maka permintaan ke NQRust-Identity akan berisi parameter scope `scope=openid address phone`. Perlu dicatat bahwa scope default yang diatur di sini akan ditimpa jika opsi `login()` menentukan scope secara eksplisit.
+- scope - Menetapkan parameter scope default ke endpoint login NQRust-Identity. Gunakan daftar scope yang dipisahkan spasi. Biasanya merujuk pada client scopes yang didefinisikan pada klien tertentu. Perlu dicatat bahwa scope `openid` akan selalu ditambahkan ke daftar scope oleh adapter. Misalnya, jika Anda memasukkan opsi scope `address phone`, maka permintaan ke NQRust-Identity akan berisi parameter scope `scope=openid address phone`. Perlu dicatat bahwa scope default yang diatur di sini akan ditimpa jika opsi `login()` menentukan scope secara eksplisit.
 - timeSkew - Menetapkan nilai awal untuk skew antara waktu lokal dan server NQRust-Identity dalam hitungan detik (hanya bersama dengan token atau refreshToken).
 - checkLoginIframe - Menetapkan untuk mengaktifkan/matikan pemantauan status login (default adalah `true`).
 - checkLoginIframeInterval - Menetapkan interval untuk memeriksa status login (default adalah 5 detik).
@@ -405,12 +405,11 @@ Akhirnya, mungkin menggunakan nilai `none` untuk memastikan bahwa layar login ti
 - maxAge - Hanya digunakan jika pengguna telah terverifikasi. Menentukan waktu maksimum sejak pengguna terverifikasi. Jika pengguna telah terverifikasi lebih lama dari `maxAge`, SSO diabaikan dan dia harus terverifikasi lagi.
 - loginHint - Digunakan untuk mengisi bidang username/email pada formulir login.
 - scope - Menimpa scope yang dikonfigurasi dalam `init` dengan nilai yang berbeda untuk login ini.
-- idpHint - Digunakan untuk memberitahu NQRust-Identity untuk melewati tampilan halaman login dan secara otomatis dialihkan ke penyedia identitas yang ditentukan. Info lebih lanjut dalam Dokumentasi Penyedia Identitas.
-- acr - Berisi informasi tentang klaim `acr`, yang akan dikirim dalam parameter `claims` ke server NQRust-Identity. Penggunaan umum adalah untuk otentikasi langkah atas. Contoh penggunaan `{ values: ["silver", "gold"], essential: true }`. Lihat spesifikasi OpenID Connect dan Dokumentasi Otentikasi Langkah Atas untuk detail lebih lanjut.
+- idpHint - Digunakan untuk memberitahu NQRust-Identity untuk melewati tampilan halaman login dan secara otomatis dialihkan ke penyedia identitas yang ditentukan.
+- acr - Berisi informasi tentang klaim `acr`, yang akan dikirim dalam parameter `claims` ke server NQRust-Identity. Penggunaan umum adalah untuk otentikasi langkah atas. Contoh penggunaan `{ values: ["silver", "gold"], essential: true }`.
 - acrValues - Menghasilkan parameter `acr_values` yang merujuk pada referensi konteks otentikasi dan memungkinkan klien untuk mendeklarasikan tingkat keamanan yang diperlukan, misalnya mekanisme otentikasi. Lihat [Bagian 4. Nilai permintaan acr_values dan tingkat keamanan dalam Profil Otentikasi MODRNA OpenID Connect 1.0](https://openid.net/specs/openid-connect-modrna-authentication-1_0.html#acr-values).
-- action - Jika nilai adalah `register`, pengguna dialihkan ke halaman pendaftaran. Lihat Bagian Pendaftaran yang Diminta Oleh Klien untuk detail lebih lanjut.
+- action - Jika nilai adalah `register`, pengguna dialihkan ke halaman pendaftaran.
 Jika nilai adalah `UPDATE_PASSWORD` atau tindakan yang didukung lainnya, pengguna akan dialihkan ke halaman ulangi sandi atau halaman tindakan yang diperlukan lainnya. Namun, jika pengguna belum terverifikasi, pengguna akan dialihkan ke halaman login dan dialihkan setelah otentikasi.
-Lihat Bagian Tindakan yang Dimulai Oleh Aplikasi untuk detail lebih lanjut.
 - locale - Menetapkan 'ui_locales' query param sesuai dengan [bagian 3.1.2.1 dari spesifikasi OIDC 1.0](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest).
 - cordovaOptions - Menentukan argumen yang dilewatkan ke Cordova in-app-browser (jika relevan). Opsi `hidden` dan `location` tidak terpengaruh oleh argumen ini. Semua opsi yang tersedia didefinisikan di [https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/). Contoh penggunaan: `{ zoom: "no", hardwareback: "yes" }`;
 

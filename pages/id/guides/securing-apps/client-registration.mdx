@@ -63,7 +63,7 @@ Ketika Anda membuat klien melalui Layanan Pendaftaran Klien, respons akan mencak
 Token akses pendaftaran menyediakan akses untuk mengambil konfigurasi klien nanti, tetapi juga untuk memperbarui atau menghapus klien.
 Token akses pendaftaran disertakan dalam permintaan dengan cara yang sama seperti token bearer atau token akses awal.
 
-Secara default, rotasi token akses pendaftaran diaktifkan. Ini berarti token akses pendaftaran hanya valid sekali. Ketika token digunakan, respons akan mencakup token baru. Catatan bahwa rotasi token akses pendaftaran dapat dinonaktifkan dengan menggunakan Kebijakan Klien.
+Secara default, rotasi token akses pendaftaran diaktifkan. Ini berarti token akses pendaftaran hanya valid sekali. Ketika token digunakan, respons akan mencakup token baru. Catatan bahwa rotasi token akses pendaftaran dapat dinonaktifkan dengan menggunakan client policies.
 
 Jika klien dibuat di luar Layanan Pendaftaran Klien, itu tidak akan memiliki token akses pendaftaran yang terkait dengannya.
 Anda dapat membuatnya melalui konsol admin. Hal ini juga dapat berguna jika Anda kehilangan token untuk klien tertentu.
@@ -173,7 +173,7 @@ String registrationAccessToken = client.getRegistrationAccessToken();
 <Callout type="info">
   Rencananya, Kebijakan Pendaftaran Klien akan dihapus dalam kedepannya untuk mendukung fitur Kebijakan Klien.
   Kebijakan Klien lebih fleksibel dan mendukung lebih banyak kasus penggunaan.
-  Misalnya kasus mendorong URI klien seperti JWKS untuk mencegah serangan SSRF dengan hanya mengizinkan pola atau domain terpercaya.
+  Misalnya kasus mendorong URI klien seperti JWKS untuk mencegah [serangan SSRF](https://owasp.org/www-community/attacks/Server_Side_Request_Forgery) dengan hanya mengizinkan pola atau domain terpercaya.
 </Callout>
 
 NQRust-Identity saat ini mendukung dua cara bagaimana klien baru dapat didaftarkan melalui Layanan Pendaftaran Klien.

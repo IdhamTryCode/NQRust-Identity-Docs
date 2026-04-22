@@ -24,7 +24,9 @@ Untuk mengizinkan pengguna tertentu untuk menggunakan `CLI Registrasi Klien`, ad
 5. Klik **Assign** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
 6. Pilih **Available Roles**, **manage-client** untuk memberikan set lengkap izin manajemen klien. Opsi lain adalah memilih **view-clients** untuk hanya-baca atau **create-client** untuk membuat klien baru.
 
-  __ Izin ini memberikan kemampuan kepada pengguna untuk melakukan operasi tanpa menggunakan Token Akses Awal atau Token Akses Registrasi (lihat [Menggunakan layanan registrasi klien](/en/guides/securing-apps/client-registration#authentication) untuk informasi lebih lanjut).
+   <Callout type="info">
+     Izin ini memberikan kemampuan kepada pengguna untuk melakukan operasi tanpa menggunakan Token Akses Awal atau Token Akses Registrasi (lihat [Menggunakan layanan registrasi klien](/id/guides/securing-apps/client-registration#authentication) untuk informasi lebih lanjut).
+   </Callout>
 
 Mungkin untuk tidak menetapkan peran `realm-management` kepada pengguna. Dalam hal ini, pengguna tetap dapat masuk dengan CLI Registrasi Klien tetapi tidak dapat menggunakannya tanpa Token Akses Awal. Mencoba melakukan operasi tanpa token akan menghasilkan kesalahan **403 Forbidden**.
 
@@ -102,7 +104,9 @@ c:\> kcreg
     c:\> kcreg get my_client
     ```
 
-    __ Di lingkungan produksi, NQRust-Identity harus diakses dengan `https:` untuk menghindari penampakan token ke penelusur jaringan.
+     <Callout type="info">
+       Di lingkungan produksi, NQRust-Identity harus diakses dengan `https:` untuk menghindari penampakan token ke penelusur jaringan.
+     </Callout>
 3. Jika sertifikat server tidak dikeluarkan oleh salah satu otoritas sertifikat terpercaya (CAs) yang termasuk dalam truststore sertifikat default Java, siapkan file `truststore.jks` dan arahkan CLI Registrasi Klien untuk menggunakannya.
 
   Misalnya, pada:

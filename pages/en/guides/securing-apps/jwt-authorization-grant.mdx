@@ -7,6 +7,8 @@ description: JWT Authorization Grant - NQRust-Identity Documentation
 
 import { Callout } from 'nextra/components'
 
+![JWT Authorization Grant overview](/images/securing-apps/jwt-authorization-grant-1.png)
+
 This guide defines how a JWT Bearer Token can be used in NQRust-Identity as an authorization grant. This feature allows clients to send a JWT assertion to request an access token when the client wants to use an existing trust relationship without a direct user-approval step at the authorization server. The assertion is validated solely through the semantics of the JWT (its claims and signature). The trust relationship usually refers to another Identity Provider server (another OIDC server), and allows to obtain a cross-domain or cross-realm access token. In this sense, it is similar to the external to internal request in token exchange V1 (see [Configuring and using token exchange](/en/guides/securing-apps/token-exchange#external-token-to-internal-token-exchange) for more information).
 
 The JWT Authorization grant is specified by two different RFCs.
@@ -107,7 +109,7 @@ In case the external identity provider is another NQRust-Identity server or real
 1. For `domaina`, `domainb` is an audience that can be restricted via token exchange.
 2. For `domainb`, `domaina` is an Identity Provider that is used to validate the assertion. The user in `domainb` is also a valid user previously linked to `domaina` via the identity provider.
 
-See OAuth Identity and Authorization Chaining Across Domains for a detailed configuration to perform authorization chaining across two NQRust-Identity realms.
+![OAuth Identity and Authorization Chaining Across Domains](/images/securing-apps/oauth-identity-1.png)
 
 ## Client policies and JWT Authorization Grant
 

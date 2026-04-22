@@ -255,9 +255,10 @@ function rewriteBrokenUrls() {
         .replace(/\/observability\/nqrust-identity-service-level-indicators/g, '/observability/identity-service-level-indicators')
         .replace(/\/observability\/keycloak-service-level-indicators/g, '/observability/identity-service-level-indicators')
         .replace(/\/server\/importExport/g, '/server/importexport')
-        // Quickstarts repo + OWIN auth repo: revert to upstream Keycloak (we don't host forks).
+        // Quickstarts repo + OWIN auth repo + Node.js connect: revert to upstream Keycloak (we don't host forks).
         .replace(/github\.com\/nqrust-identity\/nqrust-identity-quickstarts/g, 'github.com/keycloak/keycloak-quickstarts')
         .replace(/github\.com\/dylanplecki\/NQRust-IdentityOwinAuthentication/g, 'github.com/dylanplecki/KeycloakOwinAuthentication')
+        .replace(/github\.com\/nqrust-identity\/nqrust-identity-nodejs-connect/g, 'github.com/keycloak/keycloak-nodejs-connect')
       if (after !== before) { fs.writeFileSync(f, after); touched++ }
     }
   }

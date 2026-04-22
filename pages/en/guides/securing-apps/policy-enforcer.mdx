@@ -11,6 +11,8 @@ Policy Enforcement Point (PEP) is a design pattern and as such you can implement
 to implement PEPs for different platforms, environments, and programming languages. NQRust-Identity Authorization Services presents a RESTful API,
 and leverages OAuth2 authorization capabilities for fine-grained authorization using a centralized authorization server.
 
+![PEP overview](/images/securing-apps/policy-enforcer-1.png)
+
 A PEP is responsible for enforcing access decisions from the NQRust-Identity server where these decisions are taken by evaluating the policies
 associated with a protected resource. It acts as a filter or interceptor in your application in order to check whether or not a particular request
 to a protected resource can be fulfilled based on the permissions granted by these decisions.

@@ -7,6 +7,8 @@ description: Izin Hukum JWT - Dokumentasi NQRust-Identity
 
 import { Callout } from 'nextra/components'
 
+![Ikhtisar JWT Authorization Grant](/images/securing-apps/jwt-authorization-grant-1.png)
+
 Panduan ini mendefinisikan bagaimana Token Bearer JWT dapat digunakan dalam NQRust-Identity sebagai otorisasi hukum. Fitur ini memungkinkan klien untuk mengirim aser JWT untuk meminta token akses ketika klien ingin menggunakan hubungan kepercayaan yang sudah ada tanpa langkah persetujuan pengguna langsung di server otorisasi. Aser disahkan hanya melalui semantik JWT (klaim dan tanda tangan). Hubungan kepercayaan biasanya merujuk pada server Provider Identitas lainnya (server OIDC lainnya), dan memungkinkan untuk mendapatkan token akses lintas domain atau lintas realm. Dalam arti ini, itu serupa dengan permintaan eksternal ke internal dalam pertukaran token V1 (lihat [Mengonfigurasi dan menggunakan pertukaran token](/en/guides/securing-apps/token-exchange#external-token-to-internal-token-exchange) untuk informasi lebih lanjut).
 
 Izin Hukum JWT di spesifikasikan oleh dua RFC yang berbeda.
@@ -107,7 +109,7 @@ Dalam kasus provider identitas eksternal adalah server NQRust-Identity atau real
 1. Untuk `domaina`, `domainb` adalah audiens yang dapat dibatasi melalui pertukaran token.
 2. Untuk `domainb`, `domaina` adalah Provider Identitas yang digunakan untuk memvalidasi aser. Pengguna di `domainb` juga adalah pengguna yang valid sebelumnya dihubungkan dengan `domaina` melalui provider identitas.
 
-Lihat OAuth Identity and Authorization Chaining Across Domains untuk konfigurasi detail untuk melakukan rantai otorisasi di dua realm NQRust-Identity.
+![OAuth Identity and Authorization Chaining Across Domains](/images/securing-apps/oauth-identity-1.png)
 
 ## Kebijakan klien dan Izin Hukum JWT
 

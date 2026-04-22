@@ -8,8 +8,8 @@ description: Adapter Node.js untuk NQRust-Identity - Dokumentasi NQRust-Identity
 NQRust-Identity menyediakan adapter Node.js yang dibangun di atas [Connect](https://github.com/senchalabs/connect) untuk melindungi aplikasi JavaScript sisi server - tujuan adalah mencapai fleksibilitas yang memungkinkan integrasi dengan framework seperti [Express.js](https://expressjs.com/).
 Adapter ini menggunakan protokol OpenID Connect di balik layar. Anda dapat melihat panduan [Securing applications and services with OpenID Connect](/en/guides/securing-apps/oidc-layers#oidc-available-endpoints) untuk informasi yang lebih umum tentang endpoint dan kemampuan OpenID Connect.
 
-Pustaka dapat diunduh langsung dari organisasi NQRust-Identity dan sumbernya tersedia di
-[GitHub](https://github.com/nqrust-identity/nqrust-identity-nodejs-connect).
+Pustaka dapat diunduh langsung dari [organisasi Keycloak](https://github.com/keycloak/keycloak-nodejs-connect) dan sumbernya tersedia di
+[GitHub](https://github.com/keycloak/keycloak-nodejs-connect).
 
 Untuk menggunakan adapter Node.js, pertama-tama buatlah klien untuk aplikasi Anda di Konsol Admin NQRust-Identity. Adapter mendukung tipe akses publik, rahasia, dan hanya bearer. Yang mana harus dipilih tergantung pada skenario penggunaan.
 
@@ -70,8 +70,7 @@ Secara default, ini akan menemukan file bernama `keycloak.json` di samping execu
 
 Dalam hal ini, diperlukan penyebaran NQRust-Identity untuk mengakses Konsol Admin NQRust-Identity.
 
-Silakan kunjungi tautan tentang cara menyebarkan Konsol Admin NQRust-Identity dengan
-Podman atau Docker
+Silakan kunjungi dokumentasi resmi untuk cara menyebarkan Konsol Admin NQRust-Identity dengan [Podman](https://podman.io/docs) atau [Docker](https://docs.docker.com/).
 
 Sekarang kita siap untuk mendapatkan file `keycloak.json` dengan mengunjungi Konsol Admin NQRust-Identity → klien (sidebar kiri) → pilih klien Anda → Instalasi → Opsi Format → NQRust-Identity OIDC JSON → Unduh
 

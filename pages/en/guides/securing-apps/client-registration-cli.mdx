@@ -24,7 +24,9 @@ To allow a particular user to use `Client Registration CLI`, the NQRust-Identity
 5. Click **Assign** to grant a full set of client management permissions. Another option is to choose **view-clients** for read-only or **create-client** to create new clients.
 6. Select **Available Roles**, **manage-client** to grant a full set of client management permissions. Another option is to choose **view-clients** for read-only or **create-client** to create new clients.
 
-   __ These permissions grant the user the capability to perform operations without the use of Initial Access Token or Registration Access Token (see [Using the client registration service](/en/guides/securing-apps/client-registration#authentication) for more information).
+   <Callout type="info">
+     These permissions grant the user the capability to perform operations without the use of Initial Access Token or Registration Access Token (see [Using the client registration service](/en/guides/securing-apps/client-registration#authentication) for more information).
+   </Callout>
 
 It is possible to not assign any `realm-management` roles to a user. In that case, a user can still log in with the Client Registration CLI but cannot use it without an Initial Access Token. Trying to perform any operations without a token results in a **403 Forbidden** error.
 
@@ -102,7 +104,9 @@ c:\> kcreg
      c:\> kcreg get my_client
      ```
 
-     __ In a production environment, NQRust-Identity has to be accessed with `https:` to avoid exposing tokens to network sniffers.
+     <Callout type="info">
+       In a production environment, NQRust-Identity has to be accessed with `https:` to avoid exposing tokens to network sniffers.
+     </Callout>
 3. If a server’s certificate is not issued by one of the trusted certificate authorities (CAs) that are included in Java’s default certificate truststore, prepare a `truststore.jks` file and instruct the Client Registration CLI to use it.
 
    For example, on:

@@ -44,6 +44,8 @@ _subject token_ and exchange it for another token _requested token_.
 4. The _requested token_ is returned to `requester-client`. This token can now be sent to the `target-client`.
 5. The `target-client` can fulfill the request and return the response to the `requester-client`. The `requester-client` can then follow and return the response to the request from step 2.
 
+![Token exchange flow diagram](/images/securing-apps/token-exchange-1.png)
+
 Many other use-cases exist for token exchange, but the preceding example is the most typical.
 
 #### Example token exchange request
@@ -81,8 +83,9 @@ The example token exchange response may look like this:
 
 For standard token exchange, `token-exchange-standard:v2` is enabled by default.  However, you also need to enable the **Standard token exchange** switch for
 the client that is supposed to send token exchange requests, such as the `requester-client` from the [previous example](#standard-token-exchange-flow). Note that `requester-client` must be a confidential client.
-Also, as is the case for other grant requests, the token exchange requests must be authenticated by the appropriate client authentication method that is configured
-for the client.
+Also, as is the case for other grant requests, the token exchange requests must be authenticated by the appropriate client authentication method that is configured for the client.
+
+![Enable Standard Token Exchange in Capability config](/images/securing-apps/token-exchange-2.png)
 
 ### Request and response parameters
 
@@ -109,9 +112,9 @@ be also `urn:ietf:params:oauth:token-type:refresh_token`; in this case, you will
 
 **scope**
 
-_OPTIONAL._ This parameter represents the space-delimited set of OAuth and OpenID Connect scopes that the client is requesting. You can use Optional client scopes
+_OPTIONAL._ This parameter represents the space-delimited set of OAuth and OpenID Connect scopes that the client is requesting. You can use optional client scopes
 of the `requester-client`. For more details, see [scopes and audiences](#standard-token-exchange-scope). Omitting this parameter means that only
-the Default client scopes are effectively used.
+the default client scopes are effectively used.
 
 **audience**
 
@@ -141,15 +144,15 @@ Usually `Bearer` if issued token type was access token or refresh token. In case
 ### Scopes and audiences
 
 The `scope` parameter in the token exchange request has the same meaning as other grants. This parameter is optional. When it is omitted, the effective client scopes used in the request are
-the Default client scopes of the `requester-client`. When this parameter is used, the effective client scopes are the default scopes together with
-the Optional client scopes
+the default client scopes of the `requester-client`. When this parameter is used, the effective client scopes are the default scopes together with
+the optional client scopes.
 
-By default, the used client scopes will add the audiences to the `aud` claim of the token based on the used client scopes and client roles as specified in the Audience documentation.
+By default, the used client scopes will add the audiences to the `aud` claim of the token based on the used client scopes and client roles.
 
 The `audience` parameter can be used for filtering of audiences, so that the `aud` claim will contain only the audiences specified by the `audience` parameter. Similarly the client roles in the token will
 be filtered and the token will have only the client roles of the clients specified by the `audience` parameter.
 
-In addition, the `audience` parameter can be used to potentially filter client scopes as well. It works in a manner that is similar to Client scope permission for users.
+In addition, the `audience` parameter can be used to potentially filter client scopes as well. It works in a manner that is similar to client scope permission for users.
 If the client scope does not contain any client roles (for example, it contains zero roles or it contains only realm roles), no additional filtering occurs for client scopes. However, if the client scope contains any
 client role mappings, it must include some client roles of the clients requested by the `audience` parameter. Composite roles are also included for consideration. If the client scope contains no client
 roles of the clients requested by the `audience`, the client scope will be filtered.
@@ -178,15 +181,13 @@ Assume we have the realm with:
 - Client `requester-client`, which has client scope `default-scope1` added as default client scope and scope `optional-scope2` added as an optional client scope
 - Authenticated user, who is member of both `target-client1-role` and `target-client2-role`
 
-The settings above means that using scope `default-scope1` will add the audience `target-client1` to the token and using `optional-scope2` will add the audience `target-client2`. This is because of the
-audience resolving described in the Audience documentation.
+The settings above means that using scope `default-scope1` will add the audience `target-client1` to the token and using `optional-scope2` will add the audience `target-client2`. This is because of how audiences are resolved from client scope role mappings.
 
 ##### Example 1
 
 Token exchange request sent with `scope=optional-scope2` and without audience parameter:
 
-There will be no filtering of audience. The scopes and audiences will be resolved as is the case for any other grants as described in the Client scopes and
-Audience documentation sections. The response token will be similar to this (claims not interesting for this example omitted for brevity):
+There will be no filtering of audience. The scopes and audiences will be resolved as is the case for any other grants. The response token will be similar to this (claims not interesting for this example omitted for brevity):
 
 ```json
 {
@@ -238,7 +239,7 @@ The `target-client3` is not part of the token audience as user does not have any
 </Callout>
 
 <Callout type="info">
-  If you have a more complex deployment with many various scopes and audiences, it can be challenging to model it in an appropriate way. Consider using the Client scopes evaluate tab
+  If you have a more complex deployment with many various scopes and audiences, it can be challenging to model it in an appropriate way. Consider using the **Client scopes** → **Evaluate** tab in the Admin Console
   to test if the token looks as expected for the given user and for the given set of scopes and audiences.
 </Callout>
 
@@ -262,6 +263,7 @@ Admin Console in the **Advanced** tab of the OIDC client in the **OpenID Connect
 allowed only if the refresh token can use the same user session as the subject token. If that subject token is coming from a Transient session or from an
 Offline session, the requesting refresh token will not be allowed. Similarly it will not be allowed to request an offline token (using `scope=offline_access`).
 
+  ![Allow refresh token in Standard Token Exchange under OpenID Connect Compatibility Modes](/images/securing-apps/token-exchange-3.png)
 - Token exchange never creates a new user session. In case that `requested_token_type` is a refresh token, it may eventually create a new client session in the user session
 for the requester client (if the client session was not yet created).
 - NQRust-Identity Token exchange does not yet have support for the `resource` parameter.

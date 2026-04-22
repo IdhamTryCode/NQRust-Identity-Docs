@@ -30,10 +30,8 @@ Ikuti prosedur berikut untuk menghasilkan konfigurasi modul Apache HTTPD.
 1. Buka halaman Instalasi dari klien SAML Anda.
 2. Pilih opsi berkas **Mod Auth Mellon**.
 
-  Gambar 1. Unduhan konfigurasi mod_auth_mellon
+   ![Unduhan konfigurasi Mod Auth Mellon](/images/securing-apps/mod-auth-mellon-1.png)
 3. Klik **Download** untuk mengunduh berkas ZIP yang berisi deskriptor XML dan berkas PEM yang Anda butuhkan.
-
-![Mod Auth Mellon config download](/images/securing-apps/mod-auth-mellon-1.png)
 
 ## Mengonfigurasi mod_auth_mellon dengan NQRust-Identity
 
@@ -230,7 +228,9 @@ Gunakan prosedur ini untuk mengambil berkas itu dari Penyedia Identitas.
   apachectl configtest
   ```
 
-  __ Configtest setara dengan argumen -t untuk apachectl. Jika pemeriksaan konfigurasi menunjukkan kesalahan, perbaiki sebelum melanjutkan.
+   <Callout type="info">
+     Configtest setara dengan argumen -t untuk apachectl. Jika pemeriksaan konfigurasi menunjukkan kesalahan, perbaiki sebelum melanjutkan.
+   </Callout>
 3. Restart server Apache:
 
   ```
