@@ -9,11 +9,11 @@ NQRust-Identity dapat di_deploy_ dalam beberapa arsitektur ketersediaan tinggi, 
 
 ## Arsitektur
 
-Dokumen ini menjelaskan dua arsitektur ketersediaan tinggi di mana NQRust-Identity dapat di_deploy_: _Single-cluster deployments_ dan _multi-cluster deployments_.
+Dokumen ini menjelaskan dua arsitektur ketersediaan tinggi di mana NQRust-Identity dapat di_deploy_: [Single-cluster deployments](#single-cluster-deployments) dan [Multi-cluster deployments](#multi-cluster-deployments).
 
 ### Single-cluster deployments
 
-Deploy NQRust-Identity dalam satu kluster, secara opsional di beberapa zona ketersediaan atau pusat data dengan latensi jaringan dan konfigurasi database yang diperlukan, menggunakan Single-cluster deployments.
+Deploy NQRust-Identity dalam satu kluster, secara opsional di beberapa zona ketersediaan atau pusat data dengan latensi jaringan dan konfigurasi database yang diperlukan.
 
 - Tanpa dependensi eksternal
 - _Deployment_ dalam satu kluster Kubernetes atau sekelompok mesin virtual dengan jaringan transparan
@@ -25,7 +25,7 @@ Deploy NQRust-Identity dalam satu kluster, secara opsional di beberapa zona kete
 
 ### Multi-cluster deployments
 
-Hubungkan dua kluster NQRust-Identity yang di_deploy_ misalnya di dua kluster Kubernetes berbeda di dua zona ketersediaan atau pusat data dengan latensi jaringan dan konfigurasi database yang diperlukan menggunakan Multi-cluster deployments.
+Hubungkan dua kluster NQRust-Identity yang di_deploy_ misalnya di dua kluster Kubernetes berbeda di dua zona ketersediaan atau pusat data dengan latensi jaringan dan konfigurasi database yang diperlukan.
 
 - Toleransi kegagalan zona ketersediaan
 - Toleransi kegagalan kluster Kubernetes
@@ -43,9 +43,3 @@ Hubungkan dua kluster NQRust-Identity yang di_deploy_ misalnya di dua kluster Ku
   - Dua _control-planes_ Kubernetes harus diprovisikan
 - Tidak didukung dengan tiga atau lebih zona ketersediaan
 
-### Langkah Berikutnya
-
-Untuk mempelajari lebih lanjut tentang berbagai arsitektur ketersediaan tinggi dan konfigurasi yang didukung, silakan lihat panduan individu.
-
-- Single-cluster deployments
-- Multi-cluster deployments

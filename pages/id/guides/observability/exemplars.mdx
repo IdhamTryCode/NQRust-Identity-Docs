@@ -1,63 +1,86 @@
 ---
-title: Menganalisis Kelebihan dan Kesalahan dengan Contoh
-description: Menganalisis Kelebihan dan Kesalahan dengan Contoh - Dokumentasi NQRust-Identity
+title: Analyzing outliers and errors with exemplars
+description: Analyzing outliers and errors with exemplars - NQRust-Identity Documentation
 ---
 
-# Menganalisis Kelebihan dan Kesalahan dengan Contoh
+# Analyzing outliers and errors with exemplars
 
 import { Callout } from 'nextra/components'
 
-Metrik adalah agregasi atas beberapa peristiwa, dan menunjukkan kepada Anda apakah sistem Anda beroperasi dalam batas yang ditetapkan.
+Metrik adalah agregasi atas beberapa peristiwa dan menunjukkan apakah sistem Anda beroperasi dalam batas yang ditetapkan.
 Mereka sangat berguna untuk memantau tingkat kesalahan atau latensi tail dan untuk mengatur peringatan atau memimpin optimasi kinerja.
 Namun, agregasi ini membuat sulit untuk menemukan penyebab akar untuk latensi atau kesalahan yang dilaporkan dalam metrik.
 
 Penyebab akar untuk kesalahan dan latensi dapat ditemukan dengan mengaktifkan pelacakan.
-Untuk menghubungkan metrik dengan jejak yang tercatat, ada konsep [contoh](https://grafana.com/docs/grafana/latest/fundamentals/exemplars/).
+Untuk menghubungkan metrik dengan pelacakan yang tercatat, ada konsep [contoh-contoh](https://grafana.com/docs/grafana/latest/fundamentals/exemplars/).
 
-Setelah contoh diatur, NQRust-Identity melaporkan metrik dengan jejak mereka yang tercatat terakhir sebagai contoh.
-Alat dasbor seperti Grafana dapat menghubungkan contoh dari dasbor metrik ke tampilan jejak.
+Setelah contoh-contoh diatur, NQRust-Identity melaporkan metrik dengan pelacakan terakhir mereka sebagai contoh-contoh.
+Alat dasbor seperti Grafana dapat menghubungkan contoh-contoh dari dasbor metrik ke tampilan pelacakan.
 
-Metrik yang mendukung contoh adalah:
+Metrik yang mendukung contoh-contoh adalah:
 
 - `http_server_requests_seconds_count` (termasuk histogram)
 - `keycloak_credentials_password_hashing_validations_total`
 - `keycloak_user_events_total`
 
-Lihat di bawah ini untuk tangkapan layar visualisasi heatmap untuk latensi yang menunjukkan contoh saat mengarahkan mouse ke salah satu indikator merah.
+Lihat tangkapan layar di bawah ini untuk visualisasi heatmap untuk latensi yang menunjukkan contoh-contoh saat mengarahkan mouse di atas salah satu indikator merah.
 
-![exemplar](/images/observability/exemplars-1.png)
+![contoh-contoh](/images/observability/exemplars-1.png)
 
-## Mengatur Contoh
+## Mengatur contoh-contoh
 
-Untuk mendapatkan manfaat dari contoh, lakukan langkah berikut:
+Untuk mendapatkan manfaat dari contoh-contoh, lakukan langkah berikut:
 
-1. Aktifkan metrik untuk NQRust-Identity seperti yang dijelaskan dalam panduan [Gaining insights with metrics](/en/guides/observability/configuration-metrics).
-2. Aktifkan pelacakan untuk NQRust-Identity seperti yang dijelaskan dalam panduan [Root cause analysis with tracing](/en/guides/observability/tracing).
-3. Aktifkan penyimpanan contoh dalam sistem pemantauan Anda.
+1. Aktifkan metrik untuk NQRust-Identity seperti yang dijelaskan dalam panduan [Mendapatkan wawasan dengan metrik](/en/guides/observability/configuration-metrics).
+2. Aktifkan pelacakan untuk NQRust-Identity seperti yang dijelaskan dalam panduan [Analisis penyebab akar dengan pelacakan](/en/guides/observability/tracing).
+3. Aktifkan penyimpanan contoh-contoh dalam sistem pemantauan Anda.
 
-  Untuk Prometheus, ini adalah fitur [preview yang perlu Anda aktifkan](https://prometheus.io/docs/prometheus/latest/feature_flags/#exemplars-storage).
+   Untuk Prometheus, ini adalah fitur [pratinjau yang perlu Anda aktifkan](https://prometheus.io/docs/prometheus/latest/feature_flags/#exemplars-storage).
 4. Scrap metrik menggunakan protokol `OpenMetricsText1.0.0`, yang tidak diaktifkan secara default di Prometheus.
 
-  Jika Anda menggunakan `ServiceMonitor` atau serupa di lingkungan Kubernetes, ini dapat dicapai dengan menambahkannya ke spec sumber daya kustom:
+   Jika Anda menggunakan `ServiceMonitor` atau serupa di lingkungan Kubernetes, ini dapat dicapai dengan menambahkannya ke spec sumber daya kustom:
 
-  ```
-  apiVersion: monitoring.coreos.com/v1
-  kind: ServiceMonitor
-  metadata:
-    ...
-  spec:
-    scrapeProtocols:
-      - OpenMetricsText1.0.0
-  ```
-5. Konfigurasikan sumber daya metrik Anda di mana untuk menghubungkan ke jejak.
+   ```
+   apiVersion: monitoring.coreos.com/v1
+   kind: ServiceMonitor
+   metadata:
+     ...
+   spec:
+     scrapeProtocols:
+       - OpenMetricsText1.0.0
+   ```
+5. Konfigurasikan sumber daya metrik Anda di mana untuk menghubungkan ke pelacakan.
 
-  Saat menggunakan Grafana dan Prometheus, ini akan menyiapkan `exemplarTraceIdDestinations` untuk sumber daya Prometheus, yang kemudian menunjuk ke sumber daya pelacakan yang disediakan oleh alat seperti Jaeger atau Tempo.
-6. Aktifkan contoh dalam dasbor Anda.
+   Ketika menggunakan Grafana dan Prometheus, ini akan menyiapkan `exemplarTraceIdDestinations` untuk sumber daya Prometheus, yang kemudian menunjuk ke sumber daya pelacakan yang disediakan oleh alat seperti Jaeger atau Tempo.
+6. Aktifkan contoh-contoh di dasbor Anda.
 
-   Aktifkan toggle **Exemplars** dalam setiap kueri dalam setiap dasbor di mana Anda ingin menampilkan contoh.
-  Jika diatur dengan benar, Anda akan melihat titik kecil atau bintang di dasbor Anda yang dapat diklik untuk melihat jejak.
+   Aktifkan toggle **Exemplars** dalam setiap kueri di setiap dasbor di mana Anda ingin menampilkan contoh-contoh.
+Ketika diatur dengan benar, Anda akan melihat titik-titik kecil atau bintang di dasbor Anda yang dapat Anda klik untuk melihat pelacakan.
 
 <Callout type="info">
-  - Jika Anda tidak menentukan protokol scrape, Prometheus secara default tidak akan mengirimkannya dalam negosiasi konten, dan NQRust-Identity kemudian akan kembali ke protokol PrometheusText yang tidak akan berisi contoh.
-  - Jika Anda mengaktifkan pelacakan dan metrik, tetapi sampling per
+  - Jika Anda tidak menentukan protokol scrape, Prometheus secara default tidak akan mengirimkannya dalam negosiasi konten, dan NQRust-Identity kemudian akan kembali ke protokol PrometheusText yang tidak akan berisi contoh-contoh.
+  - Jika Anda mengaktifkan pelacakan dan metrik, tetapi sampling permintaan tidak merekam pelacakan, metrik yang diekspos tidak akan berisi contoh-contoh apa pun.
+  - Jika Anda mengakses titik akhir metrik dengan browser Anda, negosiasi konten akan menyebabkan format PrometheusText dikembalikan, dan Anda tidak akan melihat contoh-contoh apa pun.
 </Callout>
+
+## Mengesahkan bahwa contoh-contoh bekerja seperti yang diharapkan
+
+Lakukan langkah berikut untuk mengesahkan bahwa NQRust-Identity telah diatur dengan benar untuk contoh-contoh:
+
+1. Ikuti instruksi untuk mengatur metrik dan pelacakan untuk NQRust-Identity.
+2. Untuk tujuan pengujian, rekam semua pelacakan dengan mengatur rasio pelacakan ke `1.0`.
+Lihat [Analisis penyebab akar dengan pelacakan](/en/guides/observability/tracing#sampling) untuk pengaturan sampling yang disarankan dalam sistem produksi.
+3. Masuk ke instance NQRust-Identity untuk membuat beberapa pelacakan.
+4. Scrap metrik dengan perintah serupa berikut dan cari tahu metrik yang memiliki contoh-contoh yang diatur:
+
+   ```
+   $ curl -s http://localhost:9000/metrics \
+   -H 'Accept: application/openmetrics-text; version=1.0.0; charset=utf-8' \
+   | grep "#.*trace_id"
+   ```
+
+   Ini seharusnya menghasilkan output yang serupa dengan berikut. Perhatikan `#` tambahan setelahnya di mana span dan ID pelacakan ditambahkan:
+
+   ```
+   http_server_requests_seconds_count {...} ... # {span_id="...",trace_id="..."} ...
+   ```

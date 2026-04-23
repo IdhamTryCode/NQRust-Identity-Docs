@@ -1,19 +1,19 @@
 ---
-title: Menginisialisasi dan memulihkan akun admin
-description: Menginisialisasi dan memulihkan akun admin - Dokumentasi NQRust-Identity
+title: Bootstrapping and recovering an admin account
+description: Bootstrapping and recovering an admin account - NQRust-Identity Documentation
 ---
 
-# Menginisialisasi dan memulihkan akun admin
+# Bootstrapping and recovering an admin account
 
 import { Callout } from 'nextra/components'
 
 ## Akun admin sementara
 
-Akun admin pengguna atau layanan yang dibuat menggunakan salah satu metode yang dijelaskan di bawah ini adalah **sementara**. Ini berarti akun tersebut hanya seharusnya ada untuk durasi yang diperlukan untuk melakukan operasi yang diperlukan untuk mendapatkan akses admin yang lebih permanen dan lebih aman. Setelah itu, akun tersebut perlu dihapus secara manual. Beberapa elemen UI/UX, seperti spanduk peringatan Konsol Administrasi, label, dan pesan log, akan menunjukkan kepada administrator NQRust-Identity bahwa akun ini adalah sementara.
+Akun admin pengguna atau layanan yang dibuat menggunakan salah satu metode yang dijelaskan di bawah ini adalah **sementara**. Ini berarti akun tersebut hanya seharusnya ada selama durasi yang diperlukan untuk melakukan operasi yang diperlukan untuk mendapatkan akses admin permanen dan lebih aman. Setelah itu, akun tersebut perlu dihapus secara manual. Beberapa elemen UI/UX, seperti banner peringatan Konsol Administrasi, label, dan pesan log, akan menunjukkan kepada administrator NQRust-Identity bahwa akun ini adalah sementara.
 
-## Menginisialisasi akun admin sementara saat startup NQRust-Identity
+## Memulai pembuatan akun admin sementara pada startup NQRust-Identity
 
-Perintah `start` dan `start-dev` NQRust-Identity mendukung opsi untuk menginisialisasi akun admin pengguna dan akun layanan admin sementara. Opsi ini adalah opsi konfigurasi standar, jadi dapat ditentukan di salah satu [sumber konfigurasi](/en/guides/server/configuration#configuring-sources-for-nqrust-identity) seperti variabel lingkungan atau parameter CLI. Sebagai contoh, contoh berikut menunjukkan cara menggunakan perintah `start` dan `start-dev` dengan parameter CLI untuk menginisialisasi akun admin pengguna sementara dan akun layanan admin, masing-masing:
+Perintah `start` dan `start-dev` NQRust-Identity mendukung opsi untuk memulai pembuatan akun admin sementara pengguna dan akun layanan admin. Opsi ini adalah opsi konfigurasi standar, jadi dapat ditentukan dalam salah satu [sumber konfigurasi](/en/guides/server/configuration#configuring-sources-for-nqrust-identity) seperti variabel lingkungan atau parameter CLI. Misalnya, contoh berikut menunjukkan cara menggunakan perintah `start` dan `start-dev` dengan parameter CLI untuk memulai pembuatan akun admin sementara pengguna dan akun layanan admin, masing-masing:
 
 ```bash
 bin/kc.[sh|bat] start --bootstrap-admin-username tmpadm --bootstrap-admin-password pass
@@ -25,19 +25,19 @@ bin/kc.[sh|bat] start-dev --bootstrap-admin-client-id tmpadm --bootstrap-admin-c
 
 Nilai username atau ID klien dapat diabaikan; lihat bagian [Nilai Default](#default-values) di bawah untuk informasi lebih lanjut.
 
-Tujuan opsi ini hanya untuk menginisialisasi akun admin sementara. Akun ini akan dibuat hanya saat startup awal server NQRust-Identity saat realm master belum ada. Akun akan selalu dibuat di realm master. Untuk memulihkan akses admin yang hilang, gunakan perintah khusus yang dijelaskan di bagian di bawah.
+Tujuan opsi ini hanya untuk memulai pembuatan akun admin sementara. Akun ini akan dibuat hanya saat startup awal server NQRust-Identity saat realm master belum ada. Akun tersebut selalu dibuat di realm master. Untuk memulihkan akses admin yang hilang, gunakan perintah khusus yang dijelaskan dalam bagian di bawah.
 
-## Menginisialisasi admin pengguna atau akun layanan menggunakan perintah khusus
+## Memulai pembuatan admin pengguna atau akun layanan menggunakan perintah khusus
 
-Perintah `bootstrap-admin` dapat dieksekusi bahkan sebelum startup pertama NQRust-Identity. Perlu diingat bahwa semua node NQRust-Identity harus dihentikan sebelum menggunakan perintah ini. Eksekusi perintah ini akan memicu pembuatan realm master awal, dan sebagai akibatnya, opsi startup untuk menginisialisasi pengguna admin dan akun layanan akan diabaikan saat server dimulai untuk pertama kali.
+Perintah `bootstrap-admin` dapat dieksekusi bahkan sebelum startup pertama NQRust-Identity. Perlu diingat bahwa semua node NQRust-Identity harus dihentikan sebelum menggunakan perintah ini. Eksekusi perintah ini akan memicu pembuatan realm master awal, dan sebagai hasilnya, opsi startup untuk memulai pembuatan pengguna admin dan akun layanan akan diabaikan nantinya saat server dimulai untuk pertama kali.
 
 Selain itu, sangat disarankan untuk menggunakan perintah khusus dengan opsi yang sama dengan server NQRust-Identity (mis., opsi `db`).
 
-Jika Anda telah membangun versi yang dioptimalkan NQRust-Identity dengan perintah `build` sebagai yang dijelaskan dalam [Konfigurasi NQRust-Identity](/en/guides/server/configuration), gunakan opsi baris perintah `--optimized` agar NQRust-Identity melewati pemeriksaan build untuk waktu startup yang lebih cepat.
-Saat melakukan ini, hapus opsi waktu build dari baris perintah dan simpan hanya opsi runtime.
+Jika Anda telah membangun versi yang dioptimalkan NQRust-Identity dengan perintah `build` seperti yang dijelaskan dalam [Mengonfigurasi NQRust-Identity](/en/guides/server/configuration), gunakan opsi baris perintah `--optimized` agar NQRust-Identity melewati pemeriksaan build untuk waktu startup yang lebih cepat.
+Saat melakukan ini, hapus opsi waktu build dari baris perintah dan simpan hanya opsi waktu runtime.
 
 <Callout type="info">
-  jika Anda tidak menggunakan --optimized, perhatikan bahwa perintah bootstrap-admin mungkin secara implisit membuat atau memperbarui build yang dioptimalkan untuk Anda - jika Anda menjalankan perintah dari mesin yang sama dengan instance server, ini mungkin mempengaruhi startup berikutnya server Anda.
+  jika Anda tidak menggunakan `--optimized`, perlu diingat bahwa perintah `bootstrap-admin` mungkin secara implisit membuat atau memperbarui build yang dioptimalkan untuk Anda - jika Anda menjalankan perintah dari mesin yang sama dengan instance server, ini mungkin mempengaruhi startup berikutnya server Anda.
 </Callout>
 
 ### Membuat admin pengguna
@@ -48,4 +48,88 @@ Untuk membuat admin pengguna sementara, eksekusi perintah berikut:
 bin/kc.[sh|bat] bootstrap-admin user
 ```
 
-Jika tidak ada parameter lain yang ditentukan dan/atau tidak ada variabel lingkungan yang sesuai yang diatur, pengguna akan diminta untuk memasukkan informasi yang diperlukan. Nilai username dapat diabaikan untuk menggunakan nilai default. Untuk informasi lebih lanjut, lihat bagian [Nilai Default](
+Jika tidak ada parameter lain yang ditentukan dan/atau tidak ada variabel lingkungan yang sesuai yang diatur, pengguna akan diminta untuk memasukkan informasi yang diperlukan. Nilai username dapat diabaikan untuk menggunakan nilai default. Untuk informasi lebih lanjut, lihat bagian [Nilai Default](#default-values) dan [Variabel Lingkungan](#environment-variables) di bawah.
+
+Alternatifnya, parameter dapat ditentukan langsung dalam perintah:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin user --username tmpadm --password:env PASS_VAR
+```
+
+Perintah ini menciptakan admin pengguna sementara dengan username `tmpadm` dan sandi yang diambil dari variabel lingkungan.
+
+### Membuat akun layanan
+
+Dalam skenario otomatisasi, akun layanan admin sementara bisa menjadi alternatif yang lebih sesuai daripada admin pengguna sementara.
+
+Untuk membuat akun layanan admin sementara, eksekusi perintah berikut:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin service
+```
+
+Demikian pula, jika tidak ada variabel lingkungan atau parameter tambahan yang diatur, pengguna akan diminta untuk memasukkan informasi yang diperlukan. Nilai ID klien dapat diabaikan untuk menggunakan nilai default. Untuk informasi lebih lanjut, lihat bagian [Nilai Default](#default-values) dan [Variabel Lingkungan](#environment-variables) di bawah.
+
+Alternatifnya, parameter dapat ditentukan langsung dalam perintah:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin service --client-id tmpclient --client-secret:env=SECRET_VAR
+```
+
+Perintah ini menciptakan akun layanan admin sementara dengan ID klien `tmpclient` dan rahasia yang diambil dari variabel lingkungan.
+
+## Mengembalikan Akses ke Realm dengan Keamanan yang Diperkuat
+
+Otentikasi tanpa kata sandi, OTP, atau metode otentikasi lanjutan lainnya dapat diwajibkan untuk realm dengan akses admin yang hilang. Dalam hal ini, akun layanan admin perlu dibuat untuk memulihkan akses admin yang hilang ke realm. Setelah akun layanan dibuat, otentikasi terhadap instance NQRust-Identity diperlukan untuk melakukan semua operasi yang diperlukan:
+
+```bash
+bin/kcadm.[sh|bat] config credentials --server http://localhost:8080 --realm master --client <service_account_client_name> --secret <service_account_secret>
+```
+
+Berikutnya, dapatkan `credentialId`. Untuk contoh ini, kredensial OTP adalah yang relevan. Gunakan perintah berikut untuk mendapatkan array objek `CredentialRepresentation` dan temukan yang memiliki `type` diatur ke `otp`:
+
+```bash
+bin/kcadm.[sh|bat] get users/{userId}/credentials -r {realm-name}
+```
+
+Akhirnya, ID yang diambil dapat digunakan untuk menghapus metode otentikasi lanjutan (dalam hal kami, OTP):
+
+```bash
+bin/kcadm.[sh|bat] delete users/{userId}/credentials/{credentialId} -r {realm-name}
+```
+
+## Nilai Default
+
+Untuk kedua skenario perintah startup dan dedicated, nama pengguna dan ID klien opsional dan default ke `temp-admin` untuk pengguna dan akun layanan, masing-masing.
+
+## Menonaktifkan Prompt Parameter
+
+Untuk menonaktifkan prompt untuk parameter, parameter `--no-prompt` dapat digunakan. Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin user --username tmpadm --no-prompt
+```
+
+Jika tidak ada variabel lingkungan yang sesuai yang diatur, perintah akan gagal dengan pesan kesalahan yang menunjukkan bahwa parameter kata sandi yang diperlukan hilang.
+
+Parameter `--no-prompt` dapat berguna jika nama pengguna atau ID klien diabaikan. Sebagai contoh:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin user --password:env PASS_VAR --no-prompt
+```
+
+Ini menciptakan pengguna admin sementara dengan nama pengguna default tanpa meminta konfirmasi. Untuk informasi lebih lanjut, lihat bagian [Nilai Default](#default-values) di atas.
+
+## Variabel Lingkungan
+
+Untuk perintah `bootstrap-admin user`, nama pengguna dan kata sandi dapat opsional diatur sebagai variabel lingkungan:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin user --username:env <YourUsernameEnv> --password:env <YourPassEnv>
+```
+
+Untuk perintah `bootstrap-admin service`, ID klien opsional dan default ke `temp-admin`, sementara kata sandi klien diperlukan untuk diatur sebagai variabel lingkungan:
+
+```bash
+bin/kc.[sh|bat] bootstrap-admin service --client-id:env <YourClientIdEnv> --client-secret:env <YourSecretEnv>
+```

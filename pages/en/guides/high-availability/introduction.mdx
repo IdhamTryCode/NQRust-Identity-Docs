@@ -11,12 +11,12 @@ for your deployments.
 
 ## Architectures
 
-This document describes two high availability architectures in which to deploy NQRust-Identity: Single-cluster deployments and multi-cluster deployments.
+This document describes two high availability architectures in which to deploy NQRust-Identity: [Single-cluster deployments](#single-cluster-deployments) and [Multi-cluster deployments](#multi-cluster-deployments).
 
 ### Single-cluster deployments
 
 Deploy NQRust-Identity in a single cluster, optionally across multiple availability-zones or data centers with the required
-network latency and database configuration, using Single-cluster deployments.
+network latency and database configuration.
 
 **Advantages**
 
@@ -33,7 +33,7 @@ network latency and database configuration, using Single-cluster deployments.
 ### Multi-cluster deployments
 
 Connect two NQRust-Identity clusters deployed for example in different Kubernetes clusters in two availability zones
-or data centers with the required network latency and database configuration using Multi-cluster deployments.
+or data centers with the required network latency and database configuration.
 
 **Advantages**
 
@@ -54,10 +54,3 @@ or data centers with the required network latency and database configuration usi
   - Additional compute is required for external Infinispan clusters
   - Two Kubernetes control-planes must be provisioned
 - Not supported with three or more availability zones
-
-### Next Steps
-
-To learn more about the different high-availability architectures and their supported configurations, please consult the individual guides.
-
-- Single-cluster deployments
-- Multi-cluster deployments

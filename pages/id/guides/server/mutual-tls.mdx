@@ -1,39 +1,43 @@
 ---
-title: Mengonfigurasi sertifikat terpercaya untuk mTLS
-description: Mengonfigurasi sertifikat terpercaya untuk mTLS - Dokumentasi NQRust-Identity
+title: Configuring trusted certificates for mTLS
+description: Configuring trusted certificates for mTLS - NQRust-Identity Documentation
 ---
 
-# Mengonfigurasi sertifikat terpercaya untuk mTLS
+# Configuring trusted certificates for mTLS
 
 import { Callout } from 'nextra/components'
 
-Untuk memvalidasi sertifikat klien dengan benar dan mengaktifkan metode otentikasi tertentu seperti TLS dua arah atau mTLS, Anda dapat menetapkan trust store dengan semua sertifikat (dan rantai sertifikat) yang harus dipercaya oleh server. Ada beberapa kemampuan yang bergantung pada trust store ini untuk mengotentikasi klien menggunakan sertifikat seperti Mutual TLS dan Otentikasi X.509.
+Untuk memvalidasi sertifikat klien dengan benar dan mengaktifkan metode otentikasi tertentu seperti TLS dua arah atau mTLS, Anda dapat mengatur
+toko kepercayaan dengan semua sertifikat (dan rantai sertifikat) yang harus dipercaya oleh server. Ada beberapa kemampuan yang bergantung pada
+toko kepercayaan ini untuk mengotentikasi klien yang menggunakan sertifikat dengan benar seperti Mutual TLS dan Otentikasi X.509.
 
 ## Mengaktifkan mTLS
 
-Otentikasi menggunakan mTLS dinonaktifkan secara default. Untuk mengaktifkan penanganan sertifikat mTLS saat NQRust-Identity adalah server dan perlu memvalidasi sertifikat dari permintaan yang dibuat ke endpoint NQRust-Identity, letakkan sertifikat yang sesuai dalam truststore dan gunakan perintah berikut untuk mengaktifkan mTLS:
+Otentikasi menggunakan mTLS dinonaktifkan secara default. Untuk mengaktifkan penanganan sertifikat mTLS saat NQRust-Identity adalah server dan perlu untuk memvalidasi
+sertifikat dari permintaan yang dibuat ke endpoint NQRust-Identity, letakkan sertifikat yang sesuai dalam truststore dan gunakan perintah berikut untuk mengaktifkan mTLS:
 
 ```bash
 bin/kc.[sh|bat] start --https-client-auth=<none|request|required>
 ```
 
-Menggunakan nilai `required` menyiapkan NQRust-Identity untuk selalu meminta sertifikat dan gagal jika tidak ada sertifikat yang diberikan dalam permintaan. Dengan menetapkan nilai ke `request`, NQRust-Identity juga akan menerima permintaan tanpa sertifikat dan hanya memvalidasi kebenaran sertifikat jika ada.
+Menggunakan nilai `required` menyiapkan NQRust-Identity untuk selalu meminta sertifikat dan gagal jika tidak ada sertifikat yang diberikan dalam permintaan. Dengan mengatur
+nilai ke `request`, NQRust-Identity juga akan menerima permintaan tanpa sertifikat dan hanya memvalidasi kebenaran sertifikat jika ada.
 
 <Callout type="warning">
-  Konfigurasi mTLS dan truststore dibagikan oleh semua Realms. Tidak mungkin untuk mengonfigurasi truststore yang berbeda untuk Realms yang berbeda.
+  Konfigurasi mTLS dan truststore dibagikan oleh semua Realm. Tidak mungkin untuk mengonfigurasi truststore yang berbeda untuk Realm yang berbeda.
 </Callout>
 
 <Callout type="info">
   Properti antarmuka manajemen diwarisi dari server HTTP utama, termasuk pengaturan mTLS.
   Artinya saat mTLS diatur, itu juga diaktifkan untuk antarmuka manajemen.
-  Untuk menimpa perilaku, gunakan properti https-management-client-auth.
+  Untuk menimpa perilaku, gunakan properti `https-management-client-auth`.
 </Callout>
 
 ## Menggunakan truststore terdedikasi untuk mTLS
 
-Secara default, NQRust-Identity menggunakan System Truststore untuk memvalidasi sertifikat. Lihat Mengonfigurasi sertifikat terpercaya untuk detail.
+Secara default, NQRust-Identity menggunakan System Truststore untuk memvalidasi sertifikat. Lihat [Mengonfigurasi sertifikat terpercaya](/en/guides/server/identity-truststore) untuk detail.
 
-Jika Anda perlu menggunakan truststore terdedikasi untuk mTLS, Anda dapat mengonfigurasi lokasi truststore ini dengan menjalankan perintah berikut:
+Jika Anda perlu untuk menggunakan truststore terdedikasi untuk mTLS, Anda dapat mengonfigurasi lokasi dari truststore ini dengan menjalankan perintah berikut:
 
 ```bash
 bin/kc.[sh|bat] start --https-trust-store-file=/path/to/file --https-trust-store-password=<value>
@@ -45,16 +49,24 @@ Ekstensi file yang diakui untuk truststore:
 - `.jks`, dan `.truststore` untuk file jks
 - `.ca`, `.crt`, dan `.pem` untuk file pem
 
-Jika truststore Anda tidak memiliki ekstensi yang cocok dengan tipe filenya, Anda juga perlu menetapkan opsi `https-key-store-type`.
+Jika truststore Anda tidak memiliki ekstensi yang cocok dengan tipe filenya, Anda juga perlu untuk mengatur opsi `https-key-store-type`.
 
 ## Sumber daya tambahan
 
 ### Menggunakan mTLS untuk permintaan HTTP keluar
 
-Ingatlah bahwa ini adalah konfigurasi sertifikat dasar untuk kasus penggunaan mTLS di mana NQRust-Identity bertindak sebagai server. Ketika NQRust-Identity bertindak sebagai klien, misalnya saat NQRust-Identity mencoba untuk mendapatkan token dari endpoint token penyedia identitas yang dibroker oleh mTLS, Anda perlu mengatur HttpClient untuk menyediakan sertifikat yang tepat dalam keystore untuk permintaan keluar. Untuk mengonfigurasi mTLS dalam skenario ini, lihat [Mengonfigurasi permintaan HTTP keluar](/en/guides/server/outgoinghttp).
+Perlu diperhatikan bahwa ini adalah konfigurasi sertifikat dasar untuk kasus penggunaan mTLS di mana NQRust-Identity bertindak sebagai server. Ketika NQRust-Identity bertindak sebagai klien
+sebagai contoh, misalnya saat NQRust-Identity mencoba untuk mendapatkan token dari endpoint token penyedia identitas yang dibroker oleh mTLS, Anda perlu untuk mengatur
+HttpClient untuk menyediakan sertifikat yang tepat dalam keystore untuk permintaan keluar. Untuk mengonfigurasi mTLS dalam skenario ini, lihat [Mengonfigurasi permintaan HTTP keluar](/en/guides/server/outgoinghttp).
 
 ### Mengonfigurasi Otentikasi X.509
 
 ## Opsi relevan
 
 | Opsi | _Tipe_ atau Nilai | Default |
+| --- | --- | --- |
+| **`https-client-auth`**<br/>Mengonfigurasi server untuk meminta/mengharuskan otentikasi klien.<br/>**CLI:** `--https-client-auth`<br/>**Env:** `KC_HTTPS_CLIENT_AUTH` | `none`, `request`, `required` | `none` |
+| **`https-trust-store-file`**<br/>Trust store yang menyimpan informasi sertifikat sertifikat yang dipercaya.<br/>**CLI:** `--https-trust-store-file`<br/>**Env:** `KC_HTTPS_TRUST_STORE_FILE` | _File_ |  |
+| **`https-trust-store-password`**<br/>Kata sandi file trust store.<br/>**CLI:** `--https-trust-store-password`<br/>**Env:** `KC_HTTPS_TRUST_STORE_PASSWORD` | _String_ |  |
+| **`https-trust-store-type`**<br/>Tipe file trust store.<br/>Jika tidak diberikan, tipe secara otomatis terdeteksi berdasarkan ekstensi file. Jika `fips-mode` diatur ke `strict` dan tidak ada nilai yang diatur, maka default ke `BCFKS`.<br/>**CLI:** `--https-trust-store-type`<br/>**Env:** `KC_HTTPS_TRUST_STORE_TYPE` | _String_ |  |
+| **`https-management-client-auth`**<br/>Mengonfigurasi antarmuka manajemen untuk meminta/mengharuskan otentikasi klien.<br/>Jika tidak diberikan, nilai diwarisi dari opsi HTTP. Hanya relevan saat ada yang diekspos di antarmuka manajemen - lihat panduan untuk detail.<br/>**CLI:** `--https-management-client-auth`<br/>**Env:** `KC_HTTPS_MANAGEMENT_CLIENT_AUTH` | `none`, `request`, `required` | `none` |

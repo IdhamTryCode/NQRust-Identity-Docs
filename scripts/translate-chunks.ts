@@ -12,7 +12,7 @@ config({ path: '.env.local' })
 
 const EN_DIR = './pages/en/guides'
 const ID_DIR = './pages/id/guides'
-const TRUNCATION_THRESHOLD = 0.5 // ID must be > 50% of EN size, else treat as truncated
+const TRUNCATION_THRESHOLD = 0.85 // ID must be > 85% of EN size, else treat as truncated
 const MAX_CHUNK_CHARS = 6000     // Conservative chunk size so each fits well under output limit
 
 const client = new OpenAI({
