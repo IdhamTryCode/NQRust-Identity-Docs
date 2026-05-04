@@ -26,6 +26,7 @@ export const CATEGORIES: Category[] = [
       { title: 'Installation Overview', desc: 'Prerequisites and airgapped installer setup.', titleId: 'Ikhtisar Instalasi', descId: 'Prasyarat dan setup installer airgapped.', slug: '' },
       { title: 'Phase 1: Install Identity', desc: 'Configure hostname, ports, and deploy Identity + Portal containers.', titleId: 'Fase 1: Instalasi Identity', descId: 'Konfigurasi hostname, port, dan deploy container Identity + Portal.', slug: 'phase-1-identity' },
       { title: 'Phase 2: Configure Portal', desc: 'Create OAuth client, realm role, user, and link the Portal.', titleId: 'Fase 2: Konfigurasi Portal', descId: 'Membuat OAuth client, realm role, user, dan menghubungkan Portal.', slug: 'phase-2-portal' },
+      { title: 'Add a new client', desc: 'Register an additional OAuth client (e.g. NQRust Analytics) and assign it to users.', titleId: 'Tambah client baru', descId: 'Mendaftarkan OAuth client tambahan (misal NQRust Analytics) dan meng-assign-nya ke user.', slug: 'add-new-client' },
     ],
   },
   {
