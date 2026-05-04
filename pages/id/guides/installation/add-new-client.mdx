@@ -1,0 +1,138 @@
+---
+title: "Tambah client baru"
+description: Mendaftarkan OAuth client tambahan (misal NQRust Analytics) di Identity - Dokumentasi NQRust-Identity
+---
+
+# Tambah client baru
+
+import { Callout } from 'nextra/components'
+
+Panduan ini menjelaskan cara mendaftarkan OAuth client tambahan di NQRust-Identity, di luar client Portal yang sudah dibuat di Fase 2. Kami menggunakan **NQRust Analytics** sebagai contoh — silakan ganti namanya sesuai aplikasi Anda.
+
+## Prasyarat
+
+- Fase 1 dan Fase 2 telah selesai.
+- Anda dapat login ke Identity Admin Console dan realm `nqrust` sudah ada.
+- Aplikasi baru Anda siap menerima Client ID dan Client Secret.
+
+## Langkah 1 — Buka Identity Admin Console
+
+Buka Identity Admin Console di browser Anda dan login:
+
+```
+https://<hostname>:<identity_port>/admin
+```
+
+Pastikan realm `nqrust` terpilih (cek nama realm yang tertera di atas sidebar kiri). Jika realm lain yang terpilih, klik nama realm tersebut dan pindah ke `nqrust`.
+
+![Identity Admin Console dengan realm nqrust terpilih](/images/installation/client-1.png)
+
+## Langkah 2 — Buat OAuth client
+
+Di sidebar kiri, klik **Clients**, lalu klik tombol **Create client**. Wizard ini memiliki **tiga langkah**: General settings, Capability config, dan Login settings.
+
+![Halaman Clients dengan tombol Create client](/images/installation/client-2.png)
+
+### Langkah 2.1 — General settings
+
+Pada langkah pertama wizard, isi form sebagai berikut:
+
+| Field | Nilai |
+| --- | --- |
+| **Client type** | Biarkan sebagai `OpenID Connect` (default). |
+| **Client ID** | Masukkan `nqrust-analytics` persis seperti itu. Nilai ini wajib dan digunakan aplikasi Anda untuk mengidentifikasi dirinya. |
+| **Name** | Isi dengan label bebas yang mudah dibaca, contohnya `NQRust Analytics`. Hanya ditampilkan di admin console. |
+| **Description** | Opsional. Biarkan kosong atau isi catatan singkat seperti `OAuth client untuk NQRust Analytics`. |
+| **Always display in UI** | Toggle ke `On`. |
+
+Klik **Next** untuk melanjutkan.
+
+![Create client - general settings](/images/installation/client-2.1.png)
+
+### Langkah 2.2 — Capability config
+
+Pada langkah kedua wizard, atur opsi berikut:
+
+- **Client authentication** — toggle ke `On`.
+- **Authorization** — toggle ke `On`.
+- **Authentication flow** — pastikan dua checkbox berikut tercentang:
+  - ✅ **Standard flow**
+  - ✅ **Service accounts roles**
+- **PKCE Method** — biarkan pada `Choose...` (tanpa nilai).
+
+Klik **Next** untuk melanjutkan.
+
+![Capability config](/images/installation/client-2.2.png)
+
+### Langkah 2.3 — Login settings
+
+Pada langkah **Login settings**, isi URL sesuai dengan tempat aplikasi Anda dihost. Setiap aplikasi memiliki host, port, dan callback path-nya sendiri, jadi sesuaikan nilainya dengan setup **Anda**:
+
+| Field | Deskripsi |
+| --- | --- |
+| **Root URL** | URL dasar aplikasi Anda, misal `https://analytics.example.com`. |
+| **Home URL** | Biasanya sama dengan Root URL. |
+| **Valid redirect URIs** | URL callback OAuth yang didengarkan aplikasi Anda, misal `https://analytics.example.com/auth/callback`. |
+| **Valid post logout redirect URIs** | URL tujuan setelah logout, misal `https://analytics.example.com`. |
+| **Web origins** | Origin browser yang diizinkan memanggil Identity, misal `https://analytics.example.com`. |
+
+Klik **Save**.
+
+![Login settings](/images/installation/client-2.3.png)
+
+## Langkah 3 — Copy client secret dan konfigurasi aplikasi Anda
+
+Klik tab **Credentials** pada client `nqrust-analytics`:
+
+1. Cari field **Client secret**.
+2. Klik tombol copy untuk menyalin secret ke clipboard.
+
+![Copy client secret](/images/installation/client-3.png)
+
+Sekarang tempelkan **Client ID** dan **Client Secret** ke konfigurasi aplikasi Anda. Mekanisme persisnya bergantung pada framework atau bahasa yang aplikasi Anda gunakan — silakan lihat dokumentasi aplikasi Anda untuk detailnya. Sebagai contoh umum, banyak aplikasi membaca nilai-nilai ini dari environment variable:
+
+```
+OIDC_CLIENT_ID=nqrust-analytics
+OIDC_CLIENT_SECRET=<tempel-secret-di-sini>
+OIDC_ISSUER=https://<hostname>:<identity_port>/realms/nqrust
+```
+
+<Callout type="warning">
+  Perlakukan client secret seperti password. Jangan bagikan atau commit ke version control.
+</Callout>
+
+## Langkah 4 — Buat realm role untuk client
+
+Buat realm role yang akan Anda assign ke user yang berhak mengakses client ini.
+
+1. Pastikan realm `nqrust` masih terpilih.
+2. Di sidebar kiri, klik **Realm roles**.
+3. Klik **Create role**.
+4. Set **Role name** menjadi `nqrust-analytics`.
+5. (Opsional) Tambahkan deskripsi seperti `Memberikan akses ke NQRust Analytics`.
+6. Klik **Save**.
+
+![Buat realm role nqrust-analytics](/images/installation/client-4.png)
+
+<Callout type="info">
+  Memberi nama role yang sama dengan Client ID (`nqrust-analytics`) menjaga konsistensi dan mudah dipahami, tapi Anda boleh memakai nama apa pun yang sesuai dengan logika otorisasi aplikasi Anda.
+</Callout>
+
+## Langkah 5 — Assign role ke user
+
+Berikan user role `nqrust-analytics` agar mereka dapat mengakses aplikasi.
+
+1. Di sidebar kiri, klik **Users**.
+2. Klik username yang ingin Anda beri akses. (Jika user belum ada, klik **Add user** dulu dan buat user baru — lihat Fase 2, Langkah 6 untuk panduan pembuatan user.)
+3. Pada halaman detail user, klik tab **Role mapping**.
+4. Klik **Assign role**. Dialog akan muncul menanyakan jenis role yang akan di-assign — pilih **Realm roles**.
+5. Centang kotak di samping role `nqrust-analytics`.
+6. Klik **Assign**.
+
+![Assign realm role nqrust-analytics ke user](/images/installation/client-5.png)
+
+<Callout type="warning">
+  Ulangi langkah ini untuk setiap user yang membutuhkan akses ke client baru tersebut.
+</Callout>
+
+Client baru Anda sekarang sudah terdaftar, terkonfigurasi, dan siap digunakan untuk autentikasi user.

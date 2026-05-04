@@ -7,7 +7,7 @@ description: Konfigurasi OAuth client Portal di Identity - Dokumentasi NQRust-Id
 
 import { Callout } from 'nextra/components'
 
-Pada fase ini, Anda akan membuat OAuth client di Identity Admin Console, memberikan permission yang dibutuhkan, membuat realm role, membuat user uji coba, meng-assign role, dan menghubungkan Portal ke client tersebut.
+Pada fase ini, Anda akan membuat OAuth client di Identity Admin Console, memberikan permission yang dibutuhkan, membuat user uji coba, dan menghubungkan Portal ke client tersebut.
 
 ## Prasyarat
 
@@ -41,37 +41,60 @@ Login dengan kredensial admin default:
 
 NQRust-Identity mengelompokkan client, user, dan role ke dalam **realm**. Buat realm khusus untuk Portal:
 
-1. Klik pemilih realm di pojok kiri atas.
-2. Klik **Create realm**.
-3. Set nama realm menjadi `nqrust`.
+1. Di sidebar kiri, klik menu **Manage realms** (ikon perisai di bagian atas sidebar).
+2. Klik tombol **Create realm** di bagian atas daftar realm.
+3. Pada field **Realm name**, masukkan `nqrust`.
 4. Klik **Create**.
 
-![Form create realm](/images/installation/phase-2-2.png)
+![Halaman Manage realms dengan tombol Create realm](/images/installation/phase-2-2.png)
 
 ## Langkah 3 — Buat OAuth client Portal
 
-Dengan realm `nqrust` terpilih:
+Dengan realm `nqrust` terpilih (cek nama realm yang tertera di atas sidebar kiri), buat OAuth client yang akan digunakan oleh Portal. Wizard ini memiliki **tiga langkah**: General settings, Capability config, dan Login settings.
+
+Untuk membuka wizard:
 
 1. Di sidebar kiri, klik **Clients**.
-2. Klik **Create client**.
-3. Set **Client ID** menjadi `nqrust-portal`.
-4. Biarkan **Client type** sebagai `OpenID Connect`.
-5. Klik **Next**.
+2. Klik tombol **Create client**.
+
+### Langkah 3.1 — General settings
+
+Pada langkah pertama wizard, isi form sebagai berikut:
+
+| Field | Nilai |
+| --- | --- |
+| **Client type** | Biarkan sebagai `OpenID Connect` (default). |
+| **Client ID** | Masukkan `nqrust-portal` persis seperti itu. Nilai ini wajib dan digunakan Portal untuk mengidentifikasi dirinya. |
+| **Name** | Isi dengan label bebas yang mudah dibaca, contohnya `NQRust Portal`. Hanya ditampilkan di admin console. |
+| **Description** | Opsional. Biarkan kosong atau isi catatan singkat seperti `OAuth client untuk NQRust-Identity Portal`. |
+| **Always display in UI** | Toggle ke `On`. |
+
+Klik **Next** untuk melanjutkan.
 
 ![Create client - general settings](/images/installation/phase-2-3.png)
 
-### Capability config
+### Langkah 3.2 — Capability config
 
-Pada langkah **Capability config**:
+Pada langkah kedua wizard, atur opsi berikut:
 
-- Aktifkan **Client authentication** (toggle ke `On`).
-- Aktifkan **Service accounts roles** (toggle ke `On`) — diperlukan agar Portal dapat mengelola sumber daya realm atas namanya sendiri.
-- Biarkan **Standard flow** aktif (untuk authorization code flow yang digunakan Portal).
-- Klik **Next**.
+- **Client authentication** — toggle ke `On`.
+- **Authorization** — toggle ke `On`.
+- **Authentication flow** — pastikan dua checkbox berikut tercentang:
+  - ✅ **Standard flow**
+  - ✅ **Service accounts roles**
+- **PKCE Method** — biarkan pada `Choose...` (tanpa nilai).
+
+Klik **Next** untuk melanjutkan.
 
 ![Capability config](/images/installation/phase-2-4.png)
 
-### Login settings
+### Langkah 3.3 — Login settings
+
+<Callout type="warning">
+  **Gunakan alamat yang sama di semua tempat.** Placeholder `<hostname>` di bawah dapat berupa IP address (misal `192.168.1.100`) atau DNS name (misal `portal.company.com`) — keduanya valid. Aturan pentingnya: nilai yang Anda masukkan di sini harus **persis sama** dengan alamat yang akan diketik user di browser saat membuka Portal. Redirect URI OAuth dicocokkan sebagai string exact; ketidakcocokan (misal mendaftarkan hostname tapi mengakses lewat IP, atau sebaliknya) akan menyebabkan login gagal dengan error `Invalid parameter: redirect_uri`.
+
+  Jika ragu mana yang harus dipakai, gunakan **IP address** server — pilihan ini langsung jalan tanpa perlu setup DNS atau file `hosts` di tiap mesin client.
+</Callout>
 
 Pada langkah **Login settings**, konfigurasikan URL berdasarkan hostname dan portal port Anda:
 
@@ -105,11 +128,10 @@ Client Portal membutuhkan izin untuk mengelola sumber daya realm (user, role, cl
 
 ![Tab Service accounts roles](/images/installation/phase-2-11.png)
 
-2. Klik **Assign role**.
-3. Dialog akan muncul berisi daftar realm role. Klik dropdown **Filter by realm roles** dan ubah menjadi **Filter by clients**.
-4. Pada kolom pencarian, ketik `realm-management` untuk memfilter daftar.
-5. **Pilih semua role** dari client `realm-management` dengan mencentang checkbox di header tabel (ini memilih setiap halaman). Pastikan setiap halaman menampilkan semua role tercentang — gunakan kontrol paginasi di bawah untuk navigasi antar halaman jika perlu.
-6. Klik **Assign**.
+2. Klik **Assign role**. Dialog akan muncul menanyakan jenis role yang akan di-assign — pilih **Client roles** (bukan Realm roles), karena `realm-management` sendiri adalah sebuah client.
+3. Pada kolom pencarian, ketik `realm-management` untuk memfilter daftar.
+4. **Pilih setiap role** dari client `realm-management`. Checkbox di header tabel hanya memilih role pada **halaman saat ini** — jadi setelah mencentangnya, gunakan kontrol paginasi di bawah tabel untuk pindah ke halaman berikutnya dan centang lagi header tersebut. Ulangi sampai semua halaman role-nya tercentang. Untuk mempercepat, Anda bisa memperbesar pengaturan baris-per-halaman di bawah tabel agar semua role muat dalam satu halaman.
+5. Klik **Assign**.
 
 ![Assign role realm-management](/images/installation/phase-2-12.png)
 
@@ -123,7 +145,7 @@ Client Portal membutuhkan izin untuk mengelola sumber daya realm (user, role, cl
 
 ## Langkah 5 — Copy client secret
 
-Setelah client dikonfigurasi dan service account-nya diberi permission, buka tab **Credentials** pada client `nqrust-portal`:
+Setelah client dikonfigurasi dan service account-nya diberi permission, klik tab **Credentials** pada client `nqrust-portal`:
 
 1. Cari field **Client secret**.
 2. Klik tombol copy untuk menyalin secret ke clipboard.
@@ -135,24 +157,7 @@ Setelah client dikonfigurasi dan service account-nya diberi permission, buka tab
   Perlakukan client secret seperti password. Jangan bagikan atau commit ke version control.
 </Callout>
 
-## Langkah 6 — Buat realm role `nqrust-portal`
-
-Portal memeriksa realm role bernama `nqrust-portal` untuk mengotorisasi user. Buat role ini agar bisa Anda assign ke user pada langkah berikutnya.
-
-1. Pastikan realm `nqrust` masih terpilih.
-2. Di sidebar kiri, klik **Realm roles**.
-3. Klik **Create role**.
-4. Set **Role name** menjadi `nqrust-portal`.
-5. (Opsional) Tambahkan deskripsi seperti `Memberikan akses ke NQRust-Identity Portal`.
-6. Klik **Save**.
-
-![Buat realm role nqrust-portal](/images/installation/phase-2-13.png)
-
-<Callout type="warning">
-  Nama role harus persis `nqrust-portal` (case-sensitive). Salah ketik di sini akan membuat user tidak bisa login ke Portal.
-</Callout>
-
-## Langkah 7 — Buat user
+## Langkah 6 — Buat user
 
 Anda perlu setidaknya satu user di realm `nqrust` untuk dapat login ke Portal.
 
@@ -185,24 +190,7 @@ Setelah user dibuat, halaman detail user akan terbuka. Set password awal:
   Untuk deployment produksi, biarkan **Temporary** di posisi `On` agar setiap user baru harus mengatur password mereka sendiri setelah login pertama.
 </Callout>
 
-## Langkah 8 — Assign realm role `nqrust-portal` ke user
-
-Berikan user realm role `nqrust-portal` yang Anda buat di Langkah 6 agar mereka dapat mengakses Portal.
-
-1. Pada halaman detail user, klik tab **Role mapping**.
-2. Klik **Assign role**.
-3. Dialog akan default ke **Filter by realm roles**. Jika tidak, ubah menggunakan dropdown.
-4. Pada kolom pencarian, ketik `nqrust-portal` untuk memfilter daftar.
-5. Centang kotak di samping role `nqrust-portal`.
-6. Klik **Assign**.
-
-![Assign realm role nqrust-portal ke user](/images/installation/phase-2-16.png)
-
-<Callout type="warning">
-  Hanya user dengan realm role `nqrust-portal` yang dapat login ke Portal. Ulangi langkah ini untuk setiap user yang membutuhkan akses Portal.
-</Callout>
-
-## Langkah 9 — Isi form Portal di installer
+## Langkah 7 — Isi form Portal di installer
 
 Kembali ke terminal installer. Jika Anda keluar setelah Fase 1, jalankan ulang installer dan pilih **Install Portal** dari menu home. Atau, tekan **i** pada layar sukses Identity untuk melanjutkan.
 
@@ -218,7 +206,7 @@ Form Portal meminta tiga nilai:
 
 Arahkan ke tombol **Install** lalu tekan **Enter** untuk menerapkan konfigurasi.
 
-## Langkah 10 — Restart Portal
+## Langkah 8 — Restart Portal
 
 Installer akan memperbarui file `.env` dengan konfigurasi client baru dan me-restart container Portal:
 
@@ -228,7 +216,7 @@ docker compose up -d --force-recreate portal
 
 ![Progress restart Portal](/images/installation/phase-2-8.png)
 
-## Langkah 11 — Instalasi selesai
+## Langkah 9 — Instalasi selesai
 
 Setelah container Portal berhasil restart, layar sukses final menampilkan URL Portal:
 
@@ -238,7 +226,7 @@ Portal: https://<hostname>:<portal_port>
 
 ![Sukses instalasi Portal](/images/installation/phase-2-9.png)
 
-## Langkah 12 — Verifikasi instalasi
+## Langkah 10 — Verifikasi instalasi
 
 Buka URL Portal di browser Anda:
 
