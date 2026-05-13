@@ -7,26 +7,26 @@ description: Configure the Portal OAuth client in Identity - NQRust-Identity Doc
 
 import { Callout } from 'nextra/components'
 
-In this phase, you will create an OAuth client in the Identity Admin Console, grant it the required permissions, create a test user, and link the Portal to the client.
+In this phase, you create an OAuth client in the Identity Admin Console, grant it the required permissions, create a test user, and link the Portal to the client.
 
 ## Prerequisites
 
-- Phase 1 completed — Identity and Portal containers are running.
-- Access to the Identity Admin Console at `https://<hostname>:<identity_port>/admin`.
+- Phase 1 is complete and the Identity and Portal containers are running.
+- The Identity Admin Console is reachable at `https://<hostname>:<identity_port>/admin`.
 
 ## Step 1 — Log in to Identity Admin Console
 
-Open the Identity Admin Console in your browser:
+Open the Identity Admin Console in a browser:
 
 ```
 https://<hostname>:<identity_port>/admin
 ```
 
 <Callout type="warning">
-  The Identity server uses a self-signed TLS certificate by default. Your browser will show a security warning — accept it to proceed.
+  The Identity server uses a self-signed TLS certificate by default. The browser will display a security warning — accept it to proceed.
 </Callout>
 
-Log in with the default admin credentials:
+Sign in with the default administrator credentials:
 
 - **Username:** `admin`
 - **Password:** `identity`
@@ -34,15 +34,15 @@ Log in with the default admin credentials:
 ![Identity Admin Console login](/images/installation/phase-2-1.png)
 
 <Callout type="warning">
-  Change the default admin password immediately after first login via **Users → admin → Credentials**.
+  Change the default administrator password immediately after the first login through **Users → admin → Credentials**.
 </Callout>
 
 ## Step 2 — Create a realm
 
-NQRust-Identity groups clients, users, and roles into **realms**. Create a dedicated realm for Portal:
+A realm groups clients, users, and roles. Create a dedicated realm for the Portal as follows:
 
-1. In the left sidebar, click the **Manage realms** menu (the shield icon at the top of the sidebar).
-2. Click the **Create realm** button at the top of the realms list.
+1. In the left sidebar, click **Manage realms** (the shield icon at the top of the sidebar).
+2. Click **Create realm**.
 3. In the **Realm name** field, enter `nqrust`.
 4. Click **Create**.
 
@@ -50,23 +50,23 @@ NQRust-Identity groups clients, users, and roles into **realms**. Create a dedic
 
 ## Step 3 — Create the Portal OAuth client
 
-With the `nqrust` realm selected (check the realm name shown at the top of the left sidebar), create the OAuth client that the Portal will use. The wizard has **three steps**: General settings, Capability config, and Login settings.
+Ensure the `nqrust` realm is selected (the realm name is displayed at the top of the left sidebar). The wizard has three steps: General settings, Capability config, and Login settings.
 
 To open the wizard:
 
 1. In the left sidebar, click **Clients**.
-2. Click the **Create client** button.
+2. Click **Create client**.
 
 ### Step 3.1 — General settings
 
-On the first wizard step, fill in the form as follows:
+Fill in the General settings form:
 
 | Field | Value |
 | --- | --- |
-| **Client type** | Leave as `OpenID Connect` (default). |
-| **Client ID** | Enter `nqrust-portal` exactly. This value is required and is used by the Portal to identify itself. |
-| **Name** | Enter any human-readable label, for example `NQRust Portal`. This is shown in the admin console only. |
-| **Description** | Optional. Leave blank or add a short note such as `OAuth client for NQRust-Identity Portal`. |
+| **Client type** | Leave as `OpenID Connect`. |
+| **Client ID** | Enter `nqrust-portal`. This value is required. |
+| **Name** | Enter a display label, for example `NQRust Portal`. |
+| **Description** | Optional. Leave blank, or enter a short description such as `OAuth client for NQRust-Identity Portal`. |
 | **Always display in UI** | Toggle to `On`. |
 
 Click **Next** to continue.
@@ -75,13 +75,13 @@ Click **Next** to continue.
 
 ### Step 3.2 — Capability config
 
-On the second wizard step, configure the following options:
+Configure the Capability config form:
 
 - **Client authentication** — toggle to `On`.
 - **Authorization** — toggle to `On`.
-- **Authentication flow** — make sure these two checkboxes are checked:
-  - ✅ **Standard flow**
-  - ✅ **Service accounts roles**
+- **Authentication flow** — ensure the following are checked:
+  - **Standard flow**
+  - **Service accounts roles**
 - **PKCE Method** — leave as `Choose...` (no value).
 
 Click **Next** to continue.
@@ -91,12 +91,10 @@ Click **Next** to continue.
 ### Step 3.3 — Login settings
 
 <Callout type="warning">
-  **Use the same address everywhere.** The `<hostname>` placeholder below can be either an IP address (e.g. `192.168.1.100`) or a DNS name (e.g. `portal.company.com`) — both are valid. The critical rule is that the value you enter here must **exactly match** the address users will type in their browser to open the Portal. OAuth redirect URIs are matched as exact strings; a mismatch (e.g. registering a hostname but browsing by IP, or vice versa) will cause login to fail with an `Invalid parameter: redirect_uri` error.
-
-  If you are not sure which to use, prefer the **IP address** of the server — it works without any DNS or `hosts` file setup on client machines.
+  The `<hostname>` placeholder below may be an IP address (for example `192.168.1.100`) or a DNS name (for example `portal.company.com`). The value entered here must exactly match the address users will type in their browser. A mismatch causes login to fail with the error `Invalid parameter: redirect_uri`. If you are unsure, use the server's IP address.
 </Callout>
 
-On the **Login settings** step, configure the URLs based on your hostname and portal port:
+Fill in the Login settings form using the hostname and Portal port:
 
 | Field | Value |
 | --- | --- |
@@ -106,7 +104,7 @@ On the **Login settings** step, configure the URLs based on your hostname and po
 | **Valid post logout redirect URIs** | `https://<hostname>:<portal_port>` |
 | **Web origins** | `https://<hostname>:<portal_port>` |
 
-Example with hostname `192.168.1.100` and portal port `8083`:
+Example with hostname `192.168.1.100` and Portal port `8083`:
 
 ```
 Root URL:                    https://192.168.1.100:8083
@@ -122,55 +120,54 @@ Click **Save**.
 
 ## Step 4 — Assign service account roles to the client
 
-The Portal client needs permission to manage realm resources (users, roles, clients) via the Identity REST API. You grant these permissions through the client's **service account**.
+The Portal client requires permission to manage realm resources (users, roles, clients) through the Identity REST API. These permissions are granted via the client's service account.
 
 1. On the `nqrust-portal` client page, click the **Service accounts roles** tab.
 
 ![Service accounts roles tab](/images/installation/phase-2-11.png)
 
-2. Click **Assign role**. A dialog appears asking which type of role to assign — choose **Client roles** (not Realm roles), since `realm-management` is itself a client.
-3. In the search field, type `realm-management` to filter the list.
-4. **Select every role** from the `realm-management` client. The checkbox in the table header only selects roles on the **current page** — so after checking it, use the pagination controls at the bottom of the table to move to the next page and check the header again. Repeat until every page has all roles checked. To make this faster, you can increase the rows-per-page setting at the bottom of the table so all roles fit on a single page.
+2. Click **Assign role**. In the dialog, select **Client roles** (not Realm roles), because `realm-management` is itself a client.
+3. In the search field, type `realm-management`.
+4. Select every role from the `realm-management` client. The header checkbox selects only the current page, so navigate through each page using the pagination controls and check the header again. To complete this faster, increase the rows-per-page setting so all roles fit on a single page.
 5. Click **Assign**.
 
 ![Assign realm-management roles](/images/installation/phase-2-12.png)
 
 <Callout type="info">
-  The `realm-management` client exposes roles such as `manage-users`, `manage-clients`, `manage-realm`, `view-users`, `view-clients`, and so on. The Portal needs these roles to provision users, rotate secrets, and manage realm configuration.
+  The `realm-management` client provides roles such as `manage-users`, `manage-clients`, `manage-realm`, `view-users`, and `view-clients`. The Portal requires these roles to provision users, rotate secrets, and manage realm configuration.
 </Callout>
 
 <Callout type="warning">
-  Do not skip this step. Without the realm-management roles, the Portal will fail to load user/role data and some admin features will not work.
+  Do not skip this step. Without the `realm-management` roles, the Portal fails to load user and role data, and some administrative features will not work.
 </Callout>
 
 ## Step 5 — Copy the client secret
 
-With the client configured and its service account permissioned, click the **Credentials** tab of the `nqrust-portal` client:
+After the client is configured, click the **Credentials** tab on the `nqrust-portal` client page.
 
 1. Locate the **Client secret** field.
-2. Click the copy button to copy the secret to your clipboard.
-3. Keep this value handy — you will paste it into the installer in a later step.
+2. Click the copy button to copy the secret to the clipboard.
+3. Retain this value; it will be pasted into the installer in a later step.
 
 ![Copy client secret](/images/installation/phase-2-6.png)
 
 <Callout type="warning">
-  Treat the client secret like a password. Do not share it or commit it to version control.
+  Treat the client secret as a password. Do not share it or commit it to version control.
 </Callout>
 
 ## Step 6 — Create a user
 
-You need at least one user in the `nqrust` realm to log in to the Portal.
+At least one user is required in the `nqrust` realm to log in to the Portal.
 
-1. Make sure the `nqrust` realm is still selected.
-2. In the left sidebar, click **Users**.
-3. Click **Add user**.
-4. Fill in the basic fields:
-   - **Username** — e.g. `testuser`
-   - **Email** — e.g. `testuser@example.com`
-   - **Email verified** — toggle to `On`
-   - **First name** — e.g. `Test`
-   - **Last name** — e.g. `User`
-5. Click **Create**.
+1. In the left sidebar, click **Users**.
+2. Click **Add user**.
+3. Fill in the user fields:
+   - **Username** — for example, `testuser`.
+   - **Email** — for example, `testuser@example.com`.
+   - **Email verified** — toggle to `On`.
+   - **First name** — for example, `Test`.
+   - **Last name** — for example, `User`.
+4. Click **Create**.
 
 ![Add user form](/images/installation/phase-2-14.png)
 
@@ -180,25 +177,25 @@ After the user is created, the user detail page opens. Set an initial password:
 
 1. Click the **Credentials** tab.
 2. Click **Set password**.
-3. Enter a password and its confirmation.
-4. Set **Temporary** to `Off` if you don't want the user to be forced to change password on first login.
-5. Click **Save**, then confirm on the dialog.
+3. Enter the password and confirmation.
+4. Set **Temporary** to `Off` to skip forcing a password change on first login.
+5. Click **Save**, then confirm in the dialog.
 
 ![Set user password](/images/installation/phase-2-15.png)
 
 <Callout type="info">
-  For a production deployment, keep **Temporary** set to `On` so each new user must set their own password after the first login.
+  For production deployments, leave **Temporary** set to `On` so each new user is required to set their own password after the first login.
 </Callout>
 
 ## Step 7 — Fill the Portal form in the installer
 
-Switch back to the installer terminal. If you exited after Phase 1, re-launch it and select **Install Portal** from the home menu. Otherwise, press **i** on the Identity success screen to continue.
+Return to the installer terminal. Either press **i** on the Identity success screen, or, if the installer was closed, re-launch it and select **Install Portal** from the Home menu.
 
-The Portal form asks for three values:
+The Portal form requires three values:
 
 | Field | Description | Value |
 | --- | --- | --- |
-| **Realm Name** | The realm you created in Identity | `nqrust` |
+| **Realm Name** | The realm created in Identity | `nqrust` |
 | **Client ID** | The OAuth client ID | `nqrust-portal` |
 | **Client Secret** | The secret copied from Identity | _(paste from clipboard)_ |
 
@@ -218,7 +215,7 @@ docker compose up -d --force-recreate portal
 
 ## Step 9 — Installation complete
 
-Once the Portal container restarts successfully, the final success screen shows the Portal URL:
+When the Portal container restarts successfully, the final success screen displays the Portal URL:
 
 ```
 Portal: https://<hostname>:<portal_port>
@@ -228,16 +225,16 @@ Portal: https://<hostname>:<portal_port>
 
 ## Step 10 — Verify the installation
 
-Open the Portal URL in your browser:
+Open the Portal URL in a browser:
 
 ```
 https://<hostname>:<portal_port>
 ```
 
-You will be redirected to the Identity login page served by the `nqrust` realm. Log in with the user you created in Step 6.
+The browser is redirected to the Identity login page served by the `nqrust` realm. Log in using the user created in Step 6.
 
-After a successful login, you should see the Portal home screen.
+After a successful login, the Portal home screen is displayed.
 
 ![Portal home after successful login](/images/installation/phase-2-10.png)
 
-Congratulations — your NQRust-Identity Portal is fully installed and ready to use!
+The NQRust-Identity Portal is now fully installed and ready for use.

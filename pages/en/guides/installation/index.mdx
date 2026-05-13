@@ -7,55 +7,53 @@ description: NQRust-Identity Portal Installation Overview - NQRust-Identity Docu
 
 import { Callout } from 'nextra/components'
 
-NQRust-Identity Portal Installer is an interactive terminal-based tool that deploys the complete NQRust-Identity stack on your server. The installer guides you through a two-phase setup with a friendly TUI (Terminal User Interface).
+The NQRust-Identity Portal Installer is a terminal-based tool that deploys the NQRust-Identity stack on a Linux server. Installation is performed in two phases through a guided text user interface.
 
 ## What gets installed
 
-The installer deploys two main services:
+The installer deploys two services as Docker containers:
 
-- **Identity** — OIDC/OAuth2 provider for authentication and authorization
-- **Portal** — Web application with license gate and admin capabilities
+- **Identity** — OIDC/OAuth2 provider for authentication and authorization.
+- **Portal** — Web application for license management and administration.
 
-Both services run as Docker containers, configured with HTTPS and production-ready defaults.
+Both services are configured with HTTPS by default.
 
 ## Prerequisites
-
-Before running the installer, ensure you have:
 
 ### System requirements
 
 - Linux server (Ubuntu 24.04 LTS recommended)
 - `sudo` access
-- At least **15-40 GB** of free disk space
-- A hostname or static IP reachable by your users
+- 15–40 GB of free disk space
+- A hostname or static IP address reachable by your users
 
 ### Software requirements
 
 - **Docker Engine** installed and running
-- **Docker Compose v2** (the `docker compose` command, not the legacy `docker-compose`)
+- **Docker Compose v2** (the `docker compose` command)
 
 <Callout type="info">
-  Refer to the [official Docker documentation](https://docs.docker.com/engine/install/) to install Docker Engine and Docker Compose on your system.
+  Refer to the [official Docker documentation](https://docs.docker.com/engine/install/) to install Docker Engine and Docker Compose.
 </Callout>
 
 ### Installer files
 
-The installer runs in **airgapped mode** — all required Docker images are bundled into a single self-extracting binary. No internet access is needed during installation.
+The installer operates in **airgapped mode**. All required Docker images are bundled into a single self-extracting binary, so no internet access is required during installation.
 
-You need two files to proceed:
+Two files are required:
 
 | File | Description |
 | --- | --- |
-| `nqrust-portal-airgapped` | The installer binary (~534 MB) |
-| `nqrust-portal-airgapped.sha256` | SHA256 checksum for verification |
+| `nqrust-portal-airgapped` | Installer binary (~534 MB) |
+| `nqrust-portal-airgapped.sha256` | SHA256 checksum |
 
 <Callout type="warning">
-  These files are **not publicly available**. Contact the NQRust team to obtain the airgapped installer package for your deployment.
+  These files are not publicly available. Contact the NQRust team to obtain the airgapped installer package.
 </Callout>
 
 ## Verify the installer
 
-Once you have both files, place them in the same directory on your server and verify the checksum:
+Place both files in the same directory on the server, then verify the checksum:
 
 ```bash
 sha256sum -c nqrust-portal-airgapped.sha256
@@ -68,7 +66,7 @@ nqrust-portal-airgapped: OK
 ```
 
 <Callout type="warning">
-  If the checksum does not match, do **not** proceed with installation. Contact the NQRust team to re-download the files.
+  If the checksum does not match, do not proceed. Contact the NQRust team to obtain a new copy of the installer.
 </Callout>
 
 ## Make the binary executable
@@ -79,21 +77,19 @@ chmod +x nqrust-portal-airgapped
 
 ## Launch the installer
 
-Run the installer from the directory where you want the configuration files (`.env`, `docker-compose.yaml`, etc.) to be created:
+Run the installer from the directory where the configuration files (`.env`, `docker-compose.yaml`) will be created:
 
 ```bash
 ./nqrust-portal-airgapped
 ```
 
-On first launch, the installer detects airgapped mode and automatically loads the bundled Docker images into your local Docker daemon. This may take a few minutes.
+On first launch, the installer loads the bundled Docker images into the local Docker daemon. This may take several minutes.
 
 ![Installer home menu](/images/installation/overview-1.png)
 
 ## Installation flow
 
-The installation is divided into **two phases**:
+Installation is divided into two phases. Complete them in order:
 
-1. **[Phase 1: Install Identity](/en/guides/installation/phase-1-identity)** — Configure hostname, ports, and deploy the Identity + Portal containers.
-2. **[Phase 2: Configure Portal](/en/guides/installation/phase-2-portal)** — Create an OAuth client in Identity, then link the Portal to it.
-
-Follow each phase in order to complete the installation.
+1. **[Phase 1: Install Identity](/en/guides/installation/phase-1-identity)** — Configure ports and deploy the Identity and Portal containers.
+2. **[Phase 2: Configure Portal](/en/guides/installation/phase-2-portal)** — Create an OAuth client in Identity and link it to the Portal.

@@ -7,71 +7,67 @@ description: Install and configure NQRust-Identity - NQRust-Identity Documentati
 
 import { Callout } from 'nextra/components'
 
-In this phase, you will configure the ports and deploy the Identity and Portal services.
+In this phase, you configure the service ports and deploy the Identity and Portal containers.
 
 ## Launch the installer
 
-If you haven't already, run the installer from the directory where you want configuration files to be stored:
+Run the installer from the directory where the configuration files will be stored:
 
 ```bash
 ./nqrust-portal-airgapped
 ```
 
-The installer detects airgapped mode and loads the bundled Docker images into Docker:
+The installer detects airgapped mode and loads the bundled Docker images:
 
 ```
 Installer running in offline mode...
 Loading bundled images, please wait...
 ```
 
-Once images are loaded, the **Home** menu appears.
+When the images are loaded, the **Home** menu appears.
 
 ## Select "Install Identity"
 
-Use the arrow keys to navigate and press **Enter** to select **Install Identity**.
+Use the arrow keys to highlight **Install Identity**, then press **Enter** to confirm.
 
 ![Home menu with Install Identity selected](/images/installation/phase-1-1.png)
 
 ## Fill the Identity form
 
-The Identity form asks for two values:
+The Identity form requires two values:
 
 | Field | Description | Example |
 | --- | --- | --- |
-| **Identity Port** | External HTTPS port for Identity Admin Console | `8082` (default) |
-| **Portal Port** | External HTTPS port for Portal | `8083` (default) |
+| **Identity Port** | External HTTPS port for the Identity Admin Console | `8082` (default) |
+| **Portal Port** | External HTTPS port for the Portal | `8083` (default) |
 
-<Callout type="info">
-  The server hostname is detected automatically — you only need to set the ports.
-</Callout>
+The server hostname is detected automatically; only the ports need to be set.
 
 ### Form navigation
 
-- **Tab** or **Up/Down arrows** — Move between fields
-- **Enter** — Edit the selected field
-- **Esc** — Stop editing the current field
+- **Tab** or **Up/Down arrows** — move between fields.
+- **Enter** — edit the selected field.
+- **Esc** — stop editing the current field.
 
 ![Identity form filled in](/images/installation/phase-1-2.png)
 
 <Callout type="info">
-  Both ports must be numbers between `1024` and `65535`, and they must be different from each other. Make sure no other service on your server is using these ports.
+  Both ports must be between `1024` and `65535`, and must differ from each other. Ensure no other service on the server is using these ports.
 </Callout>
 
-Once all fields are valid, navigate to the **Install** button and press **Enter** to start the installation.
+When the values are valid, navigate to the **Install** button and press **Enter** to start the installation.
 
 ## Installation in progress
 
-The installer generates the configuration files, sets up the Docker Compose bundle, and starts the required services. You will see a progress bar and real-time log output as each service starts.
+The installer generates the configuration files, prepares the Docker Compose bundle, and starts the services. A progress bar and live log output are displayed while each service starts.
 
 ![Installation progress](/images/installation/phase-1-3.png)
 
-<Callout type="default">
-  The first startup may take 1-3 minutes as the services initialize their databases and perform health checks.
-</Callout>
+The first startup may take 1–3 minutes while each service initializes its database and runs health checks.
 
 ## Installation complete
 
-Once all services are running, the success screen appears with the access URLs:
+When all services are running, the success screen displays the access URLs:
 
 ```
 Identity Admin: https://<hostname>:<identity_port>/admin
@@ -81,11 +77,11 @@ Portal:         https://<hostname>:<portal_port>
 ![Identity installation success](/images/installation/phase-1-4.png)
 
 <Callout type="warning">
-  The Portal is not fully functional yet. You need to complete **[Phase 2: Configure Portal](/en/guides/installation/phase-2-portal)** to link it to an OAuth client in Identity.
+  The Portal is not yet fully functional. Complete **[Phase 2: Configure Portal](/en/guides/installation/phase-2-portal)** to link it to an OAuth client in Identity.
 </Callout>
 
 ## Next step
 
-Press **i** on the success screen to proceed to Phase 2. Alternatively, you can press **q** to exit the installer now and continue later by re-launching it.
+Press **i** on the success screen to continue to Phase 2, or press **q** to exit the installer and resume later.
 
 Continue with [Phase 2: Configure Portal →](/en/guides/installation/phase-2-portal)

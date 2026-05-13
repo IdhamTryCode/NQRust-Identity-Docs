@@ -7,55 +7,53 @@ description: Ikhtisar Instalasi NQRust-Identity Portal - Dokumentasi NQRust-Iden
 
 import { Callout } from 'nextra/components'
 
-NQRust-Identity Portal Installer adalah tool berbasis terminal interaktif yang men-deploy stack NQRust-Identity lengkap di server Anda. Installer memandu Anda melalui setup dua fase dengan TUI (Terminal User Interface) yang mudah digunakan.
+NQRust-Identity Portal Installer adalah tool berbasis terminal yang men-deploy stack NQRust-Identity pada server Linux. Instalasi dilakukan dalam dua fase melalui text user interface yang terpandu.
 
 ## Yang akan terinstal
 
-Installer men-deploy dua service utama:
+Installer men-deploy dua service sebagai Docker container:
 
-- **Identity** — OIDC/OAuth2 provider untuk autentikasi dan otorisasi
-- **Portal** — Aplikasi web dengan license gate dan kemampuan admin
+- **Identity** — provider OIDC/OAuth2 untuk autentikasi dan otorisasi.
+- **Portal** — aplikasi web untuk manajemen lisensi dan administrasi.
 
-Kedua service berjalan sebagai container Docker, dikonfigurasi dengan HTTPS dan default production-ready.
+Kedua service dikonfigurasi dengan HTTPS secara default.
 
 ## Prasyarat
 
-Sebelum menjalankan installer, pastikan Anda memiliki:
-
 ### Persyaratan sistem
 
-- Server Linux (Ubuntu 24.04 LTS direkomendasikan)
+- Server Linux (disarankan Ubuntu 24.04 LTS)
 - Akses `sudo`
-- Ruang disk minimal **15-40 GB**
-- Hostname atau IP statis yang dapat dijangkau oleh pengguna Anda
+- 15–40 GB ruang disk kosong
+- Hostname atau IP statis yang dapat dijangkau pengguna
 
 ### Persyaratan software
 
 - **Docker Engine** terinstal dan berjalan
-- **Docker Compose v2** (command `docker compose`, bukan `docker-compose` yang legacy)
+- **Docker Compose v2** (perintah `docker compose`)
 
 <Callout type="info">
-  Lihat [dokumentasi resmi Docker](https://docs.docker.com/engine/install/) untuk menginstal Docker Engine dan Docker Compose di sistem Anda.
+  Lihat [dokumentasi resmi Docker](https://docs.docker.com/engine/install/) untuk memasang Docker Engine dan Docker Compose.
 </Callout>
 
 ### File installer
 
-Installer berjalan dalam **mode airgapped** — semua Docker image yang dibutuhkan sudah tergabung dalam satu binary self-extracting. Tidak perlu akses internet selama instalasi.
+Installer beroperasi dalam **mode airgapped**. Semua Docker image yang dibutuhkan sudah dibundel ke dalam satu binary self-extracting, sehingga tidak diperlukan akses internet saat instalasi.
 
-Anda memerlukan dua file untuk melanjutkan:
+Dua file yang dibutuhkan:
 
 | File | Deskripsi |
 | --- | --- |
 | `nqrust-portal-airgapped` | Binary installer (~534 MB) |
-| `nqrust-portal-airgapped.sha256` | Checksum SHA256 untuk verifikasi |
+| `nqrust-portal-airgapped.sha256` | Checksum SHA256 |
 
 <Callout type="warning">
-  File-file ini **tidak tersedia publik**. Hubungi tim NQRust untuk mendapatkan paket installer airgapped untuk deployment Anda.
+  File-file ini tidak tersedia secara publik. Hubungi tim NQRust untuk memperoleh paket installer airgapped.
 </Callout>
 
 ## Verifikasi installer
 
-Setelah Anda memiliki kedua file, letakkan di direktori yang sama di server Anda dan verifikasi checksum-nya:
+Letakkan kedua file di direktori yang sama pada server, lalu verifikasi checksum-nya:
 
 ```bash
 sha256sum -c nqrust-portal-airgapped.sha256
@@ -68,7 +66,7 @@ nqrust-portal-airgapped: OK
 ```
 
 <Callout type="warning">
-  Jika checksum tidak cocok, **jangan** lanjutkan instalasi. Hubungi tim NQRust untuk mengunduh ulang file-nya.
+  Jika checksum tidak cocok, jangan lanjutkan. Hubungi tim NQRust untuk mendapatkan salinan installer yang baru.
 </Callout>
 
 ## Jadikan binary dapat dieksekusi
@@ -79,21 +77,19 @@ chmod +x nqrust-portal-airgapped
 
 ## Jalankan installer
 
-Jalankan installer dari direktori tempat Anda ingin file konfigurasi (`.env`, `docker-compose.yaml`, dll) dibuat:
+Jalankan installer dari direktori tempat file konfigurasi (`.env`, `docker-compose.yaml`) akan dibuat:
 
 ```bash
 ./nqrust-portal-airgapped
 ```
 
-Pada peluncuran pertama, installer akan mendeteksi mode airgapped dan otomatis memuat Docker image yang tergabung ke dalam Docker daemon lokal Anda. Ini mungkin membutuhkan beberapa menit.
+Pada peluncuran pertama, installer memuat Docker image yang dibundel ke dalam Docker daemon lokal. Proses ini dapat memakan waktu beberapa menit.
 
-![Menu home installer](/images/installation/overview-1.png)
+![Menu utama installer](/images/installation/overview-1.png)
 
 ## Alur instalasi
 
-Instalasi dibagi menjadi **dua fase**:
+Instalasi dibagi menjadi dua fase. Selesaikan secara berurutan:
 
-1. **[Fase 1: Instalasi Identity](/id/guides/installation/phase-1-identity)** — Konfigurasi hostname, port, dan deploy container Identity + Portal.
-2. **[Fase 2: Konfigurasi Portal](/id/guides/installation/phase-2-portal)** — Buat OAuth client di Identity, lalu link Portal ke client tersebut.
-
-Ikuti setiap fase secara berurutan untuk menyelesaikan instalasi.
+1. **[Fase 1: Instalasi Identity](/id/guides/installation/phase-1-identity)** — Konfigurasi port dan deploy container Identity dan Portal.
+2. **[Fase 2: Konfigurasi Portal](/id/guides/installation/phase-2-portal)** — Buat OAuth client di Identity dan hubungkan ke Portal.
