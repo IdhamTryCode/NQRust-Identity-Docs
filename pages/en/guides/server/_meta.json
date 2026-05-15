@@ -17,7 +17,10 @@
   "features": "Enabling and disabling features",
   "configuration-provider": "Configuring providers",
   "logging": "Configuring logging",
-  "fips": "FIPS 140-2 support",
+  "fips": {
+    "title": "FIPS 140-2 support",
+    "display": "hidden"
+  },
   "management-interface": "Configuring the Management Interface",
   "importexport": "Importing and exporting realms",
   "vault": "Using a vault",

@@ -17,7 +17,10 @@
   "features": "Mengaktifkan dan menonaktifkan fitur",
   "configuration-provider": "Mengonfigurasi provider",
   "logging": "Mengonfigurasi logging",
-  "fips": "Dukungan FIPS 140-2",
+  "fips": {
+    "title": "Dukungan FIPS 140-2",
+    "display": "hidden"
+  },
   "management-interface": "Mengonfigurasi Management Interface",
   "importexport": "Mengimpor dan mengekspor realm",
   "vault": "Menggunakan vault",

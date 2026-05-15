@@ -8,6 +8,7 @@ export interface Card {
   titleId?: string
   descId?: string
   slug: string // path segment under /{locale}/guides/{category}/
+  hidden?: boolean // if true, omitted from landing cards and category index pages (page still accessible by URL)
 }
 
 export interface Category {
@@ -49,7 +50,7 @@ export const CATEGORIES: Category[] = [
       { title: 'Enabling and disabling features', desc: 'Configure NQRust-Identity to use optional features.', titleId: 'Mengaktifkan dan menonaktifkan fitur', descId: 'Mengonfigurasi NQRust-Identity untuk menggunakan fitur opsional.', slug: 'features' },
       { title: 'Configuring providers', desc: 'Configure providers for NQRust-Identity.', titleId: 'Mengonfigurasi provider', descId: 'Mengonfigurasi provider untuk NQRust-Identity.', slug: 'configuration-provider' },
       { title: 'Configuring logging', desc: 'Configure logging for NQRust-Identity.', titleId: 'Mengonfigurasi logging', descId: 'Mengonfigurasi logging untuk NQRust-Identity.', slug: 'logging' },
-      { title: 'FIPS 140-2 support', desc: 'Configure the server for FIPS compliance.', titleId: 'Dukungan FIPS 140-2', descId: 'Mengonfigurasi server untuk compliance FIPS.', slug: 'fips' },
+      { title: 'FIPS 140-2 support', desc: 'Configure the server for FIPS compliance.', titleId: 'Dukungan FIPS 140-2', descId: 'Mengonfigurasi server untuk compliance FIPS.', slug: 'fips', hidden: true },
       { title: 'Configuring the Management Interface', desc: 'Configure the management interface for metrics and health checks.', titleId: 'Mengonfigurasi Management Interface', descId: 'Mengonfigurasi management interface untuk metrics dan health check.', slug: 'management-interface' },
       { title: 'Importing and exporting realms', desc: 'Import and export realms as JSON files.', titleId: 'Mengimpor dan mengekspor realm', descId: 'Mengimpor dan mengekspor realm sebagai file JSON.', slug: 'importexport' },
       { title: 'Using a vault', desc: 'Configure and use a vault in NQRust-Identity.', titleId: 'Menggunakan vault', descId: 'Mengonfigurasi dan menggunakan vault di NQRust-Identity.', slug: 'vault' },
@@ -82,20 +83,20 @@ export const CATEGORIES: Category[] = [
       { title: 'Securing apps with OpenID Connect', desc: 'Use OpenID Connect with NQRust-Identity to secure applications.', titleId: 'Mengamankan aplikasi dengan OpenID Connect', descId: 'Menggunakan OpenID Connect dengan NQRust-Identity untuk mengamankan aplikasi.', slug: 'oidc-layers' },
       { title: 'JavaScript adapter', desc: 'Client-side JavaScript library to secure web applications.', titleId: 'JavaScript adapter', descId: 'Library JavaScript client-side untuk mengamankan aplikasi web.', slug: 'javascript-adapter' },
       { title: 'Node.js adapter', desc: 'Node.js adapter to protect server-side JavaScript apps.', titleId: 'Node.js adapter', descId: 'Adapter Node.js untuk melindungi aplikasi JavaScript server-side.', slug: 'nodejs-adapter' },
-      { title: 'Configuring mod_auth_openidc', desc: 'Configure the mod_auth_openidc Apache module.', titleId: 'Mengonfigurasi mod_auth_openidc', descId: 'Mengonfigurasi modul Apache mod_auth_openidc.', slug: 'mod-auth-openidc' },
-      { title: 'SAML Galleon feature pack', desc: 'Use SAML Galleon feature pack to secure WildFly and EAP applications.', titleId: 'SAML Galleon feature pack', descId: 'Menggunakan SAML Galleon feature pack untuk mengamankan aplikasi WildFly dan EAP.', slug: 'saml-galleon-layers' },
-      { title: 'Configuring mod_auth_mellon', desc: 'Configure the mod_auth_mellon Apache module.', titleId: 'Mengonfigurasi mod_auth_mellon', descId: 'Mengonfigurasi modul Apache mod_auth_mellon.', slug: 'mod-auth-mellon' },
+      { title: 'Configuring mod_auth_openidc', desc: 'Configure the mod_auth_openidc Apache module.', titleId: 'Mengonfigurasi mod_auth_openidc', descId: 'Mengonfigurasi modul Apache mod_auth_openidc.', slug: 'mod-auth-openidc', hidden: true },
+      { title: 'SAML Galleon feature pack', desc: 'Use SAML Galleon feature pack to secure WildFly and EAP applications.', titleId: 'SAML Galleon feature pack', descId: 'Menggunakan SAML Galleon feature pack untuk mengamankan aplikasi WildFly dan EAP.', slug: 'saml-galleon-layers', hidden: true },
+      { title: 'Configuring mod_auth_mellon', desc: 'Configure the mod_auth_mellon Apache module.', titleId: 'Mengonfigurasi mod_auth_mellon', descId: 'Mengonfigurasi modul Apache mod_auth_mellon.', slug: 'mod-auth-mellon', hidden: true },
       { title: 'Configuring a Docker registry', desc: 'Configure a Docker registry to use NQRust-Identity.', titleId: 'Mengonfigurasi Docker registry', descId: 'Mengonfigurasi Docker registry untuk menggunakan NQRust-Identity.', slug: 'docker-registry' },
       { title: 'Using the client registration service', desc: 'Use the client registration service.', titleId: 'Menggunakan client registration service', descId: 'Menggunakan client registration service.', slug: 'client-registration' },
       { title: 'Automating client registration with the CLI', desc: 'Use the CLI to automate client registration.', titleId: 'Otomatisasi client registration dengan CLI', descId: 'Menggunakan CLI untuk otomatisasi client registration.', slug: 'client-registration-cli' },
-      { title: 'Integrating with MCP', desc: 'Use NQRust-Identity as an authorization server for MCP servers.', titleId: 'Integrasi dengan MCP', descId: 'Menggunakan NQRust-Identity sebagai authorization server untuk MCP server.', slug: 'mcp-authz-server' },
-      { title: 'Configuring token exchange', desc: 'Configure and use token exchange.', titleId: 'Mengonfigurasi token exchange', descId: 'Mengonfigurasi dan menggunakan token exchange.', slug: 'token-exchange' },
-      { title: 'JWT Authorization Grant', desc: 'Guide for the JWT Authorization Grant specification RFC 7521 / 7523.', titleId: 'JWT Authorization Grant', descId: 'Panduan untuk spesifikasi JWT Authorization Grant RFC 7521 / 7523.', slug: 'jwt-authorization-grant' },
-      { title: 'Specifications implemented', desc: 'List of specifications and standards implemented.', titleId: 'Spesifikasi yang diimplementasikan', descId: 'Daftar spesifikasi dan standar yang diimplementasikan.', slug: 'specifications' },
-      { title: 'Admin client', desc: 'Using the admin client to access the Admin REST API.', titleId: 'Admin client', descId: 'Menggunakan admin client untuk mengakses Admin REST API.', slug: 'admin-client' },
-      { title: 'Authorization client', desc: 'Using the authz client to administer and check permissions.', titleId: 'Authorization client', descId: 'Menggunakan authz client untuk mengelola dan memeriksa permission.', slug: 'authz-client' },
-      { title: 'Policy enforcer', desc: 'Using the policy enforcer in Java applications.', titleId: 'Policy enforcer', descId: 'Menggunakan policy enforcer di aplikasi Java.', slug: 'policy-enforcer' },
-      { title: 'Upgrading the Client Libraries', desc: 'How to upgrade the NQRust-Identity Client Libraries.', titleId: 'Upgrade Client Libraries', descId: 'Cara meng-upgrade NQRust-Identity Client Libraries.', slug: 'upgrading' },
+      { title: 'Integrating with MCP', desc: 'Use NQRust-Identity as an authorization server for MCP servers.', titleId: 'Integrasi dengan MCP', descId: 'Menggunakan NQRust-Identity sebagai authorization server untuk MCP server.', slug: 'mcp-authz-server', hidden: true },
+      { title: 'Configuring token exchange', desc: 'Configure and use token exchange.', titleId: 'Mengonfigurasi token exchange', descId: 'Mengonfigurasi dan menggunakan token exchange.', slug: 'token-exchange', hidden: true },
+      { title: 'JWT Authorization Grant', desc: 'Guide for the JWT Authorization Grant specification RFC 7521 / 7523.', titleId: 'JWT Authorization Grant', descId: 'Panduan untuk spesifikasi JWT Authorization Grant RFC 7521 / 7523.', slug: 'jwt-authorization-grant', hidden: true },
+      { title: 'Specifications implemented', desc: 'List of specifications and standards implemented.', titleId: 'Spesifikasi yang diimplementasikan', descId: 'Daftar spesifikasi dan standar yang diimplementasikan.', slug: 'specifications', hidden: true },
+      { title: 'Admin client', desc: 'Using the admin client to access the Admin REST API.', titleId: 'Admin client', descId: 'Menggunakan admin client untuk mengakses Admin REST API.', slug: 'admin-client', hidden: true },
+      { title: 'Authorization client', desc: 'Using the authz client to administer and check permissions.', titleId: 'Authorization client', descId: 'Menggunakan authz client untuk mengelola dan memeriksa permission.', slug: 'authz-client', hidden: true },
+      { title: 'Policy enforcer', desc: 'Using the policy enforcer in Java applications.', titleId: 'Policy enforcer', descId: 'Menggunakan policy enforcer di aplikasi Java.', slug: 'policy-enforcer', hidden: true },
+      { title: 'Upgrading the Client Libraries', desc: 'How to upgrade the NQRust-Identity Client Libraries.', titleId: 'Upgrade Client Libraries', descId: 'Cara meng-upgrade NQRust-Identity Client Libraries.', slug: 'upgrading', hidden: true },
     ],
   },
   {

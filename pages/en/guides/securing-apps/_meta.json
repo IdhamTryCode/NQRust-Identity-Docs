@@ -6,17 +6,50 @@
   "oidc-layers": "Securing applications and services with OpenID Connect",
   "javascript-adapter": "NQRust-Identity JavaScript adapter",
   "nodejs-adapter": "NQRust-Identity Node.js adapter",
-  "mod-auth-openidc": "Configuring the mod_auth_openidc Apache HTTPD Module",
-  "saml-galleon-layers": "NQRust-Identity SAML Galleon feature pack for WildFly and EAP",
-  "mod-auth-mellon": "Configuring the mod_auth_mellon Apache Module",
+  "mod-auth-openidc": {
+    "title": "Configuring the mod_auth_openidc Apache HTTPD Module",
+    "display": "hidden"
+  },
+  "saml-galleon-layers": {
+    "title": "NQRust-Identity SAML Galleon feature pack for WildFly and EAP",
+    "display": "hidden"
+  },
+  "mod-auth-mellon": {
+    "title": "Configuring the mod_auth_mellon Apache Module",
+    "display": "hidden"
+  },
   "client-registration": "Using the client registration service",
   "client-registration-cli": "Automating client registration with the CLI",
-  "mcp-authz-server": "Integrating with Model Context Protocol (MCP)",
-  "token-exchange": "Configuring and using token exchange",
-  "jwt-authorization-grant": "JWT Authorization Grant",
-  "specifications": "Specifications implemented",
-  "admin-client": "NQRust-Identity admin client",
-  "authz-client": "NQRust-Identity authorization client",
-  "policy-enforcer": "NQRust-Identity policy enforcer",
-  "upgrading": "Upgrading the NQRust-Identity Client Libraries"
+  "mcp-authz-server": {
+    "title": "Integrating with Model Context Protocol (MCP)",
+    "display": "hidden"
+  },
+  "token-exchange": {
+    "title": "Configuring and using token exchange",
+    "display": "hidden"
+  },
+  "jwt-authorization-grant": {
+    "title": "JWT Authorization Grant",
+    "display": "hidden"
+  },
+  "specifications": {
+    "title": "Specifications implemented",
+    "display": "hidden"
+  },
+  "admin-client": {
+    "title": "NQRust-Identity admin client",
+    "display": "hidden"
+  },
+  "authz-client": {
+    "title": "NQRust-Identity authorization client",
+    "display": "hidden"
+  },
+  "policy-enforcer": {
+    "title": "NQRust-Identity policy enforcer",
+    "display": "hidden"
+  },
+  "upgrading": {
+    "title": "Upgrading the NQRust-Identity Client Libraries",
+    "display": "hidden"
+  }
 }

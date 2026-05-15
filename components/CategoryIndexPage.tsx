@@ -46,7 +46,7 @@ export function CategoryIndexPage({ category }: { category: string }) {
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '0.75rem',
       }}>
-        {cat.cards.map((card) => {
+        {cat.cards.filter((card) => !card.hidden).map((card) => {
           const href = card.slug ? `${basePath}/${card.slug}` : basePath
           const { title, desc } = pickCard(card, locale)
           return <Card key={href} title={title} desc={desc} href={href} />

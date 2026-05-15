@@ -6,17 +6,50 @@
   "oidc-layers": "Mengamankan aplikasi dan service dengan OpenID Connect",
   "javascript-adapter": "NQRust-Identity JavaScript adapter",
   "nodejs-adapter": "NQRust-Identity Node.js adapter",
-  "mod-auth-openidc": "Mengonfigurasi modul mod_auth_openidc Apache HTTPD",
-  "saml-galleon-layers": "NQRust-Identity SAML Galleon feature pack untuk WildFly dan EAP",
-  "mod-auth-mellon": "Mengonfigurasi modul mod_auth_mellon Apache",
+  "mod-auth-openidc": {
+    "title": "Mengonfigurasi modul mod_auth_openidc Apache HTTPD",
+    "display": "hidden"
+  },
+  "saml-galleon-layers": {
+    "title": "NQRust-Identity SAML Galleon feature pack untuk WildFly dan EAP",
+    "display": "hidden"
+  },
+  "mod-auth-mellon": {
+    "title": "Mengonfigurasi modul mod_auth_mellon Apache",
+    "display": "hidden"
+  },
   "client-registration": "Menggunakan client registration service",
   "client-registration-cli": "Otomatisasi client registration dengan CLI",
-  "mcp-authz-server": "Integrasi dengan Model Context Protocol (MCP)",
-  "token-exchange": "Mengonfigurasi dan menggunakan token exchange",
-  "jwt-authorization-grant": "JWT Authorization Grant",
-  "specifications": "Spesifikasi yang diimplementasikan",
-  "admin-client": "NQRust-Identity admin client",
-  "authz-client": "NQRust-Identity authorization client",
-  "policy-enforcer": "NQRust-Identity policy enforcer",
-  "upgrading": "Upgrade NQRust-Identity Client Libraries"
+  "mcp-authz-server": {
+    "title": "Integrasi dengan Model Context Protocol (MCP)",
+    "display": "hidden"
+  },
+  "token-exchange": {
+    "title": "Mengonfigurasi dan menggunakan token exchange",
+    "display": "hidden"
+  },
+  "jwt-authorization-grant": {
+    "title": "JWT Authorization Grant",
+    "display": "hidden"
+  },
+  "specifications": {
+    "title": "Spesifikasi yang diimplementasikan",
+    "display": "hidden"
+  },
+  "admin-client": {
+    "title": "NQRust-Identity admin client",
+    "display": "hidden"
+  },
+  "authz-client": {
+    "title": "NQRust-Identity authorization client",
+    "display": "hidden"
+  },
+  "policy-enforcer": {
+    "title": "NQRust-Identity policy enforcer",
+    "display": "hidden"
+  },
+  "upgrading": {
+    "title": "Upgrade NQRust-Identity Client Libraries",
+    "display": "hidden"
+  }
 }
