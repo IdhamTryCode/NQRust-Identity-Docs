@@ -24,26 +24,24 @@ Installer running in offline mode...
 Loading bundled images, please wait...
 ```
 
-Setelah image dimuat, menu **Home** akan tampil.
-
 ## Pilih "Install Identity"
 
 Gunakan tombol panah untuk menyorot **Install Identity**, lalu tekan **Enter** untuk mengonfirmasi.
 
 ![Menu Home dengan Install Identity tersorot](/images/installation/phase-1-1.png)
 
-## Isi form Identity
+## Pengaturan server Identity
 
-Form Identity memerlukan dua nilai:
+Hostname server terdeteksi secara otomatis; Anda hanya perlu menetapkan port.
+
+### Pengaturan port server
 
 | Field | Deskripsi | Contoh |
 | --- | --- | --- |
 | **Identity Port** | Port HTTPS eksternal untuk Identity Admin Console | `8082` (default) |
 | **Portal Port** | Port HTTPS eksternal untuk Portal | `8083` (default) |
 
-Hostname server terdeteksi secara otomatis; Anda hanya perlu menetapkan port.
-
-### Navigasi form
+### Navigasi
 
 - **Tab** atau **panah Atas/Bawah** — berpindah antar field.
 - **Enter** — mengedit field yang terpilih.
@@ -67,12 +65,7 @@ Startup pertama dapat memakan waktu 1–3 menit selama setiap service menginisia
 
 ## Instalasi selesai
 
-Setelah seluruh service berjalan, layar sukses akan menampilkan URL akses:
-
-```
-Identity Admin: https://<hostname>:<identity_port>/admin
-Portal:         https://<hostname>:<portal_port>
-```
+Setelah seluruh service berjalan, layar sukses akan menampilkan Identity admin URL.
 
 ![Sukses instalasi Identity](/images/installation/phase-1-4.png)
 
