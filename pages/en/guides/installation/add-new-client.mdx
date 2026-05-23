@@ -7,7 +7,7 @@ description: Register an additional OAuth client (e.g. NQRust Analytics) in Iden
 
 import { Callout } from 'nextra/components'
 
-This guide describes how to register an additional OAuth client in NQRust-Identity, in addition to the Portal client created in Phase 2. The example uses **NQRust Analytics**; substitute the names with values appropriate for your application.
+This guide describes how to register additional OAuth clients in NQRust-Identity, beyond the Portal client created in Phase 2. The example uses **NQRust Analytics**; substitute the names with values appropriate for your application.
 
 ## Prerequisites
 
@@ -23,13 +23,18 @@ Open the Identity Admin Console in a browser and sign in:
 https://<hostname>:<identity_port>/admin
 ```
 
-Ensure the `nqrust` realm is selected. The realm name is shown at the top of the left sidebar; if a different realm is selected, click the realm name and switch to `nqrust`.
+Ensure `nqrust` is the **Current realm** (the realm name is displayed at the top of the left sidebar). If a different realm is shown, click **Manage realms** then select `nqrust`.
 
 ![Identity Admin Console with nqrust realm selected](/images/installation/client-1.png)
 
 ## Step 2 — Create the OAuth client
 
-In the left sidebar, click **Clients**, then click **Create client**. The wizard has three steps: General settings, Capability config, and Login settings.
+The wizard has three steps: General settings, Capability config, and Login settings.
+
+To open the wizard:
+
+1. In the left sidebar, click **Clients**.
+2. Click **Create client**.
 
 ![Clients page with Create client button](/images/installation/client-2.png)
 
@@ -82,10 +87,11 @@ Click **Save**.
 
 ## Step 3 — Copy the client secret and configure the application
 
-Click the **Credentials** tab on the `nqrust-analytics` client page.
+Click the **Credentials** tab on the `nqrust-analytics` **Client details**.
 
 1. Locate the **Client secret** field.
-2. Click the copy button to copy the secret to the clipboard.
+2. Click the copy button to copy the **Client Secret** to the clipboard.
+3. Retain this value; it will be pasted into the application configuration in the next step.
 
 ![Copy client secret](/images/installation/client-3.png)
 
@@ -119,11 +125,11 @@ Create a realm role to assign to users who require access to this client.
 
 ## Step 5 — Assign the role to users
 
-Grant users the `nqrust-analytics` role so that they may access the application.
+Grant users the `nqrust-analytics` role so they can access the application.
 
 1. In the left sidebar, click **Users**.
-2. Click the username to be granted access. If the user does not yet exist, click **Add user** and create one (refer to Phase 2, Step 6 for the user creation steps).
-3. On the user detail page, click the **Role mapping** tab.
+2. Click the username that requires access. If the user does not exist, click **Add user** to create one first (see Phase 2, Step 7 for the user creation steps).
+3. On the **User details** page, click the **Role mapping** tab.
 4. Click **Assign role**. In the dialog, select **Realm roles**.
 5. Check the `nqrust-analytics` role.
 6. Click **Assign**.

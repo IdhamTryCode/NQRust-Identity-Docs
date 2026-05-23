@@ -7,15 +7,15 @@ description: Configure the Portal OAuth client in Identity - NQRust-Identity Doc
 
 import { Callout } from 'nextra/components'
 
-In this phase, you activate the product, create an OAuth client in the Identity Admin Console, grant it the required permissions, create a test user, and link the Portal to the client.
+In this phase, you activate the product, create an OAuth client, grant the required permissions, create a test user, and link the Portal to the client.
 
 ## Prerequisites
 
 - Phase 1 is complete and the Identity and Portal containers are running.
 - The Identity Admin Console is reachable at `https://<hostname>:<identity_port>/admin`.
-- A valid license code obtained from the NQRust team.
+- A valid product key or license key obtained from the NQRust team.
 
-## Step 1 — Activate the product
+## Step 1 — Product activation
 
 Open the Identity Admin Console in a browser:
 
@@ -27,13 +27,13 @@ https://<hostname>:<identity_port>/admin
   The Identity server uses a self-signed TLS certificate by default. The browser will display a security warning — accept it to proceed.
 </Callout>
 
-After accepting the security warning, the Product Activation page is displayed. Activation is performed online against the NQRust license server.
+Once you accept the security warning in the browser, you must accept the EULA to proceed. After that the Product Activation page is displayed.
 
 | Field | Value |
 | --- | --- |
-| **License code** | The license code provided by the NQRust team. |
+| **License key** | License key is provided by the NQRust team. |
 
-Submit the form to activate the server.
+Click **Activate License** to activate the product.
 
 ![Product Activation page](/images/installation/phase-2-activation.png)
 
@@ -59,13 +59,14 @@ A realm groups clients, users, and roles. Create a dedicated realm for the Porta
 1. In the left sidebar, click **Manage realms** (the shield icon at the top of the sidebar).
 2. Click **Create realm**.
 3. In the **Realm name** field, enter `nqrust`.
-4. Click **Create**.
+4. Set **Enabled** to `On`.
+5. Click **Create**.
 
 ![Manage realms page with Create realm button](/images/installation/phase-2-2.png)
 
 ## Step 4 — Create the Portal OAuth client
 
-Ensure the `nqrust` realm is selected (the realm name is displayed at the top of the left sidebar). The wizard has three steps: General settings, Capability config, and Login settings.
+Ensure `nqrust` is the **Current realm** (the realm name is displayed at the top of the left sidebar). The wizard has three steps: General settings, Capability config, and Login settings.
 
 To open the wizard:
 
@@ -137,7 +138,7 @@ Click **Save**.
 
 The Portal client requires permission to manage realm resources (users, roles, clients) through the Identity REST API. These permissions are granted via the client's service account.
 
-1. On the `nqrust-portal` client page, click the **Service accounts roles** tab.
+1. On the `nqrust-portal` **Client details**, click the **Service accounts roles** tab.
 
 ![Service accounts roles tab](/images/installation/phase-2-11.png)
 
@@ -158,10 +159,10 @@ The Portal client requires permission to manage realm resources (users, roles, c
 
 ## Step 6 — Copy the client secret
 
-After the client is configured, click the **Credentials** tab on the `nqrust-portal` client page.
+After the client is configured, click the **Credentials** tab on the `nqrust-portal` **Client details**.
 
 1. Locate the **Client secret** field.
-2. Click the copy button to copy the secret to the clipboard.
+2. Click the copy button to copy the **Client Secret** to the clipboard.
 3. Retain this value; it will be pasted into the installer in a later step.
 
 ![Copy client secret](/images/installation/phase-2-6.png)
@@ -188,13 +189,13 @@ At least one user is required in the `nqrust` realm to log in to the Portal.
 
 ### Set the user password
 
-After the user is created, the user detail page opens. Set an initial password:
+After the user is created, the **User details** page opens. Set an initial password:
 
 1. Click the **Credentials** tab.
 2. Click **Set password**.
 3. Enter the password and confirmation.
 4. Set **Temporary** to `Off` to skip forcing a password change on first login.
-5. Click **Save**, then confirm in the dialog.
+5. Click **Save**, then click **Save password** in the **Set password?** confirmation dialog.
 
 ![Set user password](/images/installation/phase-2-15.png)
 

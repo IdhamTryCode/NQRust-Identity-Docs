@@ -32,7 +32,7 @@ Use the arrow keys to highlight **Install Identity**, then press **Enter** to co
 
 ## Identity server setting
 
-The server hostname is detected automatically; only the ports need to be set.
+The server IP address is automatically detected. Access ports are set to default. Only change the port setting if required.
 
 ### Server port setting
 
@@ -53,9 +53,9 @@ The server hostname is detected automatically; only the ports need to be set.
   Both ports must be between `1024` and `65535`, and must differ from each other. Ensure no other service on the server is using these ports.
 </Callout>
 
-When the values are valid, navigate to the **Install** button and press **Enter** to start the installation.
+Once the port settings are correct, navigate to the **Install** button and press **Enter** to start the installation.
 
-## Installation in progress
+## Installation progress
 
 The installer generates the configuration files, prepares the Docker Compose bundle, and starts the services. A progress bar and live log output are displayed while each service starts.
 

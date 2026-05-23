@@ -7,7 +7,7 @@ description: Mendaftarkan OAuth client tambahan (misal NQRust Analytics) di Iden
 
 import { Callout } from 'nextra/components'
 
-Panduan ini menjelaskan cara mendaftarkan OAuth client tambahan di NQRust-Identity, di luar client Portal yang telah dibuat pada Fase 2. Contoh menggunakan **NQRust Analytics**; ganti nama-nama tersebut dengan nilai yang sesuai untuk aplikasi Anda.
+Panduan ini menjelaskan cara mendaftarkan OAuth client tambahan di NQRust-Identity, di luar client Portal yang telah dibuat pada Fase 2. Contoh menggunakan **NQRust Analytics**; sesuaikan nama-nama tersebut dengan nilai yang sesuai untuk aplikasi Anda.
 
 ## Prasyarat
 
@@ -23,13 +23,18 @@ Buka Identity Admin Console di browser dan masuk:
 https://<hostname>:<identity_port>/admin
 ```
 
-Pastikan realm `nqrust` terpilih. Nama realm tertera pada bagian atas sidebar kiri; jika realm lain yang terpilih, klik nama realm tersebut dan pindah ke `nqrust`.
+Pastikan `nqrust` adalah **Current realm** (nama realm tertera pada bagian atas sidebar kiri). Jika realm lain yang tertampil, klik **Manage realms** lalu pilih `nqrust`.
 
 ![Identity Admin Console dengan realm nqrust terpilih](/images/installation/client-1.png)
 
 ## Langkah 2 — Buat OAuth client
 
-Di sidebar kiri, klik **Clients**, lalu klik **Create client**. Wizard memiliki tiga langkah: General settings, Capability config, dan Login settings.
+Wizard memiliki tiga langkah: General settings, Capability config, dan Login settings.
+
+Untuk membuka wizard:
+
+1. Di sidebar kiri, klik **Clients**.
+2. Klik **Create client**.
 
 ![Halaman Clients dengan tombol Create client](/images/installation/client-2.png)
 
@@ -82,10 +87,11 @@ Klik **Save**.
 
 ## Langkah 3 — Copy client secret dan konfigurasi aplikasi
 
-Klik tab **Credentials** pada halaman client `nqrust-analytics`.
+Klik tab **Credentials** pada **Client details** `nqrust-analytics`.
 
 1. Cari field **Client secret**.
-2. Klik tombol copy untuk menyalin secret ke clipboard.
+2. Klik tombol copy untuk menyalin **Client Secret** ke clipboard.
+3. Simpan nilai ini; nilai akan ditempelkan ke konfigurasi aplikasi pada langkah berikutnya.
 
 ![Copy client secret](/images/installation/client-3.png)
 
@@ -119,11 +125,11 @@ Buat realm role yang akan diberikan kepada user yang membutuhkan akses ke client
 
 ## Langkah 5 — Assign role ke user
 
-Berikan user role `nqrust-analytics` agar mereka dapat mengakses aplikasi.
+Berikan user role `nqrust-analytics` agar dapat mengakses aplikasi.
 
 1. Di sidebar kiri, klik **Users**.
-2. Klik username yang akan diberi akses. Jika user belum ada, klik **Add user** dan buat user baru (lihat Fase 2, Langkah 6 untuk panduan pembuatan user).
-3. Pada halaman detail user, klik tab **Role mapping**.
+2. Klik username yang membutuhkan akses. Jika user belum ada, klik **Add user** untuk membuatnya terlebih dahulu (lihat Fase 2, Langkah 7 untuk panduan pembuatan user).
+3. Pada halaman **User details**, klik tab **Role mapping**.
 4. Klik **Assign role**. Pada dialog, pilih **Realm roles**.
 5. Centang role `nqrust-analytics`.
 6. Klik **Assign**.

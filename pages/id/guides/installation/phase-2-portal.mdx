@@ -7,13 +7,13 @@ description: Konfigurasi OAuth client Portal di Identity - Dokumentasi NQRust-Id
 
 import { Callout } from 'nextra/components'
 
-Pada fase ini, Anda mengaktifkan produk, membuat OAuth client di Identity Admin Console, memberikan permission yang dibutuhkan, membuat user uji coba, dan menghubungkan Portal ke client tersebut.
+Pada fase ini, Anda mengaktifkan produk, membuat OAuth client, memberikan permission yang dibutuhkan, membuat user uji coba, dan menghubungkan Portal ke client tersebut.
 
 ## Prasyarat
 
 - Fase 1 telah selesai dan container Identity serta Portal sedang berjalan.
 - Identity Admin Console dapat diakses pada `https://<hostname>:<identity_port>/admin`.
-- Kode lisensi valid yang diperoleh dari tim NQRust.
+- Product key atau license key valid yang diperoleh dari tim NQRust.
 
 ## Langkah 1 — Aktivasi produk
 
@@ -27,13 +27,13 @@ https://<hostname>:<identity_port>/admin
   Server Identity menggunakan sertifikat TLS self-signed secara default. Browser akan menampilkan peringatan keamanan — terima untuk melanjutkan.
 </Callout>
 
-Setelah menerima peringatan keamanan, halaman Aktivasi Produk akan ditampilkan. Aktivasi dilakukan secara online terhadap server lisensi NQRust.
+Setelah menerima peringatan keamanan di browser, Anda harus menyetujui EULA untuk melanjutkan. Setelah itu halaman Aktivasi Produk akan ditampilkan.
 
 | Field | Nilai |
 | --- | --- |
-| **License code** | Kode lisensi yang diberikan oleh tim NQRust. |
+| **License key** | License key diberikan oleh tim NQRust. |
 
-Submit form untuk mengaktifkan server.
+Klik **Activate License** untuk mengaktifkan produk.
 
 ![Halaman Aktivasi Produk](/images/installation/phase-2-activation.png)
 
@@ -59,13 +59,14 @@ Realm mengelompokkan client, user, dan role. Buat realm khusus untuk Portal seba
 1. Di sidebar kiri, klik **Manage realms** (ikon perisai pada bagian atas sidebar).
 2. Klik **Create realm**.
 3. Pada field **Realm name**, masukkan `nqrust`.
-4. Klik **Create**.
+4. Atur **Enabled** ke `On`.
+5. Klik **Create**.
 
 ![Halaman Manage realms dengan tombol Create realm](/images/installation/phase-2-2.png)
 
 ## Langkah 4 — Buat OAuth client Portal
 
-Pastikan realm `nqrust` terpilih (nama realm tertera pada bagian atas sidebar kiri). Wizard memiliki tiga langkah: General settings, Capability config, dan Login settings.
+Pastikan `nqrust` adalah **Current realm** (nama realm tertera pada bagian atas sidebar kiri). Wizard memiliki tiga langkah: General settings, Capability config, dan Login settings.
 
 Untuk membuka wizard:
 
@@ -137,7 +138,7 @@ Klik **Save**.
 
 Client Portal membutuhkan permission untuk mengelola sumber daya realm (user, role, client) melalui Identity REST API. Permission diberikan melalui service account milik client.
 
-1. Pada halaman client `nqrust-portal`, klik tab **Service accounts roles**.
+1. Pada **Client details** `nqrust-portal`, klik tab **Service accounts roles**.
 
 ![Tab Service accounts roles](/images/installation/phase-2-11.png)
 
@@ -158,10 +159,10 @@ Client Portal membutuhkan permission untuk mengelola sumber daya realm (user, ro
 
 ## Langkah 6 — Copy client secret
 
-Setelah client dikonfigurasi, klik tab **Credentials** pada halaman client `nqrust-portal`.
+Setelah client dikonfigurasi, klik tab **Credentials** pada **Client details** `nqrust-portal`.
 
 1. Cari field **Client secret**.
-2. Klik tombol copy untuk menyalin secret ke clipboard.
+2. Klik tombol copy untuk menyalin **Client Secret** ke clipboard.
 3. Simpan nilai ini; nilai akan ditempelkan ke installer pada langkah berikutnya.
 
 ![Copy client secret](/images/installation/phase-2-6.png)
@@ -188,13 +189,13 @@ Setidaknya satu user dibutuhkan di realm `nqrust` untuk dapat login ke Portal.
 
 ### Set password user
 
-Setelah user dibuat, halaman detail user akan terbuka. Atur password awal:
+Setelah user dibuat, halaman **User details** akan terbuka. Atur password awal:
 
 1. Klik tab **Credentials**.
 2. Klik **Set password**.
 3. Masukkan password dan konfirmasinya.
 4. Atur **Temporary** ke `Off` untuk tidak memaksa user mengganti password pada login pertama.
-5. Klik **Save**, lalu konfirmasi pada dialog.
+5. Klik **Save**, lalu klik **Save password** pada dialog konfirmasi **Set password?**.
 
 ![Set password user](/images/installation/phase-2-15.png)
 
