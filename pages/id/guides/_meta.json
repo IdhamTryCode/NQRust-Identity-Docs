@@ -6,5 +6,6 @@
   "server": "Server",
   "observability": "Observabilitas",
   "securing-apps": "Keamanan Aplikasi",
-  "high-availability": "Ketersediaan Tinggi"
+  "high-availability": "Ketersediaan Tinggi",
+  "use-cases": "Use Cases"
 }

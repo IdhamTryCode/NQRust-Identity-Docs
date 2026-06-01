@@ -107,6 +107,14 @@ export const CATEGORIES: Category[] = [
       { title: 'High availability overview', desc: 'Explore the different NQRust-Identity high-availability architectures.', titleId: 'Ikhtisar high availability', descId: 'Menjelajahi arsitektur high-availability NQRust-Identity yang berbeda.', slug: 'introduction' },
     ],
   },
+  {
+    key: 'use-cases',
+    title: 'Use Cases',
+    titleId: 'Use Cases',
+    cards: [
+      { title: 'LDAP Integration', desc: 'Connect NQRust-Identity to an LDAP directory, sync users, map attributes, and verify login.', titleId: 'Integrasi LDAP', descId: 'Hubungkan NQRust-Identity ke direktori LDAP, sinkronkan pengguna, petakan atribut, dan verifikasi login.', slug: 'ldap-integration' },
+    ],
+  },
 ]
 
 export function findCategory(key: string): Category | undefined {

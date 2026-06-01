@@ -1,0 +1,181 @@
+---
+title: LDAP Integration
+description: Connect NQRust-Identity to an LDAP directory server, synchronize users, map attributes, and verify user login - NQRust-Identity Documentation
+---
+
+# LDAP Integration
+
+import { Callout, Steps } from 'nextra/components'
+
+This guide walks through integrating NQRust-Identity with an LDAP directory server (e.g., OpenLDAP or Active Directory). After completing this tutorial, users from the LDAP directory will be able to authenticate through NQRust-Identity.
+
+## Prerequisites
+
+- NQRust-Identity is installed and running. See [Phase 1: Install Identity](/en/guides/installation/phase-1-identity).
+- An LDAP server is reachable from the NQRust-Identity host.
+- You have the LDAP connection details: host, port, bind DN, and bind credentials.
+- Admin Console access at `https://<your-host>:<port>/auth/admin`.
+
+---
+
+## Step 1: Open the User Federation settings
+
+<Steps>
+
+### Navigate to User Federation
+
+1. Log in to the Admin Console.
+2. Select the target realm from the top-left dropdown.
+3. In the left sidebar, click **User Federation**.
+
+### Add LDAP provider
+
+Click **Add provider** and select **ldap** from the dropdown.
+
+</Steps>
+
+---
+
+## Step 2: Configure the LDAP connection
+
+Fill in the **Required Settings** section:
+
+| Field | Description | Example |
+| --- | --- | --- |
+| **UI display name** | Label shown in the Admin Console | `Corporate LDAP` |
+| **Vendor** | Select the closest match for your LDAP server | `Other` / `Active Directory` / `Red Hat Directory Server` |
+| **Connection URL** | LDAP server address | `ldap://ldap.example.com:389` |
+| **Enable StartTLS** | Upgrade connection to TLS after initial handshake | `Off` (enable for production) |
+| **Use Truststore SPI** | Whether to use the server truststore for TLS verification | `Only for ldaps` |
+| **Bind type** | Authentication method for the bind account | `simple` |
+| **Bind DN** | Distinguished name of the service account | `cn=admin,dc=example,dc=com` |
+| **Bind credentials** | Password for the bind account | `••••••••` |
+
+<Callout type="info">
+  Click **Test connection** to verify that NQRust-Identity can reach the LDAP server before proceeding.
+</Callout>
+
+Then fill in the **LDAP searching and updating** section:
+
+| Field | Description | Example |
+| --- | --- | --- |
+| **Edit mode** | Whether users can update their profile via NQRust-Identity | `READ_ONLY` |
+| **Users DN** | Base DN where user entries are located | `ou=users,dc=example,dc=com` |
+| **Username LDAP attribute** | LDAP attribute mapped to the NQRust-Identity username | `uid` (OpenLDAP) or `sAMAccountName` (AD) |
+| **RDN LDAP attribute** | Relative distinguished name attribute | `uid` |
+| **UUID LDAP attribute** | Unique identifier attribute | `entryUUID` (OpenLDAP) or `objectGUID` (AD) |
+| **User object classes** | Object classes that define user entries | `inetOrgPerson, organizationalPerson` |
+
+<Callout type="info">
+  Click **Test authentication** to verify that the bind credentials are accepted by the LDAP server.
+</Callout>
+
+Click **Save** to create the LDAP provider.
+
+---
+
+## Step 3: Synchronize users
+
+After saving the provider, you can import users from LDAP into the NQRust-Identity database.
+
+<Steps>
+
+### Trigger a full sync
+
+On the LDAP provider page, scroll down to the **Sync Settings** section and click **Synchronize all users**.
+
+A status message confirms the number of users imported:
+
+```
+Added X users, Updated Y users, Removed Z users
+```
+
+### Verify imported users
+
+1. In the left sidebar, click **Users**.
+2. Click **View all users**.
+3. Confirm that LDAP users appear in the list. Their **Origin** column shows the LDAP federation provider name (e.g., `Corporate LDAP`).
+
+</Steps>
+
+<Callout type="warning">
+  NQRust-Identity stores a local copy of user data from LDAP. Password validation for LDAP users is always delegated back to the LDAP server — passwords are never stored in NQRust-Identity.
+</Callout>
+
+---
+
+## Step 4: Configure attribute mappers
+
+Mappers define how LDAP attributes are translated into NQRust-Identity user profile fields.
+
+<Steps>
+
+### Open the Mappers tab
+
+On the LDAP provider page, click the **Mappers** tab. NQRust-Identity creates several default mappers automatically (e.g., `username`, `email`, `first name`, `last name`).
+
+### Review default mappers
+
+Check that these mappers point to the correct LDAP attributes for your directory:
+
+| Mapper name | LDAP attribute | NQRust-Identity field |
+| --- | --- | --- |
+| `username` | `uid` / `sAMAccountName` | username |
+| `email` | `mail` | email |
+| `first name` | `givenName` | firstName |
+| `last name` | `sn` | lastName |
+
+### Add a custom mapper (optional)
+
+To map an additional LDAP attribute (e.g., department):
+
+1. Click **Add mapper**.
+2. Set **Mapper type** to `user-attribute-ldap-mapper`.
+3. Fill in:
+   - **Name**: `department`
+   - **User Model Attribute**: `department`
+   - **LDAP Attribute**: `departmentNumber`
+4. Click **Save**.
+
+</Steps>
+
+---
+
+## Step 5: Verify login with an LDAP account
+
+<Steps>
+
+### Open Account Console
+
+Navigate to `https://<your-host>:<port>/auth/realms/<realm>/account`.
+
+### Log in
+
+Enter the credentials of an LDAP user. NQRust-Identity delegates authentication to the LDAP server.
+
+On success, the user is redirected to their account page and their profile data (name, email) is populated from the mapped LDAP attributes.
+
+### Confirm federation source in Admin Console
+
+1. Go to **Users** in the Admin Console.
+2. Open the user that just logged in.
+3. On the **Details** tab, confirm **User federation link** shows the LDAP provider name.
+
+</Steps>
+
+<Callout type="info">
+  If login fails, check the NQRust-Identity server logs for LDAP-related errors. Common causes are an incorrect Users DN, a mismatched Username LDAP attribute, or a firewall blocking the connection.
+</Callout>
+
+---
+
+## Periodic sync (optional)
+
+To keep the NQRust-Identity user list in sync with changes in LDAP automatically:
+
+1. On the LDAP provider page, scroll to **Sync Settings**.
+2. Enable **Periodic full sync** and set **Full sync period** (in seconds, e.g. `86400` for daily).
+3. Enable **Periodic changed users sync** and set **Changed users sync period** (e.g. `3600` for hourly).
+4. Click **Save**.
+
+NQRust-Identity will then run sync jobs in the background on the configured schedule.

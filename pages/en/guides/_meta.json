@@ -6,5 +6,6 @@
   "server": "Server",
   "observability": "Observability",
   "securing-apps": "Securing Applications",
-  "high-availability": "High Availability"
+  "high-availability": "High Availability",
+  "use-cases": "Use Cases"
 }

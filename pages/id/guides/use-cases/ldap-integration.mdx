@@ -1,0 +1,181 @@
+---
+title: Integrasi LDAP
+description: Hubungkan NQRust-Identity ke server direktori LDAP, sinkronkan pengguna, petakan atribut, dan verifikasi login pengguna - Dokumentasi NQRust-Identity
+---
+
+# Integrasi LDAP
+
+import { Callout, Steps } from 'nextra/components'
+
+Panduan ini menjelaskan cara mengintegrasikan NQRust-Identity dengan server direktori LDAP (misalnya OpenLDAP atau Active Directory). Setelah menyelesaikan tutorial ini, pengguna dari direktori LDAP dapat melakukan autentikasi melalui NQRust-Identity.
+
+## Prasyarat
+
+- NQRust-Identity sudah terinstal dan berjalan. Lihat [Fase 1: Instalasi Identity](/id/guides/installation/phase-1-identity).
+- Server LDAP dapat dijangkau dari host NQRust-Identity.
+- Anda memiliki detail koneksi LDAP: host, port, bind DN, dan kredensial bind.
+- Akses Admin Console di `https://<host-anda>:<port>/auth/admin`.
+
+---
+
+## Langkah 1: Buka pengaturan User Federation
+
+<Steps>
+
+### Navigasi ke User Federation
+
+1. Login ke Admin Console.
+2. Pilih realm target dari dropdown di pojok kiri atas.
+3. Di sidebar kiri, klik **User Federation**.
+
+### Tambahkan provider LDAP
+
+Klik **Add provider** dan pilih **ldap** dari dropdown.
+
+</Steps>
+
+---
+
+## Langkah 2: Konfigurasi koneksi LDAP
+
+Isi bagian **Required Settings**:
+
+| Field | Deskripsi | Contoh |
+| --- | --- | --- |
+| **UI display name** | Label yang ditampilkan di Admin Console | `LDAP Perusahaan` |
+| **Vendor** | Pilih yang paling sesuai dengan server LDAP Anda | `Other` / `Active Directory` / `Red Hat Directory Server` |
+| **Connection URL** | Alamat server LDAP | `ldap://ldap.example.com:389` |
+| **Enable StartTLS** | Upgrade koneksi ke TLS setelah handshake awal | `Off` (aktifkan untuk produksi) |
+| **Use Truststore SPI** | Apakah menggunakan server truststore untuk verifikasi TLS | `Only for ldaps` |
+| **Bind type** | Metode autentikasi untuk akun bind | `simple` |
+| **Bind DN** | Distinguished name akun servis | `cn=admin,dc=example,dc=com` |
+| **Bind credentials** | Password untuk akun bind | `••••••••` |
+
+<Callout type="info">
+  Klik **Test connection** untuk memverifikasi bahwa NQRust-Identity dapat menjangkau server LDAP sebelum melanjutkan.
+</Callout>
+
+Kemudian isi bagian **LDAP searching and updating**:
+
+| Field | Deskripsi | Contoh |
+| --- | --- | --- |
+| **Edit mode** | Apakah pengguna dapat memperbarui profil mereka melalui NQRust-Identity | `READ_ONLY` |
+| **Users DN** | Base DN tempat entri pengguna berada | `ou=users,dc=example,dc=com` |
+| **Username LDAP attribute** | Atribut LDAP yang dipetakan ke username NQRust-Identity | `uid` (OpenLDAP) atau `sAMAccountName` (AD) |
+| **RDN LDAP attribute** | Atribut relative distinguished name | `uid` |
+| **UUID LDAP attribute** | Atribut pengenal unik | `entryUUID` (OpenLDAP) atau `objectGUID` (AD) |
+| **User object classes** | Object class yang mendefinisikan entri pengguna | `inetOrgPerson, organizationalPerson` |
+
+<Callout type="info">
+  Klik **Test authentication** untuk memverifikasi bahwa kredensial bind diterima oleh server LDAP.
+</Callout>
+
+Klik **Save** untuk membuat provider LDAP.
+
+---
+
+## Langkah 3: Sinkronisasi pengguna
+
+Setelah menyimpan provider, Anda dapat mengimpor pengguna dari LDAP ke dalam database NQRust-Identity.
+
+<Steps>
+
+### Jalankan full sync
+
+Di halaman provider LDAP, gulir ke bawah ke bagian **Sync Settings** dan klik **Synchronize all users**.
+
+Pesan status akan mengonfirmasi jumlah pengguna yang diimpor:
+
+```
+Added X users, Updated Y users, Removed Z users
+```
+
+### Verifikasi pengguna yang diimpor
+
+1. Di sidebar kiri, klik **Users**.
+2. Klik **View all users**.
+3. Pastikan pengguna LDAP muncul dalam daftar. Kolom **Origin** mereka menampilkan nama provider federasi LDAP (misalnya `LDAP Perusahaan`).
+
+</Steps>
+
+<Callout type="warning">
+  NQRust-Identity menyimpan salinan lokal data pengguna dari LDAP. Validasi password untuk pengguna LDAP selalu didelegasikan kembali ke server LDAP — password tidak pernah disimpan di NQRust-Identity.
+</Callout>
+
+---
+
+## Langkah 4: Konfigurasi mapper atribut
+
+Mapper mendefinisikan bagaimana atribut LDAP diterjemahkan ke dalam field profil pengguna NQRust-Identity.
+
+<Steps>
+
+### Buka tab Mappers
+
+Di halaman provider LDAP, klik tab **Mappers**. NQRust-Identity secara otomatis membuat beberapa mapper default (misalnya `username`, `email`, `first name`, `last name`).
+
+### Tinjau mapper default
+
+Pastikan mapper-mapper ini menunjuk ke atribut LDAP yang benar untuk direktori Anda:
+
+| Nama mapper | Atribut LDAP | Field NQRust-Identity |
+| --- | --- | --- |
+| `username` | `uid` / `sAMAccountName` | username |
+| `email` | `mail` | email |
+| `first name` | `givenName` | firstName |
+| `last name` | `sn` | lastName |
+
+### Tambahkan mapper kustom (opsional)
+
+Untuk memetakan atribut LDAP tambahan (misalnya departemen):
+
+1. Klik **Add mapper**.
+2. Atur **Mapper type** ke `user-attribute-ldap-mapper`.
+3. Isi:
+   - **Name**: `department`
+   - **User Model Attribute**: `department`
+   - **LDAP Attribute**: `departmentNumber`
+4. Klik **Save**.
+
+</Steps>
+
+---
+
+## Langkah 5: Verifikasi login dengan akun LDAP
+
+<Steps>
+
+### Buka Account Console
+
+Navigasi ke `https://<host-anda>:<port>/auth/realms/<realm>/account`.
+
+### Login
+
+Masukkan kredensial pengguna LDAP. NQRust-Identity mendelegasikan autentikasi ke server LDAP.
+
+Jika berhasil, pengguna diarahkan ke halaman akun mereka dan data profil (nama, email) terisi dari atribut LDAP yang dipetakan.
+
+### Konfirmasi sumber federasi di Admin Console
+
+1. Buka **Users** di Admin Console.
+2. Buka pengguna yang baru saja login.
+3. Di tab **Details**, pastikan **User federation link** menampilkan nama provider LDAP.
+
+</Steps>
+
+<Callout type="info">
+  Jika login gagal, periksa log server NQRust-Identity untuk error terkait LDAP. Penyebab umum adalah Users DN yang salah, atribut Username LDAP yang tidak cocok, atau firewall yang memblokir koneksi.
+</Callout>
+
+---
+
+## Sinkronisasi berkala (opsional)
+
+Untuk menjaga daftar pengguna NQRust-Identity tetap sinkron dengan perubahan di LDAP secara otomatis:
+
+1. Di halaman provider LDAP, gulir ke **Sync Settings**.
+2. Aktifkan **Periodic full sync** dan atur **Full sync period** (dalam detik, misalnya `86400` untuk harian).
+3. Aktifkan **Periodic changed users sync** dan atur **Changed users sync period** (misalnya `3600` untuk per jam).
+4. Klik **Save**.
+
+NQRust-Identity akan menjalankan job sync di background sesuai jadwal yang dikonfigurasi.
